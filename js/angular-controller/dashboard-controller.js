@@ -266,7 +266,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.total.vlrTotalPagamentosNaoConfirmados.cheque = 'loading';
 			ng.total.vlrTotalPagamentosNaoConfirmados.boleto = 'loading';
 			ng.total.vlrTotalPagamentosNaoConfirmados.credito = 'loading';
-			aj.get(baseUrlApi()+"dashboard/total/pagamentos/confirmados/nao/"+first_date+'/'+last_date+'?id_empreendimento='+ng.userLogged.id_empreendimento+'&id_forma_pagamento='+id_forma_pagamento)
+			aj.get(baseUrlApi()+"dashboard/total/pagamentos/confirmados/nao/"+first_date+'/'+last_date+'?tv->id_empreendimento='+ng.userLogged.id_empreendimento+'&id_forma_pagamento='+id_forma_pagamento)
 				.success(function(data, status, headers, config) {
 					switch(id_forma_pagamento) {
 						case 2: { // cheque

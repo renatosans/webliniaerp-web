@@ -56,6 +56,14 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 
     ng.editing = false;
 
+    ng.showProductCost = function(transferencia) {
+    	var bool = (ng.isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3);
+    	var perfis = [15,50,64,92,106,120];
+    	if(perfis.indexOf($scope.userLogged.id_perfil) != -1)
+    		bool = false;
+    	return bool;
+    }
+
     ng.showBoxNovo = function(onlyShow){
     	ng.editing = !ng.editing;
 

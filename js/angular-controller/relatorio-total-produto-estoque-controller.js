@@ -13,6 +13,14 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 	ng.qtd_total_estoque = 0;
 	ng.vlr_total_estoque = 0;
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.reset = function() {
 			ng.busca			= {nome_produto:null,id_produto:null,qtd_produto:null,produto_modal:null,depositos:null,id_deposito:null,nome_deposito:null};
 			ng.itensPorPagina   = 10 ;
@@ -165,9 +173,12 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 	}
 
 	function calculaTotais() {
+		ng.qtd_total_estoque = 0 ;
+		ng.total_produtos_estoque = 0 ;
 		$.each(ng.produtos, function(i, item) {
 			ng.qtd_total_estoque += parseInt(item.qtd_item);
 			ng.vlr_total_estoque += (parseFloat(item.vlr_custo_real) * parseInt(item.qtd_item));
+			ng.total_produtos_estoque ++ ;
 		});
 	}
 

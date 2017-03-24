@@ -406,6 +406,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							id        			: empty(params.id_orcamento) ?  null : params.id_orcamento ,
 							id_usuario			: ng.vendedor.id_vendedor,
 							id_cliente 			: ng.cliente.id,
+							id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
 							venda_confirmada 	: ng.orcamento ? 0 : 1,
 							id_empreendimento	: ng.userLogged.id_empreendimento,
 							id_deposito 		: ng.caixa.depositos,
@@ -564,7 +565,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 											        	produtos:item_enviar,
 											        	venda_confirmada : ng.venda_confirmada,
 											        	id_vendedor      : Number(ng.vendedor.id_vendedor),
-											        	id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore )
+											        	id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore ),
+											        	id_autorizador_desconto	 : (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null
 	        										 }
 	        )
 			.success(function(data, status, headers, config) {
@@ -574,8 +576,23 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.modalProgressoVenda('hide');
 						if(ng.out_produtos.length > 0)
 						$('html,body').animate({scrollTop: 0},'slow');
-						if(ng.out_descontos.length > 0){
-			         		$dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
+						if(ng.out_descontos.length > 0) {
+
+			         		//$dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
+			         		
+			         		dlg = $dialogs.confirm(
+			         			'Atenção!!!',
+			         			'<strong>'+ ng.formatMsgOutDesconto() +'</strong>'
+		         			);
+
+							dlg.result.then(
+								function(btn){
+									$("#modal-password-discount").modal('show');
+								},
+								function(){
+									// Do nothing
+								}
+							);
 		         		}
 						if(ng.orcamento)
 							var btn = $('#btn-fazer-orcamento');
@@ -629,7 +646,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			         		
 		         		}
 		         		if(ng.out_descontos.length > 0){
-			         		$dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
+			         		// $dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
+
+			         		dlg = $dialogs.confirm(
+			         			'Atenção!!!',
+			         			'<strong>'+ ng.formatMsgOutDesconto() +'<br/>Deseja informar a senha de um usuário que possua permissão?</strong>'
+		         			);
+
+							dlg.result.then(
+								function(btn){
+									$("#modal-password-discount").modal('show');
+								},
+								function(){
+									// Do nothing
+								}
+							);
 		         		}
 
 		         		if(ng.orcamento)
@@ -649,18 +680,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var ids = [] ;
 		var msg_ids = [];
 		var msg = '' ;
-		$.each(ng.out_descontos,function(i,v){
-			if(ids.indexOf(v.vlr_desconto) == -1){
+
+		$.each(ng.out_descontos,function(i, v) {
+			if(ids.indexOf(v.vlr_desconto) == -1) {
 				ids.push(v.vlr_desconto)
-				msg_ids.push(v.vlr_desconto*100+"%");
+				msg_ids.push(numberFormat((v.vlr_desconto * 100), 2, ',', '.') +"%");
 			}
 		});
 
-		if(ids.length > 1){
+		if(ids.length > 1)
 			msg = "Você não tem permissão para dar desconto com os seguintes valores: <b>"+msg_ids.join()+"</b>";
-		}else{
+		else
 			msg = "Você não tem permissão para dar desconto com o valor de <b>"+msg_ids.join()+"</b>";
-		}
+
 		return msg;
 	}
 
@@ -673,6 +705,42 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			}
 		});
 		return exists ;
+	}
+
+	ng.autorizarDesconto = function(){
+		$('#alert-modal-password-discount').text('').css('display','none');
+
+		$http({
+			method: "GET",
+			url: baseUrlApi()+'faixasdescontopermitido/0/10?tfdp->id_empreendimento='+ ng.userLogged.id_empreendimento +'&tfdp->flg_excluido=0'
+		}).then(
+			function successCallback(response) {
+				var encontrado = false;
+				$.each(response.data.faixas, function(i, faixa) {
+					if(
+						(ng.out_descontos[0].vlr_desconto * 100) >= (faixa.perc_desconto_min * 100) && 
+						(ng.out_descontos[0].vlr_desconto * 100) <= (faixa.perc_desconto_max * 100)
+					){
+						$.each(faixa.usuarios, function(i, usuario) {
+							if(usuario.login === ng.autorizador.login && usuario.senha === md5(ng.autorizador.senha)) {
+								ng.autorizador.id = usuario.id_usuario;
+								encontrado = true;
+							}
+						});
+					}
+				});
+
+				if(encontrado) {
+					ng.cancelarModal('modal-password-discount');
+					ng.receberPagamento();
+				}
+				else
+					$('#alert-modal-password-discount').text('O usuário informado não possui permissão para autorizar o desconto!').css('display','block');	
+			},
+			function errorCallback(response) {
+				console.log(response);
+			}
+		);
 	}
 
 	ng.gravarVenda = function(venda){

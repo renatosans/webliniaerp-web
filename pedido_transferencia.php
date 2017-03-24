@@ -225,7 +225,7 @@
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Sabor</th>
 														
 														<th colspan="3" style="width:450px" class="text-center" 
-															ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 && userLogged.id_perfil != 15">
+															ng-if="showProductCost(transferencia)">
 															Valor de Custo
 														</th>
 														
@@ -238,7 +238,7 @@
 														</th>
 														<th rowspan="2" ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4" ></th>
 													</tr>
-													<tr ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 && userLogged.id_perfil != 15">
+													<tr ng-if="showProductCost(transferencia)">
 														<th class="text-center">Atual</th>
 														<th class="text-center">Sugerido</th>
 														<th class="text-center">Atualizar?</th>
@@ -253,9 +253,13 @@
 													<td>{{ item.nome_fabricante }}</td>
 													<td>{{ item.peso }}</td>
 													<td>{{ item.sabor }}</td>
-													<td ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 && userLogged.id_perfil != 15">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-													<td ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 && userLogged.id_perfil != 15">R$ {{ item.vlr_custo_sugerido | numberFormat:2:',':'.' }}</td>
-													<td ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 && userLogged.id_perfil != 15"> 
+													<td ng-if="showProductCost(transferencia)">
+														R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}
+													</td>
+													<td ng-if="showProductCost(transferencia)">
+														R$ {{ item.vlr_custo_sugerido | numberFormat:2:',':'.' }}
+													</td>
+													<td ng-if="showProductCost(transferencia)"> 
 														<div class="form-group">
 															<label class="label-radio inline">
 																<input ng-model="item.atualizar_custo" value="1" type="radio" class="inline-radio"/>

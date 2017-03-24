@@ -2661,50 +2661,91 @@
 
 		<!-- /Modal info lote-->
 		<div class="modal fade" id="modal-info-lote" style="display:none">
-				<div class="modal-dialog modal-md">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-							<h4>#{{ modal_lote.id }} {{ modal_lote.nome_produto }} {{ modal_lote.peso }} {{ modal_lote.sabor }}</h4>
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>#{{ modal_lote.id }} {{ modal_lote.nome_produto }} {{ modal_lote.peso }} {{ modal_lote.sabor }}</h4>
+					</div>
+					<div class="modal-body">
+						<div class="alert" id="alert-modal-lote" style="display:none"></div>
+						<div class="row">
+							<div class="col-sm-4" id="modal_lote-lote">
+								<label class="control-label">Lote</label>
+								<div class="form-group text-center">
+									<input type="text" class="form-control input-md" ng-model="modal_lote.lote"/>
+								</div>
+							</div>
+							<div class="col-sm-4" id="modal_lote-validade">
+								<label class="control-label">Validade</label>
+								<div class="form-group text-center">
+									<input type="text" class="form-control input-md"  ui-mask="99/99/9999" ng-model="modal_lote.validade"/>
+								</div>
+							</div>
+							<div class="col-sm-4" id="modal_lote-qtd">
+								<label class="control-label">Qtd</label>
+								<div class="form-group text-center">
+									<input type="text" class="form-control input-md" onKeyPress="return SomenteNumeroLetras(event);" ng-model="modal_lote.qtd"/>
+								</div>
+							</div>
 						</div>
-					    <div class="modal-body">
-					    	<div class="alert" id="alert-modal-lote" style="display:none"></div>
-						    <div class="row">
-						    	 <div class="col-sm-4" id="modal_lote-lote">
-							    	<label class="control-label">Lote</label>
-									<div class="form-group text-center">
-										<input type="text" class="form-control input-md" ng-model="modal_lote.lote"/>
-									</div>
-								</div>
-								<div class="col-sm-4" id="modal_lote-validade">
-							    	<label class="control-label">Validade</label>
-									<div class="form-group text-center">
-										<input type="text" class="form-control input-md"  ui-mask="99/99/9999" ng-model="modal_lote.validade"/>
-									</div>
-								</div>
-								<div class="col-sm-4" id="modal_lote-qtd">
-							    	<label class="control-label">Qtd</label>
-									<div class="form-group text-center">
-										<input type="text" class="form-control input-md" onKeyPress="return SomenteNumeroLetras(event);" ng-model="modal_lote.qtd"/>
-									</div>
-								</div>
-						    </div>
-						</div>
-						 <div class="modal-footer">
-					    	<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal-info-lote')"
-					    		class="btn btn-md  btn-default fechar-modal">
-					    		<i class="fa fa-times-circle"></i> Cancelar
-					    	</button>
-					    	<button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." id="btn-modal-lote-inserir"
-					    		class="btn btn-md  btn-success" ng-click="inserirProdutoLote(modal_lote)">
-					    		<i class="fa fa-plus-circle"></i> inserir
-					    	</button>
-					    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
+					</div>
+					<div class="modal-footer">
+						<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal-info-lote')" class="btn btn-md  btn-default fechar-modal">
+							<i class="fa fa-times-circle"></i> Cancelar
+						</button>
+						<button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." id="btn-modal-lote-inserir" class="btn btn-md  btn-success" ng-click="inserirProdutoLote(modal_lote)">
+							<i class="fa fa-plus-circle"></i> inserir
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!-- /.modal -->
 
+		<!-- /Modal password desconto-->
+		<div class="modal fade" id="modal-password-discount" style="display:none">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Desbloqueio de Desconto</h4>
+					</div>
+					<div class="modal-body" style="padding-top: 10px; padding-bottom: 0px;">
+						<div class="alert" id="alert-modal-password-discount" style="display:none"></div>
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="control-label">Informe o login</label>
+									<input type="text" class="form-control" ng-model="autorizador.login">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="control-label">Informe a senha</label>
+									<input type="password" class="form-control" ng-model="autorizador.senha">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer" style="margin-top: 0px;">
+						<button type="button" class="btn btn-md btn-default fechar-modal"
+							data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+							ng-click="cancelarModal('modal-password-discount')">
+							<i class="fa fa-times-circle"></i> Cancelar
+						</button>
+						<button type="button" class="btn btn-md btn-success" 
+							data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+							ng-click="autorizarDesconto()">
+							<i class="fa fa-unlock"></i> Autorizar
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal -->
 
 		<!-- Footer
 		================================================== -->
