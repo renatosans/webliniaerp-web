@@ -174,11 +174,22 @@
 								</div>
 								<div class="col-lg-4">
 									<div class="form-group">
-										<label class="control-label">Depósitos</label>
+										<label class="control-label">Depósito</label>
 										<div class="input-group">
 											<input ng-click="modalDepositos()" type="text" class="form-control" ng-model="busca.nome_deposito" readonly="readonly" style="cursor: pointer;"></input>
 											<span class="input-group-btn">
 												<button ng-click="modalDepositos(0,10)" ng-click="modalDepositos(0,10)" type="button" class="btn"><i class="fa fa-sitemap"></i></button>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-4">
+									<div class="form-group">
+										<label class="control-label">Fabricante</label>
+										<div class="input-group">
+											<input ng-click="modalFabricantes()" type="text" class="form-control" ng-model="busca.nome_fabricante" readonly="readonly" style="cursor: pointer;"></input>
+											<span class="input-group-btn">
+												<button ng-click="modalFabricantes(0,10)" ng-click="modalFabricantes(0,10)" type="button" class="btn"><i class="fa fa-puzzle-piece"></i></button>
 											</span>
 										</div>
 									</div>
@@ -217,6 +228,7 @@
 							<th>Cód. Barras</th>
 							<th>Produto</th>
 							<th width="100" class="text-center">Fabricante</th>
+							<th width="100" class="text-center">Categoria</th>
 							<th width="100" class="text-center">Tamanho</th>
 							<th width="100" class="text-center">Sabor/Cor</th>
 							<th width="100" class="text-center">R$ Custo Unit.</th>
@@ -247,6 +259,7 @@
 							<td class="text-center">{{ item.codigo_barra }}</td>
 							<td>{{ item.nome }}</td>
 							<td class="text-center">{{ item.nome_fabricante }}</td>
+							<td class="text-center">{{ item.descricao_categoria }}</td>
 							<td class="text-center">{{ item.peso }}</td>
 							<td class="text-center">{{ item.sabor }}</td>
 							
@@ -468,6 +481,70 @@
 					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.depositos.length > 1">
 									<li ng-repeat="item in paginacao.depositos" ng-class="{'active': item.current}">
 										<a href="" h ng-click="loadDepositos(item.offset,item.limit)">{{ item.index }}</a>
+									</li>
+								</ul>
+					    	</div>
+				    	</div>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal fabricantes-->
+		<div class="modal fade" id="modal-fabricantes" style="display:none">
+  			<div class="modal-dialog">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Fabricantes</span></h4>
+      				</div>
+				    <div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="input-group">
+						            <input ng-model="busca.fabricantes" ng-enter="loadFabricantes(0,10)" type="text" class="form-control input-sm">
+						            <div class="input-group-btn">
+						            	<button ng-click="loadFabricantes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+						            		<i class="fa fa-search"></i> Buscar
+						            	</button>
+						            </div> <!-- /input-group-btn -->
+						        </div> <!-- /input-group -->
+							</div><!-- /.col -->
+						</div>
+
+						<br/>
+
+				   		<div class="row">
+				   			<div class="col-sm-12">
+				   				<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead ng-show="(fabricantes.length != 0)">
+										<tr>
+											<th colspan="2">Fabricante</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-show="(fabricantes.length == 0)">
+											<td colspan="3">{{ busca_vazia.fabricantes  && 'Não há resultado para a busca' || 'Não há Fabricantes cadastrados' }}</td>
+										</tr>
+										<tr ng-repeat="item in fabricantes">
+											<td>{{ item.nome_fabricante }}</td>
+											<td width="50" align="center">
+												<button type="button" class="btn btn-xs btn-success" ng-click="addFabricante(item)">
+													<i class="fa fa-check-square-o"></i> Selecionar
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+				   			</div>
+				   		</div>
+
+				   		<div class="row">
+					    	<div class="col-sm-12">
+					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.fabricantes.length > 1">
+									<li ng-repeat="item in paginacao.fabricantes" ng-class="{'active': item.current}">
+										<a href="" h ng-click="loadFabricantes(item.offset,item.limit)">{{ item.index }}</a>
 									</li>
 								</ul>
 					    	</div>
