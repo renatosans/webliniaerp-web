@@ -159,6 +159,7 @@
 					<div class="panel-footer clearfix hidden-print">
 						<div class="pull-right">
 							<button class="btn btn-sm btn-success" ng-show="itensEstoqueMinimo.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
@@ -245,6 +246,8 @@
 	<script src="js/extras.js"></script>
 
 	<!-- AngularJS -->
+	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
+	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>

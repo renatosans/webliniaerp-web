@@ -14,6 +14,14 @@ app.controller('relMovimentacaoCaixaPeriodoController', function($scope, $http, 
     var params      = getUrlVars();
     ng.movimentacoes = false ;
 
+    ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
    ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 	return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
    }

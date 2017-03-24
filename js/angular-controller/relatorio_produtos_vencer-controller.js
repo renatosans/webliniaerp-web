@@ -9,6 +9,14 @@ app.controller('RelatorioProdutosVencerController', function($scope, $http, $win
 	ng.paginacao = [];
 	ng.paginacao = {};
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.resetFilter = function() {
 		ng.tempoAvalicao = "30";
 		ng.itensPagina = "10";

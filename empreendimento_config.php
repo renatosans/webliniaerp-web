@@ -284,8 +284,8 @@
 									<div class="row">
 										<div class="col-sm-2">
 											<div id="cep" class="form-group">
-												<label class="control-label">CEP </label>
-												<input type="text" class="form-control" ui-mask="99999-999" ng-model="empreendimento.num_cep">
+												<label class="control-label">CEP</label>
+												<input type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="cliente.cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)">
 											</div>
 										</div>
 

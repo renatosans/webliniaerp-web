@@ -25,6 +25,14 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 		ng.loadPagamentos(0,ng.itensPorPagina);
 	}
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.aplicarFiltro = function() {
 		$("#modal-aguarde").modal('show');
 		ng.loadPagamentos(0,ng.itensPorPagina);

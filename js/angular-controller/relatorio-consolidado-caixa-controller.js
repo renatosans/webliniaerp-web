@@ -10,6 +10,14 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 
 	var params = getUrlVars();
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.reset = function() {
 		ng.itens = [];
 		ng.formas_pagamento = [];

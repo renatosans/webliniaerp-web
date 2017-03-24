@@ -198,10 +198,11 @@
 							<button type="button" class="btn btn-sm btn-primary" ng-click="loadContas(0,20)"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-show="itens.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('registro')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
-						<table class="table table-bordered table-hover table-striped table-condensed">
+						<table id="registro" class="table table-bordered table-hover table-striped table-condensed">
 							<tr ng-hide="caixas_mov.length > 0 && caixas_mov != null">
 								<td colspan="6">
 									Não existe nenhuma movimentação.
@@ -301,6 +302,8 @@
 	<script src="js/extras.js"></script>
 
 	<!-- AngularJS -->
+	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
+	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>

@@ -14,6 +14,14 @@ app.controller('RelatorioProdutosVencidosController', function($scope, $http, $w
 				arr = null;
 			});
 	}
+	
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
 
 	ng.loadProdutosVencidos();
 });

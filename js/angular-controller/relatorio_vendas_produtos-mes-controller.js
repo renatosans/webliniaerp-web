@@ -14,6 +14,14 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$d
 
 	$scope.popover = {content: ''};
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.ancoraSaldo = function(key){
 		$('html, body').stop().animate({
         	scrollTop: $( '#saldo_'+key ).offset().top - 160
