@@ -799,7 +799,7 @@
 											<div class="form-group">
 												<label class="control-label"><i class="fa fa-barcode"></i> Pesquisa por Código Barras</label>
 												<div class="input-group">
-													<input id="buscaCodigo" type="text" class="form-control input-lg" ng-model="busca.codigo" sync-focus-with="!busca.ok" ng-enter="findProductByBarCode();">
+													<input id="buscaCodigo" type="text" class="form-control input-lg" ng-model="busca.codigo" onkeydown="bloquearCtrlJ(event)" sync-focus-with="!busca.ok" ng-enter="findProductByBarCode();">
 													<span class="input-group-btn">
 														<button type="button" class="btn btn-lg btn-primary" ng-click="findProductByBarCode();"><i class="fa fa-search"></i></button>
 													</span>
