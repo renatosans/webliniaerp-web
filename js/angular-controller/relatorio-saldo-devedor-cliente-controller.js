@@ -9,6 +9,14 @@ app.controller('RelatorioSaldoDevedorClienteController', function($scope, $http,
 	ng.busca.vendedores  = '';
 	ng.vendedor          = {};
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');

@@ -218,13 +218,14 @@
 							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button ng-if="false" class="btn btn-sm btn-success hidden-print"  id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('registro')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
 
 				<br>
 
-				<table class="table table-bordered table-hover table-striped table-condensed">
+				<table id="registro" class="table table-bordered table-hover table-striped table-condensed">
 					<thead ng-if="lengthObj(movimentacoes) > 0">
 						<tr>
 							<th class="text-center">Data/Hora</th>
@@ -521,6 +522,8 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<!-- AngularJS -->
+	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
+	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>

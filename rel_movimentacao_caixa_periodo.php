@@ -191,14 +191,15 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-sm btn-primary" ng-click="loadMovimentacoes()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
-							<button class="btn btn-sm btn-success hidden-print"  id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print"  id="invoicePrint" ng-if="movimentacoes.length > 0"><i class="fa fa-print" ></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('registro')" ng-if="movimentacoes.length > 0"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="col-sm-12">
-						<table class="table table-bordered table-condensed table-striped table-hover">
+						<table id="registro" class="table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th rowspan="2" style="line-height: 46px;">Data</th>
@@ -440,6 +441,8 @@
 	<script src="js/extras.js"></script>
 
 	<!-- AngularJS -->
+	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
+	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>

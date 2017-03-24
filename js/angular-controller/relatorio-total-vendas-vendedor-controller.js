@@ -9,6 +9,14 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 	ng.busca.vendedores  = '';
 	ng.vendedor          = {};
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 	return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 }

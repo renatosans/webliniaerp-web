@@ -36,6 +36,14 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		}
 	}
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.mensagens = function(classe , msg){
 		$('.alert-sistema').removeClass("alert-danger");
 		$('.alert-sistema').removeClass("alert-success");

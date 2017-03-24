@@ -73,6 +73,25 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			});
 	}
 
+	ng.consultaCep = function(){
+		aj.get("http://api.postmon.com.br/v1/cep/"+ng.cliente.cep)
+		.success(function(data, status, headers, config) {
+
+			ng.cliente.endereco = data.logradouro;
+			ng.cliente.bairro = data.bairro;
+			var estado = ng.getEstado(data.estado);
+			ng.cliente.id_estado = estado.id;
+			ng.loadCidadesByEstado(data.cidade);
+			//ng.cliente.id_cidade = data.cidade_info.codigo_ibge.substr(0,6);
+			$("#num_logradouro").focus();
+			$('#busca-cep').modal('hide');
+		})
+		.error(function(data, status, headers, config) {
+			$('#busca-cep').modal('hide');
+			alert('CEP inválido');
+		});
+	}
+
 	ng.modalDepositos = function(){
 		$('#modal-depositos').modal('show');
 		ng.loadDepositos(0,10);

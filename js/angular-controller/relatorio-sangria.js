@@ -5,6 +5,14 @@ app.controller('RelatorioSangrias', function($scope, $http, $window, UserService
 	ng.itensPorPagina	= 10;
 	ng.paginacao  		= { };
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');

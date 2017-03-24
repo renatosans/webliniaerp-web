@@ -962,6 +962,7 @@
 						        </div>
 							</div>
 							<div class="col-sm-1">
+								<!--<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('registro')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>-->
 								<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()">Limpar</button>
 							</div>
 						</div>
@@ -970,18 +971,18 @@
 
 						<div class="row">
 							<div class="col-sm-12 table-responsive">
-								<table class="table table-bordered table-condensed table-striped table-hover">
+								<table id="registro" class="table table-bordered table-condensed table-striped table-hover">
 									<thead>
 										<tr>
 											<th class="text-center">#</th>
 											<th>Código</th>
 											<th class="text-center">Descrição</th>
+											<th class="text-center">Categoria</th>
 											<th class="text-center">Fabricante</th>
 											<th class="text-center" width="80">Tamanho</th>
 											<th class="text-center" width="100">Sabor/Cor</th>
 											<th class="text-center" width="60">Estoque</th>
 											<th class="text-center" width="100">Vlr. Atacado</th>
-											<th class="text-center" width="100">Vlr. Interm.</th>
 											<th class="text-center" width="100">Vlr. Varejo</th>
 											<th width="80" style="text-align: center;">Opções</th>
 										</tr>
@@ -1010,12 +1011,12 @@
 											</td>
 											<td class="text-center">{{ item.codigo_barra }}</td>
 											<td >{{ item.nome }}</td>
+											<td>{{ item.descricao_categoria }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td class="text-center">{{ item.peso }}</td> 
 											<td class="text-center">{{ item.sabor }}</td>
 											<td class="text-center"><a href="#"  ng-click="qtdDepostito(item,$event)">{{ configuracao.id_produto_debito_anterior_cliente == item.id_produto && ' ' || item.qtd_item }}</a></td>
 											<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
 											<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
 											<td align="center">
 												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip">
@@ -1966,6 +1967,8 @@
 	
 
 	<!-- AngularJS -->
+	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
+	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>

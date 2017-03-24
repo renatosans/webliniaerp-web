@@ -9,6 +9,14 @@ app.controller('RelatorioVendasCategoriaCtrl', function($scope, $http, $window, 
 	ng.items 			= null;
 	ng.busca.arrCategorias  = [] ;
 
+	ng.doExportExcel = function(id_table){
+    	$('#'+ id_table).tableExport({
+    		filename: id_table, 
+    		type:'excel', 
+    		escape:'false'
+    	});
+    }
+
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
