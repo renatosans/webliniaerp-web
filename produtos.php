@@ -1998,13 +1998,6 @@
 			$(this).parent().find('label').attr('data-title','Trocar foto');
 			$(this).parent().find('label').addClass('selected');
 		});*/
-
-		function bloquearCtrlJ(e){
-			if(e.which === 17 || e.which === 74 || e.keyCode == 13)
-				e.preventDefault();
-			else
-				console.log(e.which);
-		}
 	</script>
 	<?php include("google_analytics.php"); ?>
   </body>

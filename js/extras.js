@@ -1019,3 +1019,10 @@ msw = (x >> 16) + (y >> 16) + (lsw >> 16);
 return (msw << 16) | (lsw & 0xFFFF);
 }
 }
+
+function bloquearCtrlJ(e){
+    if(e.which === 17 || e.which === 74 || e.keyCode == 13)
+        e.preventDefault();
+    else
+        console.log(e.which);
+}
