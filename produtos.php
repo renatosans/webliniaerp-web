@@ -951,19 +951,17 @@
 
 					<div class="panel-body">
 						<div class="row">
-							<div class="col-sm-11">
+							<div class="col-sm-12">
 								<div class="input-group">
 						            <input ng-model="busca.produtos" type="text" class="form-control input-sm" ng-enter="loadProdutos(0,10)">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
+						            	<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()">Limpar</button>
+						            	<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel()"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						            </div>
 						        </div>
-							</div>
-							<div class="col-sm-1">
-								<!--<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('registro')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>-->
-								<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()">Limpar</button>
 							</div>
 						</div>
 
