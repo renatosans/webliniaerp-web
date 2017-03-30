@@ -61,12 +61,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
     ng.chosen_tipo_tributacao_ipi = [{ cod_controle_item_nfe: null, nme_item : 'Selecione' }];
     ng.chosen_especializacao_ncm  = [{ cod_especializacao_ncm: null, dsc_especializacao_ncm : 'Selecione' }];
 
-    ng.doExportExcel = function(id_table){
-    	$('#'+ id_table).tableExport({
-    		filename: id_table, 
-    		type:'excel', 
-    		escape:'false'
-    	});
+    ng.doExportExcel = function(){
+    	window.location.href = baseUrlApi()+"produtos/export/"+ ng.userLogged.id_empreendimento;
     }
 
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){

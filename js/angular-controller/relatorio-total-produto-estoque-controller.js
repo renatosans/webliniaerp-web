@@ -47,6 +47,9 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 		if(!empty(ng.busca.id_produto)){
 			queryString += "&pro->id="+ng.busca.id_produto;
 		}
+		if(!empty(ng.busca.id_fabricante)){
+			queryString += "&fab->id="+ng.busca.id_fabricante;
+		}
 		if(!empty(ng.busca.id_deposito)){
 			queryString +=  "&dep->id="+ng.busca.id_deposito;
 		}if( (empty(ng.grupo_busca)) && (!empty(ng.busca.id_deposito)) ){
@@ -167,9 +170,45 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 	}
 
 	ng.addDeposito = function(item){
-		ng.busca.id_deposito   = item.id;
-		ng.busca.nome_deposito = item.nme_deposito;
+		ng.busca.id_fabricante   = item.id;
+		ng.busca.nome_fabricante = item.nme_fabricante;
     	$('#modal-depositos').modal('hide');
+	}
+
+	ng.modalFabricantes = function(){
+		$('#modal-fabricantes').modal('show');
+		ng.loadFabricantes(0,10);
+	}
+	ng.busca_vazia = {} ;
+	ng.loadFabricantes = function(offset, limit) {
+		offset = offset == null ? 0  : offset;
+		limit  = limit  == null ? 10 : limit;
+		ng.busca_vazia.fabricantes = false ;
+		var query_string = "?tfe->id_empreendimento="+ng.userLogged.id_empreendimento ;
+		if(!empty(ng.busca.fabricantes))
+			query_string  += "&"+$.param({nome_fabricante:{exp:"like '%"+ng.busca.fabricantes+"%'"}});
+
+    	aj.get(baseUrlApi()+"fabricantes/"+offset+"/"+limit+query_string)
+		.success(function(data, status, headers, config) {
+			ng.fabricantes = data.fabricantes ;	
+			ng.paginacao.fabricantes = data.paginacao ;
+		})
+		.error(function(data, status, headers, config) {
+			if(status != 404)
+				alert("ocorreu um erro");
+			else{
+				ng.paginacao.fabricantes = [] ;
+				ng.fabricantes = [] ;	
+				ng.busca_vazia.fabricantes = true ;
+			}
+				
+		});
+	}
+
+	ng.addFabricante = function(item){
+		ng.busca.id_fabricante   = item.id;
+		ng.busca.nome_fabricante = item.nome_fabricante;
+    	$('#modal-fabricantes').modal('hide');
 	}
 
 	function calculaTotais() {
