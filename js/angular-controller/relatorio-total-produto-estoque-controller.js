@@ -119,7 +119,7 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 		var queryString = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento;
 
 		if(!empty(ng.busca.produto_modal)){
-			queryString += "&pro->nome[exp]= LIKE '%"+ng.busca.produto_modal+"%'";
+			queryString += "&("+$.param({'pro->nome':{exp:"like'%"+ng.busca.produto_modal+"%' OR fab.nome_fabricante like'%"+ng.busca.produto_modal+"%' OR pro.codigo_barra like '%"+ng.busca.produto_modal+"%'"}})+")";
 		}
 
 		aj.get(baseUrlApi()+"produtos/"+offset+'/'+limit+"/"+queryString)
@@ -170,8 +170,8 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 	}
 
 	ng.addDeposito = function(item){
-		ng.busca.id_fabricante   = item.id;
-		ng.busca.nome_fabricante = item.nme_fabricante;
+		ng.busca.id_deposito   = item.id;
+		ng.busca.nome_deposito = item.nme_deposito;
     	$('#modal-depositos').modal('hide');
 	}
 
