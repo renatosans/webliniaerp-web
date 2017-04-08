@@ -3,7 +3,7 @@
 	restrito(array(1));
 ?>
 <!DOCTYPE html>
-<html lang="en" ng-app="HageERP">
+<html lang="en" ng-app="HageERP" ng-cloak>
   <head>
     <meta charset="utf-8">
     <title>WebliniaERP</title>
@@ -29,6 +29,7 @@
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
+	<link href="css/custom.css" rel="stylesheet">
 	<style type="text/css">
 
 		/* Fix for Bootstrap 3 with Angular UI Bootstrap */

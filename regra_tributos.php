@@ -1002,7 +1002,8 @@
 						<table class="table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
-									<th>Descrição Filtro</th>
+									<th>#</th>
+									<th>Operação</th>
 									<th>Dta. Inicio Vigencia</th>
 									<th>Dta. Fim Vigencia</th>
 									<th width="80" style="text-align: center;">Opções</th>
@@ -1010,7 +1011,8 @@
 							</thead>
 							<tbody>
 								<tr ng-repeat="item in filtros" bs-tooltip>
-									<td>Filtro #{{ item.cod_filtro_tributos }}</td>
+									<td>#{{ item.cod_filtro_tributos }}</td>
+									<td>{{ item.dsc_operacao }}</td>
 									<td>{{ item.dta_inicio_vigencia | dateFormat : 'date'}}</td>
 									<td>{{ item.dta_fim_vigencia | dateFormat : 'date'}}</td>
 									<td align="center">
