@@ -521,7 +521,7 @@ app.controller('RegraTributosController', function($scope, $http, $window, $dial
 		offset = offset == null ? 0 : offset ;
 		limit  = limit  == null ? 10 : limit ;
 		ng.filtros = null ;
-		aj.get(baseUrlApi()+"filtro_tributos/"+offset+"/"+limit+"?cod_regra_tributos="+ng.regra_tributos.cod_regra_tributos+"&flg_excluido=0")
+		aj.get(baseUrlApi()+"filtro_tributos/"+offset+"/"+limit+"?cod_regra_tributos="+ng.regra_tributos.cod_regra_tributos+"&tft->flg_excluido=0")
 			.success(function(data, status, headers, config) {
 				ng.filtros = data.filtros;
 				ng.paginacao.filtros = data.paginacao;
