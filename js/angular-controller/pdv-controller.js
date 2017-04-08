@@ -2579,9 +2579,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		});
 	}
 
-	ng.printTermic = function() {
-		var btn = $('#printTermic');
-		btn.button('loading');
+	ng.showModalCNF = function(){
+		$('#modal-cnf').modal({
+		  backdrop: 'static',
+		  keyboard: false
+		});
+	}
+
+	ng.printTermic = function(silentMode) {
+		if(!silentMode) {
+			var btn = $('#printTermic');
+			btn.button('loading');
+		}
+
 		aj.get(baseUrlApi()+"dados_venda_cnf/"+ng.id_venda+"/"+ng.caixa_open.id_caixa)
 		.success(function(data, status, headers, config) {
 			if( ng.status_websocket == 2 ){
@@ -2591,14 +2601,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					data.venda.nome_cliente = removerAcentosSAT(data.venda.nome_cliente);
 
 					data.pagamentos = [];
-					$.each(ng.pagamentos_enviar, function(i, item){
-						if(item.id_forma_pagamento == 6) {
-							item.forma_pagamento = item.parcelas[0].forma_pagamento + ' (' + item.parcelas.length + 'x)';
-							item.valor_pagamento = item.parcelas[0].valor;
+					$.each(data.pagamentos_enviar, function(i, item){
+						if(item.id_forma_pagamento == 6) { // cartão de crédito
+							item.forma_pagamento = item.descricao_forma_pagamento + ' (' + item.n_parcelas + 'x)';
+							item.valor_pagamento = item.valor_pagamento;
 						}
 
 						data.pagamentos.push({
-							dsc_formas_pagamento: removerAcentosSAT(item.forma_pagamento),
+							dsc_formas_pagamento: removerAcentosSAT(item.descricao_forma_pagamento),
 							vlr_pagamento: item.valor_pagamento
 						});
 					});
@@ -2608,22 +2618,34 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					});
 
 					data.qtdImpressoes = ng.caixa.qtd_vias_impressao;
-					btn.button('reset');
-					var mg = {
-						from:ng.caixa_open.id_ws_web,
-						to:ng.caixa_open.id_ws_dsk,
-						type:'cnf_print',
-						message:JSON.stringify(data)
+					
+					if(!silentMode)
+						btn.button('reset');
+					
+					var msg = {
+						from: ng.caixa_open.id_ws_web,
+						to: ng.caixa_open.id_ws_dsk,
+						type :'cnf_print',
+						message: JSON.stringify(data)
 					};
-					ng.sendMessageWebSocket(mg);
+					ng.sendMessageWebSocket(msg);
+
 					ng.resetPdv('venda',true);
 				} else {
-					btn.button('reset');
 					alert('Não foi possível emitir o cupom pois a impressora não está configurada no cadastro do caixa');
+					
+					if(!silentMode)
+						btn.button('reset');
+					else
+						$("#modal-cnf").hide();
 				}
 			} else {
-				btn.button('reset');
 				alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+
+				if(!silentMode)
+					btn.button('reset');
+				else
+					$("#modal-cnf").hide();
 			}
 		})
 		.error(function(data, status, headers, config) {
@@ -3409,6 +3431,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('#modal-vendas-reenviar-sat').modal('show');
 		ng.loadVendasReenviarSat(0,10);
 	}
+
 	ng.loadVendasReenviarSat = function(offset,limit){
 		ng.paginacao.vendas_reenviar_sat = [];
 		ng.vendas_reenviar_sat = null;
@@ -3499,6 +3522,67 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		.error(function(data, status, headers, config) {
 			ng.process_reeviar_sat = false ;
 		});
+	}
+
+	ng.showModalReimpressaoCNF = function(){
+		ng.process_reimprimir_cnf = false ;
+		ng.cod_nota_fiscal_reimprimir_cnf = null ;
+		$('#modal-vendas-reimprimir-cnf').modal('show');
+		ng.loadVendasCaixaAberto(0,10);
+	}
+
+	ng.loadVendasCaixaAberto = function(offset,limit){
+		ng.paginacao.vendas_caixa_aberto = [];
+		ng.vendas_caixa_aberto = null;
+		query = 'SELECT GROUP_CONCAT(id_venda) AS in_venda FROM'+
+				'('+
+					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
+					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
+					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
+					'WHERE ta.id = '+ng.caixa_aberto.id+' '+
+					'GROUP BY tmc.id_venda '+
+				') AS tb '+
+				'GROUP BY grp';
+		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
+		.success(function(data, status, headers, config) {
+			if(data != false) {
+				aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+data.in_venda+")")
+				.success(function(data, status, headers, config) {
+					ng.vendas_caixa_aberto = data.vendas;
+					ng.paginacao.vendas_caixa_aberto = data.paginacao ;
+				})
+				.error(function(data, status, headers, config) {
+					ng.paginacao.vendas_caixa_aberto = [];
+					ng.vendas_caixa_aberto = [];
+				});
+			}
+			else {
+				ng.paginacao.vendas_caixa_aberto = [];
+				ng.vendas_caixa_aberto = [];
+			}
+		})
+		.error(function(data, status, headers, config) {
+			
+		});
+	}
+	ng.reimprimir_cnf = function(item,event){
+		// verificando se o client está aberto....
+		if(empty(ng.caixa_open.id_ws_dsk)){
+			$('#modal-vendas-reimprimir-cnf').modal('hide');
+			$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
+			return ;
+		}
+
+		// sinaliza que está iniciando o processo de impressão do cupom não fiscal
+		ng.process_reimprimir_cnf = true;
+		
+		// fecha o modal da lista de vendas
+		$('#modal-vendas-reimprimir-cnf').modal('hide');
+		
+		// abre o modal de status de impressão do cupom não fiscal
+		ng.showModalCNF();
+		ng.id_venda = item.id;
+		ng.printTermic(true);
 	}
 
 	ng.location = function(page){
