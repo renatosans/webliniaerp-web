@@ -33,7 +33,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.emailSendPdfVenda = [] ;
 	ng.print_report_thermal_printer = false;
     ng.complete_report_thermal_printer = false;
-
+    ng.show_cancel_button_fechamento_caixa = true;
 	ng.reforco             = {} ;
 	ng.sangria             = {} ;
 	ng.abertura_reforco    = {} ;
@@ -533,7 +533,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				if(data.open_today){
 					ng.efetivarCompra();
 				}else{
-					$dialogs.notify('Atenção!','<strong>Você está tentando fazer uma operação para um caixa que foi aberto em uma data anterior a hoje, isto  não é possivel. Feche o caixa para que possa continuar.</strong>');
+					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+					dialog.result.then(
+						function(btn){
+							ng.show_cancel_button_fechamento_caixa = false;
+							ng.modalFechar();
+						},
+						function(){
+							// Do nothing
+						}
+					);
 					return;
 				}
 			})
@@ -1424,7 +1433,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}else{
 					btn_reforco.button('reset');
 					$("#modal-reforco").modal('hide');
-					$dialogs.notify('Atenção!','<strong>Você está tentando fazer uma operação para um caixa que foi aberto em uma data anterior a hoje, isto  não é possivel. Feche o caixa para que possa continuar.</strong>');
+					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+					dialog.result.then(
+						function(btn){
+							ng.show_cancel_button_fechamento_caixa = false;
+							ng.modalFechar();
+						},
+						function(){
+							// Do nothing
+						}
+					);
 					return;
 				}
 			})
@@ -1601,7 +1619,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}else{
 					btn_sangria.button('reset');
 					$("#modal-sangria").modal('hide');
-					$dialogs.notify('Atenção!','<strong>Você está tentando fazer uma operação para um caixa que foi aberto em uma data anterior a hoje, isto  não é possivel. Feche o caixa para que possa continuar.</strong>');
+					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+					dialog.result.then(
+						function(btn){
+							ng.show_cancel_button_fechamento_caixa = false;
+							ng.modalFechar();
+						},
+						function(){
+							// Do nothing
+						}
+					);
 					return;
 				}
 			})
@@ -1665,7 +1692,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.vendedor.id_vendedor   = data.id_operador;
 				ng.vendedor.nome_vendedor = data.nome_operador;
 				if(!data.open_today){	
-					$dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+					dialog.result.then(
+						function(btn){
+							ng.show_cancel_button_fechamento_caixa = false;
+							ng.modalFechar();
+						},
+						function(){
+							// Do nothing
+						}
+					);
 				}
 				
 			})

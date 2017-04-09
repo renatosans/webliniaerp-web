@@ -1304,7 +1304,7 @@
 				<!-- /.modal -->
 
 				<!-- /Modal de Fechamento de caixa-->
-				<div class="modal fade" id="modal-fechamento" style="display:none">
+				<div class="modal fade" id="modal-fechamento" style="display:none" data-backdrop="static" data-keyboard="false">
 		  			<div class="modal-dialog error modal-sm">
 		    			<div class="modal-content">
 		      				<div class="modal-header">
@@ -1377,8 +1377,11 @@
 			    					<i class="fa fa-lock"></i> Fechar PDV
 			    				</button>
 
-			    				<button type="button" data-loading-ftext=" Aguarde..." ng-click="cancelarModal('modal-fechamento')" id="btn-fechar-caixa"
-			    					class="btn btn-md btn-default btn-block fechar-modal">
+			    				<button id="btn-fechar-caixa" type="button" 
+			    					class="btn btn-md btn-default btn-block fechar-modal"
+			    					data-loading-ftext=" Aguarde..." 
+			    					ng-click="cancelarModal('modal-fechamento')"
+			    					ng-if="show_cancel_button_fechamento_caixa">
 			    					<i class="fa fa-times-circle"></i> Cancelar
 			    				</button>
 						  	</div>
