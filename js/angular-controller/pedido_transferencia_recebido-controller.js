@@ -179,10 +179,20 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		item.qtd_pedida = null ;
 	}
 
+	ng.deletarTransferencia = function(item){
+		aj.get(baseUrlApi()+"transferencia/estoque/"+ item.id +"/excluir")
+			.success(function(data, status, headers, config) {
+				ng.loadtransferencias(0,10);
+			})
+			.error(function(data, status, headers, config) {
+				console.log(data);
+			});
+	}
+
 	ng.listaTransferencias = {} ;
 	ng.loadtransferencias = function(offset, limit){
 		ng.listaTransferencias.transferencias = null 
-		aj.get(baseUrlApi()+"transferencias/estoque/"+offset+"/"+limit+"?cplSql=id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+" AND id_status_transferencia <> 4 ORDER BY id  DESC")
+		aj.get(baseUrlApi()+"transferencias/estoque/"+offset+"/"+limit+"?cplSql=id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+" AND id_status_transferencia <> 4 AND flg_excluido = 0 ORDER BY id  DESC")
 		.success(function(data, status, headers, config) {
 			ng.listaTransferencias.transferencias = data.transferencias ;
 			ng.listaTransferencias.paginacao = data.paginacao ;
