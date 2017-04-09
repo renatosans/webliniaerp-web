@@ -691,20 +691,20 @@
 												<select chosen class="form-control input-sm" ng-model="cliente.id_perfil" ng-options="a.id as a.nome for a in perfis"  ng-change="loadModulosByPerfil(cliente.id_perfil)" ></select>
 											</div>
 										</div>
-										<div class="col-sm-3">
+										<div class="col-sm-2">
 											<div id="login" class="form-group">
 												<label class="control-label">Login</label>
 												<input type="text" class="form-control input-sm" ng-model="cliente.login">
 											</div>
 										</div>
-										<div class="col-sm-3">
+										<div class="col-sm-2">
 											<div id="senha" class="form-group">
 												<label class="control-label">Senha</label>
 												<input class="form-control input-sm" type="password" id="input_senha" ng-model="cliente.senha">
 												
 											</div>
 										</div>
-										<div class="col-sm-3">
+										<div class="col-sm-2">
 											<div  class="form-group">
 												<label class="control-label"></label>
 												<div class="checkbox" style="padding-left: 0px;">
@@ -712,6 +712,25 @@
 														<input type="checkbox" onclick="if($(this).is(':checked')){$('#input_senha').attr('type','text')}else{$('#input_senha').attr('type','password')}">
 														<span class="custom-checkbox"></span>
 														 Mostrar senha<br>
+													</label>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<div class="form-group">
+												<label class="control-label"><span class="custom-checkbox"></span>
+														 Bloquear Usuário?<br></label>
+												<div class="form-group">
+													<label class="label-radio inline">
+														<input ng-model="cliente.flg_ativo" value="1" type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Não</span>
+													</label>
+
+													<label class="label-radio inline">
+														<input ng-model="cliente.flg_ativo" value="0" type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Sim</span>
 													</label>
 												</div>
 											</div>

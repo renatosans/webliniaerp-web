@@ -325,7 +325,7 @@
 													<thead>
 														<tr>
 															<th class="text-center" rowspan="2" style="line-height: 46px;width: 200px">Empreendimento</th>
-															<th class="text-center" rowspan="2" style="line-height: 46px" >Custo</th>
+															<th class="text-center" rowspan="2" style="line-height: 46px" >Custo </th>
 															<th class="text-center" colspan="2">Venda (Atacado)</th>
 															<th class="text-center" colspan="2">Venda (Intermediário)</th>
 															<th class="text-center" colspan="2">Venda (Varejo)</th>
@@ -350,7 +350,16 @@
 																#{{preco.id_empreendimento}} - {{ preco.nome_empreendimento }}
 															</td>
 															<td>
-																<input ng-model="preco.vlr_custo" ng-keyup="calcularAllMargens(preco)"  thousands-formatter precision='5' type="text" class="form-control input-xs parsley-validated">
+																<div class="row">
+																	<div class="col-sm-9">
+																		<input ng-model="preco.vlr_custo" ng-keyup="calcularAllMargens(preco)"  thousands-formatter precision='5' type="text" class="form-control input-xs parsley-validated">
+																	</div>
+																	<div class="col-sm-1" style="padding-left: 0px;">
+																		<button type="button" tooltip title="Replicar para todos" class="btn btn-success btn-xs" ng-click="replicarCusto(preco)">
+																			<i class="fa fa-arrows-v"></i>
+																		</button>
+																	</div>
+																</div>
 															</td>
 															<td>
 																<input ng-model="preco.perc_venda_atacado" ng-keyup="calculaMargens('atacado','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
