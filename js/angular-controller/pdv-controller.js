@@ -2410,16 +2410,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('#'+id).modal('hide');
 	}
 
-	ng.loadEmpreendimento = function() {
-		aj.get(baseUrlApi() + "empreendimento/" + ng.userLogged.id_empreendimento)
-			.success(function(data, status, headers, config) {
-				ng.empreendimento = data;
-			})
-			.error(function(data, status, headers, config) {
-				if(status == 404)
-					ng.empreendimento = {};
-			});
-	}
+	
 
 	ng.cancelarPagamento = function(){
 		if(ng.pagamento_fulso == true){

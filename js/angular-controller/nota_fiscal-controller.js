@@ -372,6 +372,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 					};
 				});
 				ng.NF.itens = data;
+				console.log(ng.NF.itens);
 			});
 	}
 
@@ -442,7 +443,8 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 			ng.NF.dados_emissao.cod_operacao = Number(url_params.cod_operacao);
 			ng.calcularNfe(null, url_params.id_venda, url_params.cod_operacao);
 		}
-	}else 
+	}
+	else 
 		$dialogs.notify('Desculpe!','<strong>Não foi possível calcular a NF, os paramentros estão incorretos.</strong>');
 	
 	ng.loadDadosEmitente();
@@ -455,4 +457,6 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 	ng.loadControleNfe('consumidor_final', 		'lista_consumidor_final');
 	ng.loadControleNfe('presenca_comprador', 	'lista_presenca_comprador');
 	ng.loadControleNfe('finalidade_emissao', 	'lista_finalidade_emissao');
+
+	$('#sizeToggle').trigger("click");
 });

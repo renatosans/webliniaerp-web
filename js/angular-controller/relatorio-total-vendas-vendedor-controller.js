@@ -1,7 +1,8 @@
-app.controller('RelatorioTotalVendasVendedorController', function($scope, $http, $window, UserService,FuncionalidadeService) {
+app.controller('RelatorioTotalVendasVendedorController', function($scope, $http, $window, UserService,FuncionalidadeService, EmpreendimentoService) {
 	var ng 				= $scope,
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.vendas 		   	= null;
 	ng.paginacao 	   	= {};

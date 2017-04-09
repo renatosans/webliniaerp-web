@@ -136,6 +136,25 @@ app.service('ConfigService', function($http) {
 	}
 });
 
+app.service('EmpreendimentoService', function($http) {
+	var empreendimento = null ;
+	this.getDadosEmpreendimento = function(id_empreendimento) {
+		if(empreendimento != null)
+			return empreendimento ;
+		 $.ajax({
+		 	url: baseUrlApi()+"empreendimento/"+id_empreendimento,
+		 	async: false,
+		 	success: function(config) {
+		 		empreendimento = config ;
+		 	},
+		 	error: function(error) {
+		 		console.log(error);
+		 	}
+		 });
+		return empreendimento ;
+	}
+});
+
 app.service('NFService', function($http) {
 	this.getNota = function(id_empreendimento,id_venda) {
 		var nota  = false ;;

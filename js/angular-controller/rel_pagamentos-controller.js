@@ -1,10 +1,11 @@
-app.controller('relPagamentosController', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService){
+app.controller('relPagamentosController', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService, EmpreendimentoService){
 
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 						= baseUrl();
 	ng.userLogged 					= UserService.getUserLogado();
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
     ng.contas    					= [];
     ng.paginacao           			= {conta:null} ;
     ng.busca               			= {id_forma_pagamento:"",tipoData:"" } ;

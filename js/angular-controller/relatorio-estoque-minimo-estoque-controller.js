@@ -1,8 +1,10 @@
-app.controller('RelatorioProdutosEstoqueMinimoController', function($scope, $http, $window, UserService) {
+app.controller('RelatorioProdutosEstoqueMinimoController', function($scope, $http, $window, UserService, EmpreendimentoService) {
 	var ng = $scope,
 		aj = $http;
 
 	ng.userLogged = UserService.getUserLogado();
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
+
 
 	ng.itensEstoqueMinimo = [];
 
