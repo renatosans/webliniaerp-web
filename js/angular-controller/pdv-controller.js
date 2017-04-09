@@ -3923,6 +3923,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	}
 
+	ng.loadEmpreendimento = function() {
+		aj.get(baseUrlApi() + "empreendimento/" + ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.empreendimento = data;
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.empreendimento = {};
+			});
+	}
 
 	ng.inserirProdutoLote = function(produto){
 		var error = 0 ;
