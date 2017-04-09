@@ -850,7 +850,8 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 				});
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao buscar url '+baseUrlApi()+"count_orcamentos_by_empreendimento/dashboard/"+ng.userLogged.id_empreendimento+"/"+ng.userLogged.id);
+				if(status != 404)
+					console.log('erro ao buscar url '+baseUrlApi()+"count_orcamentos_by_empreendimento/dashboard/"+ng.userLogged.id_empreendimento+"/"+ng.userLogged.id);
 			});
 	}
 

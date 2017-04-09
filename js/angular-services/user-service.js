@@ -140,13 +140,14 @@ app.service('NFService', function($http) {
 	this.getNota = function(id_empreendimento,id_venda) {
 		var nota  = false ;;
 		 $.ajax({
-		 	url: baseUrlApi()+"nota_fiscal/?cod_empreendimento="+id_empreendimento+"&cod_venda="+id_venda,
+		 	url: baseUrlApi()+"nota_fiscal?cod_empreendimento="+id_empreendimento+"&cod_venda="+id_venda,
 		 	async: false,
 		 	success: function(dados) {
 		 		nota = dados ;
 		 	},
 		 	error: function(error) {
-		 		console.log(error);
+		 		if(error.status != 404)
+		 			console.log(error);
 		 	}
 		 });
 		return nota ;

@@ -208,9 +208,9 @@
 										<div class="form-group" id="cod_operacao">
 											<label class="control-label">Operação</label> 
 											<select chosen ng-change="setDadosEmissao()"
-										    option="lista_operacao"
-										    ng-model="NF.dados_emissao.cod_operacao"
-										    ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
+										    	option="lista_operacao"
+										    	ng-model="NF.dados_emissao.cod_operacao"
+										    	ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
 											</select>
 										</div>
 									</div>
