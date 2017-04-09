@@ -220,111 +220,113 @@
 				</div>
 
 				<br>
+				<div class="panel panel-default">
+					<div class="panel-body" style="overflow-y: scroll; overflow-x: scroll; width: 100%; height: 300px; background-color: #fff;">
+						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == false" style="width: 1200px; font-family: monospace; font-size: 10px; margin-bottom: 0;">
+							<thead>
+								<tr>
+									<th class="text-center" width="100">ID</th>
+									<th>Cód. Barras</th>
+									<th width="400">Produto</th>
+									<th width="200" class="text-center">Fabricante</th>
+									<th width="200" class="text-center">Categoria</th>
+									<th width="100" class="text-center">Tamanho</th>
+									<th width="100" class="text-center">Sabor/Cor</th>
+									<th width="100" class="text-center">R$ Custo</th>
+									<th width="100" class="text-center">R$ Atacado</th>
+									<th width="100" class="text-center">R$ Interm.</th>
+									<th width="100" class="text-center">R$ Varejo</th>
+									<th width="100" class="text-center" >Depósito</th>
+									<th width="100" class="text-center" ng-if="grupo_tabela == 'validade'">Validade</th>
+									<th width="100" class="text-center">Estoque</th>
+									<th width="100" class="text-center">R$ Subtotal</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-if="produtos.length == 0 && produtos != null">
+									<td class="text-center" colspan="14">
+										<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+									</td>
+								</tr>
+								<tr ng-if="produtos.length < 0 && produtos == null">
+									<td colspan="14">
+										Nenhuma venda encontrada.
+									</td>
+								</tr>
+								<tr ng-repeat="item in produtos">
+									<td class="text-center">
+										{{ item.id }}
+									</td>
+									<td class="text-center">{{ item.codigo_barra }}</td>
+									<td>{{ item.nome }}</td>
+									<td class="text-center">{{ item.nome_fabricante }}</td>
+									<td class="text-center">{{ item.descricao_categoria }}</td>
+									<td class="text-center">{{ item.peso }}</td>
+									<td class="text-center">{{ item.sabor }}</td>
+									
+									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == false">
-					<thead>
-						<tr>
-							<th class="text-center" width="100">ID</th>
-							<th>Cód. Barras</th>
-							<th>Produto</th>
-							<th width="100" class="text-center">Fabricante</th>
-							<th width="100" class="text-center">Categoria</th>
-							<th width="100" class="text-center">Tamanho</th>
-							<th width="100" class="text-center">Sabor/Cor</th>
-							<th width="100" class="text-center">R$ Custo Unit.</th>
-							<th width="100" class="text-center">R$ Atacado</th>
-							<th width="100" class="text-center">R$ Interm.</th>
-							<th width="100" class="text-center">R$ Varejo</th>
-							<th width="100" class="text-center" >Depósito</th>
-							<th width="100" class="text-center" ng-if="grupo_tabela == 'validade'">Validade</th>
-							<th width="100" class="text-center">Estoque</th>
-							<th width="100" class="text-center hide">R$ Custo Total</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="produtos.length == 0 && produtos != null">
-							<td class="text-center" colspan="14">
-								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-if="produtos.length < 0 && produtos == null">
-							<td colspan="14">
-								Nenhuma venda encontrada.
-							</td>
-						</tr>
-						<tr ng-repeat="item in produtos">
-							<td class="text-center">
-								{{ item.id }}
-							</td>
-							<td class="text-center">{{ item.codigo_barra }}</td>
-							<td>{{ item.nome }}</td>
-							<td class="text-center">{{ item.nome_fabricante }}</td>
-							<td class="text-center">{{ item.descricao_categoria }}</td>
-							<td class="text-center">{{ item.peso }}</td>
-							<td class="text-center">{{ item.sabor }}</td>
-							
-							<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
-							<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
-							<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
-							<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-center" >{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
+									<td class="text-center" ng-if="grupo_tabela == 'validade'">{{ item.dta_validade != '2099-12-31' && (item.dta_validade | dateFormat:'date') || ' ' }}</td>
 
-							<td class="text-center" >{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
-							<td class="text-center" ng-if="grupo_tabela == 'validade'">{{ item.dta_validade != '2099-12-31' && (item.dta_validade | dateFormat:'date') || ' ' }}</td>
+									<td class="text-center">{{ item.qtd_item }}</td>
+									<td class="text-right ">R$ {{ (item.vlr_custo_real * item.qtd_item) | numberFormat : 2 : ',' : '.' }}</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td class="text-right text-bold" colspan="10">Quantidade</td>
+									<td class="text-center">{{ total_produtos_estoque }}</td>
+									<td class="text-right text-bold">TOTAL</td>
+									<td class="text-center">{{ qtd_total_estoque }}</td>
+									<td class="text-right hide">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
+								</tr>
+							</tfoot>
+						</table>
+						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == 'produto' ">
+								<thead>
+									<tr>
+										<th class="text-right" >Depósito</th>
+										<th width="100" class="text-center">Estoque</th>
+									</tr>
+								</thead>
+								<tbody ng-repeat="(key, value) in produtos">
+									<tr   class="info text-left">
+										<td colspan="2" >{{ key+" | "+value.nome}} {{ value.nome_fabricante != ""  &&  "| "+value.nome_fabricante || "" }} {{ value.peso != ""  &&  "| "+value.peso || "" }} </td>
+									</tr>
+									<tr ng-repeat="produto in value">
+										<td class="text-right">{{ produto.nome_deposito }}</td>
+										<td class="text-right">{{ produto.qtd_item }}</td>
+									</tr>
+								</tbody>
+						</table>
 
-							<td class="text-center">{{ item.qtd_item }}</td>
-							<td class="text-right hide">R$ {{ (item.vlr_custo_real * item.qtd_item) | numberFormat : 2 : ',' : '.' }}</td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr>
-							<td class="text-right text-bold" colspan="9">Quantidade</td>
-							<td class="text-center">{{ total_produtos_estoque }}</td>
-							<td class="text-right text-bold">TOTAL</td>
-							<td class="text-center">{{ qtd_total_estoque }}</td>
-							<td class="text-right hide">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
-						</tr>
-					</tfoot>
-				</table>
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == 'produto' ">
-						<thead>
-							<tr>
-								<th class="text-right" >Depósito</th>
-								<th width="100" class="text-center">Estoque</th>
-							</tr>
-						</thead>
-						<tbody ng-repeat="(key, value) in produtos">
-							<tr   class="info text-left">
-								<td colspan="2" >{{ key+" | "+value.nome}} {{ value.nome_fabricante != ""  &&  "| "+value.nome_fabricante || "" }} {{ value.peso != ""  &&  "| "+value.peso || "" }} </td>
-							</tr>
-							<tr ng-repeat="produto in value">
-								<td class="text-right">{{ produto.nome_deposito }}</td>
-								<td class="text-right">{{ produto.qtd_item }}</td>
-							</tr>
-						</tbody>
-				</table>
-
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == 'deposito' ">
-						<thead>
-							<tr>
-								<th class="text-right" >produto</th>
-								<th width="200" class="text-center">Fabricante</th>
-								<th width="100" class="text-center">Tamanho</th>
-								<th width="100" class="text-center">Estoque</th>
-							</tr>
-						</thead>
-						<tbody ng-repeat="(key, value) in produtos">
-							<tr   class="info text-left">
-								<td colspan="4" >{{ key }}</td>
-							</tr>
-							<tr ng-repeat="produto in value">
-								<td class="text-right">{{ produto.nome }}</td>
-								<td class="text-right">{{ produto.nome_fabricante }}</td>
-								<td class="text-right">{{ produto.peso }}</td>
-								<td class="text-right">{{ produto.qtd_item }}</td>
-							</tr>
-						</tbody>
-				</table>
-
+						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == 'deposito' ">
+								<thead>
+									<tr>
+										<th class="text-right" >produto</th>
+										<th width="200" class="text-center">Fabricante</th>
+										<th width="100" class="text-center">Tamanho</th>
+										<th width="100" class="text-center">Estoque</th>
+									</tr>
+								</thead>
+								<tbody ng-repeat="(key, value) in produtos">
+									<tr   class="info text-left">
+										<td colspan="4" >{{ key }}</td>
+									</tr>
+									<tr ng-repeat="produto in value">
+										<td class="text-right">{{ produto.nome }}</td>
+										<td class="text-right">{{ produto.nome_fabricante }}</td>
+										<td class="text-right">{{ produto.peso }}</td>
+										<td class="text-right">{{ produto.qtd_item }}</td>
+									</tr>
+								</tbody>
+						</table>
+					</div>
+				</div>
 				<div class="pull-right hidden-print">
 						<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.produtos.length > 1">
 							<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
