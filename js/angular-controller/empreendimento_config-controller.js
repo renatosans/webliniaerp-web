@@ -60,6 +60,20 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		}
 	];
 
+	ng.segmentos = [
+		{'label':'Beleza', 		'value':'Beleza'},
+		{'label':'Bijouterias', 'value':'Bijouterias'},
+		{'label':'Clinica',		'value':'Clinica'},
+		{'label':'Confecção', 	'value':'Confecção'},
+		{'label':'Engenharia', 	'value':'Engenharia'},
+		{'label':'Especiarias', 'value':'Especiarias'},
+		{'label':'Indústria', 	'value':'Indústria'},
+		{'label':'Saúde', 		'value':'Saúde'},
+		{'label':'Segurança', 	'value':'Segurança'},
+		{'label':'Suplemento', 	'value':'Suplemento'},
+		{'label':'Tabacaria', 	'value':'Tabacaria'},
+		{'label':'Vestuário', 	'value':'Vestuário'}
+	];
 
 	ng.loadPlanoContasSelect = function() {
 	 	ng.plano_contas = [{id:null,dsc_completa:"Selecione"}];

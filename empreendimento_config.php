@@ -199,7 +199,7 @@
 											</div>
 										</div>
 
-										<div class="col-sm-4">
+										<div class="col-sm-3">
 											<div class="form-group" id="nme_logo">
 												<label class="control-label"><i class="fa fa-camera"></i> Logo</label>
 												<div class="upload-file">
@@ -211,7 +211,19 @@
 												</div>
 											</div>
 										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label class="control-label">Segmento  </label>
+												<select chosen
+												    option="plano_contas"
+												    allow-single-deselect="true"
+												    ng-model="empreendimento.dsc_segmento"
+												    ng-options="item.value as item.label for item in segmentos"">
+												</select>
+											</div>
+										</div>
 									</div>
+									
 
 									<div class="row">
 										<div class="col-sm-3">

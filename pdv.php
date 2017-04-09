@@ -326,6 +326,7 @@
 								<li><a ng-if="modo_venda == 'est'" href="#" ng-click="abrirVenda('pdv')"><i class="fa fa-desktop"></i> Nova Venda (Modo Loja)</a></li>
 								<li><a ng-if="modo_venda == 'pdv'" href="#" ng-click="abrirVenda('est')"><i class="fa fa-desktop"></i> Nova Venda (Modo Depósito)</a></li>
 								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalListaReenviarSat()"><i class="fa fa-file-text-o"></i> Reprocessar Cupom SAT</a></li>
+								<li ng-show="caixa_aberto"><a href="#" ng-click="showModalReimpressaoCNF()"><i class="fa fa-file-text-o"></i> Re-imprimir Cupom Não Fiscal</a></li>
 								<li ng-show="finalizarOrcamento == false"><a href="#" ng-click="pagamentoFulso()"><i class="fa fa-money"></i> Pagamento</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="resizeScreen()"><i class="fa fa-arrows-alt"></i>Tela Inteira</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="selVendedor()"><i class="fa fa-retweet fa-lg"></i>  Trocar Vendedor</a></li>
@@ -1303,7 +1304,7 @@
 				<!-- /.modal -->
 
 				<!-- /Modal de Fechamento de caixa-->
-				<div class="modal fade" id="modal-fechamento" style="display:none">
+				<div class="modal fade" id="modal-fechamento" style="display:none" data-backdrop="static" data-keyboard="false">
 		  			<div class="modal-dialog error modal-sm">
 		    			<div class="modal-content">
 		      				<div class="modal-header">
@@ -1376,8 +1377,11 @@
 			    					<i class="fa fa-lock"></i> Fechar PDV
 			    				</button>
 
-			    				<button type="button" data-loading-ftext=" Aguarde..." ng-click="cancelarModal('modal-fechamento')" id="btn-fechar-caixa"
-			    					class="btn btn-md btn-default btn-block fechar-modal">
+			    				<button id="btn-fechar-caixa" type="button" 
+			    					class="btn btn-md btn-default btn-block fechar-modal"
+			    					data-loading-ftext=" Aguarde..." 
+			    					ng-click="cancelarModal('modal-fechamento')"
+			    					ng-if="show_cancel_button_fechamento_caixa">
 			    					<i class="fa fa-times-circle"></i> Cancelar
 			    				</button>
 						  	</div>
@@ -1954,7 +1958,7 @@
 				    </div>
 				    <div class="modal-footer">
 				    	<div ng-if="!sendEmailPdf">
-					    	<a ng-show="!emitirNfe" id="printTermic" class="btn btn-md  btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="printTermic()" >
+					    	<a ng-show="!emitirNfe" id="printTermic" class="btn btn-md  btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="printTermic(false)" >
 					    		<i class="fa fa-print"></i> Imprimir (via Impressora Térmica)
 					    	</a>
 					    	<button ng-show="!emitirNfe" type="button" data-loading-text=" Aguarde..." id="btn-imprimir"
@@ -2274,7 +2278,7 @@
   			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
       				<div class="modal-header">
-						<h4>Aguarde</h4>
+						<h4>Aguarde!</h4>
       				</div>
 
 				    <div class="modal-body">
@@ -2283,7 +2287,33 @@
 				    	<div class="row">
 				    		<div class="col-sm-6" id="valor_pagamento">
 				    		<p>
-				    			<strong id="text_status_sat_cfe">Imprimindo cupom fiscal</strong><img src="assets/imagens/progresso_venda.gif">
+				    			<strong id="text_status_sat_cfe">Imprimindo Cupom Fiscal</strong><img src="assets/imagens/progresso_venda.gif">
+				    		</p>
+							</div>
+				    	</div>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal Processando Venda-->
+		<div class="modal fade" id="modal-cnf" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+						<h4>Aguarde!</h4>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="alert alert-reforco" style="display:none"></div>
+
+				    	<div class="row">
+				    		<div class="col-sm-6" id="valor_pagamento">
+				    		<p>
+				    			<strong id="text_status_sat_cfe">Imprimindo Cupom Não-Fiscal</strong><img src="assets/imagens/progresso_venda.gif">
 				    		</p>
 							</div>
 				    	</div>
@@ -2446,6 +2476,84 @@
 						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.vendas_reenviar_sat.length > 1">
 										<li ng-repeat="item in paginacao.vendas_reenviar_sat" ng-class="{'active': item.current}">
 											<a href="" ng-click="loadVendasReenviarSat(item.offset,item.limit)">{{ item.index }}</a>
+										</li>
+									</ul>
+						        </div> <!-- /input-group -->
+							</div><!-- /.col -->
+						</div>
+					</div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal Vendas para re-imprimir CNF-->
+		<div class="modal fade" id="modal-vendas-reimprimir-cnf" style="display:none">
+  			<div class="modal-dialog modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 ng-if="cdb_busca.status==false">Vendas</span></h4>
+      				</div>
+				    <div class="modal-body">
+						<!-- <div class="row">
+							<div class="col-md-12">
+								<div class="input-group">
+						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+
+						            <div class="input-group-btn">
+						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
+						            		ng-click="loadProdutos(0,10)">
+						            		<i class="fa fa-search"></i> Buscar
+						            	</button>
+						            </div> 
+						        </div>
+							</div>
+						</div><br> -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="alert alert-produtos" style="display:none"></div>
+						   		<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead ng-show="(vendas_caixa_aberto.length != 0)">
+										<tr>
+											<th>#</th>
+											<th>Data</th>
+											<th>Vendedor</th>
+											<th>Cliente</th>
+											<th>Valor</th>
+											<th width="40"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-if="vendas_caixa_aberto == null">
+											<th class="text-center" colspan="9" style="text-align:center"><i class="fa fa-refresh fa-spin"></i> <strong>Carregando</strong></th>
+										</tr>
+										<tr ng-show="(vendas_caixa_aberto.length == 0)">
+											<td colspan="3">Nenhum venda encontrada</td>
+										</tr>
+										<tr ng-repeat="item in vendas_caixa_aberto" bs-tooltip >
+											<td>{{ item.id }}</td>
+											<td>{{ item.dta_venda }}</td>
+											<td>{{ item.nme_vendedor }}</td>
+											<td>{{ configuracoes.id_cliente_movimentacao_caixa == item.id_cliente && 'S/N'  ||  item.nme_cliente }}</td>
+											<td>R${{ item.vlr_total_venda | numberFormat:2:',':'.'}}</td>
+											<td>
+											<button ng-disabled="process_reimprimir_cnf" data-toggle="tooltip" title="Re-imprimir" data-loading-text='<i class="fa fa-refresh fa-spin"></i>' ng-click="reimprimir_cnf(item,$event)" class="btn btn-success btn-xs" type="button">
+												<i class="fa fa-paper-plane-o"></i>
+											</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+					    <div class="row">
+					    	<div class="col-md-12">
+								<div class="input-group pull-right">
+						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.vendas_caixa_aberto.length > 1">
+										<li ng-repeat="item in paginacao.vendas_caixa_aberto" ng-class="{'active': item.current}">
+											<a href="" ng-click="loadVendasCaixaAberto(item.offset,item.limit)">{{ item.index }}</a>
 										</li>
 									</ul>
 						        </div> <!-- /input-group -->

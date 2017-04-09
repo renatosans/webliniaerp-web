@@ -61,6 +61,14 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
     ng.chosen_tipo_tributacao_ipi = [{ cod_controle_item_nfe: null, nme_item : 'Selecione' }];
     ng.chosen_especializacao_ncm  = [{ cod_especializacao_ncm: null, dsc_especializacao_ncm : 'Selecione' }];
 
+    ng.replicarCusto = function(preco){
+    	var vlr_custo_linha = preco.vlr_custo;
+    	$.each(ng.produto.precos, function(index,item){
+    		ng.produto.precos[index].vlr_custo = vlr_custo_linha;
+    		ng.calcularAllMargens(item);
+    	});
+    }
+
     ng.doExportExcel = function(){
     	window.location.href = baseUrlApi()+"produtos/export/"+ ng.userLogged.id_empreendimento;
     }
