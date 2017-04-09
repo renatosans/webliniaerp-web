@@ -2150,6 +2150,72 @@
 												</div>
 											</div>
 										</div>
+										<div class="row">
+										<div class="col-sm-2">
+											<div id="cep" class="form-group">
+												<label class="control-label">CEP</label>
+												<input type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="new_cliente.cep" ng-keyUp="validCep(new_cliente.cep)" ng-blur="validCep(new_cliente.cep)">
+											</div>
+										</div>
+
+										<div class="col-sm-7">
+											<div id="endereco" class="form-group">
+												<label class="control-label">Endereço</label>
+												<input type="text" class="form-control input-sm" ng-model="new_cliente.endereco">
+											</div>
+										</div>
+
+										<div class="col-sm-1">
+											<div id="numero" class="form-group">
+												<label class="control-label">No.</label>
+												<input id="num_logradouro" type="text" class="form-control input-sm" ng-model="new_cliente.numero" ng-blur="consultaLatLog()">
+											</div>
+										</div>
+
+										<div class="col-sm-2">
+											<div id="bairro" class="form-group">
+												<label class="control-label">Bairro</label>
+												<input type="text" class="form-control input-sm" ng-model="new_cliente.bairro">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12">
+											<div id="complemento" class="form-group">
+												<label class="control-label">Complemento:</label>
+												<input type="text" class="form-control input-sm" ng-model="new_cliente.end_complemento">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4">
+											<div id="ponto_referencia" class="form-group">
+												<label class="control-label">Ponto Referência</label>
+												<input type="text" class="form-control input-sm" ng-model="new_cliente.ponto_referencia">
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<div id="regiao" class="form-group">
+												<label class="control-label">Região</label>
+												<input type="text" class="form-control input-sm" ng-model="new_cliente.regiao">
+											</div>
+										</div>
+
+										<div class="col-sm-2">
+											<div id="id_estado" class="form-group">
+												<label class="control-label">Estado</label>
+												<select chosen id="id_select_estado" class="form-control input-sm" readonly="readonly" ng-model="new_cliente.id_estado" ng-options="item.id as item.nome for item in estados" ng-change="new_cliente.id_cidade=null;loadCidadesByEstado()"></select>
+											</div>
+										</div>
+
+
+										<div class="col-sm-4">
+											<div id="id_cidade" class="form-group">
+												<label class="control-label">Cidade</label>
+												<select chosen class="form-control input-sm" readonly="readonly" ng-model="new_cliente.id_cidade" ng-options="a.id as a.nome for a in cidades"></select>
+											</div>
+										</div>
+									</div>		
 									</div>
 								</div>
 							</div>
