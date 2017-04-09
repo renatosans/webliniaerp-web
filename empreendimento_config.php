@@ -580,10 +580,16 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-sm-4">
+									<div class="col-sm-3">
 										<div class="form-group" id="pth_local"  >
-											<label class="control-label">Cod. Identificador Balança</label>
+											<label class="control-label">Código Identificador Balança</label>
 											<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group" id="">
+											<label class="control-label">Qtd. Casas Decimais</label>
+											<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
 										</div>
 									</div>
 								</div>

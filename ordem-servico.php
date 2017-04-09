@@ -393,7 +393,7 @@
 												</td>
 												<td class="text-right text-middle">
 													<input type="text" class="form-control input-xs text-center"
-														ng-model="item.vlr_venda_varejo" thousands-formatter precision='5'
+														ng-model="item.vlr_venda_varejo" thousands-formatter precision='{{ configuracoes.qtd_casas_decimais }}'
 														ng-keyup="recalculaTotais()">
 												</td>
 												<td class="text-center text-middle">
