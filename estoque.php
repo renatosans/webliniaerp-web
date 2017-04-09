@@ -449,42 +449,42 @@
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label class="control-label">Usuário</label>
-									<input ng-model="busca.nme_usuario" ng-enter="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.nme_usuario" ng-enter="loadEntradas(0,10)" ng-keyup="loadEntradas(0,10)"  type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label class="control-label">Fornecedor</label>
-									<input ng-model="busca.fornecedor" ng-enter="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.fornecedor" ng-enter="loadEntradas(0,10)"  ng-keyup="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
 							<div class="col-sm-1">
 								<div class="form-group">
 									<label class="control-label">Nº NF</label>
-									<input ng-model="busca.notafiscal" ng-enter="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.notafiscal" ng-enter="loadEntradas(0,10)" type="text"  ng-keyup="loadEntradas(0,10)" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
 							<div class="col-sm-1">
 								<div class="form-group">
 									<label class="control-label">Pedido</label>
-									<input ng-model="busca.pedido" ng-enter="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.pedido" ng-enter="loadEntradas(0,10)" ng-keyup="loadEntradas(0,10)"  type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label class="control-label">Depósito</label>
-									<input ng-model="busca.dep_entrada" ng-enter="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.dep_entrada" ng-enter="loadEntradas(0,10)" ng-keyup="loadEntradas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
 							<div class="col-sm-1">
 								<div class="form-group">
 									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-primary" ng-click="loadEntradas(0,10)"><i class="fa fa-filter"></i> Filtrar</button>
+									<button type="button" class="btn btn-sm btn-primary" ng-click="loadEntradas(0,10)" ><i class="fa fa-filter"></i> Filtrar</button>
 								</div>
 							</div>
 

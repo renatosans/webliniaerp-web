@@ -341,7 +341,11 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.clientes"  ng-enter="loadCliente(0,10)" type="text" class="form-control input-sm">
+						            <input type="text" class="form-control input-sm"
+						            	 ng-enter="loadCliente(0,10)" 
+						            	 ng-model="busca.clientes"
+						            	 ng-keyup="loadCliente(0,10)" 
+						            >
 						            <div class="input-group-btn">
 						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar

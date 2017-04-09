@@ -873,7 +873,10 @@
 							</div>
 							<div class=" col-sm-9">
 								<div class="input-group">
-						            <input ng-model="busca.clientes" ng-enter="loadClientes(0,10)"  type="text" class="form-control input-sm">
+						            <input ng-model="busca.clientes"  type="text" class="form-control input-sm"
+						            	ng-enter="loadClientes(0,10)" 
+						            	ng-keyup="loadClientes(0,10)"
+						            >
 						            <div class="input-group-btn">
 						            	<button ng-click="loadClientes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar

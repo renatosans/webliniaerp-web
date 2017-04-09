@@ -193,7 +193,7 @@
 							<div class="col-sm-3">
 								<label class="control-label">Vendedor</label>
 								<div class="input-group">
-									<input ng-click="selUsuario('vendedor')" type="text" class="form-control" ng-model="busca.ven_nome_vendedor" readonly="readonly" style="cursor: pointer;" />
+									<input ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
 									<span class="input-group-btn">
 										<button ng-click="selUsuario('vendedor')"  type="button" class="btn"><i class="fa fa-user-md"></i></button>
 									</span>
@@ -202,7 +202,7 @@
 								<div class="col-sm-3">
 								<label class="control-label">Cliente</label>
 								<div class="input-group">
-									<input ng-click="selUsuario('cliente')" type="text" class="form-control" ng-model="busca.ven_nome_cliente" readonly="readonly" style="cursor: pointer;" />
+									<input ng-click="selUsuario('cliente')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
 									<span class="input-group-btn">
 										<button ng-click="selUsuario('cliente')"  type="button" class="btn"><i class="fa fa-user"></i></button>
 									</span>
@@ -642,7 +642,11 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.usuarios"  ng-enter="loadUsuarios(0,10,busca.tipo_usuario)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.usuarios"   type="text" class="form-control input-sm"
+						            	ng-enter="loadUsuarios(0,10,busca.tipo_usuario)"
+						            	ng-model="loadUsuarios(0,10,busca.tipo_usuario)"
+						            	ng-keyup="loadUsuarios(0,10,busca.tipo_usuario)"
+						            	>
 						            <div class="input-group-btn">
 						            	<button ng-click="loadUsuarios(0,10,busca.tipo_usuario)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
