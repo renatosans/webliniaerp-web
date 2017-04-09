@@ -1,6 +1,6 @@
 <?php
 	include_once "util/login/restrito.php";
-	restrito(array(1));
+	restrito();
 	date_default_timezone_set('America/Sao_Paulo');
 ?>
 <!DOCTYPE html>
@@ -33,7 +33,7 @@
 	<link rel="stylesheet" type="text/css" href="css/custom.css">
   </head>
 
-  <body class="overflow-hidden" ng-controller="RelatorioTotalProdutoEstoque" ng-cloak>
+  <body class="overflow-hidden" ng-controller="RelatorioTotalVendasVendedorDiarioController" ng-cloak>
 	<!-- Overlay Div -->
 	<!-- <div id="overlay" class="transparent"></div>
 
@@ -143,13 +143,16 @@
 						</span>
 
 						<div class="pull-left m-left-sm">
-							<h3 class="m-bottom-xs m-top-xs">Relatório Vendas Dia a Dia Por Vendedor</h3>
+							<h3 class="m-bottom-xs m-top-xs">Relatório de Vendas por Vendedor</h3>
+							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
 
 					<div class="pull-right text-right">
-						<h5><strong>#<?php echo rand(); ?></strong></h5>
-						<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+						<h6>{{ dados_empreendimento.num_cnpj }} - {{ dados_empreendimento.nome_empreendimento }}</h6>
+						<h6>{{ dados_empreendimento.nme_logradouro }}, {{ dados_empreendimento.num_logradouro }}</h6>
+						<h6>CEP: {{ dados_empreendimento.num_cep }} - {{ dados_empreendimento.nme_cidade }} - {{ dados_empreendimento.uf }}</h6>
+						<h6>Telefone: {{ dados_empreendimento.num_telefone }}</h6>
 					</div>
 				</div>
 
@@ -161,47 +164,47 @@
 					<div class="panel-body">
 						<form role="form">
 							<div class="row">
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label class="control-label">Inicial</label>
+										<div class="input-group">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
+											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label class="control-label">Final</label>
+										<div class="input-group">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
+											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-4">
+									<div class="form-group">
+										<label class="control-label">Vendedor</label>
+										<div class="input-group">
+											<input ng-click="selCliente()" type="text" class="form-control" ng-model="vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
+											<span class="input-group-btn">
+												<button ng-click="selCliente()" ng-click="selCliente(0,10)" type="button" class="btn"><i class="fa fa-users"></i></button>
+											</span>
+										</div>
+									</div>
+								</div>
+
 								<div class="col-lg-4">
 									<div class="form-group">
 										<label class="control-label">Produto</label>
 										<div class="input-group">
-											<input ng-click="modalProdutos()" type="text" class="form-control" ng-model="busca.nome_produto" readonly="readonly" style="cursor: pointer;"></input>
+											<input ng-click="showProdutos(0,10)" type="text" class="form-control" ng-model="produto.nome_produto" readonly="readonly" style="cursor: pointer;"></input>
 											<span class="input-group-btn">
-												<button ng-click="modalProdutos(0,10)" ng-click="modalProdutos(0,10)" type="button" class="btn"><i class="fa fa-archive"></i></button>
+												<button ng-enter="showProdutos(0,10)" ng-click="showProdutos(0,10)" type="button" class="btn"><i class="fa fa-archive"></i></button>
 											</span>
 										</div>
-									</div>
-								</div>
-								<div class="col-lg-4">
-									<div class="form-group">
-										<label class="control-label">Depósito</label>
-										<div class="input-group">
-											<input ng-click="modalDepositos()" type="text" class="form-control" ng-model="busca.nome_deposito" readonly="readonly" style="cursor: pointer;"></input>
-											<span class="input-group-btn">
-												<button ng-click="modalDepositos(0,10)" ng-click="modalDepositos(0,10)" type="button" class="btn"><i class="fa fa-sitemap"></i></button>
-											</span>
-										</div>
-									</div>
-								</div>
-								<div class="col-lg-4">
-									<div class="form-group">
-										<label class="control-label">Fabricante</label>
-										<div class="input-group">
-											<input ng-click="modalFabricantes()" type="text" class="form-control" ng-model="busca.nome_fabricante" readonly="readonly" style="cursor: pointer;"></input>
-											<span class="input-group-btn">
-												<button ng-click="modalFabricantes(0,10)" ng-click="modalFabricantes(0,10)" type="button" class="btn"><i class="fa fa-puzzle-piece"></i></button>
-											</span>
-										</div>
-									</div>
-								</div>
-								<div class="col-lg-2">
-									<div class="form-group">
-										<label class="control-label">Agrupar por:</label>
-										<select class="form-control" ng-model="grupo_busca">
-											<option value=""></option>
-											<option value="produto">Produto</option>
-											<option value="deposito">Depósito</option>
-										</select>
 									</div>
 								</div>
 							</div>
@@ -212,72 +215,67 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
-							<button class="btn btn-sm btn-success hidden-print"  id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-show="vendas.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
 
 				<br>
-			
-				<div class="panel panel-default">
-					<div class="panel-body" style="overflow-y: scroll; width: 100%; background-color: #fff;">
-						<table id="data" class="table table-bordered table-hover table-striped table-condensed" style="font-family: monospace; font-size: 10px; margin-bottom: 0;">
-							<thead>
-								<tr>
-									<th width="100" class="text-center">Nome do Vendedor</th>
-									<th width="100" class="text-center">Data da Venda </th>
-									<th width="100" class="text-center">Nome do Produto</th>
-									<th width="100" class="text-center">Nome do Fabricante</th>
-									<th width="100" class="text-center">Tamanho</th>
-									<th width="100" class="text-center">Cor</th>
-									<th width="100" class="text-center">Custo Unit.</th>
-									<th width="100" class="text-center">Valor Desconto</th>
-									<th width="100" class="text-center">Valor Item</th>
-									<th width="100" class="text-center">Quantidade</th>
-									<th width="100" class="text-center">Subtotal Item</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-if="produtos.length == 0 && produtos != null">
-									<td class="text-center" colspan="14">
-										<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-									</td>
-								</tr>
-								<tr ng-if="produtos.length < 0 && produtos == null">
-									<td colspan="14">
-										Nenhuma venda encontrada.
-									</td>
-								</tr>
-								<tr ng-repeat="item in vendas">
-									<td>{{ item.nome_vendedor }}</td>
-									<td>{{ item.dta_venda }}</td>
-									<td>{{ item.nome_produto }}</td>
-									<td>{{ item.nome_fabricante }}</td>
-									<td>{{ item.nome_tamanho }}</td>
-									<td>{{ item.nome_cor }}</td>
-									<td>{{ item.vlr_custo }}</td>
-									<td>{{ item.vlr_desconto}}</td>
-									<td>{{ item.vlr_venda_item }}</td>
-									<td>{{ item.qtd }}</td>
-									<td>{{ item.vlr_subtotal_item }}</td>	
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									
-								</tr>
-							</tfoot>
-						</table>
 
-						<div class="pull-right hidden-print">
-							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.produtos.length > 1">
-								<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
-									<a href="" h ng-click="loadProdutos(item.offset,item.limit)">{{ item.index }}</a>
-								</li>
-							</ul>
-						</div>
-					</div>
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+					<thead>
+						<tr>
+							<th></th>
+							<th width="100" class="text-center">Data Venda</th>
+							<th width="200">Vendedor</th>
+							<th width="200">Produto</th>
+							<th width="100" class="text-center">Fabricante</th>
+							<th width="100" class="text-center">Tamanho</th>
+							<th width="100" class="text-center">Cor</th>
+							<th width="100" class="text-center">R$ Custo</th>
+							<th width="100" class="text-center">R$ Real</th>
+							<th width="100" class="text-center">Desc. %</th>
+							<th width="100" class="text-center">Vlr. c/ Desc.</th>
+							<th width="100" class="text-center">Qtd.</th>
+							<th width="100" class="text-center">R$ Subtotal</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-if="vendas.length == 0">
+							<td class="text-center" colspan="6">
+								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+							</td>
+						</tr>
+						<tr ng-if="vendas == null">
+							<td class="text-center" colspan="13">
+								Nenhuma venda encontrada.
+							</td>
+						</tr>
+						<tr ng-repeat="item in vendas">
+							<td class="text-center">{{ item.id }}</td>
+							<td class="text-center">{{ item.dta_venda }}</td>
+							<td>{{ item.nme_vendedor }}</td>
+							<td class="text-center">{{ item.nme_produto }}</td>
+							<td class="text-center">{{ item.nme_fabricante }}</td>
+							<td class="text-center">{{ item.nme_tamanho }}</td>
+							<td class="text-center">{{ item.nme_cor }}</td>
+							<td class="text-center">R$ {{item.vlr_custo | numberFormat:2:',':'.'}}</td>
+							<td class="text-right">R$ {{item.vlr_real_item | numberFormat:2:',':'.'}}</td>
+							<td class="text-right">{{item.num_percentual_desconto | numberFormat:2:',':'.'}} %</td>
+							<td class="text-right">R$ {{item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
+							<td class="text-center">{{ item.qtd }}</td>
+							<td class="text-center">R$ {{item.vlr_subtotal_item | numberFormat:2:',':'.'}}</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div class="pull-right hidden-print">
+					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
+						<li ng-repeat="item in paginacao.vendas" ng-class="{'active': item.current}">
+							<a href="" h ng-click="loadVendas(item.offset,item.limit)">{{ item.index }}</a>
+						</li>
+					</ul>
 				</div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
@@ -296,25 +294,85 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-	<!-- /Modal Produtos-->
-		<div class="modal fade" id="list_produtos" style="display:none">
-  			<div class="modal-dialog modal-lg">
+	<!-- /Modal Clientes-->
+		<div class="modal fade" id="list_clientes" style="display:none">
+  			<div class="modal-dialog">
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Produtos</span></h4>
+						<h4>Vendedores</span></h4>
       				</div>
 				    <div class="modal-body">
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produto_modal" ng-enter="loadProdutosModal(0,10)" type="text" class="form-control input-sm">
-
+						            <input ng-model="busca.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
-						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutosModal(0,10)">
+						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
+						            </div> <!-- /input-group-btn -->
+						        </div> <!-- /input-group -->
+							</div><!-- /.col -->
+						</div>
+						<br />
+						<div class="row">
+							<div class="col-sm-12">
+								<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead ng-show="(vendedores.length != 0)">
+										<tr>
+											<th >Nome</th>
+											<th >Perfil</th>
+											<th colspan="2">Selecionar</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-show="(vendedores.length == 0)">
+											<td colspan="2">Não há vendedores cadastrados</td>
+										</tr>
+										<tr ng-repeat="item in vendedores">
+											<td>{{ item.nome }}</td>
+											<td>{{ item.nome_perfil }}</td>
+											<td width="50" align="center">
+												<button type="button" class="btn btn-xs btn-success" ng-click="addCliente(item)">
+													<i class="fa fa-check-square-o"></i> Selecionar
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="row">
+				    		<div class="col-sm-12">
+				    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_clientes.length > 1">
+									<li ng-repeat="item in paginacao_clientes" ng-class="{'active': item.current}">
+										<a href="" h ng-click="loadCliente(item.offset,item.limit)">{{ item.index }}</a>
+									</li>
+								</ul>
+				    		</div>
+				    	</div>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+		<div class="modal fade" id="list_produtos" style="display:none">
+			<div class="modal-dialog">
+				<div class="modal-content">
+	  				<div class="modal-header">
+	    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Produtos</span></h4>
+	  				</div>
+				    <div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="input-group">
+						            <input ng-model="busca.produtos" ng-keyup="loadProdutos(0,10)"  ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+
+						            <div class="input-group-btn">
+						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-search"></i> Buscar</button>
 						            </div> <!-- /input-group-btn -->
 						        </div> <!-- /input-group -->
 							</div><!-- /.col -->
@@ -326,26 +384,24 @@
 							<div class="col-md-12">
 								<div class="alert alert-produtos" style="display:none"></div>
 						   		<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(produtos_modal.length != 0)">
+									<thead ng-show="(produtos.length != 0)">
 										<tr>
 											<th>#</th>
 											<th>Nome</th>
 											<th>Fabricante</th>
 											<th>Tamanho</th>
-											<th>Sabor/Cor</th>
 											<th width="80"></th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-show="(produtos_modal.length == 0)">
-											<td colspan="3">Não a resultados para a busca</td>
+										<tr ng-show="(produtos.length == 0)">
+											<td colspan="3">Não a Produtos cadastrados</td>
 										</tr>
-										<tr ng-repeat="item in produtos_modal">
+										<tr ng-repeat="item in produtos">
 											<td>{{ item.id_produto }}</td>
-											<td>{{ item.nome }}</td>
+											<td>{{ item.nome_produto }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
-											<td>{{ item.sabor }}</td>			
 											<td>
 											<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
 												<i class="fa fa-check-square-o"></i> Selecionar
@@ -360,9 +416,9 @@
 					    <div class="row">
 					    	<div class="col-md-12">
 								<div class="input-group pull-right">
-						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.produtos_modal.length > 1">
-										<li ng-repeat="item in paginacao.produtos_modal" ng-class="{'active': item.current}">
-											<a href="" ng-click="loadProdutosModal(item.offset,item.limit)">{{ item.index }}</a>
+						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.produtos.length > 1">
+										<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
+											<a href="" ng-click="loadProdutos(item.offset,item.limit)">{{ item.index }}</a>
 										</li>
 									</ul>
 						        </div> <!-- /input-group -->
@@ -372,139 +428,11 @@
 			  	</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
 		</div>
-		<!-- /.modal -->
-		<!-- /Modal depositos-->
-		<div class="modal fade" id="modal-depositos" style="display:none">
-  			<div class="modal-dialog">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Depositos</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.depositos" ng-enter="loadDepositos(0,10)" type="text" class="form-control input-sm">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadDepositos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
-
-						<br/>
-
-				   		<div class="row">
-				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(depositos.length != 0)">
-										<tr>
-											<th colspan="2">Nome</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(depositos.length == 0)">
-											<td colspan="3">{{ busca_vazia.depositos  && 'Não há resultado para a busca' || 'Não há Depositos cadastrados' }}</td>
-										</tr>
-										<tr ng-repeat="item in depositos">
-											<td>{{ item.nme_deposito }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addDeposito(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-				   			</div>
-				   		</div>
-
-				   		<div class="row">
-					    	<div class="col-sm-12">
-					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.depositos.length > 1">
-									<li ng-repeat="item in paginacao.depositos" ng-class="{'active': item.current}">
-										<a href="" h ng-click="loadDepositos(item.offset,item.limit)">{{ item.index }}</a>
-									</li>
-								</ul>
-					    	</div>
-				    	</div>
-				    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<!-- /.modal -->
-
-		<!-- /Modal fabricantes-->
-		<div class="modal fade" id="modal-fabricantes" style="display:none">
-  			<div class="modal-dialog">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Fabricantes</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.fabricantes" ng-enter="loadFabricantes(0,10)" type="text" class="form-control input-sm">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadFabricantes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
-
-						<br/>
-
-				   		<div class="row">
-				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(fabricantes.length != 0)">
-										<tr>
-											<th colspan="2">Fabricante</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(fabricantes.length == 0)">
-											<td colspan="3">{{ busca_vazia.fabricantes  && 'Não há resultado para a busca' || 'Não há Fabricantes cadastrados' }}</td>
-										</tr>
-										<tr ng-repeat="item in fabricantes">
-											<td>{{ item.nome_fabricante }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addFabricante(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-				   			</div>
-				   		</div>
-
-				   		<div class="row">
-					    	<div class="col-sm-12">
-					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.fabricantes.length > 1">
-									<li ng-repeat="item in paginacao.fabricantes" ng-class="{'active': item.current}">
-										<a href="" h ng-click="loadFabricantes(item.offset,item.limit)">{{ item.index }}</a>
-									</li>
-								</ul>
-					    	</div>
-				    	</div>
-				    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<!-- /.modal -->
-
 	<a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
 
 	<!-- Logout confirmation -->
 	<?php include("logoutConfirm.php"); ?>
+	
 
     <!-- Le javascript
     ================================================== -->
@@ -540,8 +468,8 @@
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
 
-	<!-- UnderscoreJS -->
-	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
@@ -560,7 +488,7 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/relatorio-total-produto-estoque-controller.js"></script>
+	<script src="js/angular-controller/rel-diario-vendedor-controller.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -571,39 +499,6 @@
 
 			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
-		});
-		$('.datepicker').datepicker();
-			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
-			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
-			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
-
-			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
-			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
-		function printDiv(id, pg) {
-			var contentToPrint, printWindow;
-
-			contentToPrint = window.document.getElementById(id).innerHTML;
-			printWindow = window.open(pg);
-
-		    printWindow.document.write("<link href='bootstrap/css/bootstrap.min.css' rel='stylesheet'>");
-			printWindow.document.write("<link href='css/font-awesome.min.css' rel='stylesheet'>");
-			printWindow.document.write("<link href='css/pace.css' rel='stylesheet'>");
-			printWindow.document.write("<link href='css/endless.min.css' rel='stylesheet'>");
-			printWindow.document.write("<link href='css/endless-skin.css' rel='stylesheet'>");
-
-			printWindow.document.write("<style type='text/css' media='print'>@page { size: portrait; } th, td { font-size: 8pt; }</style><style type='text/css'>#invoicePrint{ display:none }</style>");
-
-			printWindow.document.write(contentToPrint);
-
-			printWindow.window.print();
-			printWindow.document.close();
-			printWindow.focus();
-		}
-
-		$(function()	{
-			$('#invoicePrint').click(function()	{
-				printDiv("main-container", "");
-			});
 		});
 	</script>
 	<?php include("google_analytics.php"); ?>
