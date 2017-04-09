@@ -320,7 +320,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		var devolucao = {
 			id_empreendimento   : ng.userLogged.id_empreendimento,
 			id_venda			: ng.venda.id,
-			observacao			: '',
+			observacao			: ng.observacao,
 			id_operador         : ng.userLogged.id,
 			id_deposito         : id_deposito
 		};
