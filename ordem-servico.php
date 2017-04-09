@@ -493,7 +493,7 @@
 							<div class="col-sm-4">
 								<div class="form-group">
 									<label class="control-label">Cliente</label>
-									<input ng-model="busca.nome" ng-enter="loadOrdensServicos(0,10)" type="text" class="form-control input-md ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.nome" ng-keyup="loadOrdensServicos(0,10)" ng-enter="loadOrdensServicos(0,10)" type="text" class="form-control input-md ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
@@ -619,7 +619,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input ng-model="busca.clientes"  ng-enter="loadClientes(0,10)" type="text" class="form-control input-sm">
+                                    <input ng-model="busca.clientes" ng-keyup="loadClientes(0,10)"  ng-enter="loadClientes(0,10)" type="text" class="form-control input-sm">
                                     <div class="input-group-btn">
                                         <button ng-click="loadClientes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
                                             <i class="fa fa-search"></i> Buscar
@@ -697,7 +697,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input ng-model="busca.servicos"  ng-enter="loadServicos(0,10)" type="text" class="form-control input-sm">
+                                    <input ng-model="busca.servicos" ng-keyup="loadServicos(0,10)" ng-enter="loadServicos(0,10)" type="text" class="form-control input-sm">
                                     <div class="input-group-btn">
                                         <button ng-click="loadServicos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
                                             <i class="fa fa-search"></i> Buscar
@@ -769,7 +769,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.produtos" ng-keyup="loadProdutos(0,10)"  ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar

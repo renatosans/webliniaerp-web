@@ -228,7 +228,7 @@
 								<div class="col-sm-5">
 									<div class="form-group">
 										<label class="control-label">Cliente</label>
-										<input ng-model="busca_aux.cliente" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+										<input ng-model="busca_aux.cliente" ng-keyup="loadMovimentacoes()" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 									</div>
 								</div>
 								<div class="col-lg-2" ng-if="busca_aux.tipoData == 'lan'">
