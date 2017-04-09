@@ -1,5 +1,6 @@
 <?php
 	include_once '../constants.php';
+	
 	function getPaginaPrincipal($modulos){
 		$pages = array();
 		foreach ($modulos as $key => $value) {
@@ -19,18 +20,21 @@
 			return 'vendas.php';
 		elseif (in_array('controle-atendimento.php', $pages))
 			return 'controle-atendimento.php';
-		else{
-			return empty($pages[0]) ? $pages[1] : $pages[0] ;
-		}
-		
+		else
+			return empty($pages[0]) ? $pages[1] : $pages[0];
 	}
+
 	function validaEmpreendimentoPeriodoTeste($id_empreendimento){
-		$url = URL_API.'empreendimentos?id'.$id_empreendimento;
+		$url = URL_API.'empreendimentos?id'. $id_empreendimento;
+
 		$ch = curl_init();
+		
 		curl_setopt($ch, CURLOPT_URL,$url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		
 		$output  = curl_exec($ch);
 		$info 	 = curl_getinfo($ch);
+		
 		curl_close ($ch);
 
 		$saida     = array() ;
@@ -40,28 +44,32 @@
 		
 		if($flg_teste == 1){
 			$dias_passados  = is_numeric($output['dias_passados']) && $output['dias_passados']   >= 0  ? (int)$output['dias_passados'] : false;
-			$qtd_dias_teste = is_numeric($output['qtd_dias_teste']) && $output['qtd_dias_teste'] >= 0  ? (int)$output['qtd_dias_teste'] : false ;
-			if($dias_passados && $qtd_dias_teste){
-				if($dias_passados <= $qtd_dias_teste){
+			$qtd_dias_teste = is_numeric($output['qtd_dias_teste']) && $output['qtd_dias_teste'] >= 0  ? (int)$output['qtd_dias_teste'] : false;
+			
+			if($dias_passados && $qtd_dias_teste) {
+				if($dias_passados <= $qtd_dias_teste) {
 					$saida['flg_teste'] 			 = 1 ;
 					$saida['status_teste'] 			 = true ;
 					$saida['qtd_dias_teste']        = $dias_passados ;
 					$saida['dias_passados_em_teste'] = $qtd_dias_teste ;
 					$saida['dta_cadastro']           = $output['dta_cadastro'];
-				}else{
+				}
+				else {
 					$saida['flg_teste'] 			 = 1   ;
 					$saida['status_teste'] 			 = false ;
 					$saida['qtd_dias_teste']        = $dias_passados ;
 					$saida['dias_passados_em_teste'] = $qtd_dias_teste ;
 					$saida['dta_cadastro']           = $output['dta_cadastro'] ;
 				}
-			}else{
-				return false ;
 			}
-		}else{
+			else
+				return false;
+		}
+		else {
 			$saida['flg_teste'] 			 = 0   ;
 			$saida['dta_cadastro']           = $output['dta_cadastro'] ;
 		}
+
 		return $saida ;
 	}
 
@@ -69,7 +77,7 @@
 
 	$url = URL_API.'logar';
 
-	if($_SERVER['REQUEST_METHOD'] == "POST"){
+	if($_SERVER['REQUEST_METHOD'] == "POST") {
 		$senha = isset($_POST['senha']) ? $_POST['senha'] : "" ;
 		$login = isset($_POST['login']) ? $_POST['login'] : "" ;
 
@@ -85,13 +93,16 @@
 
 		$ch = curl_init();
 		$url = $url;
+
 		curl_setopt($ch, CURLOPT_URL,$url);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, "login=".$login."&senha=".$senha."");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		
 		$output  = curl_exec($ch);
 		$info 	 = curl_getinfo($ch);
-		curl_close ($ch);
+		
+		curl_close($ch);
 
 		if($info['http_code'] == 200){
 			$_SESSION['user_emp'] = json_decode($output);
@@ -101,15 +112,16 @@
 			header('Content-type: application/json');
 
 		header("HTTP/1.1 ". $info['http_code'] ."");
-		//http_response_code($info['http_code']);
 
 		echo $output;
-	}else if(isset($_GET['id_empreendimento']) && isset($_GET['nome_empreendimento'])  ){
-		
+	}
+	else if(isset($_GET['id_empreendimento']) && isset($_GET['nome_empreendimento'])){
 		$saida = array();
+
 		foreach ($_SESSION['user_emp'] as $key => $value) {
 			$saida[$key] = $value;
 		}
+
 		$dados_teste = validaEmpreendimentoPeriodoTeste($_GET['id_empreendimento']);
 
 		$saida['id']   					= (int)$_GET['id'];
@@ -123,10 +135,13 @@
 		
 		$ch = curl_init();
 		$url = $url;
+
 		curl_setopt($ch, CURLOPT_URL,URL_API.'usuario/'.$saida['id_empreendimento'].'/'.$saida['id']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		
 		$usuario  = curl_exec($ch);
 		$usuarioInfo = curl_getinfo($ch);
+		
 		curl_close ($ch);
 
 		if($usuarioInfo['http_code'] != 200){
@@ -136,10 +151,13 @@
 
 		$ch = curl_init();
 		$url = $url;
+
 		curl_setopt($ch, CURLOPT_URL,URL_API.'empreendimentos?id_usuario='.$saida['id']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		
 		$empreendimentoUsuario  = curl_exec($ch);
 		$empreendimentoUsuarioInfo 	 = curl_getinfo($ch);
+		
 		curl_close ($ch);
 
 		if($empreendimentoUsuarioInfo['http_code'] != 200){
@@ -159,12 +177,13 @@
 			$saida['qtd_dias_teste']         = $dados_teste['qtd_dias_teste'];
 			$saida['dias_passados_em_teste'] = $dados_teste['dias_passados_em_teste'];
 			$saida['dta_cadastro']           = $dados_teste['dta_cadastro'];
-		}elseif ($dados_teste['flg_teste'] == 0) {
+		}
+		elseif ($dados_teste['flg_teste'] == 0) {
 			$saida['flg_teste']              = 0 ;
 			$saida['dta_cadastro']           = $dados_teste['dta_cadastro'];
-		}else{
-			header("HTTP/1.1 500");
 		}
+		else
+			header("HTTP/1.1 500");
 
 		$ch = curl_init();
 		$url = $url;
@@ -217,9 +236,7 @@
 		header('Content-type: application/json');
 		header("HTTP/1.1 200");
 		echo json_encode(array("pagina_principal"=>$saida['pagina_principal']));
-
-	}else{
-		header("HTTP/1.1 500");
-		//http_response_code(500);
 	}
+	else
+		header("HTTP/1.1 500");
 ?>
