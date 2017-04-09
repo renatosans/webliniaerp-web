@@ -1,4 +1,4 @@
-app.controller('ProdutosController', function($scope, $timeout, $http, $window, $dialogs, UserService, FuncionalidadeService, PrestaShop){
+app.controller('ProdutosController', function($scope, $timeout, $http, $window, $dialogs, ConfigService, UserService, FuncionalidadeService, PrestaShop){
 	var ng = $scope
 		aj = $http;
 
@@ -918,19 +918,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				
 		});
 	}
-	ng.configuracao = null ;
-	ng.loadConfig = function(){
-		var error = 0 ;
-		aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento)
-			.success(function(data, status, headers, config) {
-				ng.configuracao = data ;
-			})
-			.error(function(data, status, headers, config) {
-				if(status == 404){
-					ng.configuracao = false ;
-				}
-			});
-	}
+	ng.configuracao = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 
 	ng.empreendimentosByProduto = function(id_produto){
 		var error = 0 ;
@@ -1918,7 +1906,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.mensagens('alert-danger','<strong>'+ data +'</strong>');
 	}
 	ng.loadDepositos(0,10,true);
-	ng.loadConfig();
 	ng.loadFabricantes();
 	ng.loadImportadores();
 	ng.loadCategorias();
