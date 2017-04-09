@@ -191,8 +191,16 @@
 				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
 					<thead>
 						<tr>
-							<th width="100"></th>
+							<th class="text-center" width="100">ID</th>
 							<th>Cliente</th>
+							<th>E-mail</th>
+							<th>Telefone</th>
+							<th>Celular</th>
+							<th>Endereço</th>
+							<th>N°</th>
+							<th>UF</th>
+							<th>Cidade</th>
+
 							<th width="100" class="text-center">Saldo</th>
 
 
@@ -205,8 +213,8 @@
 							</td>
 						</tr>
 						<tr ng-if="vendas == null">
-							<td class="text-center" colspan="6">
-								Não a clientes com saldo devedor
+							<td class="text-center" colspan="12">
+								Não há clientes com saldo devedor
 							</td>
 						</tr>
 						<tr ng-repeat="item in vendas">
@@ -215,6 +223,27 @@
 							</td>
 							<td>{{ item.nome_cliente }}</td>
 							<td ng-if="item.vlr_saldo_devedor > 0" style="color:green;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
+							<td>
+								{{ item.email }}
+							</td>
+							<td >
+								{{ item.tel_fixo }}
+							</td>
+							<td >
+								{{ item.celular }}
+							</td>
+							<td >
+								{{ item.endereco }}
+							</td>
+							<td >
+								{{ item.numero }}
+							</td>
+							<td >
+								{{ item.uf }}
+							</td>
+							<td >
+								{{ item.nme_cidade }}
+							</td>
 							<td ng-if="item.vlr_saldo_devedor == 0" style="color:blue;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
 							<td ng-if="item.vlr_saldo_devedor < 0" style="color:red;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
 						</tr>
