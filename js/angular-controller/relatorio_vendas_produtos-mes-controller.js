@@ -1,7 +1,8 @@
-app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$dialogs, UserService) {
+app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$dialogs, UserService, EmpreendimentoService) {
 	var ng 				= $scope;
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.deposito 		= {};
 	ng.depositos 		= [];

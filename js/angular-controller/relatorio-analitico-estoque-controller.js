@@ -1,8 +1,9 @@
-app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $window, UserService,FuncionalidadeService,ConfigService) {
+app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $window, UserService,FuncionalidadeService,ConfigService, EmpreendimentoService) {
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
 	ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina = "10";
 	ng.deposito = {};
 	ng.depositos = [];

@@ -1,10 +1,11 @@
-app.controller('RelatorioProdutosVencerController', function($scope, $http, $window, UserService) {
+app.controller('RelatorioProdutosVencerController', function($scope, $http, $window, UserService, EmpreendimentoService) {
 	var ng = $scope,
 		aj = $http;
 
 	ng.tempoAvalicao = "30";
 	ng.itensPagina = "10";
 	ng.userLogged = UserService.getUserLogado();
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itens = null;
 	ng.paginacao = [];
 	ng.paginacao = {};
