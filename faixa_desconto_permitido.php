@@ -272,7 +272,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.usuarios"  ng-enter="loadUsuarios(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.usuarios" ng-keyup="loadUsuarios(0,10)" ng-enter="loadUsuarios(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadUsuarios(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar

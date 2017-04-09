@@ -250,7 +250,7 @@
 							<div class="col-sm-3">
 								<div class="form-group">
 									<label class="control-label">Cliente</label>
-									<input ng-model="busca.nme_cliente" ng-enter="loadOrdemProducao(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.nme_cliente" ng-enter="loadOrdemProducao(0,10)" ng-keyup="loadOrdemProducao(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
@@ -359,7 +359,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.produtos" ng-keyup="loadProdutos(0,10)" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
 
 						            <div class="input-group-btn">
 						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
@@ -438,7 +438,7 @@
 								<div class="form-group">
 									<label class="control-label">Busca pelo nome do Depósito</label>
 									<div class="input-group">
-							            <input ng-model="busca.depositos" type="text" class="form-control input-sm">
+							            <input ng-model="busca.depositos" ng-keyup="loadDepositos(0,10)" type="text" class="form-control input-sm">
 							            <div class="input-group-btn">
 							            	<button ng-click="loadDepositos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-search"></i> Buscar</button>
 							            </div>
