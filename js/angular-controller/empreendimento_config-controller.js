@@ -700,6 +700,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.qtd_casas_decimais != undefined){
+			var item10 = {
+							nome 				:'qtd_casas_decimais',
+							valor 				:ng.configuracoes.qtd_casas_decimais , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		btn.button('loading');
 		var pth_local_sucess = false ;
 		if(ng.config.pth_local != undefined){

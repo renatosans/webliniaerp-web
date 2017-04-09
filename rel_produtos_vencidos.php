@@ -143,13 +143,16 @@
 						</span>
 
 						<div class="pull-left m-left-sm">
-							<h3 class="m-bottom-xs m-top-xs">Relatório de Produtos Vencidos</h3>
+							<h3 class="m-bottom-xs m-top-xs">Relatório Produtos Vencidos</h3>
+							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
 
 					<div class="pull-right text-right">
-						<h5><strong>#<?php echo rand(); ?></strong></h5>
-						<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+						<h6>{{ dados_empreendimento.num_cnpj }} - {{ dados_empreendimento.nome_empreendimento }}</h6>
+						<h6>{{ dados_empreendimento.nme_logradouro }}, {{ dados_empreendimento.num_logradouro }}</h6>
+						<h6>CEP: {{ dados_empreendimento.num_cep }} - {{ dados_empreendimento.nme_cidade }} - {{ dados_empreendimento.uf }}</h6>
+						<h6>Telefone: {{ dados_empreendimento.num_telefone }}</h6>
 					</div>
 				</div>
 

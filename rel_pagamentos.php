@@ -149,12 +149,15 @@
 
 						<div class="pull-left m-left-sm">
 							<h3 class="m-bottom-xs m-top-xs">Relatório de Contas a Receber</h3>
+							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
 
 					<div class="pull-right text-right">
-						<h5><strong>#<?php echo rand(); ?></strong></h5>
-						<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+						<h6>{{ dados_empreendimento.num_cnpj }} - {{ dados_empreendimento.nome_empreendimento }}</h6>
+						<h6>{{ dados_empreendimento.nme_logradouro }}, {{ dados_empreendimento.num_logradouro }}</h6>
+						<h6>CEP: {{ dados_empreendimento.num_cep }} - {{ dados_empreendimento.nme_cidade }} - {{ dados_empreendimento.uf }}</h6>
+						<h6>Telefone: {{ dados_empreendimento.num_telefone }}</h6>
 					</div>
 				</div>
 
@@ -228,7 +231,7 @@
 								<div class="col-sm-5">
 									<div class="form-group">
 										<label class="control-label">Cliente</label>
-										<input ng-model="busca_aux.cliente" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+										<input ng-model="busca_aux.cliente" ng-keyup="loadMovimentacoes()" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 									</div>
 								</div>
 								<div class="col-lg-2" ng-if="busca_aux.tipoData == 'lan'">

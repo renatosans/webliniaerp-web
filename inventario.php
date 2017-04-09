@@ -320,14 +320,14 @@
 							<div class="col-sm-3">
 								<div class="form-group">
 									<label class="control-label">Depósito</label>
-									<input ng-model="busca.text" ng-enter="loadUltimosInventarios(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.text" ng-enter="loadUltimosInventarios(0,10)" ng-keyup="loadUltimosInventarios(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
 							<div class="col-sm-3">
 								<div class="form-group">
 									<label class="control-label">Responsável</label>
-									<input ng-model="busca.responsavel" ng-enter="loadUltimosInventarios(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.responsavel" ng-enter="loadUltimosInventarios(0,10)" ng-keyup="loadUltimosInventarios(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 

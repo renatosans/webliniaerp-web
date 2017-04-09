@@ -1,8 +1,9 @@
-app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, UserService) {
+app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, UserService, EmpreendimentoService) {
 	var ng = $scope,
 		aj = $http;
 
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itens 			= [];
 	ng.total 			= 0;
 	ng.formas_pagamento = [];

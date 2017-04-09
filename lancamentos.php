@@ -1143,6 +1143,7 @@
 						            	ng-model="busca.clientes" 
 						            	ng-keyup="loadCliente(0,10)"
 						            	ng-disabled="enableNewFormCliente">
+						            	
 						            <div class="input-group-btn">
 						            	<button type="button" class="btn btn-sm btn-primary" 
 						            		ng-click="loadCliente(0,10)" 

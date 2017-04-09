@@ -352,7 +352,7 @@
 															<td>
 																<div class="row">
 																	<div class="col-sm-9">
-																		<input ng-model="preco.vlr_custo" ng-keyup="calcularAllMargens(preco)"  thousands-formatter precision='5' type="text" class="form-control input-xs parsley-validated">
+																		<input ng-model="preco.vlr_custo" ng-keyup="calcularAllMargens(preco)"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}' type="text" class="form-control input-xs parsley-validated">
 																	</div>
 																	<div class="col-sm-1" style="padding-left: 0px;">
 																		<button type="button" tooltip title="Replicar para todos" class="btn btn-success btn-xs" ng-click="replicarCusto(preco)">
@@ -362,24 +362,24 @@
 																</div>
 															</td>
 															<td>
-																<input ng-model="preco.perc_venda_atacado" ng-keyup="calculaMargens('atacado','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+																<input ng-model="preco.perc_venda_atacado" ng-keyup="calculaMargens('atacado','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
 															<td>
 																<input ng-model="preco.valor_venda_atacado" ng-keyup="calculaMargens('atacado','valor',preco)" 
-																 ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+																 ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
 
 															<td>
-																<input ng-model="preco.perc_venda_intermediario" ng-keyup="calculaMargens('intermediario','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'    type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+																<input ng-model="preco.perc_venda_intermediario" ng-keyup="calculaMargens('intermediario','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'    type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
 															<td>
-																<input ng-model="preco.valor_venda_intermediario" ng-keyup="calculaMargens('intermediario','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+																<input ng-model="preco.valor_venda_intermediario" ng-keyup="calculaMargens('intermediario','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
 															<td>
-																<input ng-model="preco.perc_venda_varejo" ng-keyup="calculaMargens('varejo','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+																<input ng-model="preco.perc_venda_varejo" ng-keyup="calculaMargens('varejo','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
 															<td>
-																<input ng-model="preco.valor_venda_varejo" ng-keyup="calculaMargens('varejo','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='5'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+																<input ng-model="preco.valor_venda_varejo" ng-keyup="calculaMargens('varejo','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
 														</tr>
 													</tbody>

@@ -604,7 +604,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.empreendimento" type="text" class="form-control input-sm">
+						            <input ng-model="busca.empreendimento" ng-enter="loadAllEmpreendimentos(0,10)" ng-keyup="loadAllEmpreendimentos(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadAllEmpreendimentos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
@@ -671,7 +671,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produto" id="foco" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.produto" ng-enter="loadProdutos(0,10)" ng-keyup="loadProdutos(0,10)"  id="foco" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
@@ -940,7 +940,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.str_empreendimento_busca" ng-enter="loadEmpreendimentosBusca(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.str_empreendimento_busca" ng-enter="loadEmpreendimentosBusca(0,10)" ng-keyup="loadEmpreendimentosBusca(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadEmpreendimentosBusca(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar

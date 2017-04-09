@@ -144,12 +144,15 @@
 
 						<div class="pull-left m-left-sm">
 							<h3 class="m-bottom-xs m-top-xs">Relatório de Saldo Devedor de Clientes</h3>
+							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
 
 					<div class="pull-right text-right">
-						<h5><strong>#<?php echo rand(); ?></strong></h5>
-						<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+						<h6>{{ dados_empreendimento.num_cnpj }} - {{ dados_empreendimento.nome_empreendimento }}</h6>
+						<h6>{{ dados_empreendimento.nme_logradouro }}, {{ dados_empreendimento.num_logradouro }}</h6>
+						<h6>CEP: {{ dados_empreendimento.num_cep }} - {{ dados_empreendimento.nme_cidade }} - {{ dados_empreendimento.uf }}</h6>
+						<h6>Telefone: {{ dados_empreendimento.num_telefone }}</h6>
 					</div>
 				</div>
 
@@ -286,7 +289,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.vendedores" type="text" class="form-control input-sm">
+						            <input ng-model="busca.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
