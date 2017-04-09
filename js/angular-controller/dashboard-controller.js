@@ -26,6 +26,34 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			orcamentos : null
 		};
 
+		ng.opcoes_filtro_pesquisa = [];
+		ng.opcoes_filtro_pesquisa.push({value: 5, label: 'Últ. 5 dias'}); 		// 0
+		ng.opcoes_filtro_pesquisa.push({value: 7, label: 'Últ. 7 dias'}); 		// 1
+		ng.opcoes_filtro_pesquisa.push({value: 15, label: 'Últ. 15 dias'}); 	// 2
+		ng.opcoes_filtro_pesquisa.push({value: 30, label: 'Últ. 30 dias'}); 	// 3
+		ng.opcoes_filtro_pesquisa.push({value: 0, label: 'Mês atual'}); 		// 4
+
+		ng.opcao_selecionada = ng.opcoes_filtro_pesquisa[4];
+
+		ng.calcula_periodo_filtro = function(){
+			if(ng.opcao_selecionada.value === 0) { // mês atual
+				$("#dtaInicial").val(getFirstDateOfMonthString());
+				$("#dtaFinal").val(getLastDateOfMonthString());
+
+				ng.aplicarFiltro();
+			}
+			else {
+				var hoje = moment();
+				var fim = angular.copy(hoje);
+				var inicio = hoje.subtract(ng.opcao_selecionada.value, 'day');
+
+				$("#dtaInicial").val(inicio.format('DD/MM/YYYY'));
+				$("#dtaFinal").val(fim.format('DD/MM/YYYY'));
+
+				ng.aplicarFiltro();
+			}
+		}
+
 		ng.funcioalidadeAuthorized = function(cod_funcionalidade){
     		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
     	}
