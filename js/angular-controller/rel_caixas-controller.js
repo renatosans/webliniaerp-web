@@ -106,7 +106,7 @@ app.controller('relCaixasController', function($scope, $http, $window, $dialogs,
 										})+"";
 		}
 
-		aj.get(baseUrlApi()+"caixa/allAberturas/"+offset+"/"+limit+"?dta_fechamento[exp]=IS NOT NULL&abt_caixa->id_empreendimento="+ng.userLogged.id_empreendimento+query_string)
+		aj.get(baseUrlApi()+"caixa/allAberturas/"+offset+"/"+limit+"?abt_caixa->id_empreendimento="+ng.userLogged.id_empreendimento+query_string)
 			.success(function(data, status, headers, config) {
 				ng.caixas_mov = data.aberturas;
 				ng.paginacao.caixas_mov = data.paginacao;

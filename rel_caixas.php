@@ -62,7 +62,7 @@
 	</style>
   </head>
 
-  <body class="overflow-hidden" ng-controller="relCaixasController">
+  <body class="overflow-hidden" ng-controller="relCaixasController" ng-cloak>
 
 	<div id="wrapper" class="preload">
 		<div id="top-nav" class="fixed skin-1">
@@ -214,6 +214,7 @@
 									<th>Operador</th>
 									<th>Data da Abertura</th>
 									<th>Data da fechamento</th>
+									<th width="30" style="text-align: center;">Status</th>
 									<th width="30" style="text-align: center;">Opções</th>
 								</tr>
 							</thead>
@@ -223,8 +224,19 @@
 									<td>{{ item.operador }}</td>
 									<td>{{ item.dta_abertura | dateFormat:'dateTime' }}</td>
 									<td>{{ item.dta_fechamento | dateFormat:'dateTime'  }}</td>
+									<td class="text-center">
+										<i class="fa fa-circle text-warning" 
+											title="Caixa em operação" tooltip
+											ng-if="!(item.dta_fechamento)"></i>
+
+										<i class="fa fa-circle text-danger" 
+											title="Caixa Fechado" tooltip
+											ng-if="(item.dta_fechamento)"></i>
+									</td>
 									<td style="text-align: center;" >
-										<a type="button" href="rel_movimentacao_caixa.php?id={{ item.id }}" target="_blank" tooltip="Detalhes" data-toggle="tooltip" class="btn btn-xs btn-primary">
+										<a type="button" target="_blank" class="btn btn-xs btn-primary"
+											href="rel_movimentacao_caixa.php?id={{ item.id }}" 
+											title="Detalhes" tooltip>
 											<i class="fa fa-tasks"></i>
 										</a>
 									</td>
