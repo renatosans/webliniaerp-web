@@ -417,7 +417,11 @@
 							<div class="col-sm-5">
 								<div class="form-group">
 									<label class="control-label">Cliente</label>
-									<input ng-model="busca.nome" ng-enter="loadDevolucoes(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input type="text" class="form-control input-sm ng-pristine ng-valid ng-touched"
+									ng-enter="loadDevolucoes(0,10)" 
+									ng-model="busca.nome" 
+									ng-keyup="loadDevolucoes(0,10)"	
+									>
 								</div>
 							</div>
 

@@ -179,7 +179,10 @@
 							<div class="col-sm-3">
 								<div class="form-group">
 									<label class="control-label">Destinatário</label>
-									<input ng-model="busca.text" ng-enter="loadNotas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.text" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched"
+										 ng-enter="loadNotas(0,10)" 
+										 ng-keyup="loadNotas(0,10)"
+									>
 								</div>
 							</div>
 

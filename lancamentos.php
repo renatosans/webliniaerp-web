@@ -1141,6 +1141,7 @@
 						            <input type="text" class="form-control input-sm"
 						            	ng-enter="loadCliente(0,10)" 
 						            	ng-model="busca.clientes" 
+						            	ng-keyup="loadCliente(0,10)"
 						            	ng-disabled="enableNewFormCliente">
 						            <div class="input-group-btn">
 						            	<button type="button" class="btn btn-sm btn-primary" 
