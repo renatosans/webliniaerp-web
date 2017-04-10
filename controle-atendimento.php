@@ -372,7 +372,17 @@
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Ficha do Paciente</h4>
+						<h4 style="float: left;">Ficha do Paciente</h4>
+						<div style="float: left;margin-left: 10px; margin-top: 5px;width: 200px">
+							<select chosen 
+						    option="especialidades"
+						    ng-model="id_especialidade_procedimento"
+						    allow-single-deselect="true"
+						    ng-options="item.id as item.dsc_especialidade for item in especialidades"
+						    data-placeholder="Especialidade">
+							</select>
+						</div>
+						<div style="clear: both;"></div>
       				</div>
 				    <div class="modal-body bg-trans-dark">
 				    	<div class="panel-tab clearfix">
@@ -557,7 +567,7 @@
 									</div>
 								</form>
 								<div style="max-height: 300px;overflow: auto;">
-									<table class="table table-bordered table-hover table-striped table-condensed">
+									<table class="table table-bordered table-hover table-striped table-condensed" ng-if="!empty(id_especialidade_procedimento)">
 										<thead>
 											<th class="text-center">Data</th>
 											<th class="text-center">Procedimento</th>
@@ -616,6 +626,9 @@
 											<th ng-if="configuracoes.flg_controlar_tempo_atendimento == 1"></th>
 										</tfoot>
 									</table>
+									<p class="text-center" ng-if="empty(id_especialidade_procedimento)">
+										Selecione uma especialidade
+									</p>
 								</div>
 							</div>
 
@@ -1053,7 +1066,7 @@
 							</div>
 							<div class="tab-pane fade" id="pagamentos">
 								<div style="max-height: 300px;overflow: auto;">
-									<table class="table table-bordered table-hover table-striped table-condensed">
+									<table class="table table-bordered table-hover table-striped table-condensed" ng-if="!empty(id_especialidade_procedimento)" >
 										<thead>
 											<th class="text-center">Dta lançamento</th>
 											<th class="text-center">Forma Pagamento</th>
@@ -1085,6 +1098,9 @@
 											<th class="text-right">R$ {{ pagamentosCliente.total | numberFormat:2:',':'.' }}</th>
 										</tfoot>
 									</table>
+									<p class="text-center" ng-if="empty(id_especialidade_procedimento)" >
+										Selecione uma especialidade
+									</p>
 								</div>
 							</div>
 						</div>
@@ -1704,6 +1720,9 @@
     <script src="js/dialogs.v2.min.js" type="text/javascript"></script>
     <script src="js/auto-complete/ng-sanitize.js"></script>
     <script src="js/angular-chosen.js"></script>
+     <script type="text/javascript">
+    	var addParamModule = ['angular.chosen'] ;
+    </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>

@@ -1,10 +1,11 @@
 <?php
+
 	define('AMBIENTE','CLIENTES');
 	define('PAGE', substr($_SERVER['SCRIPT_NAME'],strripos($_SERVER['SCRIPT_NAME'],'/')+1));
 	
 	if($_SERVER['SERVER_NAME'] == 'localhost' || strpos($_SERVER['SERVER_NAME'], "192.168.") === 0){
-		define('URL_API','http://'. $_SERVER['SERVER_NAME'] .'/webliniaerp-api/');
-		define('URL_BASE','http://'. $_SERVER['SERVER_NAME'] .'/webliniaerp-web/');
+		define('URL_API','http://'. $_SERVER['SERVER_NAME'] .'/wbl-api/');
+		define('URL_BASE','http://'. $_SERVER['SERVER_NAME'] .'/wbl-web/');
 	}else{
 		define('URL_API','http://'.$_SERVER['SERVER_NAME'].'/api/');
 		define('URL_BASE','http://'.$_SERVER['SERVER_NAME'].'/');	
@@ -19,4 +20,5 @@
 	    define('TEMPLATE',$_GET['template']);	
 	else
 		define('TEMPLATE',"vitrine");
+
 ?>

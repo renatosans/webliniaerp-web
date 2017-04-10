@@ -1,4 +1,4 @@
-app.controller('ControleAtendimentoController', function($scope, $http, $window, $dialogs, UserService,ConfigService,FuncionalidadeService){
+app.controller('ControleAtendimentoController', function($scope, $http, $window, $dialogs, UserService,ConfigService,FuncionalidadeService,$timeout){
 
 	var ng = $scope ,
 		aj = $http;
@@ -353,7 +353,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 				ng.loadPaciente();
 				ng.getItensVenda();
 				if(ng.paciente_atendimento.flg_procedimento == 1){
-					aj.get(baseUrlApi()+"clinica/paciente/"+ng.paciente_atendimento.id_paciente+"/procedimentos?id_status_procedimento[exp]=IN(1,2)")
+					aj.get(baseUrlApi()+"clinica/paciente/"+ng.paciente_atendimento.id_paciente+"/procedimentos?id_status_procedimento[exp]=IN(1,2) AND tiv.id_especialidade_procedimento = "+(!empty(ng.id_especialidade_procedimento)? "'"+ng.id_especialidade_procedimento+"'"  : 'NULL' )+" ")
 					.success(function(data, status, headers, config) {
 					})
 					.error(function(data, status, headers, config) {
@@ -530,6 +530,12 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
     }
 
     ng.salvarProcedimento = function(){
+
+    	if(empty(ng.id_especialidade_procedimento)){
+			$dialogs.notify('Atenção!','<strong>Selecione uma especialidade antes de executar esta ação.</strong>');
+			return ;
+		}
+
     	var error = 0 ;
     	$('.has-error').tooltip('destroy');
     	$('.has-error').removeClass('has-error');
@@ -624,7 +630,8 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 					perc_imposto_compra: 0,
 					perc_desconto_compra: 0,
 					perc_margem_aplicada: 0,
-					id_status_procedimento : 1
+					id_status_procedimento : 1,
+					id_especialidade_procedimento : ng.id_especialidade_procedimento
 				};
 			 	var post = {
 			 		produtos : [item],
@@ -661,7 +668,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
     ng.itens_venda = [] ;
     ng.getItensVenda = function(){
     	ng.itens_venda = null ;
-   		aj.get(baseUrlApi()+"clinica/paciente/"+ ng.atendimento_selecionado.id_paciente +"/procedimentos?cplSql=( (ta.id_atendimento_origem IS NULL) OR (ta.id_atendimento_origem IS NOT NULL AND tiv.id_procedimento_principal IS NOT NULL ) )")
+   		aj.get(baseUrlApi()+"clinica/paciente/"+ ng.atendimento_selecionado.id_paciente +"/procedimentos?cplSql=( (ta.id_atendimento_origem IS NULL) OR (ta.id_atendimento_origem IS NOT NULL AND tiv.id_procedimento_principal IS NOT NULL )) AND tiv.id_especialidade_procedimento = "+(!empty(ng.id_especialidade_procedimento)? "'"+ng.id_especialidade_procedimento+"'"  : 'NULL' )+" ")
 			.success(function(data, status, headers, config) {
 				ng.itens_venda = data ;
 			})
@@ -1377,6 +1384,12 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 	}
 	ng.modo_venda = 'est';
 	ng.salvarPagamento = function(){
+
+	if(empty(ng.id_especialidade_procedimento)){
+		$dialogs.notify('Atenção!','<strong>Selecione uma especialidade antes de executar esta ação.</strong>');
+		return ;
+	}
+
 	var btn = $('#btn-pagamneto');
 	btn.button('loading');
     var pagamentos   = [] ;
@@ -1414,6 +1427,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
                 next_date            = somadias(next_date,30);
                 item.id_venda        = ng.atendimento_selecionado.id_venda;
                 item.id_item_venda   = ng.id_item_venda;
+                item.id_especialidade_procedimento = ng.id_especialidade_procedimento;
                 itens_prc.push(item);
             }
 
@@ -1429,6 +1443,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
                 v.valor_pagamento       = v_cheque.valor_pagamento ;
                 v.id_venda        = ng.atendimento_selecionado.id_venda;
                 v.id_item_venda   = ng.id_item_venda;
+                v.id_especialidade_procedimento = ng.id_especialidade_procedimento ;
                 v_push = angular.copy(v);
                 pagamentos.push(v_push);
             });
@@ -1442,10 +1457,12 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
                 v.status_pagamento      = v_boleto.status_pagamento ;
                 v.id_venda        = ng.atendimento_selecionado.id_venda;
                 v.id_item_venda   = ng.id_item_venda;
+                 v.id_especialidade_procedimento = ng.id_especialidade_procedimento ;
                 v_push = angular.copy(v);
                 pagamentos.push(v_push);
             });
         }else{
+        	v.id_especialidade_procedimento = ng.id_especialidade_procedimento ;
             pagamentos.push(v);
         }
     });
@@ -1534,7 +1551,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 	ng.pagamentosCliente = {} ;
 	ng.loadPagamentosPaciente = function(){
 		ng.pagamentosCliente.pagamentos = null ;
-		 aj.get(baseUrlApi()+"pagamentos/cliente/"+ng.atendimento_selecionado.id_paciente)
+		 aj.get(baseUrlApi()+"pagamentos/cliente/"+ng.atendimento_selecionado.id_paciente+"?pag->id_especialidade_procedimento="+ng.id_especialidade_procedimento)
             .success(function(data, status, headers, config) {
 				ng.pagamentosCliente.pagamentos = data.pagamentos ;
 				ng.pagamentosCliente.total = 0 ;
@@ -1830,7 +1847,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
     	limit  = limit  == null ? 10 : limit;
 		ng.procedimentos = [];
 		if(tipo=="principal"){
-			var query_string = "clinica/paciente/"+ng.atendimento_selecionado.id_paciente+"/procedimentos/"+offset+"/"+limit+"?tiv->id_procedimento_principal[exp]=IS NULL&tav->id_item_venda[exp]= IS NULL&tiv->id_status_procedimento[exp]= IN(1,2)";
+			var query_string = "clinica/paciente/"+ng.atendimento_selecionado.id_paciente+"/procedimentos/"+offset+"/"+limit+"?tiv->id_procedimento_principal[exp]=IS NULL&tav->id_item_venda[exp]= IS NULL&tiv->id_status_procedimento[exp]= IN(1,2) AND tiv.id_especialidade_procedimento = "+(!empty(ng.id_especialidade_procedimento)? "'"+ng.id_especialidade_procedimento+"'"  : 'NULL' )+" ";
 			if(ng.busca.procedimentos != ""){
 				query_string += "&"+$.param({'tp->dsc_procedimento':{exp:"like'%"+ng.busca.procedimentos+"%'"}});
 			}
@@ -1892,6 +1909,12 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 	}
 
 	ng.salvarAtividadeProcedimento = function(){
+
+		if(empty(ng.id_especialidade_procedimento)){
+			$dialogs.notify('Atenção!','<strong>Selecione uma especialidade antes de executar esta ação</strong>');
+			return ;
+		}
+
 		var btn = $('#salvar-atividade-procedimento');
 		btn.button('loading');
 		var error = 0 ;
@@ -2048,6 +2071,22 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 		});
 	}
 
+	ng.loadEspecialidades= function(offset,limit) {
+		aj.get(baseUrlApi()+"clinica/procedimento/especialidades/?id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.especialidades = [{id:null,dsc_especialidade:'Selecione'}];
+				ng.especialidades = ng.especialidades.concat(data);
+				$timeout(function() { $("select").trigger("chosen:updated"); }, 300);
+			})
+			.error(function(data, status, headers, config) {
+				ng.especialidades = [{id:null,dsc_especialidade:'Selecione'}];
+			});
+	}
+
+	ng.empty = function(vlr){
+		return empty(vlr);
+	}
+
 	//$scope.openModal();
 	ng.abrirCaixa();
 	ng.getListaAtendimento();
@@ -2055,6 +2094,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 	ng.loadBancos();
 	ng.loadContas();
 	ng.loadEstados();
+	ng.loadEspecialidades();
 
     var procedimentos_auto_complete = [] ;
     $( "#ui-auto-complete-procedimento" ).autocomplete({
@@ -2229,7 +2269,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
     var atividade_procedimentos_principal_auto_complete = [] ;
     $( "#ui-auto-complete-procedimento-principal-atividade" ).autocomplete({
       source: function (request, response) {
-      	var query_string = "clinica/paciente/"+ng.atendimento_selecionado.id_paciente+"/procedimentos?tiv->id_procedimento_principal[exp]=IS NULL&tav->id_item_venda[exp]= IS NULL&tiv->id_status_procedimento[exp]= IN(1,2)";
+      	var query_string = "clinica/paciente/"+ng.atendimento_selecionado.id_paciente+"/procedimentos?tiv->id_procedimento_principal[exp]=IS NULL&tav->id_item_venda[exp]= IS NULL&tiv->id_status_procedimento[exp]= IN(1,2) AND tiv.id_especialidade_procedimento = "+(!empty(ng.id_especialidade_procedimento)? "'"+ng.id_especialidade_procedimento+"'"  : 'NULL' )+" ";
       	query_string += "&"+$.param({'(tp->dsc_procedimento':{exp:"like '%"+request.term.replace(/^\s+|\s+$/g,"")+"%' OR tp.cod_procedimento='"+request.term.replace(/^\s+|\s+$/g,"")+"')"}});
       	aj.get(baseUrlApi()+query_string)
 			.success(function(data, status, headers, config) {

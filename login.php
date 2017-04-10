@@ -73,13 +73,11 @@
 							</label>
 							Remember me
 						</div>
-
 						<div class="seperator"></div>
 						<div class="form-group">
 							Forgot your password?<br/>
 							Click <a href="#">here</a> to reset your password
 						</div>
-
 						<hr/>
 						-->
 						<div class="pull-right">
