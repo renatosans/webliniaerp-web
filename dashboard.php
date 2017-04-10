@@ -230,6 +230,18 @@
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
+												<label class="control-label">Opções</label>
+												<select class="form-control"
+												    option="opcoes_filtro_pesquisa"
+												    ng-model="opcao_selecionada"
+												    ng-options="option as option.label for option in opcoes_filtro_pesquisa"
+												    ng-change="calcula_periodo_filtro()">
+												</select>
+											</div>
+										</div>
+
+										<div class="col-lg-2">
+											<div class="form-group">
 												<label class="control-label">Inicial</label>
 												<div class="input-group" id="dtaInicialDiv">
 													<input type="text" id="dtaInicial" class="datepicker form-control" name="dta_inicial" style="text-align: center;">
@@ -858,6 +870,9 @@
 
 	 <script src="js/fileinput/fileinput.js" type="text/javascript"></script>
      <script src="js/fileinput/locales/pt-BR.js" type="text/javascript"></script>
+
+     <!-- Moment -->
+  	<script src="js/moment/moment.min.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
