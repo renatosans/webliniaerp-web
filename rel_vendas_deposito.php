@@ -143,7 +143,7 @@
 						</span>
 
 						<div class="pull-left m-left-sm">
-							<h3 class="m-bottom-xs m-top-xs">Relatório de Vendas por Vendedor</h3>
+							<h3 class="m-bottom-xs m-top-xs">Relatório de Vendas por Depósito</h3>
 							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
