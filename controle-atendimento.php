@@ -379,6 +379,7 @@
 						    ng-model="id_especialidade_procedimento"
 						    allow-single-deselect="true"
 						    ng-options="item.id as item.dsc_especialidade for item in especialidades"
+						    ng-change="getItensVenda();loadPagamentosPaciente(); showButtonSalvar = false;"
 						    data-placeholder="Especialidade">
 							</select>
 						</div>
