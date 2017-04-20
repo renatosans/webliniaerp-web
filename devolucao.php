@@ -382,6 +382,12 @@
 								</table>
 							</div>
 						</div>
+						<div class="col-sm-">
+							<div class="form-group">
+								<label>Motivo da Devolução:</label>
+								<textarea class="form-control" rows="3" ng-model="observacao"></textarea>
+							</div>
+						</div>
 					</div>
 					<div class="panel-footer clearfix" ng-if="view.cadastar_cliente == false">
 						<div style="text-align:center">
@@ -391,6 +397,7 @@
 							</button>
 						</div>
 					</div>
+
 				</div><!-- /panel -->
 
 				<div class="panel panel-default">
@@ -574,6 +581,7 @@
 									<p style="margin: 0 0 3px;"><strong>Cliente:</strong> #{{  viewDetalhes.item.id_cliente }} <strong>-</strong> {{ viewDetalhes.item.nome_cliente }}</p>
 									<p style="margin: 0 0 3px;"><strong>ID Venda:</strong> {{ viewDetalhes.item.id_venda }}</strong></p>
 									<p style="margin: 0 0 3px;"><strong>Data Devolução:</strong> {{ viewDetalhes.item.dta_devolucao | dateFormat }}</strong></p>
+									<p style="margin: 0 0 3px;"><strong>Motivo da Devolução:</strong> {{viewDetalhes.item.obs_devolucao}}</strong></p>
 									<br/>
 								</div>
 								<table class="table table-bordered table-condensed table-striped table-hover">
@@ -606,6 +614,9 @@
 										<tr>
 											<td colspan="7" style="text-align:right">Total</td>
 											<td style="text-align:right">R$ {{ viewDetalhes.item.vlr_disponivel | numberFormat:2:',':'' }}</td>
+										</tr>
+										<tr>
+											
 										</tr>
 									</tbody>
 								</table>

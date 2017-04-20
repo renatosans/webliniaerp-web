@@ -33,7 +33,7 @@
 	<link rel="stylesheet" type="text/css" href="css/custom.css">
   </head>
 
-  <body class="overflow-hidden" ng-controller="RelatorioTotalVendasVendedorDiarioController" ng-cloak>
+  <body class="overflow-hidden" ng-controller="RelatorioTotalVendasDepositoController" ng-cloak>
 	<!-- Overlay Div -->
 	<!-- <div id="overlay" class="transparent"></div>
 
@@ -143,7 +143,7 @@
 						</span>
 
 						<div class="pull-left m-left-sm">
-							<h3 class="m-bottom-xs m-top-xs">Relatório de Vendas por Vendedor Diário</h3>
+							<h3 class="m-bottom-xs m-top-xs">Relatório de Vendas por Depósito</h3>
 							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
@@ -186,11 +186,11 @@
 
 								<div class="col-sm-4">
 									<div class="form-group">
-										<label class="control-label">Vendedor</label>
+										<label class="control-label">Deposito</label>
 										<div class="input-group">
-											<input ng-click="selCliente()" type="text" class="form-control" ng-model="vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
+											<input ng-click="modalDepositos()" type="text" class="form-control" ng-model="deposito.nme_deposito" readonly="readonly" style="cursor: pointer;">
 											<span class="input-group-btn">
-												<button ng-click="selCliente()" ng-click="selCliente(0,10)" type="button" class="btn"><i class="fa fa-users"></i></button>
+												<button ng-click="modalDepositos()" type="button" class="btn"><i class="fa fa-sitemap"></i></button>
 											</span>
 										</div>
 									</div>
@@ -226,19 +226,17 @@
 				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
 					<thead>
 						<tr>
-							<th></th>
 							<th width="100" class="text-center">Data Venda</th>
-							<th width="200">Vendedor</th>
+							<th width="200">Depósito</th>
+							<th width="100" class="text-center">ID Produto</th>
 							<th width="200">Produto</th>
 							<th width="100" class="text-center">Fabricante</th>
+							<th width="100" class="text-center">Categoria</th>
 							<th width="100" class="text-center">Tamanho</th>
 							<th width="100" class="text-center">Cor</th>
-							<th width="100" class="text-center">R$ Custo</th>
-							<th width="100" class="text-center">R$ Real</th>
-							<th width="100" class="text-center">Desc. %</th>
-							<th width="100" class="text-center">Vlr. c/ Desc.</th>
-							<th width="100" class="text-center">Qtd.</th>
-							<th width="100" class="text-center">R$ Subtotal</th>
+							<th width="100" class="text-center">Qtd. Vendido</th>
+							<th width="100" class="text-center">R$ Méd. Venda</th>
+							<th width="100" class="text-center">R$ Total Vendido</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -253,18 +251,16 @@
 							</td>
 						</tr>
 						<tr ng-repeat="item in vendas">
-							<td class="text-center">{{ item.id }}</td>
 							<td class="text-center">{{ item.dta_venda }}</td>
-							<td>{{ item.nme_vendedor }}</td>
-							<td class="text-center">{{ item.nme_produto }}</td>
+							<td>{{ item.nme_deposito }}</td>
+							<td class="text-center">{{ item.cod_produto }}</td>
+							<td>{{ item.nme_produto }}</td>
 							<td class="text-center">{{ item.nme_fabricante }}</td>
+							<td class="text-center">{{ item.nme_categoria }}</td>
 							<td class="text-center">{{ item.nme_tamanho }}</td>
 							<td class="text-center">{{ item.nme_cor }}</td>
-							<td class="text-center">R$ {{item.vlr_custo | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">R$ {{item.vlr_real_item | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">{{item.num_percentual_desconto | numberFormat:2:',':'.'}} %</td>
-							<td class="text-right">R$ {{item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
-							<td class="text-center">{{ item.qtd }}</td>
+							<td class="text-center">{{ item.qtd_vendido }}</td>
+							<td class="text-center">R$ {{item.vlr_vendido | numberFormat:2:',':'.'}}</td>
 							<td class="text-center">R$ {{item.vlr_subtotal_item | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
@@ -294,69 +290,75 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-	<!-- /Modal Clientes-->
-		<div class="modal fade" id="list_clientes" style="display:none">
-  			<div class="modal-dialog">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Vendedores</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
-						<br />
-						<div class="row">
-							<div class="col-sm-12">
-								<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(vendedores.length != 0)">
-										<tr>
-											<th >Nome</th>
-											<th >Perfil</th>
-											<th colspan="2">Selecionar</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(vendedores.length == 0)">
-											<td colspan="2">Não há vendedores cadastrados</td>
-										</tr>
-										<tr ng-repeat="item in vendedores">
-											<td>{{ item.nome }}</td>
-											<td>{{ item.nome_perfil }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addCliente(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
+	<!-- /Modal Depósitos-->
+	<div class="modal fade" id="modal-depositos" style="display:none">
+		<div class="modal-dialog">
+			<div class="modal-content">
+  				<div class="modal-header">
+    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4>Depositos</span></h4>
+  				</div>
+			    <div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group">
+					            <input ng-model="busca.depositos"  ng-keyup="loadDepositos(0,10)" ng-enter="loadDepositos(0,10)" type="text" class="form-control input-sm">
+					            <div class="input-group-btn">
+					            	<button ng-click="loadDepositos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+					            		<i class="fa fa-search"></i> Buscar
+					            	</button>
+					            </div> <!-- /input-group-btn -->
+					        </div> <!-- /input-group -->
+						</div><!-- /.col -->
+					</div>
 
-						<div class="row">
-				    		<div class="col-sm-12">
-				    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_clientes.length > 1">
-									<li ng-repeat="item in paginacao_clientes" ng-class="{'active': item.current}">
-										<a href="" h ng-click="loadCliente(item.offset,item.limit)">{{ item.index }}</a>
-									</li>
-								</ul>
-				    		</div>
+					<br/>
+
+			   		<div class="row">
+			   			<div class="col-sm-12">
+			   				<div class="alert" id="alert-modal-deposito" style="display:none" ></div>
+			   				<table class="table table-bordered table-condensed table-striped table-hover">
+								<thead ng-show="(depositos.length != 0)">
+									<tr>
+										<th class="text-center">#</th>
+										<th>Nome</th>
+										<th width="50"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-show="(depositos == null)">
+										<td colspan="4" class="text-center"><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
+									</tr>
+									<tr ng-show="(depositos == 0)">
+										<td colspan="4" class="text-center">Nenhum Deposito encontrado</td>
+									</tr>
+									<tr ng-repeat="item in depositos">
+										<td class="text-center">{{ item.id }}</td>
+										<td>{{ item.nme_deposito }}</td>
+										<td align="center">
+											<button  type="button" class="btn btn-xs btn-success" ng-click="addDeposito(item)">
+												<i class="fa fa-check-square-o"></i> Selecionar
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+			   			</div>
+			   		</div>
+
+			   		<div class="row">
+				    	<div class="col-sm-12">
+				    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="depositos.paginacao.length > 1">
+								<li ng-repeat="item in depositos.paginacao" ng-class="{'active': item.current}">
+									<a href="" h ng-click="loadDepositos(item.offset,item.limit)">{{ item.index }}</a>
+								</li>
+							</ul>
 				    	</div>
-				    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
+			    	</div>
+			    </div>
+		  	</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
 		<!-- /.modal -->
 		<div class="modal fade" id="list_produtos" style="display:none">
 			<div class="modal-dialog">
@@ -488,7 +490,7 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/rel-diario-vendedor-controller.js"></script>
+	<script src="js/angular-controller/rel-vendas-deposito-controller.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {

@@ -758,7 +758,7 @@
 									<th>Usuário</th>
 									<th>Empreendimento</th>
 									<th>Status</th>
-									<th width="80" style="text-align: center;">Ações</th>
+									<th width="100" style="text-align: center;">Ações</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -796,6 +796,9 @@
 
 										<button type="button"  ng-click="detalhesPedido(item)" title="Detalhes" class="btn btn-xs btn-primary" data-toggle="tooltip">
 											<i class="fa fa-tasks"></i>
+										</button>
+										<button type="button"  ng-click="deletarTransferencia(item)" ng-if="!(item.dta_transferencia)" title="Excluir" class="btn btn-xs btn-danger" data-toggle="tooltip">
+											<i class="fa fa-trash-o"></i>
 										</button>
 									</td>
 								</tr>

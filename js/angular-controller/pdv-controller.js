@@ -2973,8 +2973,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		btn.button('loading');
 		//ng.new_cliente.id_perfil = 6 ;
 		var new_cliente = angular.copy(ng.new_cliente);
-		new_cliente.id_estado = ng.empreendimento.cod_estado;
-		new_cliente.id_cidade = ng.empreendimento.cod_cidade;
 		if(!empty(new_cliente.dta_nacimento))
 			new_cliente.dta_nacimento = moment(new_cliente.dta_nacimento,'DD-MM-YYYY').format('YYYY-MM-DD');
 		aj.post(baseUrlApi()+"cliente/cadastro/rapido",new_cliente)
@@ -3923,6 +3921,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	}
 
+	ng.loadEmpreendimento = function() {
+		aj.get(baseUrlApi() + "empreendimento/" + ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.empreendimento = data;
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.empreendimento = {};
+			});
+	}
 
 	ng.inserirProdutoLote = function(produto){
 		var error = 0 ;
@@ -4003,8 +4011,44 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	$('#list_produtos').on('shown.bs.modal', function () {
 		$('#foco').focus()
-	})
+	});
 
+	ng.loadEstados = function () {
+		ng.estados = [];
+
+		aj.get(baseUrlApi()+"estados")
+		.success(function(data, status, headers, config) {
+			ng.estados = data;
+		})
+		.error(function(data, status, headers, config) {
+
+		});
+	}
+
+	ng.loadCidadesByEstado = function (nome_cidade) {
+		ng.cidades = [];
+		var id_cidade = angular.copy(ng.new_cliente.id_cidade);
+		aj.get(baseUrlApi()+"cidades/"+ng.new_cliente.id_estado)
+		.success(function(data, status, headers, config) {
+			ng.new_cliente.id_cidade = angular.copy(id_cidade);
+			console.log(ng.new_cliente.id_cidade);
+			ng.cidades = data;
+			setTimeout(function(){$("select").trigger("chosen:updated");},300);
+			if(nome_cidade != null){
+				$.each(ng.cidades,function(i,x){
+					if(removerAcentos(nome_cidade) == removerAcentos(x.nome)){
+						ng.new_cliente.id_cidade = angular.copy(x.id);
+						return false ;
+					}
+				});
+			}
+		})
+		.error(function(data, status, headers, config) {
+
+		});
+	}
+
+	ng.loadEstados();
 	ng.loadEmpreendimento();
 	ng.existsCookie();
 	ng.loadConfig();

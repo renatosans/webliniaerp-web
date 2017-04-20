@@ -174,7 +174,7 @@
 										<div class="col-sm-3">
 											<div class="form-group">
 												<label class="control-label">Fabricante</label>
-												<select class="form-control input-sm" ng-model="fabricante"  ng-options="i.nome_fabricante for i in fabricantes" ng-enter="aplicarFiltro()"></select>
+												<select class="form-control input-sm" ng-model="fabricante" ng-options="i.nome_fabricante for i in fabricantes" ng-enter="aplicarFiltro()"></select>
 											</div>
 										</div>
 

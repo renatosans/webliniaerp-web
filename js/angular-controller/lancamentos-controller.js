@@ -142,7 +142,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		var dataInicial = $("#dtaInicial").val();
 		var dataFinal   = $("#dtaFinal").val();
-		var queryString = "?(id_tipo_conta[exp]= <> 5 OR (id_tipo_conta =5 AND (flg_caixa_fechado = 0 OR flg_caixa_fechado IS NULL ) )  AND flg_tipo_lancamento = 'C' ) AND (flg_transferencia_conta = 0 OR flg_transferencia_conta IS NULL)&id_empreendimento="+ng.userLogged.id_empreendimento ;
+		var queryString = "?(id_tipo_conta[exp]= <> 5 OR (id_tipo_conta =5 AND (flg_caixa_fechado = 0 OR flg_caixa_fechado IS NULL ) )  AND flg_tipo_lancamento = 'C' ) AND (flg_transferencia_conta = 0 OR flg_transferencia_conta IS NULL)&flg_excluido[exp]=<>1&id_empreendimento="+ng.userLogged.id_empreendimento ;
 
 		if(dataInicial != "" &&  dataFinal != "" ){
 			var data_arr = dataInicial.split('/');

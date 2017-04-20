@@ -150,11 +150,13 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 		ng.busca.id_produto   = item.id;
 		ng.busca.nome_produto = item.nome;
     	$('#list_produtos').modal('hide');
-	}	
+	}
+
 	ng.modalDepositos = function(){
 		$('#modal-depositos').modal('show');
 		ng.loadDepositos(0,10);
 	}
+	
 	ng.busca_vazia = {} ;
 	ng.loadDepositos = function(offset, limit) {
 		offset = offset == null ? 0  : offset;
