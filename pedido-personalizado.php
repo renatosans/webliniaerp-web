@@ -1268,7 +1268,7 @@
                                 <table class="table table-bordered table-condensed table-striped table-hover">
                                     <thead ng-show="(modeloEstampas.itens.length != 0)">
                                         <tr>
-                                            <th>#</th>
+                                            <th width="100">#</th>
                                             <th>Nome</th>
                                             <th width="80"></th>
                                         </tr>
@@ -1304,8 +1304,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="input-group pull-right">
-                                     <ul class="pagination pagination-xs m-top-none" ng-show="modeloEstampa.paginacao.length > 1">
-                                        <li ng-repeat="item in modeloEstampa.paginacao" ng-class="{'active': item.current}">
+                                     <ul class="pagination pagination-xs m-top-none" ng-show="modeloEstampas.paginacao.length > 1">
+                                        <li ng-repeat="item in modeloEstampas.paginacao" ng-class="{'active': item.current}">
                                             <a href="" ng-click="loadModeloEstampas(item.offset,item.limit)">{{ item.index }}</a>
                                         </li>
                                     </ul>

@@ -525,6 +525,7 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 						nmeCorSabor: 		(!empty(data.ordem_producao.sabor) 				? data.ordem_producao.sabor 			: ""),
 						nmeTamanho: 		(!empty(data.ordem_producao.tamanho) 			? data.ordem_producao.tamanho 			: ""),
 						nmeFabricante: 		(!empty(data.ordem_producao.nome_fabricante) 	? data.ordem_producao.nome_fabricante 	: ""),
+						dscObservacoes: 	(!empty(ng.produto.observacoes) 				? ng.produto.observacoes 				: ""),
 						qtdItem: 			(!empty(data.ordem_producao.qtd) 				? data.ordem_producao.qtd 				: ""),
 						nmePrinterModel: 	(!empty(ng.configuracao.printer_model_op) 	    ? ng.configuracao.printer_model_op 		: "")
 					})

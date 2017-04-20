@@ -1731,7 +1731,7 @@
 	<!-- fixedHeadTable -->
 	<script type="text/javascript" src="js/fixedHeadTable/fixedHeadTable.js"></script>
 
-
+	<script src='js/agenda/lib/moment.min.js'></script>
 
 
 	<!-- AngularJS -->
