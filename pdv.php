@@ -79,6 +79,14 @@
   </head>
 
   <body ng-click="closeAutoComplete($event)" class="overflow-hidden" ng-controller="PDVController" ng-cloak>
+	<script>
+		document.addEventListener('keydown', function(event) {
+			if(event.keyCode == 13 || event.keyCode == 17 || event.keyCode == 74) {
+				event.preventDefault();
+			}
+		});
+	</script>
+
   	<!-- Overlay Div -->
 	<div id="overlay" class="transparent"></div>
 
@@ -800,7 +808,7 @@
 											<div class="form-group">
 												<label class="control-label"><i class="fa fa-barcode"></i> Pesquisa por Código Barras</label>
 												<div class="input-group">
-													<input id="buscaCodigo" type="text" class="form-control input-lg" ng-model="busca.codigo" onkeydown="bloquearCtrlJ(event)" sync-focus-with="!busca.ok" ng-enter="findProductByBarCode();">
+													<input id="buscaCodigo" type="text" class="form-control input-lg" ng-model="busca.codigo" sync-focus-with="!busca.ok" ng-enter="findProductByBarCode();">
 													<span class="input-group-btn">
 														<button type="button" class="btn btn-lg btn-primary" ng-click="findProductByBarCode();"><i class="fa fa-search"></i></button>
 													</span>

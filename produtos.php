@@ -88,7 +88,7 @@
 	</style>
   </head>
 
-  <body class="overflow-hidden" ng-controller="ProdutosController" ng-cloak>
+  <body class="overflow-hidden" ng-controller="ProdutosController" ng-cloak>w
   	<!-- Overlay Div -->
 	<div id="overlay" class="transparent"></div>
 
@@ -227,7 +227,6 @@
 													<div class="form-group" id="codigo_barra">
 														<label class="control-label"><i class="fa fa-barcode"></i> Código de Barras</label>
 														<input type="text" class="form-control input-sm"
-															onkeydown="bloquearCtrlJ(event)"
 															ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" 
 															ng-model="produto.codigo_barra" >
 													</div>
