@@ -190,6 +190,31 @@ app.service('CaixaService', function($http) {
 	}
 });
 
+app.service('CozinhaService', function($http){
+	this.getCozinhasAtivas = function(cod_empreendimento) {
+		var caixas;
+
+		$.ajax({
+			url: baseUrlApi() +"cozinhas?cod_empreendimento="+cod_empreendimento,
+			async: false,
+			success: function(data){
+				$.each(data.cozinhas, function(i, cozinha){
+					if(empty(caixas))
+						caixas = [];
+					
+					if(!empty(cozinha.id_ws_dsk))
+						caixas.push(cozinha);
+				});
+			},
+			error: function(error){
+				console.log(error);
+			}
+		});
+
+		return caixas;
+	}
+});
+
 app.service('AsyncAjaxSrvc', function() {
 	this.getListOfItens = function(route) {
 		var list = [];

@@ -303,10 +303,17 @@
 											</div>
 										</div>
 
-										<div class="col-sm-3">
+										<div class="col-sm-2">
 											<div class="form-group">
 												<label class="control-label">Hora de Saída</label>
-												<input ng-disabled="processando_autorizacao || autorizado" id="InputhrsSaida" type="time" class="form-control input-sm" style="width: 50%;">
+												<input ng-disabled="processando_autorizacao || autorizado" id="InputhrsSaida" type="time" class="form-control input-sm">
+											</div>
+										</div>
+
+										<div class="col-sm-6" ng-if="NF.dados_emissao.finalidade_emissao == '4'">
+											<div class="form-group">
+												<label class="control-label">Chave de Acesso (NF-e/NFC-e Referência)</label> 
+												<input type="text" class="form-control input-sm" ng-model="NF.dados_emissao.chave_nfe_referenciada">
 											</div>
 										</div>
 									</div>
@@ -665,7 +672,7 @@
 													<th class="text-middle text-center" rowspan="2">CST/CSOSN</th>
 													<th class="text-middle text-center" rowspan="2">CFOP</th>
 													<th class="text-middle text-center" rowspan="2">Un.</th> 
-													<th class="text-middle text-center" rowspan="2">Qtd.</th> 
+													<th class="text-middle text-center" rowspan="2" width="100">Qtd.</th> 
 													<th class="text-middle text-center" rowspan="2" width="100">Valor Unit.</th>
 													<th class="text-middle text-center" rowspan="2" width="100">Valor Total</th>
 													<th class="text-middle text-center" rowspan="2" width="100">B.Calc. ICMS</th> 
@@ -708,8 +715,12 @@
 														{{ item.prod.qCom }}
 													</td>
 													<td class="text-middle text-right">
-														<span>R$ {{ item.prod.vUnCom | numberFormat : 2 : ',' : '.' }}</span>
-														<input type="text" class="form-control input-sm" ng-model="item.prod.vUnCom" thousands-formatter precision='{{ configuracoes.qtd_casas_decimais }}'>
+														<span ng-if="autorizado">R$ {{ item.prod.vUnCom | numberFormat : 2 : ',' : '.' }}</span>
+														<input type="text" class="form-control input-sm" 
+															thousands-formatter precision='{{ configuracoes.qtd_casas_decimais }}'
+															ng-if="!autorizado" 
+															ng-model="item.prod.vUnCom"
+															ng-change="recalcularValorTotal(item)">
 													</td>
 													<td class="text-middle text-right">
 														R$ {{ item.prod.vProd | numberFormat : 2 : ',' : '.' }}

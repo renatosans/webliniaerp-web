@@ -220,6 +220,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.loadVendasTop10Clientes(date_first, date_last);
 			ng.loadVendasTop10Fabricantes(date_first, date_last);
 			ng.loadVendasTop10Produtos(date_first, date_last);
+			ng.loadSaldoDevedorCliente();
 		}
 
 		ng.limparFiltros = function() {

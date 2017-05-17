@@ -1,7 +1,10 @@
-app.controller('ControleMesasController', function($scope, $http, $window, UserService,ConfigService,$dialogs,FuncionalidadeService) {
+app.controller('ControleMesasController', function(
+	$scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService, CozinhaService
+) {
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
+	ng.cozinhasDisponiveis = CozinhaService.getCozinhasAtivas(ng.userLogged.id_empreendimento);
 	ng.configuracao  = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.layout = { 
 		mesas:true,
@@ -23,12 +26,12 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 	ng.buscaTipoProduto = {} ;
 	ng.categoriasProduto = [];
 	ng.loadingMoreProdutos = false ;
-	ng.produtos = {itens:[],paginacao:[]};
-	ng.produto = {} ;
-	ng.EditProduto = false ;
-	ng.editComanda = false ;
-	ng.new_cliente = {id_empreendimento:ng.userLogged.id_empreendimento,id_perfil:6};
-	ng.id_ws_dsk     =  ng.configuracao.id_ws_dsk_op ;
+	ng.produtos 	= {itens:[],paginacao:[]};
+	ng.produto 		= {};
+	ng.EditProduto 	= false;
+	ng.editComanda 	= false;
+	ng.new_cliente 	= { id_empreendimento: ng.userLogged.id_empreendimento, id_perfil: 6 };
+	ng.id_ws_dsk 	= ng.configuracao.id_ws_dsk_op;
 	ng.status_websocket = 0 ;
 	var TimeWaitingResponseTestConection = 10000;
 	var timeOutSendTestConection = null ;
@@ -355,6 +358,19 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 	}
 
 	ng.incluirItemComandaModal = function(item,event){
+		dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+
+		dlg.result.then(
+			function(btn){
+				incluirItemComandaModalAction(item, true);
+			},
+			function(){
+				incluirItemComandaModalAction(item, false);
+			}
+		);
+	}
+
+	function incluirItemComandaModalAction(item, flg_delivery){
 		var produto = angular.copy(item);
 		produto.qtd = empty(produto.qtd) ? 1 : produto.qtd ; 
 		var btn = $(event.target);
@@ -379,42 +395,58 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 			id_usuario : ng.userLogged.id,
 			dta_create : moment().format('YYYY-MM-DD HH:mm:ss'),
 			dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
-			id_mesa : ng.mesaSelecionada.mesa.id_mesa 
+			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
+			flg_delivery: (flg_delivery) ? 1 : 0
 		}
 
 		aj.post(baseUrlApi()+"item_comanda/add",post)
 		.success(function(data, status, headers, config) {
 			if(Number(produto.flg_produto_composto) == 1){
 				data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
-				var msg = {
-					from:ng.id_ws_web,
-					to:ng.id_ws_dsk,
-					type:'cop_print',
-					message : JSON.stringify({ 
-						numOrdemProducao: 	(!empty(data.ordem_producao.id_ordem_producao) 	? data.ordem_producao.id_ordem_producao : ""),
-						numMesa: 			(!empty(data.ordem_producao.dsc_mesa) 			? data.ordem_producao.dsc_mesa 			: ""),
-						numComanda: 		(!empty(data.ordem_producao.id_venda) 			? data.ordem_producao.id_venda 			: ""),
-						nmeSolicitante: 	(!empty(data.ordem_producao.nome_usuario) 		? data.ordem_producao.nome_usuario 		: ""),
-						nmeCliente: 		(!empty(data.ordem_producao.nome_cliente) 		? data.ordem_producao.nome_cliente 		: ""),
-						nmeProduto: 		(!empty(data.ordem_producao.nome_produto) 		? data.ordem_producao.nome_produto 		: ""),
-						nmeCorSabor: 		(!empty(data.ordem_producao.sabor) 				? data.ordem_producao.sabor 			: ""),
-						nmeTamanho: 		(!empty(data.ordem_producao.tamanho) 			? data.ordem_producao.tamanho 			: ""),
-						nmeFabricante: 		(!empty(data.ordem_producao.nome_fabricante) 	? data.ordem_producao.nome_fabricante 	: ""),
-						qtdItem: 			(!empty(data.ordem_producao.qtd) 				? data.ordem_producao.qtd 				: ""),
-						nmePrinterModel: 	(!empty(ng.configuracao.printer_model_op) 	    ? ng.configuracao.printer_model_op 		: "")
-					})
+				
+				if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
+					$.each(ng.cozinhasDisponiveis, function(i, cozinha){
+						var msg = {
+							from: ng.id_ws_web,
+							to: cozinha.id_ws_dsk,
+							type:'cop_print',
+							message : JSON.stringify({ 
+								numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
+								numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
+								numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
+								nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
+								nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
+								nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
+								nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
+								numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
+								nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
+								nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
+								nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
+								nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
+								nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
+								nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
+								nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
+								codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
+								nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
+								qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
+								nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
+								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0)
+							})
+						}
+
+						ng.sendMessageWebSocket(msg);
+					});
 				}
-				ng.sendMessageWebSocket(msg);
 
 				var msg = {
-						type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-						message : JSON.stringify(data.ordem_producao)
-					}
-					ng.sendMessageWebSocket(msg);
+					type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+					message : JSON.stringify(data.ordem_producao)
+				}
+				ng.sendMessageWebSocket(msg);
 			}
 			var msg = {
-					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-					message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
+				type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+				message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
 			}
 				
 			ng.sendMessageWebSocket(msg);
@@ -483,6 +515,19 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 
 
 	ng.incluirItemComanda = function(event){
+		dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+
+		dlg.result.then(
+			function(btn){
+				incluirItemComandaAction(true);
+			},
+			function(){
+				incluirItemComandaAction(false);
+			}
+		);
+	}
+
+	function incluirItemComandaAction(flg_delivery) {
 		var btn = $(event.target);
 		if(!btn.is(':button')) btn = $(event.target).parent();
 		btn.button('loading');
@@ -504,38 +549,55 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 			flg_produto_composto : ng.produto.flg_produto_composto,
 			dta_create : moment().format('YYYY-MM-DD HH:mm:ss'),
 			dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
-			id_mesa : ng.mesaSelecionada.mesa.id_mesa 
+			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
+			flg_delivery: (flg_delivery) ? 1 : 0
 		}
 
 		aj.post(baseUrlApi()+"item_comanda/add",post)
 		.success(function(data, status, headers, config) {
 			if(Number(ng.produto.flg_produto_composto) == 1){
 				data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
+				
+				if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
+					$.each(ng.cozinhasDisponiveis, function(i, cozinha){
+						var msg = {
+							from:ng.id_ws_web,
+							to: cozinha.id_ws_dsk,
+							type:'cop_print',
+							message : JSON.stringify({ 
+								numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
+								numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
+								numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
+								nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
+								nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
+								nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
+								nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
+								numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
+								nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
+								nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
+								nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
+								nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
+								nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
+								nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
+								nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
+								codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
+								nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
+								dscObservacoes: 		(!empty(ng.produto.observacoes) 						? ng.produto.observacoes 						: ""),
+								qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
+								nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
+								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0)
+							})
+						}
+						ng.sendMessageWebSocket(msg);
+					});
+				}
+				
 				var msg = {
-					from:ng.id_ws_web,
-					to:ng.id_ws_dsk,
-					type:'cop_print',
-					message : JSON.stringify({ 
-						numOrdemProducao: 	(!empty(data.ordem_producao.id_ordem_producao) 	? data.ordem_producao.id_ordem_producao : ""),
-						numMesa: 			(!empty(data.ordem_producao.dsc_mesa) 			? data.ordem_producao.dsc_mesa 			: ""),
-						numComanda: 		(!empty(data.ordem_producao.id_venda) 			? data.ordem_producao.id_venda 			: ""),
-						nmeSolicitante: 	(!empty(data.ordem_producao.nome_usuario) 		? data.ordem_producao.nome_usuario 		: ""),
-						nmeCliente: 		(!empty(data.ordem_producao.nome_cliente) 		? data.ordem_producao.nome_cliente 		: ""),
-						nmeProduto: 		(!empty(data.ordem_producao.nome_produto) 		? data.ordem_producao.nome_produto 		: ""),
-						nmeCorSabor: 		(!empty(data.ordem_producao.sabor) 				? data.ordem_producao.sabor 			: ""),
-						nmeTamanho: 		(!empty(data.ordem_producao.tamanho) 			? data.ordem_producao.tamanho 			: ""),
-						nmeFabricante: 		(!empty(data.ordem_producao.nome_fabricante) 	? data.ordem_producao.nome_fabricante 	: ""),
-						dscObservacoes: 	(!empty(ng.produto.observacoes) 				? ng.produto.observacoes 				: ""),
-						qtdItem: 			(!empty(data.ordem_producao.qtd) 				? data.ordem_producao.qtd 				: ""),
-						nmePrinterModel: 	(!empty(ng.configuracao.printer_model_op) 	    ? ng.configuracao.printer_model_op 		: "")
-					})
+					type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+					message : JSON.stringify(data.ordem_producao)
 				}
 				ng.sendMessageWebSocket(msg);
-				var msg = {
-						type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-						message : JSON.stringify(data.ordem_producao)
-					}
-					ng.sendMessageWebSocket(msg);
+
 			}
 			var msg = {
 					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
@@ -724,7 +786,7 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 					enviaTesteConexao();
 					break;
 				case 'op_finished':
-					aj.get(baseUrlApi()+"mesa/ordem_producao/"+data.message.id_ordem_producao)
+					aj.get(baseUrlApi() +"mesa/ordem_producao/"+ data.message.id_ordem_producao)
 					.success(function(data, status, headers, config) {
 						noty({
 							layout: 'topRight',
@@ -756,7 +818,7 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 				case 'connection_test_response':
 					clearTimeout(timeOutWaitingResponseTestConection);
 					$scope.$apply(function () { ng.status_websocket = 2 ;});
-					ng.id_ws_dsk = data.from ;
+					ng.id_ws_dsk = data.from;
 					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Conexão com App client extabelecida');
 				break;
 			}			
@@ -769,30 +831,25 @@ app.controller('ControleMesasController', function($scope, $http, $window, UserS
 
 	function enviaTesteConexao(){	
 		timeOutSendTestConection = setTimeout(function(){
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Buscando id_ws_dsk ...');
-			aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento+"/id_ws_dsk_op")
-				.success(function(data, status, headers, config) {
-					if(!empty(data.id_ws_dsk_op)){
-						ng.id_ws_dsk = data.id_ws_dsk_op ;
-						var mg = {
-							from:ng.id_ws_web,
-							to:ng.id_ws_dsk,
-							type:'connection_test_request',
-							message:"Teste de conexão com client desktop"
-						};
-						ng.sendMessageWebSocket(mg);
-						 timeOutWaitingResponseTestConection = setTimeout(function() {
-						 	$scope.$apply(function () { ng.status_websocket = 1 ;});
-						 	console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
-						 }, TimeWaitingResponseTestConection);
-					}else
-						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter o id_ws_dsk');
-					enviaTesteConexao();
-				})
-				.error(function(data, status, headers, config) {
-					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter o id_ws_dsk');
-					enviaTesteConexao();
+			if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
+				$.each(ng.cozinhasDisponiveis, function(i, cozinha){
+					var msg = {
+						from: ng.id_ws_web,
+						to: cozinha.id_ws_dsk,
+						type: 'connection_test_request',
+						message: 'Teste de conexão com client desktop'
+					};
+
+					ng.sendMessageWebSocket(msg);
+
+					timeOutWaitingResponseTestConection = setTimeout(function() {
+						$scope.$apply(function () { ng.status_websocket = 1 ;});
+						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+					}, TimeWaitingResponseTestConection);
 				});
+			}
+
+			enviaTesteConexao();
 		},60000);
 	}
 
