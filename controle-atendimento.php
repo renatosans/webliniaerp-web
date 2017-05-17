@@ -353,10 +353,10 @@
 										<button class="btn btn-xs btn-primary" ng-click="abrirFichaPaciente(paciente)" data-toggle="tooltip" title="Abrir Fichar do Paciente">
 											<i class="fa fa-user"></i>
 										</button>
-										<a class="btn btn-xs btn-info" href="ficha-paciente.php?id_paciente={{ paciente.id_paciente }}" 
+					<!--<a class="btn btn-xs btn-info" href="ficha-paciente.php?id_paciente={{ paciente.id_paciente }}" 
 											data-toggle="tooltip" title="Imprimir Ficha do Paciente">
 											<i class="fa fa-file-text-o"></i>
-										</a>
+										</a> -->
 									</td>
 								</tr>
 							</tbody>
@@ -379,7 +379,7 @@
 						    ng-model="id_especialidade_procedimento"
 						    allow-single-deselect="true"
 						    ng-options="item.id as item.dsc_especialidade for item in especialidades"
-						    ng-change="getItensVenda();loadPagamentosPaciente(); showButtonSalvar = false;"
+						    ng-change="getItensVenda();loadPagamentosPaciente();"
 						    data-placeholder="Especialidade">
 							</select>
 						</div>
@@ -1109,7 +1109,7 @@
 
 			    	<div class="modal-footer clearfix no-margin">
 						<div class="pull-left">
-							<a class="btn btn-sm btn-info" href="ficha-paciente.php?id_paciente={{ dados_paciente.id }}">
+							<a ng-disabled="!id_especialidade_procedimento" class="btn btn-sm btn-info" href="ficha-paciente.php?id_paciente={{ dados_paciente.id }}{{ ( id_especialidade_procedimento && ('&id_especialidade='+id_especialidade_procedimento) || '' ) }}">
 								<i class="fa fa-file-text-o"></i> Imprimir Ficha do Paciente
 							</a>
 						</div>

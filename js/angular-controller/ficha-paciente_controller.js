@@ -123,10 +123,11 @@ app.controller('FichaPacienteController', function($scope, $http, $window, $dial
 				ng.vlrTotalPagamentos += Number(item.valor_pagamento);
 		});
 	}
+
 	ng.getDadosPaciente();
 	//ng.getProcedimentosPaciente();
 	$('#loading-relatorio').modal('show');
-	$('#iframe-ficha-paciente').html('<iframe id="iframe-ficha-paciente"  src="'+baseUrlApi()+'relPDF?template=ficha_paciente&dados[id_paciente]='+params.id_paciente+'&dados[id_empreendimento]='+ng.userLogged.id_empreendimento+'&papel=A4-L" frameborder=0 allowTransparency="true"  style=" width: 100%;height: 900px;background: #fff;border: none;overflow: hidden; display:none"></iframe>')
+	$('#iframe-ficha-paciente').html('<iframe id="iframe-ficha-paciente"  src="'+baseUrlApi()+'relPDF?template=ficha_paciente&dados[id_paciente]='+params.id_paciente+'&dados[id_empreendimento]='+ng.userLogged.id_empreendimento+'&dados[id_especialidade]='+params.id_especialidade+'&papel=A4-L" frameborder=0 allowTransparency="true"  style=" width: 100%;height: 900px;background: #fff;border: none;overflow: hidden; display:none"></iframe>')
 	$('#iframe-ficha-paciente iframe').load(function(){
         $(this).show();
        	$('#loading-relatorio').modal('hide');

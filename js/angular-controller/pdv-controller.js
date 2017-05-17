@@ -238,7 +238,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		else
 			ng.imgProduto = 'img/imagem_padrao_produto.gif';
 
-		ng.carrinho.push(produto) ;
+		var index = false ;
+		$.each(ng.carrinho,function(i,v){
+			if(!empty(produto.codigo_barra)){
+				if(v.codigo_barra == produto.codigo_barra){
+					index = i ;
+					return ;
+				}
+			}
+		});
+		if(index !== false){
+			ng.carrinho[index].qtd_total ++ ;	
+			ng.calcSubTotal(ng.carrinho[index]);
+		}else
+			ng.carrinho.push(produto) ;
 
 	}
 

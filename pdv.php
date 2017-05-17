@@ -1638,6 +1638,7 @@
 									<thead ng-show="(produtos.length != 0)">
 										<tr>
 											<th rowspan="2" style="line-height: 46px;" class="text-center">#</th>
+											<th rowspan="2" style="line-height: 46px;" class="text-center">Cod. barra</th>
 											<th rowspan="2" style="line-height: 46px;" class="text-center">Nome</th>
 											<th rowspan="2" style="line-height: 46px;" class="text-center">Fabricante</th>
 											<th rowspan="2" style="line-height: 46px;" class="text-center">Tamanho</th>
@@ -1655,16 +1656,17 @@
 									</thead>
 									<tbody>
 										<tr ng-if="produtos == null">
-											<th class="text-center" colspan="10" style="text-align:center">
+											<th class="text-center" colspan="12" style="text-align:center">
 												<strong>Carregando</strong>
 												<img src="assets/imagens/progresso_venda.gif">
 											</th>
 										</tr>
 										<tr ng-show="(produtos.length == 0)">
-											<td colspan="10">Nenhum produto encontrado</td>
+											<td colspan="11">Nenhum produto encontrado</td>
 										</tr>
 										<tr ng-repeat="item in produtos">
 											<td class="text-center">{{ item.id_produto }}</td>
+											<td class="text-center">{{ item.codigo_barra }}</td>
 											<td>{{ item.nome_produto }}</td>
 											<td class="text-center">{{ item.nome_fabricante }}</td>
 											<td class="text-center">{{ item.peso }}</td>
