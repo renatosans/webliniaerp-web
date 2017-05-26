@@ -191,19 +191,18 @@ app.service('CaixaService', function($http) {
 });
 
 app.service('CozinhaService', function($http){
-	this.getCozinhasAtivas = function(cod_empreendimento) {
-		var caixas;
+	this.cozinhas = null,
+	this.getCozinhasAPI = function(cod_empreendimento) {
+		var cozinhas = null;
 
 		$.ajax({
 			url: baseUrlApi() +"cozinhas?cod_empreendimento="+cod_empreendimento,
 			async: false,
 			success: function(data){
 				$.each(data.cozinhas, function(i, cozinha){
-					if(empty(caixas))
-						caixas = [];
-					
-					if(!empty(cozinha.id_ws_dsk))
-						caixas.push(cozinha);
+					if(empty(cozinhas))
+						cozinhas = [];
+					cozinhas.push(cozinha);
 				});
 			},
 			error: function(error){
@@ -211,7 +210,33 @@ app.service('CozinhaService', function($http){
 			}
 		});
 
-		return caixas;
+		this.cozinhas = cozinhas;
+
+		return this.cozinhas;
+	},
+	this.getAllCozinhas = function(cod_empreendimento) {
+		if(!empty(this.cozinhas))
+			return this.cozinhas;
+		else
+			return this.getCozinhasAPI(cod_empreendimento);
+	},
+	this.getCozinhasAtivas = function(cod_empreendimento) {
+		var cozinhasAtivas = null;
+		
+		if(empty(this.cozinhas))
+			this.getCozinhasAPI(cod_empreendimento);
+
+		if(!empty(this.cozinhas)) {
+			$.each(this.cozinhas, function(i, cozinha){
+				if(empty(cozinhasAtivas))
+					cozinhasAtivas = [];
+
+				if(!empty(cozinha.id_ws_dsk))
+					cozinhasAtivas.push(cozinha);
+			});
+		}
+
+		return cozinhasAtivas;
 	}
 });
 

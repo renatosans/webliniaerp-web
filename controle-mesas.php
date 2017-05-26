@@ -184,8 +184,8 @@
 	    }
 
 	    .panel.middle-frame div.container {
-	      min-height: 180px;
-	      line-height: 180px;
+	      min-height: 200px;
+	      line-height: 200px;
 	      padding-left: 0px !important;
 	      padding-right: 0px !important;
 	    }
@@ -290,8 +290,10 @@
 		<div id="main-container">
 			<div id="breadcrumb">
 				<ul class="breadcrumb">
-					 <li><i class="fa fa-home"></i> <a href="dashboard.php">Home</a></li>
-					 <li class="active"><i class="fa fa-table"></i> Controle de Posições</li>
+					<li><i class="fa fa-home"></i> <a href="dashboard.php">Home</a></li>
+					<li class="active" ng-click="showAvaliableKitchens()">
+						<i class="fa fa-table"></i> Controle de Posições
+					</li>
 				</ul>
 			</div><!-- breadcrumb -->
 
@@ -533,16 +535,17 @@
 					<div ng-show="layout.detComanda">
 						<div class="panel-heading">
 							<h3 class="panel-title clearfix">
-								Comanda #{{ comandaSelecionada.comanda.id }}
+								Comanda <small>#{{ comandaSelecionada.comanda.id }}</small>
 								<div class="pull-right">
 									<button ng-click="changeTela('detMesa')" type="button" class="btn btn-xs btn-primary">
-									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
+									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i></button>
 									<button ng-if="userLogged.flg_dispositivo==1"  type="button" class="btn btn-xs btn-default" ng-click="goChangeCliente()">
 										<i class="fa fa-user"></i>
 										<span class="hidden-xs">Informar Cliente</span>
 									</button>
 									<button ng-if="userLogged.flg_dispositivo==1" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" ng-click="changeTela('escTipoProduto')">
 										<i class="fa fa-plus-circle"></i>
+										Add Produto
 									</button>
 									<button ng-if="userLogged.flg_dispositivo==1" type="button" class="btn btn-xs btn-info hidden-xs" ng-click="openModalProdutos()">
 										<i class="fa fa-plus-circle"></i>
@@ -611,7 +614,19 @@
 							<!--<div class="row" ng-if="funcioalidadeAuthorized('fechar_comanda')">-->
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
-									<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}" target="_blank"a class="btn btn-danger pull-right"><i class="fa fa-dollar"></i> Fechar Comanda</a>
+									<div class="pull-right">
+										<button type="button" class="btn btn-danger"
+											ng-click="cancelarComanda(comandaSelecionada.comanda.id)">
+											<i class="fa fa-times-circle"></i>
+											Cancelar Comanda
+										</button>
+										<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}" 
+											target="_blank" 
+											class="btn btn-success">
+											<i class="fa fa-dollar"></i>
+											Fechar Comanda
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -826,7 +841,7 @@
 			</div>
 		</div><!-- /main-container -->
 
-		<!-MODAIS->
+		<!--MODAIS-->
 
 		<!-- /Modal Produtos-->
 		<div class="modal fade" id="list_produtos" style="display:none">
@@ -834,7 +849,7 @@
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Produtos</span></h4>
+						<h4>Produtos</h4>
       				</div>
 				    <div class="modal-body">
 						<div class="row">
@@ -912,6 +927,54 @@
 			</div><!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
+
+		<div class="modal fade" id="avaliableKitchens" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Cozinhas</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<table class="table table-condensed table-hover table-bordered table-striped">
+									<thead>
+										<th class="text-middle text-center">#</th>
+										<th>Local</th>
+										<th class="text-middle text-center">ID Conexão WebSocket</th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="cozinha in allCozinhas">
+											<td class="text-middle text-center">{{ cozinha.cod_cozinha }}</td>
+											<td>{{ cozinha.nme_cozinha }}</td>
+											<td class="text-middle">
+												<span ng-if="(!cozinha.id_ws_dsk)">
+													<i class="fa fa-lg fa-circle text-danger"></i>
+													Desconectada
+												</span>
+												<span ng-if="(cozinha.id_ws_dsk)">
+													<i class="fa fa-lg fa-circle text-success"
+														data-toggle="tooltip" title="{{ cozinha.id_ws_dsk }}"></i>
+													Conectada
+												</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer clearfix">
+						<div class="pull-right">
+							<button class="btn btn-default btn-sm" data-dismiss="modal">
+								Fechar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<!-- Footer
 		================================================== -->

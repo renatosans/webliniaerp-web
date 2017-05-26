@@ -4,6 +4,7 @@ app.controller('ControleMesasController', function(
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
+	ng.allCozinhas = CozinhaService.getAllCozinhas(ng.userLogged.id_empreendimento);
 	ng.cozinhasDisponiveis = CozinhaService.getCozinhasAtivas(ng.userLogged.id_empreendimento);
 	ng.configuracao  = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.layout = { 
@@ -41,6 +42,25 @@ app.controller('ControleMesasController', function(
 
 	ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
+	}
+
+	ng.showAvaliableKitchens = function(){
+		$('#avaliableKitchens').modal('show');
+		$('[data-toggle="tooltip"]').tooltip();
+	}
+
+	ng.cancelarComanda = function(id_comanda) {
+		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja excluir este orçamento?</strong>');
+
+		dlg.result.then(function(btn){
+			aj.get(baseUrlApi()+"orcamento/delete/"+id_comanda+"/"+ng.userLogged.id_empreendimento+"/"+ng.userLogged.id)
+			.success(function(data, status, headers, config) {
+				ng.changeTela('detMesa');
+			})
+			.error(function(data, status, headers, config) {
+				console.log(data, status, headers, config);
+			});
+		}, undefined);	
 	}
 
 	ng.changeTela = function(tela,changeValue){

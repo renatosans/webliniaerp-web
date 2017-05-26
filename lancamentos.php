@@ -269,9 +269,9 @@
 										<div class="form-group" >
 											<label class="control-label">Banco</label>
 											<select chosen
-										    option="bancos"
-										    ng-model="pagamento.id_banco"
-										    ng-options="banco.id as banco.nome for banco in bancos">
+											    option="bancos"
+											    ng-model="pagamento.id_banco"
+											    ng-options="banco.id as banco.nome for banco in bancos">
 											</select>
 										</div>
 									</div>
@@ -395,9 +395,9 @@
 											<div class="form-group cheque_banco" >
 												<label class="control-label">Banco</label>
 													<select chosen
-												    option="bancos"
-												    ng-model="item.id_banco"
-												    ng-options="banco.id as banco.nome for banco in bancos">
+													    option="bancos"
+													    ng-model="item.id_banco"
+													    ng-options="banco.id as banco.nome for banco in bancos">
 													</select>
 											</div>
 										</div>
@@ -460,9 +460,9 @@
 											<div class="form-group boleto_banco" >
 												<label class="control-label">Banco</label>
 												<select chosen
-												    option="bancos"
-												    ng-model="item.id_banco"
-												    ng-options="banco.id as banco.nome for banco in bancos">
+													    option="bancos"
+													    ng-model="item.id_banco"
+													    ng-options="banco.id as banco.nome for banco in bancos">
 													</select>
 											</div>
 										</div>

@@ -645,6 +645,10 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			ng.pagamento.status = 0 ;
 
 		ng.loadDatapicker();
+
+		setTimeout(function(){
+			$scope.$apply();
+		}, 10);
 	}
 
 	ng.delItemCheque = function($index){
