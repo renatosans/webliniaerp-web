@@ -520,6 +520,21 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label class="control-label"></label>
+									<div class="controls">
+										<label class="label-checkbox inline">
+											<input type="checkbox" ng-model="show_obs_column" ng-true-value="1" ng-false-value="0">
+											<span class="custom-checkbox"></span>
+											Exibir observações
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 
@@ -533,13 +548,14 @@
 					<div class="col-sm-12">
 						<table class="table table-bordered table-condensed table-striped table-hover" style="background-color: #FFF;">
 							<thead>
-								<th class="text-center text-middle" width="10"></th>
-								<th class="text-center text-middle" width="130">Aberturda da O.S.</th>
+								<th class="text-center text-middle" width="30"></th>
+								<th class="text-center text-middle" width="100">Data O.S.</th>
 								<th class="text-middle" width="200">Cliente</th>
-								<th class="text-center text-middle" width="130">Total Serviços</th>
-								<th class="text-center text-middle" width="130">Total Produto</th>
-								<th class="text-center text-middle" width="130">Total Pedidos</th>
-								<th class="text-center text-middle" width="150">Status OS</th>
+								<th class="text-center text-middle" width="90">Total Serviços</th>
+								<th class="text-center text-middle" width="90">Total Produtos</th>
+								<th class="text-center text-middle" width="90">Total Pedidos</th>
+								<th class="text-center text-middle" width="50">Status</th>
+								<th class="text-center text-middle" width="100" ng-if="show_obs_column === 1">Observações</th>
 								<th class="text-center text-middle" width="150">Status NFS-e</th>
 							</thead>
 							<tbody>
@@ -582,10 +598,12 @@
 									<td class="text-right text-middle">
 										R$ {{ (item.vlr_servicos + item.vlr_produtos) | numberFormat : 2 : ',' : '.' }}
 									</td>
-									<td class="text-middle">
+									<td class="text-middle text-center">
 										<i class="fa fa-circle fa-lg text-{{ item.clr_class }}" 
 											tooltip data-original-title="{{ item.dsc_status }}"></i>
-										{{ item.dsc_status }}
+									</td>
+									<td class="text-middle" ng-if="show_obs_column === 1">
+										{{ item.dsc_observacoes_gerais }}
 									</td>
 									<td class="text-middle text-center">
 										{{ item.dsc_status_nfs }}

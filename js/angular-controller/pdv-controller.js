@@ -2431,9 +2431,22 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			//window.location = "pdv.php";
 		}else{
 			ng.receber_pagamento = false;
-			ng.recebidos = [];
-			ng.totalPagamento();
-			ng.calculaTroco();
+			
+			dlg = $dialogs.confirm(
+				'Atenção!!!',
+				'<strong>Deseja excluir os pagamentos realizados?</strong>'
+			);
+
+			dlg.result.then(
+				function(btn){
+					ng.recebidos = [];
+					ng.totalPagamento();
+					ng.calculaTroco();
+				},
+				function(){
+					// Do nothing
+				}
+			);
 		}
 	}
 
@@ -2619,11 +2632,60 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		});
 	}
 
-	ng.showModalCNF = function(){
+	ng.showModalCNF = function(type){
 		$('#modal-cnf').modal({
 		  backdrop: 'static',
 		  keyboard: false
 		});
+
+		if(type == 'cnf')
+			$('#text_status_cnf').text('Imprimindo Cupom Não-Fiscal...');
+		else if(type == 'comanda')
+			$('#text_status_cnf').text('Imprimindo Comanda...');
+	}
+
+	ng.printComanda = function(id_venda) {
+		$('#list_comandas').modal('hide');
+		ng.showModalCNF('comanda');
+
+		aj.get(baseUrlApi() +"dados_venda_comanda/"+ id_venda)
+			.success(function(data, status, headers, config) {
+				if( ng.status_websocket == 2 ){
+					if(!empty(ng.caixa.mod_impressora)) {
+						data.empreendimento.nome_empreendimento = removerAcentosSAT(data.empreendimento.nome_empreendimento);
+						
+						data.venda.nome_usuario = removerAcentosSAT(data.venda.nome_usuario);
+						data.venda.nome_cliente = removerAcentosSAT(data.venda.nome_cliente);
+
+						$.each(data.itensVenda, function(i, item){
+							data.itensVenda[i].nome_produto = removerAcentosSAT(item.nome_produto);
+						});
+
+						data.qtdImpressoes = ng.caixa.qtd_vias_impressao;
+						data.cnfType = 'comanda';
+						
+						var msg = {
+							from: ng.caixa_open.id_ws_web,
+							to: ng.caixa_open.id_ws_dsk,
+							type :'cnf_print',
+							message: JSON.stringify(data)
+						};
+
+						ng.sendMessageWebSocket(msg);
+
+						$("#modal-cnf").modal('hide');
+					} else {
+						alert('Não foi possível emitir o cupom pois a impressora não está configurada no cadastro do caixa');
+						$("#modal-cnf").modal('hide');
+					}
+				} else {
+					alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+					$("#modal-cnf").modal('hide');
+				}
+			})
+			.error(function(data, status, headers, config) {
+				alert('Ocorreu um erro ao processar os dados')
+			});
 	}
 
 	ng.printTermic = function(silentMode) {
@@ -2658,6 +2720,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					});
 
 					data.qtdImpressoes = ng.caixa.qtd_vias_impressao;
+					data.cnfType = 'cnf';
 					
 					if(!silentMode)
 						btn.button('reset');
@@ -3477,8 +3540,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				'('+
 					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
 					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
+					'INNER JOIN tbl_abertura_caixa AS tac ON tac.id = tmc.id_abertura_caixa '+
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE ta.id = '+ng.caixa_aberto.id+' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL '+
+					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL '+
 					'GROUP BY tmc.id_venda '+
 				') AS tb '+
 				'GROUP BY grp';
@@ -3618,7 +3682,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('#modal-vendas-reimprimir-cnf').modal('hide');
 		
 		// abre o modal de status de impressão do cupom não fiscal
-		ng.showModalCNF();
+		ng.showModalCNF('cnf');
 		ng.id_venda = item.id;
 		ng.printTermic(true);
 	}

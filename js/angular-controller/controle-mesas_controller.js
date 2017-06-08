@@ -136,7 +136,7 @@ app.controller('ControleMesasController', function(
 			var buscaCpf  = busca.replace(/\./g, '').replace(/\-/g, '');
 			var buscaCnpj = busca.replace(/\./g, '').replace(/\-/g, '').replace(/\//g,'');
 			busca = busca.replace(/\s/g, '%');
-			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+busca+"%' OR usu.apelido like '%"+busca+"%' OR tpj.cnpj like '%"+buscaCnpj+"%' OR tpf.cpf like '%"+buscaCpf+"%')"}})+"";
+			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+busca+"%' OR usu.apelido like '%"+busca+"%' OR usu.tel_fixo like '%"+busca+"%' OR usu.celular like '%"+busca+"%' OR usu.endereco like '%"+busca+"%' OR tpj.cnpj like '%"+buscaCnpj+"%' OR tpf.cpf like '%"+buscaCpf+"%')"}})+"";
 		}
 		aj.get(baseUrlApi()+url+query_string)
 		.success(function(data, status, headers, config) {
@@ -377,15 +377,28 @@ app.controller('ControleMesasController', function(
 			});
 	}
 
-	ng.incluirItemComandaModal = function(item,event){
-		dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+	ng.incluirItemComandaModal = function(item, event){
+		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma a inclusão deste item na comanda?');
 
 		dlg.result.then(
 			function(btn){
-				incluirItemComandaModalAction(item, true);
+				if(item.flg_produto_composto === 1){
+					dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+
+					dlg.result.then(
+						function(btn){
+							incluirItemComandaModalAction(item, true);
+						},
+						function(){
+							incluirItemComandaModalAction(item, false);
+						}
+					);
+				}
+				else
+					incluirItemComandaModalAction(item, false);
 			},
 			function(){
-				incluirItemComandaModalAction(item, false);
+				
 			}
 		);
 	}
@@ -535,14 +548,23 @@ app.controller('ControleMesasController', function(
 
 
 	ng.incluirItemComanda = function(event){
-		dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma a inclusão deste item na comanda?');
 
 		dlg.result.then(
 			function(btn){
-				incluirItemComandaAction(true);
+				dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+
+				dlg.result.then(
+					function(btn){
+						incluirItemComandaAction(true);
+					},
+					function(){
+						incluirItemComandaAction(false);
+					}
+				);
 			},
 			function(){
-				incluirItemComandaAction(false);
+				
 			}
 		);
 	}

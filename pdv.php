@@ -2387,11 +2387,9 @@
 				    	<div class="alert alert-reforco" style="display:none"></div>
 
 				    	<div class="row">
-				    		<div class="col-sm-6" id="valor_pagamento">
 				    		<p>
-				    			<strong id="text_status_sat_cfe">Imprimindo Cupom Não-Fiscal</strong><img src="assets/imagens/progresso_venda.gif">
+				    			<img src="assets/imagens/progresso_venda.gif"> <span id="text_status_cnf"></span>
 				    		</p>
-							</div>
 				    	</div>
 				    </div>
 			  	</div>
@@ -2815,10 +2813,17 @@
 											<td ng-if="config.id_cliente_movimentacao_caixa == item.id_cliente">(Não informado)</td>
 											<td class="text-center">{{ item.qtd_total }}</td>
 											<td class="text-right">R$ {{ item.valor_total | numberFormat:2:',':'.' }}</td>
-											<td width="50" align="center">
-												<a href="pdv.php?id_orcamento={{item.id_comanda}}" type="button" class="btn btn-xs btn-success">
-													<i class="fa fa-dollar"></i> Fechar Comanda
+											<td width="100" align="center">
+												<a type="button" class="btn btn-xs btn-success"
+													href="pdv.php?id_orcamento={{item.id_comanda}}" 
+													tooltip title="Fechar Comanda">
+													<i class="fa fa-dollar"></i>
 												</a>
+												<button type="button" class="btn btn-xs btn-info" 
+													tooltip title="Imprimir Comanda"
+													ng-click="printComanda(item.id_comanda)">
+													<i class="fa fa-print"></i>
+												</button>
 											</td>
 										</tr>
 									</tbody>
