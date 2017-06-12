@@ -88,7 +88,7 @@
 	</style>
   </head>
 
-  <body class="overflow-hidden" ng-controller="ProdutosController" ng-cloak>w
+  <body class="overflow-hidden" ng-controller="ProdutosController" ng-cloak>
   	<!-- Overlay Div -->
 	<div id="overlay" class="transparent"></div>
 

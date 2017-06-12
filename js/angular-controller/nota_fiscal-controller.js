@@ -72,7 +72,8 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 			cod_operacao 						: cod_operacao,
 			transportadora 						: ng.NF.transportadora,
 			volumes 							: ng.NF.volumes,
-			informacoes_adicionais_contribuinte : ng.NF.informacoes_adicionais_contribuinte
+			informacoes_adicionais_contribuinte : ng.NF.informacoes_adicionais_contribuinte,
+			produtos							: ng.NF.itens
 		};
 
 		var copy_dados = angular.copy(nfTO);
@@ -89,7 +90,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 
 		var copyNF = angular.copy(ng.NF);
 
-		aj.post(baseUrlApi()+"nfe/calcular",post)
+		aj.post(baseUrlApi()+"nfe/calcular", {dados: JSON.stringify(post)})
 			.success(function(data, status, headers, config) {
 				ng.nfeCalculada 	= true;
 				ng.disableSendNf 	= false;
@@ -372,7 +373,6 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 					};
 				});
 				ng.NF.itens = data;
-				console.log(ng.NF.itens);
 			});
 	}
 
@@ -406,17 +406,25 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 	}
 
 	ng.setDadosEmissao = function(){
-		var cod_operacao = ng.NF.dados_emissao.cod_operacao;
+		var operacao = _.findWhere(ng.lista_operacao, {cod_operacao: ng.NF.dados_emissao.cod_operacao});
 
-		$.each(ng.lista_operacao, function(i,v) {
-			if(Number(cod_operacao) == Number(v.cod_operacao)) {
-				ng.NF.dados_emissao.local_destino 		= v.num_local_destino;
-				ng.NF.dados_emissao.finalidade_emissao 	= v.num_finalidade_emissao;
-				ng.NF.dados_emissao.consumidor_final 	= (ng.venda.tipo_cadastro == 'pf') ? "1" : "0"; // 0 - Normal | 1 - Consumidor Final
-				ng.NF.dados_emissao.tipo_documento 		= (ng.venda) ? "1" : v.num_tipo_documento; // 0 - Nota de Entrada | 1 - Nota de Saída
-				ng.NF.dados_emissao.presenca_comprador 	= v.num_presenca_comprador;
+		ng.NF.dados_emissao.local_destino 		= operacao.num_local_destino;
+		ng.NF.dados_emissao.finalidade_emissao 	= operacao.num_finalidade_emissao;
+		ng.NF.dados_emissao.consumidor_final 	= (ng.venda.tipo_cadastro == 'pf') ? "1" : "0"; // 0 - Normal | 1 - Consumidor Final
+		ng.NF.dados_emissao.tipo_documento 		= (ng.venda) ? "1" : operacao.num_tipo_documento; // 0 - Nota de Entrada | 1 - Nota de Saída
+		ng.NF.dados_emissao.presenca_comprador 	= operacao.num_presenca_comprador;
+
+		angular.forEach(ng.NF.itens, function(item){
+			if(empty(item['Operacao'])) {
+				item['Operacao'] = {
+					identificador: operacao.cod_operacao
+				};
 			}
-		});
+		}, operacao);
+	}
+
+	ng.recalcularValorTotal = function(item){
+		item.prod.vProd = parseInt(item.prod.qCom, 10) * parseFloat(item.prod.vUnCom);
 	}
 
 	ng.showDANFEModal = function(nota){
