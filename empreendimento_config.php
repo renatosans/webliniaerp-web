@@ -1833,14 +1833,6 @@
         				<h4>Ultima atualização</h4>
       				</div>
 				    <div class="modal-body">
-				    	<div class="row">
-				    		<div class="col-sm-12">
-				    			<button  data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="getSincronizacao($event)" type="submit" class="btn btn-info btn-sm">
-									<i class='fa fa-refresh'></i> atualizar informações
-								</button>
-				    		</div>
-				    	</div>
-				    	<br>
 						<div class="row">
 							<div class="col-sm-12">
 								<pre>{{ ultimaAtualizacaoEmMassa.jsonPretty }}</pre>
