@@ -1281,28 +1281,37 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	}*/
 
 
-	ng.sincronizarDadosPrestaShop = function(){
+	ng.sincronizarDadosPrestaShop = function(event){
 		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja Sincronizar todos os dados do empreendimento com o PrestaShop?</strong>');
 
 		dlg.result.then(function(btn){
+			
+			var but = $(event.target);
+			if(!(but.is(':button')))
+			but = $(but.parent('button'));
+
+
+			but.button('loading');
+
 			ng.modalSincronizacaoPrestashop = {status:'init'};
 			$('#modal-sincronizacao-prestashop').modal('show');
 
 			var post = {
 				script:'teste.php',
+				id_empreendimento: ng.userLogged.id_empreendimento,
 				params:{
-					id_empreendimento: ng.userLogged.id_empreendimento,
-					baseUrlApi : baseUrlApi()
+					id_empreendimento: ng.userLogged.id_empreendimento
 				}
 			};
 
-			aj.post(baseUrlApi()+"background/start",post )
+			aj.post("http://hagesuplementos.com.br/webliniaerp-testes/clientes/api/background/restart",post )
 			.success(function(data, status, headers, config) {
-				AtualizarStatusSincronizacaoPrestaShop(data.file_progress);
+				ng.existsAtualizacaoEmMassa();
+				but.button('reset');
 			})
 			.error(function(data, status, headers, config) {
 				alert('Erro ao iniciar processo');
-				$('#modal-sincronizacao-prestashop').modal('hide');
+				but.button('reset');
 			});
 
 		}, undefined);
@@ -1327,7 +1336,68 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		return (typeof item == 'object') ;
 	}
 
+	ng.currentAtualizacaoEmMassa = null ;
 
+	ng.existsAtualizacaoEmMassa = function () {
+		ng.estados = [];
+
+		aj.get(baseUrlApi()+"background/atualizacao_em_massa/exists/"+ng.userLogged.id_empreendimento)
+		.success(function(data, status, headers, config) {
+			ng.currentAtualizacaoEmMassa = data;
+		})
+		.error(function(data, status, headers, config) {
+
+		});
+	}
+
+	ng.verSincronizacao = function(){
+		$('#modal-atualizacao_em_massa').modal('show');
+		aj.get(baseUrlApi()+"background/atualizacao_em_massa/"+ng.currentAtualizacaoEmMassa.id)
+		.success(function(data, status, headers, config) {
+			ng.modalAtualizacaoEmMassa = data;
+			var jsonObj = JSON.parse(ng.modalAtualizacaoEmMassa.dados_json);
+			ng.modalAtualizacaoEmMassa.jsonPretty = JSON.stringify(jsonObj, null, '\t');
+		})
+		.error(function(data, status, headers, config) {
+			alert('Erro ao carregar dados');
+		});	
+	}
+
+	ng.getSincronizacao = function(event){
+		var btn = $(event.target);
+		if(!(btn.is(':button')))
+			btn = $(btn.parent('button'));
+
+
+		btn.button('loading');
+
+		aj.get(baseUrlApi()+"background/atualizacao_em_massa/"+ng.currentAtualizacaoEmMassa.id)
+		.success(function(data, status, headers, config) {
+			ng.modalAtualizacaoEmMassa = data;
+			var jsonObj = JSON.parse(ng.modalAtualizacaoEmMassa.dados_json);
+			ng.modalAtualizacaoEmMassa.jsonPretty = JSON.stringify(jsonObj, null, '\t');
+			btn.button('reset');
+		})
+		.error(function(data, status, headers, config) {
+			btn.button('reset');
+			alert('Erro ao carregar dados');
+		});	
+	}
+
+	ng.ultimaAtualizacaoEmMassa = function () {
+		$('#modal-ultima-atualizacao_em_massa').modal('show');
+		aj.get(baseUrlApi()+"background/atualizacao_em_massa/ultima/"+ng.userLogged.id_empreendimento)
+		.success(function(data, status, headers, config) {
+			ng.ultimaAtualizacaoEmMassa = data;
+			var jsonObj = JSON.parse(ng.ultimaAtualizacaoEmMassa.dados_json);
+			ng.ultimaAtualizacaoEmMassa.jsonPretty = JSON.stringify(jsonObj, null, '\t');
+		})
+		.error(function(data, status, headers, config) {
+
+		});
+	}
+
+	ng.existsAtualizacaoEmMassa();
 	ng.loadPerfis();
 	ng.loadEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.existsCookie();

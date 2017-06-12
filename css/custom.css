@@ -438,3 +438,11 @@ ul.dropdown-menu.notification {
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
+
+.krajee-default.file-preview-frame .kv-file-content {
+	overflow: hidden;
+}
+
+.input-group.form-control{
+	z-index: 0 !important ;
+}

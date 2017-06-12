@@ -1385,11 +1385,21 @@
 								<div class="tab-content">
 									<div class="tab-pane fade active in" id="prestashop">
 										<br/>
-										<div class="row pull-right">
-											<div class="col-sm-2">
-												<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="sincronizarDadosPrestaShop()" type="submit" class="btn btn-info btn-sm">
-													<i class='fa fa-refresh'></i> Sincronizar
-												</button>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="pull-right">
+													<button ng-if="ultimaAtualizacaoEmMassa"  ng-click="ultimaAtualizacaoEmMassa()" type="submit" class="btn btn-info btn-sm">
+														<i class='fa fa-eye'></i> Ver ultima atualização
+													</button>
+
+													<button ng-if="!currentAtualizacaoEmMassa" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="sincronizarDadosPrestaShop($event)" type="submit" class="btn btn-info btn-sm">
+														<i class='fa fa-refresh'></i> Atualizar
+													</button>
+
+													<button ng-if="currentAtualizacaoEmMassa"  ng-click="verSincronizacao()" type="submit" class="btn btn-info btn-sm">
+														<i class='fa fa-eye'></i> Ver atualização em andamento
+													</button>
+												</div>
 											</div>
 										</div>
 										<div class="alert alert-config-prestashop" style="display:none"></div>
@@ -1786,6 +1796,61 @@
 		</div>
 		<!-- /.modal -->
 
+
+		<div class="modal fade" id="modal-atualizacao_em_massa" style="display:none">
+  			<div class="modal-dialog modal-xl"">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        				<h4>Atualização em andamento</h4>
+      				</div>
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-12">
+				    			<button  data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="getSincronizacao($event)" type="submit" class="btn btn-info btn-sm">
+									<i class='fa fa-refresh'></i> atualizar informações
+								</button>
+				    		</div>
+				    	</div>
+				    	<br>
+						<div class="row">
+							<div class="col-sm-12">
+								<pre>{{ modalAtualizacaoEmMassa.jsonPretty }}</pre>
+							</div>
+						</div>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+
+		<div class="modal fade" id="modal-ultima-atualizacao_em_massa" style="display:none">
+  			<div class="modal-dialog modal-xl"">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        				<h4>Ultima atualização</h4>
+      				</div>
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-12">
+				    			<button  data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="getSincronizacao($event)" type="submit" class="btn btn-info btn-sm">
+									<i class='fa fa-refresh'></i> atualizar informações
+								</button>
+				    		</div>
+				    	</div>
+				    	<br>
+						<div class="row">
+							<div class="col-sm-12">
+								<pre>{{ ultimaAtualizacaoEmMassa.jsonPretty }}</pre>
+							</div>
+						</div>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
 
 		<!-- Footer
 		================================================== -->
