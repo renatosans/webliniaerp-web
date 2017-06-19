@@ -1304,7 +1304,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				}
 			};
 
-			aj.post("http://hagesuplementos.com.br/webliniaerp-testes/clientes/api/background/restart",post )
+			aj.post(baseUrlApi()+"background/start",post )
 			.success(function(data, status, headers, config) {
 				ng.existsAtualizacaoEmMassa();
 				but.button('reset');
@@ -1344,9 +1344,10 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		aj.get(baseUrlApi()+"background/atualizacao_em_massa/exists/"+ng.userLogged.id_empreendimento)
 		.success(function(data, status, headers, config) {
 			ng.currentAtualizacaoEmMassa = data;
+			$('#modal-sincronizacao-prestashop').modal('hide');
 		})
 		.error(function(data, status, headers, config) {
-
+			$('#modal-sincronizacao-prestashop').modal('hide');
 		});
 	}
 

@@ -1833,6 +1833,7 @@
         				<h4>Ultima atualização</h4>
       				</div>
 				    <div class="modal-body">
+				    	<br>
 						<div class="row">
 							<div class="col-sm-12">
 								<pre>{{ ultimaAtualizacaoEmMassa.jsonPretty }}</pre>
