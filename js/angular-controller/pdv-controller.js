@@ -240,8 +240,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		var index = false ;
 		$.each(ng.carrinho,function(i,v){
-			if(!empty(produto.codigo_barra)){
-				if(v.codigo_barra == produto.codigo_barra){
+			if(!empty(produto.id_produto)){
+				if(v.id_produto == produto.id_produto){
 					index = i ;
 					return ;
 				}
@@ -1738,6 +1738,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.receberPagamento = function(){
+		ng.esconder_cliente = false;
 		if(ng.finalizarOrcamento) ng.id_venda_ignore = params.id_orcamento ;
 		var produtos = angular.copy(ng.carrinho);
 		var venda    = {
@@ -3099,7 +3100,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				var div_contrair = $('#col-sm-auto-complete-cliente');
 				div_extender.removeClass('col-sm-2').addClass('col-sm-10');
 				div_contrair.removeClass('col-sm-10').addClass('col-sm-2');
-				ng.esconder_cliente = false ;
+				ng.esconder_cliente = true ;
 			}
 		}
 		console.log(busca);
@@ -3204,7 +3205,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	/*--------------------------------------------*/
-	ng.esconder_cliente = true ;
+	ng.esconder_cliente = false ;
 	ng.clientes_auto_complete = [] ;
 	ng.clientes_auto_complete_visible = true ;
 
@@ -3218,7 +3219,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					var div_contrair = $('#col-sm-auto-complete-produto');
 					div_extender.removeClass('col-sm-2').addClass('col-sm-10');
 					div_contrair.removeClass('col-sm-10').addClass('col-sm-2');
-					ng.esconder_cliente = true ;
+					ng.esconder_cliente = false ;
 				}
 			}
 		}
@@ -3544,8 +3545,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
 					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL '+
 					'GROUP BY tmc.id_venda '+
-				') AS tb '+
-				'GROUP BY grp';
+					'ORDER BY tmc.id_venda DESC '+
+				') AS tb ';
 		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
 		.success(function(data, status, headers, config) {
 			aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+data.in_venda+")")
@@ -3951,14 +3952,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
                     pagamento_fulso : ng.pagamento_fulso,
                     id_controle_pagamento : (ng.pagamento_fulso ? ng.id_controle_pagamento : null)
 				})}}));
-		$('#load-pdf-venda').show();
+		/*$('#load-pdf-venda').show();
 		$('#pdf-venda').hide();
 		$('#pdf-venda').html('<iframe style="height:450px" width="100%"  src="'+ng.url_pdf+'" frameborder=0 allowTransparency="true"  style=" width: 100%;height: 900px;background: #fff;border: none;overflow: hidden; display:none"></iframe>')
 		$('#pdf-venda iframe').load(function(){
 			$('#pdf-venda').show();
 		    $(this).show();
 		   	$('#load-pdf-venda').hide();
-		});
+		});*/
 	}
 
 	ng.loadPlanoContas = function() {

@@ -268,9 +268,15 @@
 													<i class="fa fa-map-marker"></i>
 												</button>
 
-												<button type="button" ng-click="loadDetalhesVenda(item)" title="Detalhes" data-toggle="tooltip" class="btn btn-xs btn-primary">
+												<a class="btn btn-xs btn-primary" 
+													href="{{ getUrlPDFVenda(item) }}" target="_blank" 
+													title="Detalhes" data-toggle="tooltip">
 													<i class="fa fa-tasks"></i>
-												</button>
+												</a>
+
+												<!--<button type="button" ng-click="loadDetalhesVenda(item)" title="Detalhes" data-toggle="tooltip" class="btn btn-xs btn-primary">
+													<i class="fa fa-tasks"></i>
+												</button>-->
 
 
 												<!--<button type="button" ng-click="loadEditVenda(item)" ng-disabled="item.venda_confirmada == 1" title="Editar" data-toggle="tooltip" class="btn btn-xs btn-warning">

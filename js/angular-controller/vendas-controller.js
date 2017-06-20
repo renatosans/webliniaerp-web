@@ -71,6 +71,22 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 			});
 	}
 
+	ng.getUrlPDFVenda = function(venda) {
+		var url_pdf = baseUrlApi()+'relPDF?template=comprovante_venda&'+(
+			$.param({
+				dados: {
+					json: JSON.stringify({
+						id_venda 				: venda.id,
+						id_empreendimento 		: ng.userLogged.id_empreendimento,
+						pagamento_fulso 		: false,
+						id_controle_pagamento 	: null,
+						id_cliente 				: venda.id_cliente
+					})
+				}
+			})
+		);
+		return url_pdf;
+	}
 
 	ng.loadDetalhesVenda = function(venda) {
 		ng.venda = venda;

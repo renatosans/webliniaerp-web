@@ -190,7 +190,12 @@
 									<div class="col-sm-3">
 										<div class="form-group element-group">
 											<label class="control-label">Data da OS</label>
-											<input type="text" class="form-control text-center" readonly="readonly" ng-model="objectModel.dta_ordem_servico">
+											<div class="input-group">
+												<input type="text" class="form-control text-center datepicker" ng-model="objectModel.dta_ordem_servico">
+												<span id="btn-calendar-dta-os" class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</span>
+											</div>
 										</div>
 									</div>
 
@@ -522,7 +527,7 @@
 						</div>
 
 						<div class="row">
-							<div class="col-sm-4">
+							<div class="col-sm-2">
 								<div class="form-group">
 									<label class="control-label"></label>
 									<div class="controls">
@@ -530,6 +535,19 @@
 											<input type="checkbox" ng-model="show_obs_column" ng-true-value="1" ng-false-value="0">
 											<span class="custom-checkbox"></span>
 											Exibir observações
+										</label>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-4" ng-show="(!busca.cod_status_servico)">
+								<div class="form-group">
+									<label class="control-label"></label>
+									<div class="controls">
+										<label class="label-checkbox inline">
+											<input type="checkbox" ng-model="busca.show_cancelados" ng-true-value="1" ng-false-value="0" ng-click="loadOrdensServicos(0,10)">
+											<span class="custom-checkbox"></span>
+											Exibir cancelados
 										</label>
 									</div>
 								</div>
@@ -975,10 +993,11 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
-			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
-			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
-			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
+			$("#btn-calendar-dta-os").on("click", function(){ $('[ng-model="objectModel.dta_ordem_servico"]').trigger("focus"); });
+			$('.datepicker').on('changeDate', function(ev){
+				$(this).datepicker('hide');
+				$(this).trigger('change');
+			});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});
 	</script>

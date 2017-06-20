@@ -3,7 +3,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 	$scope.configuracoes 		= ConfigService.getConfig($scope.userLogged.id_empreendimento);
 	$scope.status_ordem_servico = AsyncAjaxSrvc.getListOfItens(baseUrlApi()+'status/atendimento');;
 	$scope.status_servico 		= AsyncAjaxSrvc.getListOfItens(baseUrlApi()+'status/procedimento');;
-	$scope.busca 				= { clientes: "", 	servicos: "", 	produtos: "",  nome: "", cod_status_servico: null};
+	$scope.busca 				= { clientes: "", 	servicos: "", 	produtos: "",  nome: "", cod_status_servico: null, show_cancelados: 0};
 	$scope.paginacao			= { clientes: null, servicos: null, produtos: null, ordens_servico: null };
 
 	$scope.showBoxNovo = function(clearData){
@@ -46,6 +46,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 		loadProdutosByIdOrdemServico();
 		loadServicosByIdOrdemServico();
 		$scope.showBoxNovo(false);
+		 $(window).scrollTop(0);
 		setTimeout(function() {
 			$scope.$apply();
 		}, 500);
@@ -230,7 +231,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 		var postData = angular.copy($scope.objectModel);
 			postData.id_abertura_caixa 	= $scope.caixa.id;
 			postData.id_plano_conta 	= $scope.configuracoes.id_plano_caixa;
-			postData.dta_ordem_servico 	= moment(postData.dta_ordem_servico, 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+			postData.dta_ordem_servico 	= moment(postData.dta_ordem_servico +' '+ moment().format('HH:mm:ss'), 'DD/MM/YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
 
 		delete postData.criador.modulosAssociatePage;
 		delete postData.criador.empreendimento_usuario;
@@ -285,9 +286,10 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 			query_string += "&("+$.param({'cli->nome':{exp:"like'%"+$scope.busca.nome+"%')"}});
 		}
 
-		if($scope.busca.cod_status_servico != null){
+		if($scope.busca.cod_status_servico != null)
 			query_string += "&atd->id_status="+ $scope.busca.cod_status_servico;
-		}
+		else if(parseInt($scope.busca.show_cancelados, 10) === 0)
+			query_string += "&("+$.param({'atd->id_status':{exp:"<> 5)"}});
 
 		if($("#dtaInicial").val() != ""){
 			var dta_ordem_servico = moment($("#dtaInicial").val(), 'DD/MM/YYYY').format('YYYY-MM-DD');

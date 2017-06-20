@@ -1004,6 +1004,8 @@
 								<tr>
 									<th>#</th>
 									<th>Operação</th>
+									<th>Estado Origem</th>
+									<th>Estado Destino</th>
 									<th>Dta. Inicio Vigencia</th>
 									<th>Dta. Fim Vigencia</th>
 									<th width="80" style="text-align: center;">Opções</th>
@@ -1013,6 +1015,8 @@
 								<tr ng-repeat="item in filtros" bs-tooltip>
 									<td>#{{ item.cod_filtro_tributos }}</td>
 									<td>{{ item.dsc_operacao }}</td>
+									<td>{{ item.nme_estado_origem }}</td>
+									<td>{{ item.nme_estado_destino }}</td>
 									<td>{{ item.dta_inicio_vigencia | dateFormat : 'date'}}</td>
 									<td>{{ item.dta_fim_vigencia | dateFormat : 'date'}}</td>
 									<td align="center">

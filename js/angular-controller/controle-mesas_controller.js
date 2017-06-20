@@ -56,6 +56,13 @@ app.controller('ControleMesasController', function(
 			aj.get(baseUrlApi()+"orcamento/delete/"+id_comanda+"/"+ng.userLogged.id_empreendimento+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
 				ng.changeTela('detMesa');
+				var msg = {
+					type 				: 'table_change',
+					from 				: ng.id_ws_web,
+					to_empreendimento 	: ng.userLogged.id_empreendimento,
+					message 			: ""
+				};
+				ng.sendMessageWebSocket(msg);
 			})
 			.error(function(data, status, headers, config) {
 				console.log(data, status, headers, config);
@@ -436,7 +443,6 @@ app.controller('ControleMesasController', function(
 		.success(function(data, status, headers, config) {
 			if(Number(produto.flg_produto_composto) == 1){
 				data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
-				
 				if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
 					$.each(ng.cozinhasDisponiveis, function(i, cozinha){
 						var msg = {
@@ -477,12 +483,22 @@ app.controller('ControleMesasController', function(
 				}
 				ng.sendMessageWebSocket(msg);
 			}
+
 			var msg = {
-				type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-				message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
-			}
+				type: 'table_change',
+				from: ng.id_ws_web,
+				to_empreendimento: ng.userLogged.id_empreendimento,
+				message : JSON.stringify(
+					{
+						index_mesa: ng.indeMesaSelecionada,
+						mesa: data.mesa,
+						id_comanda: ng.comandaSelecionada.comanda.id
+					}
+				)
+			};
 				
 			ng.sendMessageWebSocket(msg);
+			
 			item.qtd = null ;
 			btn.button('reset');
 			ng.loadComanda(ng.comandaSelecionada.comanda.id);
@@ -847,13 +863,15 @@ app.controller('ControleMesasController', function(
 				break;
 				case 'table_change':
 					$scope.$apply(function () { 
-						if(empty(data.message.index_mesa))
-							data.message.index_mesa = getIndex('id_mesa',data.message.mesa.id_mesa,ng.mesas);
-						ng.mesas[data.message.index_mesa] = data.message.mesa ;
-						if(!(empty(ng.mesaSelecionada.mesa)) && ng.mesaSelecionada.mesa.id_mesa == data.message.mesa.id_mesa)
-							ng.loadComandasByMesa();
-						if(( !empty(data.message.id_comanda) && !empty(ng.comandaSelecionada.comanda)) && ng.comandaSelecionada.comanda.id == data.message.id_comanda)
-							ng.loadComanda(data.message.id_comanda);
+						if(!empty(data.message)) {
+							if(empty(data.message.index_mesa))
+								data.message.index_mesa = getIndex('id_mesa',data.message.mesa.id_mesa,ng.mesas);
+							ng.mesas[data.message.index_mesa] = data.message.mesa ;
+							if(!(empty(ng.mesaSelecionada.mesa)) && ng.mesaSelecionada.mesa.id_mesa == data.message.mesa.id_mesa)
+								ng.loadComandasByMesa();
+							if(( !empty(data.message.id_comanda) && !empty(ng.comandaSelecionada.comanda)) && ng.comandaSelecionada.comanda.id == data.message.id_comanda)
+								ng.loadComanda(data.message.id_comanda);
+						}
 						
 					});
 				break;

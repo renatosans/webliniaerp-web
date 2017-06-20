@@ -79,14 +79,6 @@
   </head>
 
   <body ng-click="closeAutoComplete($event)" class="overflow-hidden" ng-controller="PDVController" ng-cloak>
-	<script>
-		document.addEventListener('keydown', function(event) {
-			if(event.keyCode == 13 || event.keyCode == 17 || event.keyCode == 74) {
-				event.preventDefault();
-			}
-		});
-	</script>
-
   	<!-- Overlay Div -->
 	<div id="overlay" class="transparent"></div>
 
@@ -630,9 +622,13 @@
 					    		<div class="row">
 					    			<div class="col-sm-12" id="col-sm-auto-complete-cliente">
 										<div class="form-group">
-											<label class="control-label"><h4>Cliente <span><button style="cursor:auto;height: 18px;padding-top: 0;" class="btn btn-xs btn-success" type="button" ng-if="isNumeric(cliente.id) && esconder_cliente">{{ getIdentificadorCliente() }} <i style="cursor:pointer;" ng-click="removeCliente()" class="fa fa-times fa-lg fa-danger"></i></button></h4></label>
+											<label class="control-label"><h4>Cliente <span><button style="cursor:auto;height: 18px;padding-top: 0;" class="btn btn-xs btn-success" type="button" ng-if="isNumeric(cliente.id) && !esconder_cliente">{{ getIdentificadorCliente() }} <i style="cursor:pointer;" ng-click="removeCliente()" class="fa fa-times fa-lg fa-danger"></i></button></h4></label>
 											<div class="input-group">
-												<input onKeyPress="return SomenteNumeroLetras(event);" id="input_auto_complete_cliente" ng-focus="outoCompleteCliente(busca.cliente_outo_complete,$event,false)"  ng-keyUp="outoCompleteCliente(busca.cliente_outo_complete)" type="text" class="form-control" ng-model="busca.cliente_outo_complete"/>
+												<input id="input_auto_complete_cliente" type="text" class="form-control" 
+													onKeyPress="return SomenteNumeroLetras(event);"
+													ng-focus="outoCompleteCliente(busca.cliente_outo_complete,$event,false)" 
+													ng-keyUp="outoCompleteCliente(busca.cliente_outo_complete)"
+													ng-model="busca.cliente_outo_complete"/>
 												<div class="content-outo-complete-cliente-pdv" ng-show="clientes_auto_complete.length > 0 && clientes_auto_complete_visible">
 													<table class="table table-striped itens-outo-complete">
 														<thead>
@@ -829,7 +825,7 @@
 										<div class="col-sm-10" id="col-sm-auto-complete-cliente">
 											<div class="form-group">
 												<label class="control-label"><h4>Cliente <span> <button  style="cursor:auto;height: 18px;padding-top: 0;
-" class="btn btn-xs btn-success" type="button" ng-if="isNumeric(cliente.id) && esconder_cliente">{{ getIdentificadorCliente() }} <i style="cursor:pointer;" ng-click="removeCliente()" class="fa fa-times fa-lg fa-danger"></i></button></h4></label>
+" class="btn btn-xs btn-success" type="button" ng-if="isNumeric(cliente.id) && !esconder_cliente">{{ getIdentificadorCliente() }} <i style="cursor:pointer;" ng-click="removeCliente()" class="fa fa-times fa-lg fa-danger"></i></button></h4></label>
 												<div class="input-group">
 													<input id="input_auto_complete_cliente" onKeyPress="return SomenteNumeroLetras(event);" ng-focus="outoCompleteCliente(busca.cliente_outo_complete,$event)"  ng-keyUp="outoCompleteCliente(busca.cliente_outo_complete)" type="text" class="form-control" ng-model="busca.cliente_outo_complete"/>
 													<div class="content-outo-complete-cliente-pdv" ng-show="clientes_auto_complete.length > 0 && clientes_auto_complete_visible">
@@ -1851,142 +1847,46 @@
 
 		<!-- /Modal Print-->
 		<div class="modal fade" id="modal-print" style="display:none"  data-keyboard="false">
-  			<div class="modal-dialog error modal-lg">
+  			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
-      				<!--<div class="modal-header" id="topo_print">
-						<div class="clearfix">
-							<div class="pull-left">
-								<span class="img-demo">
-									<img src="assets/imagens/logos/{{ userLogged.nme_logo }}" height="40" width="40">
-								</span>
-
-								<div class="pull-left m-left-sm">
-									<h3 class="m-bottom-xs m-top-xs" ng-if="pagamento_fulso != true  && orcamento!=true">Comprovante de Venda</h3>
-									<h3 class="m-bottom-xs m-top-xs" ng-if="orcamento == true">Pedido de Venda</h3>
-									<h3 class="m-bottom-xs m-top-xs" ng-if="pagamento_fulso == true">Comprovante de Pagamento</h3>
-									<span class="text-muted">{{ userLogged.nome_empreendimento }}</span>
-								</div>
-							</div>
-
-							<div class="pull-right text-right">
-								<h5 ng-if="pagamento_fulso != true && finalizarOrcamento == false"><strong>#{{ id_venda }}</strong></h5>
-								<h5 ng-if="finalizarOrcamento"><strong>#{{ id_orcamento }}</strong></h5>
-								<h5 ng-if="pagamento_fulso == true"><strong>#{{ id_controle_pagamento }}</strong></h5>
-								<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
-							</div>
-						</div>
-      				</div>
-
-				    <div class="modal-body">
-				    	<div class="row">
-				    		<div class="col-sm-12">
-
-				    		</div>
-				    	</div>
-				    	<div class="row" id="tbl_print">
-				    		<div class="col-sm-12" id="valor_pagamento">
-				    			<strong style="font-size:14px;margin-bottom:5px">Vendedor : {{ vendedor.nome_vendedor }}</strong>
-				    			<br>
-				    			<strong style="font-size:14px" ng-if="isNumeric(cliente.id)">Cliente : {{ cliente.nome }}</strong>
-				    			<br>
-				    			<strong style="font-size:14px;margin-bottom:5px;color:#2C800C" ng-if="vlr_saldo_devedor >= 0 && isNumeric(cliente.id) && (orcamento == false)">Saldo : R${{ vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-				    			<strong style="font-size:14px;margin-bottom:5px;color:#D82121" ng-if="vlr_saldo_devedor < 0 && isNumeric(cliente.id) && (orcamento == false)">Saldo : R$ {{ vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-				    			<strong style="font-size:14px;margin-bottom:5px;color:#2C800C" ng-if="(isNumeric(cliente.id) && cliente.vlr_saldo_devedor >= 0) && (orcamento == true)">Saldo : R$ {{ cliente.vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-				    			<strong style="font-size:14px;margin-bottom:5px;color:#D82121" ng-if="(isNumeric(cliente.id) && cliente.vlr_saldo_devedor < 0) && (orcamento == true)">Saldo : R$ {{ cliente.vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-				    			<br>
-				    			<br>
-				    			<table class="table table-bordered" ng-if="pagamento_fulso != true">
-									<thead ng-show="carrinho.length  > 0">
-										<tr>
-											<th>Produto</th>
-											<th>Fabricante</th>
-											<th>Tamanho</th>
-											<th class="text-center" style="width: 80px;" >Quantidade</th>
-											<th class="text-center" style="width: 100px;">Valor Unitário</th>
-											<th class="text-center" style="width: 60px;">Valor desconto</th>
-											<th class="text-center" style="width: 100px;">Subtotal</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}">
-											<td>{{ item.nome_produto }}</td>
-											<td>{{ item.nome_fabricante }}</td>
-											<td>{{ item.peso }}</td>
-											<td class="text-center" width="20">{{ item.qtd_total }}</td>
-											<td class="text-right">R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}</td>
-											<td class="text-center"><span ng-if="item.valor_desconto_real > 0 && item.valor_desconto_real != undefined">R$<span> {{ item.valor_desconto_real | numberFormat : 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.sub_total | numberFormat : 2 : ',' : '.' }}</td>
-										</tr>
-										<tr>
-											<td colspan="6"><b>TOTAL</b></td>
-											<td style="text-align:right">R$ {{ vlrTotalCompra | numberFormat : 2 : ',' : '.' }}</td>
-										</tr>
-									</tbody>
-								</table>
-				    		</div>
-				    	</div>
-			    		<div class="row" id="tbl_print_pg">
-				    		<div class="col-sm-12" id="valor_pagamento">
-				    			<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-if="pagamento_fulso != true" >
-										<tr>
-											<th colspan="2" class="text-center" >Pagamentos referentes a venda</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-if="(recebidos.length == 0)">
-											<td colspan="1">Não foi recebido nenhum pagamento</td>
-										</tr>
-										<tr ng-repeat="item in recebidos">
-											<td ng-if="item.id_forma_pagamento != 6">{{ item.forma_pagamento  }} <strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
-											<td ng-if="item.id_forma_pagamento == 6">{{ item.forma_pagamento  }} em {{item.parcelas}}x <strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
-										</tr>
-									</tbody>
-								</table>
-				    		</div>
-			    		</div>
-			    		<div class="row" ng-show="emitirNfe">
-							<div class="col-sm-12">
-								<div class="form-group" id="regimeTributario">
-									<label class="ccontrol-label">Operação</label> 
-									<select chosen
-								    option="lista_operacao"
-								    ng-model="configuracoes.id_operacao_padrao_venda"
-								    ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
-									</select>
-								</div>
-							</div>
-						</div>
-
-				    </div>-->
-
-				    <div class="modal-body" >
-				    	<div id="load-pdf-venda" class="text-center" style="height: 450px;line-height: 400px;vertical-align:middle;width: 100%;font-size: 15px;">
-				    		<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando comprovante...
-				    	</div>
-				    	<div id="pdf-venda"></div>
-				    </div>
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">Venda finalizada com sucesso!</h4>
+					</div>
+					<div class="modal-body">
+						<p>Utilize os botões abaixo para prosseguir.</p>
+					</div>
 				    <div class="modal-footer">
 				    	<div ng-if="!sendEmailPdf">
-					    	<a ng-show="!emitirNfe" id="printTermic" class="btn btn-md  btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="printTermic(false)" >
+					    	<a class="btn btn-md btn-block btn-primary" 
+					    		href="{{ url_pdf }}" target="_blank" 
+					    		ng-show="!emitirNfe"
+					    		ng-click="setvalue('sendEmailPdf',false); emitirNfe = false;">
+					    		<i class="fa fa-file-pdf-o"></i> Visualizar PDF (Comprovante de Venda)
+					    	</a>
+					    	<a ng-show="!emitirNfe" id="printTermic" class="btn btn-md btn-block btn-primary" 
+					    		data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." 
+					    		ng-click="printTermic(false)" >
 					    		<i class="fa fa-print"></i> Imprimir (via Impressora Térmica)
 					    	</a>
 					    	<button ng-show="!emitirNfe" type="button" data-loading-text=" Aguarde..." id="btn-imprimir"
-					    		class="btn btn-md  btn-success" ng-click="setvalue('sendEmailPdf',true)">
+					    		class="btn btn-md btn-block btn-success" ng-click="setvalue('sendEmailPdf',true)">
 					    		<i class="fa fa-envelope-o"></i> Enviar por E-mail
 					    	</button>
 					    	<button ng-show="!emitirNfe" ng-click="set('emitirNfe',true)" ng-if="configuracoes.flg_emitir_nfe_pdv == 1" type="button" data-loading-text=" Aguarde..." 
-					    		class="btn btn-md  btn-info">
+					    		class="btn btn-md btn-block btn-info">
 					    		<i class="fa fa-print"></i> Emitir NF-e
 					    	</button>
-					    	<a ng-show="!emitirNfe" ng-click="cancelar()" class="btn btn-md  btn-default">
+					    	<a ng-show="!emitirNfe" ng-click="cancelar()" class="btn btn-md btn-block btn-default">
 					    		<i class="fa fa-reply"></i> Voltar ao PDV
 					    	</a>
 					    	<a ng-show="emitirNfe==true" ng-disabled="configuracoes.id_operacao_padrao_venda == undefined || configuracoes.id_operacao_padrao_venda == '' " href="nota-fiscal.php?id_venda={{ id_venda }}&&cod_operacao={{configuracoes.id_operacao_padrao_venda}}"  type="button" data-loading-text=" Aguarde..." 
-					    		class="btn btn-md  btn-info" >
+					    		class="btn btn-md btn-block btn-info" >
 					    		<i class="fa fa-print"></i> Confirmar Emissão NF-e
 					    	</a>
-					    	<a ng-show="emitirNfe" ng-click="emitirNfe = false" class="btn btn-md  btn-default">
+					    	<a ng-show="emitirNfe" ng-click="emitirNfe = false" class="btn btn-md btn-block btn-default">
 					    		<i class="fa fa-reply"></i> Voltar
 					    	</a>
 				    	</div>
@@ -2006,7 +1906,7 @@
 						    		class="btn btn-md  btn-success">
 						    		<i class="fa fa-paper-plane-o"></i> Enviar
 						    	</button>
-						    	<button ng-click="setvalue('sendEmailPdf',false)" ng-click="emitirNfe = false" class="btn btn-md  btn-default">
+						    	<button ng-click="setvalue('sendEmailPdf',false); emitirNfe = false;" class="btn btn-md  btn-default">
 						    		<i class="fa fa-reply"></i> Voltar
 						    	</button>
 					    	</div>

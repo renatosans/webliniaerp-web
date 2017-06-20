@@ -256,24 +256,52 @@
 
 							<div class="col-sm-3">
 								<div class="form-group" id="regimeTributario">
-									<label class="ccontrol-label">Situação da O.S.</label> 
+									<label class="ccontrol-label">Situação da O.P.</label> 
 									<select chosen option="status_op" ng-model="busca.id_status_op"
 									    ng-options="status.id as status.nome_status for status in status_op">
 									</select>
 								</div>
 							</div>
 
-							<div class="col-sm-1">
+							<div class="col-sm-3">
+								<div class="form-group" id="regimeTributario">
+									<label class="ccontrol-label">Categoria</label> 
+									<select chosen option="categorias" ng-model="busca.id_categoria_op"
+									    ng-options="categoria.id as categoria.descricao_categoria for categoria in categorias">
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-3" ng-show="(!busca.id_status_op)">
 								<div class="form-group">
-									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-primary" ng-click="loadOrdemProducao(0,10)"><i class="fa fa-filter"></i> Filtrar</button>
+									<label class="control-label"><br/></label>
+									<div class="controls">
+										<label class="label-checkbox inline">
+											<input type="checkbox" ng-model="busca.show_concluidos" ng-true-value="1" ng-false-value="0" ng-click="loadOrdemProducao(0,10)">
+											<span class="custom-checkbox"></span>
+											Exibir concluídos
+										</label>
+									</div>
 								</div>
 							</div>
 
-							<div class="col-sm-1">
+							<div class="col-sm-2">
 								<div class="form-group">
-									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-block btn-default" ng-click="resetFilter()">Limpar</button>
+									<label class="control-label"><br/></label>
+									<div class="controls">
+										<button type="button" class="btn btn-sm btn-primary" ng-click="loadOrdemProducao(0,10)"><i class="fa fa-filter"></i> Filtrar</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label"><br/></label>
+									<div class="controls">
+										<button type="button" class="btn btn-sm btn-block btn-default" ng-click="resetFilter()">Limpar</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -289,58 +317,74 @@
 						</div>
 
 						<table class="table table-bordered table-condensed table-striped table-hover">
-							<tr>
-								<td colspan="5" class="text-center" ng-if="ordem_producao.length == 0">
-									Nenhuma Ordem de Produção encontrada
-								</td>
-							</tr>
 							<thead>
 								<tr>
-									<th>ID OP</th>
 									<th class="text-center">Data Criação</th>
-									<th>Criador</th>
+									<th class="text-center">Criador</th>
 									<th>Cliente</th>
-									<th>Nº Comanda</th>
-									<th class="text-center">Status</th>
-									<th width="200" style="text-align: center;">Opções</th>
+									<th class="text-center">Mesa</th>
+									<th class="text-center">Nº Comanda</th>
+									<th class="text-center">Produto</th>
+									<th class="text-center" width="60">Qtd</th>
+									<th class="text-center" width="80">Opções</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr bs-tooltip ng-repeat="item in ordem_producao">
-									<td width="80">{{ item.id }}</td>
-									<td  class="text-center">{{ item.dta_create | dateFormat:'dateTime' }}</td>
-									<td>{{ item.nome_responsavel }}</td>
-									<td>{{ item.nome_cliente }}</td>
-									<td>{{ item.dsc_mesa }}</td>
-									<td>{{ item.num_comanda }}</td>
-									<td  class="text-center">{{ item.nome_status }}</td>
-									<td align="center">
-										<button ng-if="item.id_status == 1" data-loading-text="<i class='fa fa-refresh fa-spin'/>" type="button" ng-click="changeStatus(item,2,$event)" class="btn btn-lg btn-warning">
-											<i class="fa fa-unlock"></i>
+								<tr ng-if="ordem_producao.length == 0">
+									<td class="text-center" colspan="8">
+										Nenhuma ordem de produção encontrada
+									</td>
+								</tr>
+								<tr bs-tooltip ng-repeat="item in ordem_producao"
+									class="{{ (item.id_status == 3) ? 'info' : ((item.id_status == 1) ? 'danger' : ((item.id_status == 2) ? 'warning' : '')) }}">
+									<td class="text-middle text-center" ng-click="showView(item)">
+										{{ item.dta_create | dateFormat:'dateTime' }}
+									</td>
+									<td class="text-middle" ng-click="showView(item)">
+										{{ item.nome_responsavel }}
+									</td>
+									<td class="text-middle" ng-click="showView(item)">
+										{{ item.nome_cliente }}
+									</td>
+									<td class="text-middle text-center" ng-click="showView(item)">
+										{{ item.dsc_mesa }}
+									</td>
+									<td class="text-middle text-center" ng-click="showView(item)">
+										{{ item.num_comanda }}
+									</td>
+									<td class="text-middle text-center" ng-click="showView(item)">
+										{{ item.nme_produto }}
+									</td>
+									<td class="text-middle text-center" width="80" ng-click="showView(item)">
+										{{ item.qtd_produto }}
+									</td>
+									<td class="text-middle text-center">
+										<button type="button" class="btn btn-lg btn-info" 
+											data-loading-text="<i class='fa fa-refresh fa-spin'/>" 
+											ng-if="item.id_status == 1"
+											ng-click="changeStatus(item,2,$event)">
+											<i class="fa fa-play"></i>
 										</button>
 
-										<button ng-if="item.id_status == 2" data-loading-text="<i class='fa fa-refresh fa-spin'/>" type="button" ng-click="changeStatus(item,3,$event)" class="btn btn-lg btn-success">
-											<i class="fa fa-lock"></i>
-										</button>
-										<button type="button" ng-click="showView(item)" class="btn btn-lg btn-primary">
-											<i class="fa fa-tasks"></i>
-										</button>
-										<button type="button" ng-click="delete(item)"  class="btn btn-lg btn-danger delete" disabled="disabled">
-											<i class="fa fa-trash-o"></i>
+										<button type="button" class="btn btn-lg btn-success"
+											data-loading-text="<i class='fa fa-refresh fa-spin'/>" 
+											ng-if="item.id_status == 2" 
+											ng-click="changeStatus(item,3,$event)">
+											<i class="fa fa-stop"></i>
 										</button>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 						<div class="panel-footer clearfix">
-						<div class="pull-right">
-							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.ordem_producao.length > 1">
-								<li ng-repeat="item in paginacao.ordem_producao" ng-class="{'active': item.current}">
-									<a href="" h ng-click="loadOrdemProducao(item.offset,item.limit)">{{ item.index }}</a>
-								</li>
-							</ul>
+							<div class="pull-right">
+								<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.ordem_producao.length > 1">
+									<li ng-repeat="item in paginacao.ordem_producao" ng-class="{'active': item.current}">
+										<a href="" h ng-click="loadOrdemProducao(item.offset,item.limit)">{{ item.index }}</a>
+									</li>
+								</ul>
+							</div>
 						</div>
-					</div>
 					</div>
 				</div>
 			</div>

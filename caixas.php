@@ -307,6 +307,7 @@
 						<table class="table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
+									<th width="50">#</th>
 									<th>Descrição</th>
 									<th>IP</th>
 									<th width="80" style="text-align: center;">Opções</th>
@@ -324,6 +325,7 @@
 							</tr>
 							<tbody>
 								<tr ng-repeat="item in contas">
+									<td>{{ item.id }}</td>
 									<td>{{ item.dsc_conta_bancaria }}</td>
 									<td>{{ item.pth_local }}</td>
 									<td align="center">
