@@ -963,7 +963,6 @@
 								<div class="input-group">
 						            <input type="text" class="form-control input-sm" 
 						            	ng-model="busca.produtos"
-						            	ng-keyup="loadProdutos(0,10)"
 						            	ng-enter="loadProdutos(0,10)">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">

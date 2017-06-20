@@ -6,7 +6,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
 	var clienteTO 	= { 
-						tipo_cadastro: "pf",empreendimentos:[],cod_regime_tributario:null,cod_regime_pis_cofins:null,
+						flg_ativo: 1, tipo_cadastro: "pf",empreendimentos:[],cod_regime_tributario:null,cod_regime_pis_cofins:null,
 						cod_tipo_empresa:null,flg_contribuinte_icms:0,flg_isento_inscricao_estadual:0,flg_contribuinte_ipi:0,cod_zoneamento:null ,regime_especial:[],cliente_tipo_cadastro:'cliente_pf',flg_tipo:'cliente',modulos:[],
 						empreendimentos: [{id:ng.userLogged.id_empreendimento,nome_empreendimento:ng.userLogged.nome_empreendimento}]
 				  	};
