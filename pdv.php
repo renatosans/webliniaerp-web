@@ -1995,7 +1995,7 @@
 											</div>
 											<div class="col-sm-3" ng-if="new_cliente.tipo_cadastro == 'pf'">
 												<div id="dta_nacimento" class="form-group">
-													<label class="control-label">Data de Nacimento</label>
+													<label class="control-label">Data de Nascimento</label>
 													<input class="form-control input-sm" ui-mask="99/99/9999" id="dta_nacimento" ng-model="new_cliente.dta_nacimento">
 												</div>
 											</div>

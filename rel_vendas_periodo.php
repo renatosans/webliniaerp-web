@@ -141,7 +141,7 @@
 
 					<div class="panel-footer clearfix">
 						<div class="pull-right">
-							<button type="button" class="btn btn-sm btn-primary" ng-click="loadVendas()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
+							<button type="button" class="btn btn-sm btn-primary" ng-click="loadVendas(0,10)"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="limparBusca()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-show="itens.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
@@ -157,7 +157,8 @@
 
 				<br>
 
-				<table class="table table-condensed table-bordered table-striped table-hover">
+				<table class="table table-condensed table-bordered table-striped table-hover"
+					ng-if="(vendas != null)">
 					<thead>
 						<tr>
 							<th class="text-center" width="80">#</th>
@@ -165,14 +166,14 @@
 							<th class="text-center">Vendedor</th>
 							<th class="text-center">Cliente</th>
 							<th class="text-center" width="80">Status</th>
-							<th class="text-center" width="100">Total</th>
+							<th class="text-center" width="100">Vlr. Venda</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr bs-tooltip ng-repeat="item in vendas">
 							<td class="text-center">{{ item.id }}</td>
 							<td class="text-center">{{ item.dta_venda }}</td>
-							<td>{{ item.nme_vendedor }} <i ng-if="funcioalidadeAuthorized('mudar_vendedor')" ng-if="userLogged.id_perfil == 1" tooltip="Finalizar Produção" data-toggle="tooltip" title="Alterar Vendedor" style="cursor:pointer ;float: right;color: green;" ng-click="selVendedor(item)" class="fa fa-retweet fa-lg"></i></td>
+							<td>{{ item.nme_vendedor }}</td>
 							<td>{{ item.nme_cliente }}</td>
 							<td class="text-center">
 								{{ item.dsc_status }}
@@ -180,7 +181,30 @@
 							<td class="text-right">R$ {{ item.vlr_total_venda | numberFormat : '2' : ',' : '.'}}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td class="text-right text-bold" colspan="5">Total Vendido</td>
+							<td class="text-right">R$ {{ vlr_total_vendido | numberFormat : 2 : ',' : '.'  }}</td>
+						</tr>
+						<tr>
+							<td class="text-right text-bold" colspan="5">Ticket Medio</td>
+							<td class="text-right">R$ {{ vlr_ticket_medio | numberFormat : 2 : ',' : '.'  }}</td>
+						</tr>
+						<tr>
+							<td class="text-center text-bold" colspan="6">Total por Forma de Pagamento</td>
+						</tr>
+						<tr ng-repeat="item in formas_pagamento">
+							<td class="text-right" colspan="5">{{ item.dsc_forma_pagamento }} ({{ item.prc_respectivo | numberFormat : 0 : ',' : '.' }}%)</td>
+							<td class="text-right">R$ {{ item.vlr_soma_pagamento | numberFormat : 2 : ',' : '.'  }}</td>
+						</tr>
+						<tr>
+							<td class="text-right text-bold" colspan="5">Total Recebido</td>
+							<td class="text-right">R$ {{ vlr_total_formas_pagamento | numberFormat : 2 : ',' : '.'  }}</td>
+						</tr>
+					</tfoot>
 				</table>
+
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->
