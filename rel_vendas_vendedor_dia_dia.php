@@ -233,7 +233,7 @@
 							<th width="100" class="text-center">Fabricante</th>
 							<th width="100" class="text-center">Tamanho</th>
 							<th width="100" class="text-center">Cor</th>
-							<th width="100" class="text-center">R$ Custo</th>
+							<th width="100" class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ Custo</th>
 							<th width="100" class="text-center">R$ Real</th>
 							<th width="100" class="text-center">Desc. %</th>
 							<th width="100" class="text-center">Vlr. c/ Desc.</th>
@@ -260,7 +260,7 @@
 							<td class="text-center">{{ item.nme_fabricante }}</td>
 							<td class="text-center">{{ item.nme_tamanho }}</td>
 							<td class="text-center">{{ item.nme_cor }}</td>
-							<td class="text-center">R$ {{item.vlr_custo | numberFormat:2:',':'.'}}</td>
+							<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{item.vlr_custo | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.vlr_real_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">{{item.num_percentual_desconto | numberFormat:2:',':'.'}} %</td>
 							<td class="text-right">R$ {{item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
