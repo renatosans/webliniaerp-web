@@ -237,7 +237,7 @@
 							</td>
 						</tr>
 						<tr ng-if="vendas == null">
-							<td class="text-center" colspan="13">
+							<td class="text-center" colspan="14">
 								Nenhuma venda encontrada.
 							</td>
 						</tr>

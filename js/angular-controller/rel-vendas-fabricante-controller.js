@@ -60,6 +60,8 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 		 ng.produto = null;
 		 ng.vendas = null;
 		 ng.paginacao.vendas = null;
+		 ng.busca.id_fabricante   = null;
+		 ng.busca.nome_fabricante = null;
 	}
 
 	ng.resetFilter = function() {
