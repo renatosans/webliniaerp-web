@@ -228,7 +228,7 @@
 														<label class="control-label"><i class="fa fa-barcode"></i> Código de Barras</label>
 														<input type="text" class="form-control input-sm"
 															ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" 
-															ng-model="produto.codigo_barra" >
+															ng-model="produto.codigo_barra" ng-enter="fixBarcodeScanner()">
 													</div>
 												</div>
 

@@ -178,6 +178,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				}
 			});
 	}
+	
+	ng.fixBarcodeScanner = function(){}
 
 	ng.loadInsumos = function(offset, limit) {
 		ng.modal_insumos = [];
