@@ -1850,7 +1850,7 @@
   			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancelar()">
 							<span aria-hidden="true">&times;</span>
 						</button>
 						<h4 class="modal-title">Venda finalizada com sucesso!</h4>
