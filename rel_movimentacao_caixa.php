@@ -285,42 +285,87 @@
 								<span style="font-size: 14px;">Total por Forma de Pagamento</span>
 							</td>
 						</tr>
-						<tr ng-repeat="(key, item) in totais.formas_pagamento" ng-if="item.valor > 0">
-							<td colspan="4" class="text-right">
-								{{ item.dsc == 'Dinheiro' && 'Dinheiro(Pagamentos)' || item.dsc }}
-							</td>
-							<td class="text-right" style="color:#000;">
-								<strong>R$ {{  item.dsc == 'Dinheiro' && (item.valor - total_reforco_caixa | numberFormat:2:',':'.') || (item.valor | numberFormat:2:',':'.')  }}</strong>
-							</td>
-							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
 
+						<tr>
+							<td colspan="4" class="text-right text-success text-bold">{{ totais.formas_pagamento.dinheiro.dsc }} (Pagamentos de Venda)</td>
+							<td class="text-right text-success text-bold">R$ {{ totais.formas_pagamento.dinheiro.valor - total_reforco_caixa | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-success text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-success text-bold">R$ {{ totais.formas_pagamento.dinheiro.valor - total_reforco_caixa | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-info text-bold">Reforços</td>
+							<td class="text-right text-info text-bold">R$ {{ total_reforco_caixa  | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-info text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-info text-bold">R$ {{ total_reforco_caixa  | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-danger text-bold">Sangrias</td>
+							<td class="text-right text-danger text-bold">R$ {{ totais.formas_pagamento.sangria.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-danger text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-danger text-bold">R$ {{ totais.formas_pagamento.sangria.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">Saldo Dinheiro</td>
+							<td class="text-right text-bold">
+								<span ng-class="{ 'text-danger': (getSaldoDinheiro() < 0), 'text-success': (getSaldoDinheiro() > 0) }">R$ {{ getSaldoDinheiro() | numberFormat : 2 : ',' : '.'}}</span>
 							</td>
-							<td ng-if="key == 'cartao_debito' && funcioalidadeAuthorized('ver_taxa_maquineta')" style="color:#000;" class="text-right">
-								<strong>R$ {{ total_desconto_taxa_maquineta_debito | numberFormat:2:',':'.'}}</strong>
-							</td>
-							<td ng-if="key == 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" style="color:#000;" class="text-right">
-								<strong>R$ {{ total_desconto_taxa_maquineta_credito | numberFormat:2:',':'.'}}</strong>
-							</td>
-							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;">
-								<strong>R$ {{ 0 | numberFormat:2:',':'.'}}</strong>
-							</td>
-
-							<td ng-if="key == 'cartao_debito' && funcioalidadeAuthorized('ver_taxa_maquineta')" style="color:#000;" class="text-right">
-								<strong>R$ {{ item.valor - total_desconto_taxa_maquineta_debito | numberFormat:2:',':'.'}}</strong>
-							</td>
-							<td ng-if="key == 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" style="color:#000;" class="text-right">
-								<strong>R$ {{ item.valor - total_desconto_taxa_maquineta_credito | numberFormat:2:',':'.'}}</strong>
-							</td>
-							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;">
-								<strong>R$ {{ item.valor | numberFormat:2:',':'.'}}</strong>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">
+								<span ng-class="{ 'text-danger': (getSaldoDinheiro() < 0), 'text-success': (getSaldoDinheiro() > 0) }">R$ {{ getSaldoDinheiro() | numberFormat : 2 : ',' : '.'}}</span>
 							</td>
 						</tr>
 						<tr>
-							<td colspan="4" class="text-right">Dinheiro(Reforços)</td>
-							<td class="text-right" style="color:#000;"><strong>R$ {{ (total_reforco_caixa | numberFormat:2:',':'.') }}</strong> </td>
-							<td ></td>
-							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;"><strong>R$ {{ (0 | numberFormat:2:',':'.') }}</strong> </td>
-							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;"><strong>R$ {{ (0 | numberFormat:2:',':'.') }}</strong> </td>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.cartao_credito.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.cartao_credito.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right text-bold">R$ {{ total_desconto_taxa_maquineta_credito | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.cartao_credito.valor - total_desconto_taxa_maquineta_credito | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.cartao_debito.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.cartao_debito.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right text-bold">R$ {{ total_desconto_taxa_maquineta_debito | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.cartao_debito.valor - total_desconto_taxa_maquineta_debito | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.cheque.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.cheque.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.cheque.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.a_receber.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.a_receber.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.a_receber.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.vale_troca.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.vale_troca.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.vale_troca.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.boleto_bancario.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.boleto_bacario.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.boleto_bacario.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.transferencia_bancaria.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.transferencia_bancaria.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.transferencia_bancaria.valor | numberFormat : 2 : ',' : '.'}}</td>
 						</tr>
 					</tbody>
 				</table>
