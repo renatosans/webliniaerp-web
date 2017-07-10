@@ -2621,7 +2621,7 @@
 												</a>
 												<button type="button" class="btn btn-xs btn-primary"
 													tooltip title="Imprimir"
-													ng-click="getInformacoesFechamentoCaixa(item.id)">
+													ng-click="printRFC(item.id)">
 													<i class="fa fa-print"></i>
 												</button>
 											</td>

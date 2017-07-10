@@ -90,7 +90,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 
 		var copyNF = angular.copy(ng.NF);
 
-		aj.post(baseUrlApi()+"nfe/calcular", {dados: JSON.stringify(post)})
+		aj.post(baseUrlApi()+"nfe/calcular", post)
 			.success(function(data, status, headers, config) {
 				ng.nfeCalculada 	= true;
 				ng.disableSendNf 	= false;

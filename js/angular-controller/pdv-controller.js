@@ -2333,6 +2333,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	}
 
+	ng.printRFC = function(id_fechamento_caixa) {
+		dlg = $dialogs.confirm('Atenção!!!' ,'Deseja incluir as movimentações do caixa no relatório?');
+
+		dlg.result.then(
+			function(){
+				ng.complete_report_thermal_printer = true;
+				ng.getInformacoesFechamentoCaixa(id_fechamento_caixa);
+			},
+			function(){
+				ng.complete_report_thermal_printer = false;
+				ng.getInformacoesFechamentoCaixa(id_fechamento_caixa);
+			}
+		);
+	}
+
 	ng.getInformacoesFechamentoCaixa = function(id_fechamento_caixa) {
 		ng.fechamento_caixa = { 
 			empreendimento: ng.empreendimento,

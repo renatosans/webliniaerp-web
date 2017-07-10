@@ -20,6 +20,15 @@
 	<!-- Pace -->
 	<link href="css/pace.css" rel="stylesheet">
 
+	<!-- Gritter -->
+	<link href="css/gritter/jquery.gritter.css" rel="stylesheet">
+
+	<!-- Datepicker -->
+	<link href="css/datepicker.css" rel="stylesheet"/>
+
+	<!-- Timepicker -->
+	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
+
 	<!-- Color box -->
 	<link href="css/colorbox/colorbox.css" rel="stylesheet">
 
@@ -30,8 +39,31 @@
 	<link href="css/endless.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
 
-	<link href="css/isteven-multi-select.css" rel="stylesheet">
+	<link href="css/fileinput/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+
 	<link href="css/custom.css" rel="stylesheet">
+	<style type="text/css">
+		 .kv-avatar .file-preview-frame,.kv-avatar .file-preview-frame:hover {
+            margin: 0;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+            text-align: center;
+        }
+        .kv-avatar .file-input {
+            display: table-cell;
+            max-width: 220px;
+        }
+        .kv-avatar .file-drag-handle{
+            display: none
+        }
+        .file-drop-zone.clickable:hover {
+            border: 1px dashed #aaa !important ;
+        }
+        </style>
+	</style>
+
+	<link href="css/isteven-multi-select.css" rel="stylesheet">
   </head>
 
 <body class="overflow-hidden" ng-controller="DashboardIntegradoController">
@@ -147,23 +179,16 @@
 					<li>
 			    		<div class="value">
 			    			<span>Faturamento</span>
-			    			<h4>R$ <strong id="faturamentoNumber">32153</strong></h4>
+			    			<h4>R$ <strong id="faturamentoNumber">0</strong></h4>
 			    		</div>
 			    		<span id="faturamentoChart" class="sparkline"></span>
 			    	</li>
 			    	<li>
 			    		<div class="value">
 			    			<span>Despesas</span>
-			    			<h4>R$ <strong id="despesasNumber">4256</strong></h4>
+			    			<h4>R$ <strong id="despesasNumber">0</strong></h4>
 			    		</div>
 						<span id="despesasChart" class="sparkline"></span>
-			    	</li>
-			    	<li>
-			    		<div class="value">
-			    			<span>Lucro Previsto</span>
-			    			<h4>R$ <strong id="lucroNumber">3424</strong></h4>
-			    		</div>
-						<span id="lucroChart" class="sparkline"></span>
 			    	</li>
 			    </ul><!-- /page-stats -->
 			</div><!-- /main-header -->
@@ -183,46 +208,31 @@
 									<ul class="list-group collapse" id="filtro">
 										<li class="list-group-item clearfix">
 											<div class="row">
-												<div class="col-lg-8">
+												<div class="col-lg-12">
 													<div class="form-group">
 														<label class="control-label">Empreendimentos</label>
 														<div     
 															isteven-multi-select
-															input-model="modernBrowsers"
-															output-model="outputBrowsers"
+															input-model="empreendimentos"
+															output-model="empreendimentos_selecionados"
+															translation="localLang"
+															helper-elements="all none filter"
 															button-label="icon name"
-															item-label="icon name maker"
+															item-label="icon name"
 															tick-property="ticked"
 														></div>
-													</div>
-												</div>
-												<div class="col-lg-3">
-													<div class="row">
-														<div class="form-group">
-															<label class="control-label">Inicial</label>
-															<div class="input-group" id="dtaInicialDiv">
-																<input type="text" id="dtaInicial" class="datepicker form-control" name="dta_inicial" style="text-align: center;">
-																<span id="btnDtaInicial" class="input-group-addon"><i class="fa fa-calendar"></i></span>
-															</div>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="form-group">
-															<label class="control-label">Final</label>
-															<div class="input-group" id="dtaFinalDiv">
-																<input type="text" id="dtaFinal" class="datepicker form-control" name="dta_inicial" style="text-align: center;">
-																<span id="btnDtaFinal" class="input-group-addon"><i class="fa fa-calendar"></i></span>
-															</div>
-														</div>
 													</div>
 												</div>
 											</div>
 										</li>
 										<li class="list-group-item clearfix">
 											<div class="pull-right">
-												<button class="btn btn-sm btn-default"><i class="fa fa-undo"></i> Reset</button>
-												<button class="btn btn-sm btn-primary"><i class="fa fa-filter"></i> Aplicar Filtro</button>
+												<button class="btn btn-sm btn-default" ng-click="resetFilter()">
+													<i class="fa fa-undo"></i> Reset
+												</button>
+												<button class="btn btn-sm btn-primary" ng-click="applyFilter()">
+													<i class="fa fa-filter"></i> Aplicar Filtro
+												</button>
 											</div>
 										</li>
 									</ul>
@@ -232,14 +242,15 @@
 
 						<div class="row">
 							<div class="col-sm-6 col-md-6">
-								<div class="panel-stat3 bg-info">
-									<h2 class="m-top-none">R$ <span id="serverloadCount">13.423,43</span></h2>
+								<div class="panel-stat3 bg-info vlr_receber_hoje">
+									<h2 class="m-top-none">R$ <span class="value">0,00</span></h2>
 									<h5>A receber hoje</h5>
-									<i class="fa fa-arrow-circle-o-up fa-lg"></i><span class="m-left-xs">15% do restante do mês</span>
+									<i class="fa fa-arrow-circle-o-up fa-lg hide"></i>
+									<span class="m-left-xs hide">15% do restante do mês</span>
 									<div class="stat-icon">
 										<i class="fa fa-money fa-3x"></i>
 									</div>
-									<div class="refresh-button">
+									<div class="refresh-button hide">
 										<i class="fa fa-refresh"></i>
 									</div>
 									<div class="loading-overlay">
@@ -248,14 +259,15 @@
 								</div>
 							</div><!-- /.col -->
 							<div class="col-sm-6 col-md-6">
-								<div class="panel-stat3 bg-warning">
-									<h2 class="m-top-none">R$ <span id="userCount">36.242,33</span></h2>
+								<div class="panel-stat3 bg-warning vlr_pagar_hoje">
+									<h2 class="m-top-none">R$ <span class="value">0,00</span></h2>
 									<h5>A pagar hoje</h5>
-									<i class="fa fa-arrow-circle-o-up fa-lg"></i><span class="m-left-xs">28% do restante do mês</span>
+									<i class="fa fa-arrow-circle-o-up fa-lg hide"></i>
+									<span class="m-left-xs hide">28% do restante do mês</span>
 									<div class="stat-icon">
 										<i class="fa fa-area-chart fa-3x"></i>
 									</div>
-									<div class="refresh-button">
+									<div class="refresh-button hide">
 										<i class="fa fa-refresh"></i>
 									</div>
 									<div class="loading-overlay">
@@ -267,10 +279,11 @@
 
 						<div class="row">
 							<div class="col-sm-6 col-md-6">
-								<div class="panel-stat3 bg-success">
-									<h2 class="m-top-none">R$ <span id="orderCount">25.345,34</span></h2>
+								<div class="panel-stat3 bg-success vlr_receber_atrasado">
+									<h2 class="m-top-none">R$ <span class="value">0,00</span></h2>
 									<h5>Recebimentos em atraso</h5>
-									<i class="fa fa-arrow-circle-o-up fa-lg"></i><span class="m-left-xs">3% Maior que o mês anterior</span>
+									<i class="fa fa-arrow-circle-o-up fa-lg hide"></i>
+									<span class="m-left-xs hide">3% Maior que o mês anterior</span>
 									<div class="stat-icon">
 										<i class="fa fa-warning fa-3x"></i>
 									</div>
@@ -283,10 +296,11 @@
 								</div>
 							</div><!-- /.col -->
 							<div class="col-sm-6 col-md-6">
-								<div class="panel-stat3 bg-danger">
-									<h2 class="m-top-none">R$ <span id="visitorCount">4.272,14</span></h2>
+								<div class="panel-stat3 bg-danger vlr_pagar_atrasado">
+									<h2 class="m-top-none">R$ <span class="value">0,00</span></h2>
 									<h5>Despesas em atraso</h5>
-									<i class="fa fa-arrow-circle-o-up fa-lg"></i><span class="m-left-xs">15% Maior que o mês anterior</span>
+									<i class="fa fa-arrow-circle-o-up fa-lg hide"></i>
+									<span class="m-left-xs hide">15% Maior que o mês anterior</span>
 									<div class="stat-icon">
 										<i class="fa fa-warning fa-3x"></i>
 									</div>
@@ -562,6 +576,7 @@
 
 	<!-- Sparkline -->
 	<script src='js/jquery.sparkline.min.js'></script>
+	<script src='js/jquery.animateNumber.min.js'></script>
 
 	<!-- Endless -->
 	<script src="js/endless/endless_dashboard.js"></script>
@@ -587,6 +602,13 @@
     <script src="js/isteven-multi-select.js"></script>
     <script type="text/javascript">
     	var addParamModule = ['isteven-multi-select'] ;
+    	$('.datepicker').datepicker();
+		$('.timepicker').timepicker();
+
+		$("#btnDtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
+		$("#btnDtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
+
+		$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
     </script>
     <script src="js/app.js"></script>
     <script src="js/angular-services/user-service.js"></script>

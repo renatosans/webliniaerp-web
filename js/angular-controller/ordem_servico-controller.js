@@ -3,7 +3,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 	$scope.configuracoes 		= ConfigService.getConfig($scope.userLogged.id_empreendimento);
 	$scope.status_ordem_servico = AsyncAjaxSrvc.getListOfItens(baseUrlApi()+'status/atendimento');;
 	$scope.status_servico 		= AsyncAjaxSrvc.getListOfItens(baseUrlApi()+'status/procedimento');;
-	$scope.busca 				= { clientes: "", 	servicos: "", 	produtos: "",  nome: "", cod_status_servico: null, show_cancelados: 0};
+	$scope.busca 				= { clientes: "", 	servicos: "", 	produtos: "",  nome: "", cod_status_servico: null, show_cancelados: 0, limit: "10"};
 	$scope.paginacao			= { clientes: null, servicos: null, produtos: null, ordens_servico: null };
 
 	$scope.showBoxNovo = function(clearData){
@@ -242,7 +242,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 				$('#btnSalvarOS').button('reset');
 				
 				$scope.showBoxNovo(true);
-				$scope.loadOrdensServicos(0,10);
+				$scope.loadOrdensServicos(0);
 			})
 			.error(function(errors, status, headers, config) {
 				$('#btnCancelarOS').button('reset');
@@ -273,17 +273,22 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 
 	$scope.resetFilter = function() {
 		$("#dtaInicial").val("");
+		$("#dtaFinal").val("");
 		$scope.busca.nome = "" ;
+		$scope.busca.limit = "10" ;
 		$scope.busca.cod_status_servico = null ;
 		$scope.reset();
-		$scope.loadOrdensServicos(0,10);
+		$scope.loadOrdensServicos(0);
 	}
 
-	$scope.loadOrdensServicos = function(offset,limit) {
+	$scope.loadOrdensServicos = function(offset) {
+		$scope.ordens_servico = [];
+		$scope.paginacao.ordens_servico = [];
+
 		var query_string = "?atd->id_empreendimento="+ $scope.userLogged.id_empreendimento;
 
 		if($scope.busca.nome != ""){
-			query_string += "&("+$.param({'cli->nome':{exp:"like'%"+$scope.busca.nome+"%')"}});
+			query_string += "&("+$.param({'(cli->nome':{exp:"like'%"+$scope.busca.nome+"%') OR jud.razao_social LIKE '%"+$scope.busca.nome+"%' OR jud.nome_fantasia LIKE '%"+$scope.busca.nome+"%')"}});
 		}
 
 		if($scope.busca.cod_status_servico != null)
@@ -291,13 +296,13 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 		else if(parseInt($scope.busca.show_cancelados, 10) === 0)
 			query_string += "&("+$.param({'atd->id_status':{exp:"<> 5)"}});
 
-		if($("#dtaInicial").val() != ""){
-			var dta_ordem_servico = moment($("#dtaInicial").val(), 'DD/MM/YYYY').format('YYYY-MM-DD');
-
-			query_string += "&("+$.param({'2':{exp:"=2 AND cast(ven.dta_venda as date) = '"+ dta_ordem_servico +"' )"}});
+		if(!empty($("#dtaInicial").val()) && !empty($("#dtaFinal").val())){
+			var dta_inicio = moment($("#dtaInicial").val(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+			var dta_final = moment($("#dtaFinal").val(), 'DD/MM/YYYY').format('YYYY-MM-DD');
+			query_string += "&("+$.param({'2':{exp:"=2 AND cast(ven.dta_venda as date) BETWEEN '"+ dta_inicio +"' AND '"+ dta_final +"' )"}});
 		}
 
-		$http.get(baseUrlApi()+"ordens-servico/"+ offset +"/"+ limit + query_string)
+		$http.get(baseUrlApi()+"ordens-servico/"+ offset +"/"+ $scope.busca.limit + query_string)
 			.success(function(data, status, headers, config) {
 				$scope.ordens_servico = data.itens;
 				$scope.paginacao.ordens_servico = data.paginacao;
@@ -331,7 +336,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 			vlr_total_os: 0,
 			dta_ordem_servico: moment().format('DD/MM/YYYY HH:mm:ss')
 		};
-		$scope.loadOrdensServicos(0,10);
+		$scope.loadOrdensServicos(0);
 	}
 
 	clearObject();

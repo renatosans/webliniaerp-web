@@ -495,10 +495,20 @@
 								</div>
 							</div>
 
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">Até</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control text-center">
+										<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
+									</div>
+								</div>
+							</div>
+
 							<div class="col-sm-4">
 								<div class="form-group">
 									<label class="control-label">Cliente</label>
-									<input ng-model="busca.nome" ng-keyup="loadOrdensServicos(0,10)" ng-enter="loadOrdensServicos(0,10)" type="text" class="form-control input-md ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.nome" ng-enter="loadOrdensServicos(0)" type="text" class="form-control input-md ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
@@ -510,20 +520,6 @@
 									</select>
 								</div>
 							</div>
-
-							<div class="col-sm-1">
-								<div class="form-group">
-									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-block btn-primary" ng-click="loadOrdensServicos(0,10)"><i class="fa fa-filter"></i> Filtrar</button>
-								</div>
-							</div>
-
-							<div class="col-sm-1">
-								<div class="form-group">
-									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-block btn-default" ng-click="resetFilter()">Limpar</button>
-								</div>
-							</div>
 						</div>
 
 						<div class="row">
@@ -531,24 +527,53 @@
 								<div class="form-group">
 									<label class="control-label"></label>
 									<div class="controls">
-										<label class="label-checkbox inline">
+										<label class="label-checkbox">
 											<input type="checkbox" ng-model="show_obs_column" ng-true-value="1" ng-false-value="0">
 											<span class="custom-checkbox"></span>
 											Exibir observações
+										</label>
+										<label class="label-checkbox" ng-show="(!busca.cod_status_servico)">
+											<input type="checkbox" ng-model="busca.show_cancelados" ng-true-value="1" ng-false-value="0" ng-click="loadOrdensServicos(0)">
+											<span class="custom-checkbox"></span>
+											Exibir cancelados
 										</label>
 									</div>
 								</div>
 							</div>
 
-							<div class="col-sm-4" ng-show="(!busca.cod_status_servico)">
+							<div class="col-sm-2">
 								<div class="form-group">
-									<label class="control-label"></label>
+									<label class="ccontrol-label">Itens por Página</label> 
+									<select class="form-control" ng-model="busca.limit" ng-change="loadOrdensServicos(0)">
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="70">70</option>
+										<option value="100">100</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-1">
+								<div class="form-group">
+									<label class="control-label"><br></label>
 									<div class="controls">
-										<label class="label-checkbox inline">
-											<input type="checkbox" ng-model="busca.show_cancelados" ng-true-value="1" ng-false-value="0" ng-click="loadOrdensServicos(0,10)">
-											<span class="custom-checkbox"></span>
-											Exibir cancelados
-										</label>
+										<button type="button" class="btn btn-sm btn-block btn-primary" 
+											ng-click="loadOrdensServicos(0)">
+											<i class="fa fa-filter"></i> Filtrar
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-1">
+								<div class="form-group">
+									<label class="control-label"><br></label>
+									<div class="controls">
+										<button type="button" class="btn btn-sm btn-block btn-default" 
+											ng-click="resetFilter()">
+											Limpar
+										</button>
 									</div>
 								</div>
 							</div>

@@ -407,8 +407,8 @@
 							</tbody>
 						</table>	
 						<div class="pull-right">
-							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.operacoes.length > 1">
-								<li ng-repeat="item in paginacao.operacoes" ng-class="{'active': item.current}">
+							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.operacao.length > 1">
+								<li ng-repeat="item in paginacao.operacao" ng-class="{'active': item.current}">
 									<a href="" h ng-click="load(item.offset,item.limit)">{{ item.index }}</a>
 								</li>
 							</ul>
