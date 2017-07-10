@@ -718,6 +718,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.dsc_titulo_cnf != undefined){
+			var item5 = {
+							nome 				:'dsc_titulo_cnf',
+							valor 				:ng.configuracoes.dsc_titulo_cnf , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item5);
+		}
+
+		if(ng.configuracoes.dsc_observacoes_cnf != undefined){
+			var item5 = {
+							nome 				:'dsc_observacoes_cnf',
+							valor 				:ng.configuracoes.dsc_observacoes_cnf , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item5);
+		}
+
 		btn.button('loading');
 		var pth_local_sucess = false ;
 		if(ng.config.pth_local != undefined){

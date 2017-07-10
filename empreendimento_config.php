@@ -580,7 +580,7 @@
 										</div>
 									</div>
 
-									<div class="col-sm-5">
+									<div class="col-sm-4">
 										<div class="form-group">
 										 <label for="txt_sign_ac">Perfis disponíveis no cadastro rapido:</label>
 										 	<div class="clearfix" ng-repeat="item in perfis">
@@ -592,15 +592,11 @@
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="row">
 									<div class="col-sm-3">
 										<div class="form-group" id="pth_local"  >
 											<label class="control-label">Código Identificador Balança</label>
 											<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
 										</div>
-									</div>
-									<div class="col-sm-2">
 										<div class="form-group" id="">
 											<label class="control-label">Qtd. Casas Decimais</label>
 											<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
@@ -608,9 +604,23 @@
 									</div>
 								</div>
 								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label class="control-label" >Título Cupom Não Fiscal</label>
+											<input ng-model="configuracoes.dsc_titulo_cnf" type="text" class="form-control input-sm parsley-validated" maxlength="41">
+										</div>
+									</div>
+									<div class="col-sm-7 col-sm-offset-1">
+										<div class="form-group">
+											<label class="control-label">Observação Cupom Não Fiscal</label>
+											<textarea ng-model="configuracoes.dsc_observacoes_cnf" class="form-control" rows="5"></textarea>
+										</div>
+									</div>
+								</div>
+								<div class="row">
 									<div class="col-sm-12">
 										<div class="pull-right">
-											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
 												<i class="fa fa-save"></i> Salvar
 											</button>
 										</div>
