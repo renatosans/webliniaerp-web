@@ -1660,7 +1660,7 @@
 										<tr ng-show="(produtos.length == 0)">
 											<td colspan="11">Nenhum produto encontrado</td>
 										</tr>
-										<tr ng-repeat="item in produtos">
+										<tr ng-repeat="(index, item) in produtos">
 											<td class="text-center">{{ item.id_produto }}</td>
 											<td class="text-center">{{ item.codigo_barra }}</td>
 											<td>{{ item.nome_produto }}</td>
@@ -1668,7 +1668,7 @@
 											<td class="text-center">{{ item.peso }}</td>
 											<td class="text-center">{{ item.sabor }}</td>
 											<td class="text-center">{{ item.qtd_item }}</td>
-											<td class="text-center">{{ item.qtd_reservada }}</td>
+											<td class="text-center"><a id="prd_item_{{ index }}" href="#" ng-click="showPopoverOrcamentosProdutoReservado(item, index, $event)">{{ item.qtd_reservada }}</a></td>
 											<td class="text-center">{{ item.qtd_item - item.qtd_reservada  }}</td>
 											<td>
 												<input onKeyPress="return SomenteNumero(event);" ng-keyUp="" ng-model="item.qtd_total" type="text" class="form-control input-xs" width="50" />
@@ -1850,7 +1850,7 @@
   			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancelar()">
 							<span aria-hidden="true">&times;</span>
 						</button>
 						<h4 class="modal-title">Venda finalizada com sucesso!</h4>
@@ -1995,7 +1995,7 @@
 											</div>
 											<div class="col-sm-3" ng-if="new_cliente.tipo_cadastro == 'pf'">
 												<div id="dta_nacimento" class="form-group">
-													<label class="control-label">Data de Nacimento</label>
+													<label class="control-label">Data de Nascimento</label>
 													<input class="form-control input-sm" ui-mask="99/99/9999" id="dta_nacimento" ng-model="new_cliente.dta_nacimento">
 												</div>
 											</div>

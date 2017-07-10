@@ -393,13 +393,8 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 
 		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
 			.success(function(data, status, headers, config) {
-				$.each(data.usuarios,function(i,item){
-					ng.usuarios.push(item);
-				});
-				ng.paginacao_usuarios = [];
-				$.each(data.paginacao,function(i,item){
-					ng.paginacao_usuarios.push(item);
-				});
+				ng.usuarios = data.usuarios;
+				ng.paginacao_usuarios = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404){
@@ -414,9 +409,9 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 	ng.selUsuario = function(tipo){
 		var offset = 0  ;
     	var limit  =  10 ;;
-
-			ng.loadUsuarios(offset,limit,tipo);
-			$("#list_usuarios").modal("show");
+		ng.busca.usuarios = "";
+		ng.loadUsuarios(offset,limit,tipo);
+		$("#list_usuarios").modal("show");
 	}
 
 	ng.addUsuario = function(item){

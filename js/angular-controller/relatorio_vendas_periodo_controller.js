@@ -7,7 +7,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 	ng.userLogged 	= UserService.getUserLogado();
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.venda 		= {};
-	ng.vendas 		= [];
+	ng.vendas 		= null;
 	ng.paginacao 	= {vendas:null}
 	ng.detalhes     = [];
 	ng.busca        = {produtos:"",usuarios:"",vendedor:""};
@@ -44,6 +44,35 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 		$("#dtaInicial").val('');
 	}
 
+	ng.loadPagamentosVendas = function() {
+		var dtaInicial  = $("#dtaInicial").val();
+
+		var query_string = "?ven->id_empreendimento="+ ng.userLogged.id_empreendimento+"&ven->flg_excluido=0";
+		var date = empty($("#dtaInicial").val()) ? null : formatDate($("#dtaInicial").val()) ;
+		query_string += empty(date) ? "" : "&date_format(ven->dta_venda,'%Y-%m-%d')="+date ;
+
+		ng.vlr_total_formas_pagamento = 0;
+
+		aj.get(baseUrlApi()+"relatorio/vendas/diario/pagamentos/"+ query_string)
+			.success(function(data, status, headers, config) {
+				ng.formas_pagamento = data.vendas;
+				// calculando o valor total vendido
+				angular.forEach(ng.formas_pagamento, function(item){
+					ng.vlr_total_formas_pagamento += item.vlr_soma_pagamento;
+				});
+
+				angular.forEach(ng.formas_pagamento, function(item){
+					item.prc_respectivo = (item.vlr_soma_pagamento / ng.vlr_total_formas_pagamento) * 100;
+				});
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.formas_pagamento = [];
+				else
+					alert('erro ao buscar pagamentos');
+			});
+	}
+
 	ng.loadVendas = function(offset,limit) {
 		var dtaInicial  = $("#dtaInicial").val();
 
@@ -59,26 +88,28 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 
 		var date =  empty($("#dtaInicial").val()) ? null : formatDate($("#dtaInicial").val()) ;
 		query_string += empty(date)                        ? "" : "&date_format(ven->dta_venda,'%Y-%m-%d')="+date ;
-		query_string += empty(ng.busca.ven_id_vendedor)    ? "" : "&ven->id_usuario="+ng.busca.ven_id_vendedor  ;
-		query_string += empty(ng.busca.ven_id_cliente)     ? "" : "&ven->id_cliente="+ng.busca.ven_id_cliente  ;
-		query_string += empty(ng.busca.ven_id_venda)       ? "" : "&ven->id="+ng.busca.ven_id_venda  ;
 
+		ng.vlr_total_vendido = 0;
+		ng.vlr_ticket_medio = 0;
 
+		ng.vendas = [];
 
-		aj.get(baseUrlApi()+"vendas/"+ offset +"/"+ limit + query_string)
+		aj.get(baseUrlApi()+"relatorio/vendas/diario/"+ offset +"/"+ limit + query_string)
 			.success(function(data, status, headers, config) {
-				//ng.vendas 			= _.groupBy(data.vendas, "dta_group");
 				ng.vendas 			= data.vendas;
 				ng.paginacao.vendas = data.paginacao;
+				angular.forEach(ng.vendas, function(venda){
+					ng.vlr_total_vendido += venda.vlr_total_venda;
+				});
+				ng.vlr_ticket_medio = (ng.vlr_total_vendido / ng.vendas.length);
+				ng.loadPagamentosVendas();
 			})
 			.error(function(data, status, headers, config) {
-				if(status == 404)
-					ng.vendas = [];
-				else
-					alert('erro ao buscar vendas');
+				ng.status = status;
+				ng.vendas = null;
+				ng.msg_error = data;
 			});
 	}
-
 
 	ng.loadDetalhesVenda = function(venda) {
 		ng.venda = venda;

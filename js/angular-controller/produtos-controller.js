@@ -178,6 +178,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				}
 			});
 	}
+	
+	ng.fixBarcodeScanner = function(){}
 
 	ng.loadInsumos = function(offset, limit) {
 		ng.modal_insumos = [];
@@ -1075,40 +1077,40 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		 $(event.target).popover({
                     title: 'Depositos',
                     placement: 'top',
-                    content: '<strong>loading ... </strong>',
+                    content: '<strong>Aguarde, carregando...</strong>',
                     html: true,
                     container: 'body',
                     trigger  :'focus',
                 }).popover('show');
 
 		 aj.get(baseUrlApi()+"estoque/?prd->id="+produto.id_produto+"&emp->id_empreendimento="+ng.userLogged.id_empreendimento)
-		.success(function(data, status, headers, config) {
-			var depositos = {} ;
-			$.each(data.produtos,function(i,v){
-				if(depositos[v.nome_deposito] == undefined)
-					depositos[v.nome_deposito] = {nome_deposito:v.nome_deposito,qtd:0};
-				depositos[v.nome_deposito].qtd += Number(v.qtd_item); 
-			});
-			
-			var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
-			$.each(depositos,function(i,v){
-				tbl += '<tr>'+'<td>'+i+'</td>'+'<td class"text-center">'+v.qtd+'</td>'+'</tr>';
-			});
-			tbl += '</table>';
-			 $(event.target).popover('destroy').popover({
-                    title: 'Depositos',
-                    placement: 'top',
-                    content: tbl,
-                    html: true,
-                    container: 'body',
-                    trigger  :'focus',
-                }).popover('show');
-					
-		})
-		.error(function(data, status, headers, config) {
-		
+			.success(function(data, status, headers, config) {
+				var depositos = {} ;
+				$.each(data.produtos,function(i,v){
+					if(depositos[v.nome_deposito] == undefined)
+						depositos[v.nome_deposito] = {nome_deposito:v.nome_deposito,qtd:0};
+					depositos[v.nome_deposito].qtd += Number(v.qtd_item); 
+				});
 				
-		});
+				var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
+				$.each(depositos,function(i,v){
+					tbl += '<tr>'+'<td>'+i+'</td>'+'<td class"text-center">'+v.qtd+'</td>'+'</tr>';
+				});
+				tbl += '</table>';
+				 $(event.target).popover('destroy').popover({
+	                    title: 'Depositos',
+	                    placement: 'top',
+	                    content: tbl,
+	                    html: true,
+	                    container: 'body',
+	                    trigger  :'focus',
+	                }).popover('show');
+						
+			})
+			.error(function(data, status, headers, config) {
+			
+					
+			});
 	}
 	ng.produto.flg_produto_composto = 0 ;
 	ng.produto_normal = 0 ;

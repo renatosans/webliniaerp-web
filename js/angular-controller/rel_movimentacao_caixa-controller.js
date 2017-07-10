@@ -224,10 +224,18 @@ app.controller('relMovimentacaoCaixaController', function($scope, $http, $window
 		aj.get(baseUrlApi()+"caixa/movimentacoes/total/"+params['id'])
 			.success(function(data, status, headers, config) {
 				ng.totais = data;
+				console.log(ng.totais);
 			})
 			.error(function(data, status, headers, config) {
 				ng.totais = [];
 			});
+	}
+
+	ng.getSaldoDinheiro = function() {
+		var vlr_dinheiro_pgto_vendas = ng.totais.formas_pagamento.dinheiro.valor - ng.total_reforco_caixa;
+		var vlr_reforcos = ng.total_reforco_caixa;
+		var vlr_sangrias = ng.totais.formas_pagamento.sangria.valor;
+		return (vlr_dinheiro_pgto_vendas + vlr_reforcos) - vlr_sangrias;
 	}
 
 	ng.mensagens = function(classe , msg, alertClass){

@@ -4141,6 +4141,40 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		});
 	}
 
+	ng.showPopoverOrcamentosProdutoReservado = function(item, index, event){
+		$(event.target).popover({
+            title: 'Orçamentos',
+            placement: 'top',
+            content: '<strong>Aguarde, carregando...</strong>',
+            html: true,
+            container: 'body',
+            trigger  :'focus',
+        }).popover('show');
+
+		 aj.get(baseUrlApi()+"produto/"+ item.id_produto +"/orcamento/"+ ng.userLogged.id_empreendimento +"/reservado/")
+			.success(function(data, status, headers, config) {
+				var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
+					tbl += '<tr>'+'<td>Orçamento</td>'+'<td class"text-center">Data</td>'+'<td class"text-center">Qtd.</td>'+'</tr>';
+				$.each(data,function(i,v){
+					tbl += '<tr>'+'<td class"text-center">'+v.cod_orcamento+'</td>'+'<td class"text-center">'+formatDateBR(v.dta_venda)+'</td>'+'<td class"text-center">'+v.qtd_reservado+'</td>'+'</tr>';
+				});
+				tbl += '</table>';
+				 $(event.target).popover('destroy').popover({
+	                    title: 'Orçamentos',
+	                    placement: 'top',
+	                    content: tbl,
+	                    html: true,
+	                    container: 'body',
+	                    trigger  :'focus',
+	                }).popover('show');
+
+			})
+			.error(function(data, status, headers, config) {
+			
+					
+			});
+	}
+
 	ng.loadEstados();
 	ng.loadEmpreendimento();
 	ng.existsCookie();

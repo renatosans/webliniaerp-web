@@ -691,6 +691,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.flg_considerar_pagamento_pendente_saldo_devedor != undefined){
+			var item10 = {
+							nome 				:'flg_considerar_pagamento_pendente_saldo_devedor',
+							valor 				:ng.configuracoes.flg_considerar_pagamento_pendente_saldo_devedor , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.cod_identificador_balanca != undefined){
 			var item10 = {
 							nome 				:'cod_identificador_balanca',
