@@ -254,7 +254,7 @@
 						<tr ng-if="movimentacoes.length > 0">
 							<td colspan="4" class="text-right">Saldo Final</td>
 							<td style="color:#000;" class="text-right">
-								<strong>R$ {{ totais.total | numberFormat:2:',':'.'}}</strong>
+								<strong>R$ {{ totais.total - totais.formas_pagamento.sangria.valor| numberFormat:2:',':'.'}}</strong>
 							</td>
 							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
 
