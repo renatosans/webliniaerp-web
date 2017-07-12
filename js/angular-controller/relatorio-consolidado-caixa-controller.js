@@ -128,7 +128,11 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 
 						console.log(fp);
 						ng.total += parseFloat(fp.valor);
-						formas_pagamento[x].valor += parseFloat(fp.valor);
+						if(!empty(formas_pagamento[x]))
+							formas_pagamento[x].valor += parseFloat(fp.valor);
+						else {
+							formas_pagamento[x] = fp;
+						}
 					});
 				});
 
