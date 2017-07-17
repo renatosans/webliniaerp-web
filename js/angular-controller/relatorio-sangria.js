@@ -5,6 +5,7 @@ app.controller('RelatorioSangrias', function($scope, $http, $window, UserService
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina	= 10;
 	ng.paginacao  		= { };
+	ng.pagamentos = null;
 
 	ng.doExportExcel = function(id_table){
     	$('#'+ id_table).tableExport({
@@ -18,14 +19,16 @@ app.controller('RelatorioSangrias', function($scope, $http, $window, UserService
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
 		 ng.fornecedor = {} ;
+		ng.pagamentos = null;
+		ng.msg_error = null;
 	}
 
 	ng.resetFilter = function() {
 		ng.reset();
-		ng.loadPagamentos(0, ng.itensPorPagina);
 	}
 
 	ng.aplicarFiltro = function() {
+		ng.msg_error = null;
 		$("#modal-aguarde").modal('show');
 		ng.loadPagamentos(0, ng.itensPorPagina);
 	}
@@ -59,7 +62,9 @@ app.controller('RelatorioSangrias', function($scope, $http, $window, UserService
 				$("#modal-aguarde").modal('hide');
 			})
 			.error(function(data, status, headers, config) {
-				ng.pagamentos = [] ;
+				ng.pagamentos = null;
+				ng.status = status;
+				ng.msg_error = data;
 				ng.paginacao.pagamentos = [];
 				$("#modal-aguarde").modal('hide');
 			});

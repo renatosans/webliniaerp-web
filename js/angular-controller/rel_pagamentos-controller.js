@@ -12,7 +12,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
     ng.busca_aux               		= {id_forma_pagamento:"",tipoData:"", cliente: ""} ;
     ng.conta                        = {} ;
     ng.movimentacao 				= {};
-    ng.movimentacoes 				= [];
+    ng.movimentacoes 				= null;
     var params      = getUrlVars();
 
     console.log(params);
@@ -95,10 +95,12 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		$("#dtaFinal").val('');
 		ng.busca.id_forma_pagamento = "";
 		ng.busca_aux.cliente = "";
-		ng.loadMovimentacoes();
+		ng.msg_error = null;
+		ng.movimentacoes = null;
 	}
 	ng.loadMovimentacoes= function() {
-		ng.movimentacoes = null ;
+		ng.msg_error = null;
+		ng.movimentacoes = [] ;
 		ng.totais = {total:0} ;
 		ng.total_desconto_taxa_maquineta = 0 ;
 		ng.total_desconto_taxa_maquineta_debito = 0 ;
@@ -166,8 +168,9 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 				ng.movimentacoes = data;
 			})
 			.error(function(data, status, headers, config) {
-				if(status == 404)
-					ng.movimentacoes = [];
+				ng.movimentacoes = null;
+				ng.status = status;
+				ng.msg_error = data;
 	 	});
 	}
 

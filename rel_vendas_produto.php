@@ -180,7 +180,7 @@
 							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-show="itens.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
-							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')" ng-if="(vendas != null)"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
@@ -191,7 +191,7 @@
 					</li>
 				</ul>
 				<br>
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(vendas != null)">
 					<thead>
 						<tr>
 							<th width="50"></th>
@@ -210,11 +210,6 @@
 						<tr ng-if="vendas == null">
 							<td class="text-center" colspan="10">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-if="vendas.length==0">
-							<td colspan="10" class="text-center">
-								Nenhuma registro encontrado
 							</td>
 						</tr>
 						<tr ng-repeat="venda in vendas" bs-popover>
@@ -236,6 +231,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				<!--<div class="pull-right">
 						<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
 							<li ng-repeat="item in paginacao.vendas" ng-class="{'active': item.current}">

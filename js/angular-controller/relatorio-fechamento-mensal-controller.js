@@ -5,7 +5,6 @@ app.controller('RelatorioFechamentoMensalController', function($scope, $http, $w
 	ng.userLogged = UserService.getUserLogado();
 	ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
-	ng.dados;
 
 	ng.qtdCompraTotal;
 	ng.vlrCompraUnitario;
@@ -16,6 +15,8 @@ app.controller('RelatorioFechamentoMensalController', function($scope, $http, $w
 	ng.vlrVendaTotal;
 
 	ng.saldoTotal;
+
+	ng.dados = null;
 
 	ng.doExportExcel = function(id_table){
     	$('#'+ id_table).tableExport({
@@ -48,12 +49,14 @@ app.controller('RelatorioFechamentoMensalController', function($scope, $http, $w
 	}
 
 	ng.resetFilter = function() {
+		ng.msg_error = null;
 		$("#dtaInicial").val("");
 		$("#dtaFinal").val("");
 		ng.reset();
 	}
 
 	ng.aplicarFiltro = function() {
+		ng.msg_error = null;
 		ng.reset();
 
 		var dtaInicial 	= $("#dtaInicial").val();
@@ -128,6 +131,9 @@ app.controller('RelatorioFechamentoMensalController', function($scope, $http, $w
 				});
 			})
 			.error(function(data, status, headers, config) {
+				ng.dados = null;
+				ng.status = status;
+				ng.msg_error = data;
 				$(".modal").modal('hide');
 				ng.reset();
 			});

@@ -196,7 +196,7 @@
 					</div>
 				</div>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(dados != null)">
 					<thead>
 						<tr>
 							<th style="vertical-align: middle; width: 365px;" rowspan="2">Produto</th>
@@ -240,6 +240,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
 				<div class="padding-sm bg-grey">
 					<strong>Nota:</strong>

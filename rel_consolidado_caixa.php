@@ -144,7 +144,7 @@
 							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-show="itens.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
-							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')" ng-if="(itens != null)"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
@@ -157,7 +157,7 @@
 
 				<br>
 
-				<table class="table table-bordered table-hover table-striped table-condensed">
+				<table class="table table-bordered table-hover table-striped table-condensed" ng-if="(formas_pagamento != null)">
 					<thead>
 						<tr class="active">
 							<th class="text-center" colspan="2">TOTAIS POR FORMA DE PAGAMENTO</th>
@@ -185,7 +185,7 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(itens != null)">
 					<thead>
 						<tr class="active">
 							<th>Caixa</th>
@@ -195,11 +195,6 @@
 						</tr>
 					</thead>
 					<tbody ng-repeat="(key,item) in itens">
-						<tr ng-if="itens.length == 0">
-							<td class="text-center" colspan="7">
-								Nenhuma movimentação encontrada.
-							</td>
-						</tr>
 						<tr class="warning">
 							<td><strong>{{ item.dsc_conta_bancaria }}</strong></td>
 							<td>{{ item.operador }}</td>
@@ -224,6 +219,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->

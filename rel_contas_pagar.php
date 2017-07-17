@@ -228,7 +228,7 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(pagamentos != null)">
 					<thead>
 						<tr>
 							<th class="text-center">Vencimento</th>
@@ -250,6 +250,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				<div class="row hidden-print">
 		    		<div class="col-sm-12">
 		    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.pagamentos.length > 1">

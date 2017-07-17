@@ -158,7 +158,7 @@
 
 				<hr>
 
-				<div class="panel panel-default hidden-print" style="margin-top: 15px;">
+				<div class="panel panel-default hidden-print" style="margin-top: 15px;" ng-if="(itensEstoqueMinimo != null)">
 					<div class="panel-footer clearfix hidden-print">
 						<div class="pull-right">
 							<button class="btn btn-sm btn-success" ng-show="itensEstoqueMinimo.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
@@ -167,7 +167,7 @@
 					</div>
 				</div>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(itensEstoqueMinimo != null)">
 					<thead>
 						<tr>
 							<th class="text-center">Produto</th>
@@ -189,6 +189,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->

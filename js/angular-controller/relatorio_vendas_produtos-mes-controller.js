@@ -38,6 +38,8 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$d
 	ng.resetFilter = function() {
 		ng.reset();
 		$('.datepicker1').datepicker('clearDates');
+		ng.msg_error = null;
+		ng.vendas = null;
 	}
 
 	ng.aplicarFiltro = function() {
@@ -79,6 +81,8 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$d
 		queryString = queryString == "" ? "?" : queryString+"&" ;
 		//queryString += $.param({'group_by':["DATE_FORMAT(ven.dta_venda,'%m-%Y')","itv.id_produto"]});
 		queryString += "&"+$.param({'order_by':["mes_ano_venda DESC"]});
+
+		ng.vendas 			= [];
 		
 		aj.get(baseUrlApi()+"v2/produtos/by_venda/"+ng.userLogged.id_empreendimento+"/"+queryString)
 			.success(function(data, status, headers, config) {
@@ -104,7 +108,9 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$d
 
 			})
 			.error(function(data, status, headers, config) {
-				ng.vendas = false;
+				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
 				$("#modal-aguarde").modal('hide');
 			});
 	}

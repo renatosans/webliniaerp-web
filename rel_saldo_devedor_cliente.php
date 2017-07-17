@@ -191,7 +191,7 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(vendas != null)">
 					<thead>
 						<tr>
 							<th class="text-center" width="100">ID</th>
@@ -211,13 +211,8 @@
 					</thead>
 					<tbody>
 						<tr ng-if="vendas.length == 0">
-							<td class="text-center" colspan="6">
+							<td class="text-center" colspan="10">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-if="vendas == null">
-							<td class="text-center" colspan="12">
-								Não há clientes com saldo devedor
 							</td>
 						</tr>
 						<tr ng-repeat="item in vendas">

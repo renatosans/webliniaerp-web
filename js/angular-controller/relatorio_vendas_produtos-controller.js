@@ -11,7 +11,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 	ng.busca			= {}
 	ng.busca.clientes  	= '';
 	ng.cliente          = {};
-	ng.vendas 			= [];
+	ng.vendas 			= null;
 
 	 $scope.all_countries = [{
                 "id": 28,
@@ -84,7 +84,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 			queryString += queryString == "" ? "?pro->id="+ng.produto.id_produto : "&pro->id="+ng.produto.id_produto ;
 		}
 
-		ng.vendas = null ;
+		ng.vendas = [] ;
 
 		/*if(ng.cliente.id != "" && ng.cliente.id != null){
 			queryString = queryString == "" ? "?usu->id="+ng.cliente.id : "&usu->id="+ng.cliente.id ;
@@ -97,7 +97,9 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 
 			})
 			.error(function(data, status, headers, config) {
-				ng.vendas = [];
+				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
 				$("#modal-aguarde").modal('hide');
 			});
 	}

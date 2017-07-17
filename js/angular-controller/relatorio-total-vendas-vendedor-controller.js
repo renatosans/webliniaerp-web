@@ -27,6 +27,7 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 		 $("#dtaFinal").val('');
 		 ng.vendedor = {} ;
 		 ng.busca.vendedores = '' ;
+		 ng.msg_error = null;
 	}
 
 	ng.resetFilter = function() {
@@ -73,6 +74,9 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 			.error(function(data, status, headers, config) {
 				$("#modal-aguarde").modal('hide');
 				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
+				ng.paginacao.vendas = [];
 				ng.paginacao.vendas = null;
 			});
 	}

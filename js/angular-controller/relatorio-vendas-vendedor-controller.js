@@ -31,7 +31,7 @@ app.controller('RelatorioVendasVendedorController', function($scope, $http, $win
 		var queryString = "?ven->id_empreendimento="+ng.userLogged.id_empreendimento;
 			queryString += "&vdd->id="+params.id_vendedor;
 			queryString += !empty(ng.configuracoes.id_produto_debito_anterior_cliente) ? "&itv->id_produto[exp]=<>"+ng.configuracoes.id_produto_debito_anterior_cliente : '' ;
-		ng.vendas = null ;
+		ng.vendas = [] ;
 		aj.get(baseUrlApi()+"relatorio/vendas/analitico/vendedor/"+offset+'/'+limit+"/"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data.vendas;
@@ -40,7 +40,9 @@ app.controller('RelatorioVendasVendedorController', function($scope, $http, $win
 
 			})
 			.error(function(data, status, headers, config) {
-				ng.vendas = [];
+				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
 				ng.paginacao.vendas = [];
 				$("#modal-aguarde").modal('hide');
 			});

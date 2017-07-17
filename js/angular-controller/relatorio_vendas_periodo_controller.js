@@ -42,6 +42,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 		ng.busca.ven_nome_cliente = null ;
 		ng.busca.ven_id_venda     = null ;
 		$("#dtaInicial").val('');
+		ng.msg_error = null;
 	}
 
 	ng.loadPagamentosVendas = function() {
@@ -71,6 +72,11 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 				else
 					alert('erro ao buscar pagamentos');
 			});
+	}
+
+	ng.aplicarFiltro = function(){
+		ng.loadVendas(0,10);
+		ng.msg_error = null;
 	}
 
 	ng.loadVendas = function(offset,limit) {

@@ -175,7 +175,7 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(itens != null)">
 					<thead>
 						<tr>
 							<th class="text-center">Depósito</th>
@@ -201,6 +201,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->

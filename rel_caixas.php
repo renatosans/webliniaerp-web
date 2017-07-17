@@ -185,10 +185,9 @@
 										</div>
 									</div>
 								</div>
-
 								<div class="col-lg-6">
 									<div class="form-group">
-										<label class="control-label"><br/></label>
+										<label class="control-label">Operador</label>
 										<input ng-enter="loadContas(0,20)" type="text" class="form-control" ng-model="busca.caixas_string"></input>
 									</div>
 								</div>
@@ -206,11 +205,6 @@
 					</div>
 				</div>
 						<table id="registro" class="table table-bordered table-hover table-striped table-condensed">
-							<tr ng-hide="caixas_mov.length > 0 && caixas_mov != null">
-								<td colspan="6">
-									Não existe nenhuma movimentação.
-								</td>
-							</tr>
 							<thead ng-show="caixas_mov.length > 0 && caixas_mov != null" >
 								<tr>
 									<th>Caixa</th>
@@ -246,6 +240,7 @@
 								</tr>
 							</tbody>
 						</table>
+						<span ng-hide="caixas_mov.length > 0 && caixas_mov != null" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">Não existe nenhuma movimentação</span>
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="pull-right">
