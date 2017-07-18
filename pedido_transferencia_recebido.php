@@ -215,7 +215,8 @@
 														<th>Peso</th>
 														<th>Sabor</th>
 														<th class="text-center" >Estoque</th>
-														<th class="text-center" width="90" >
+														<th class="text-center" width="90" 
+															ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															Vlr. Custo
 															<div class="btn-group">
 																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -259,7 +260,7 @@
 														<td>{{ item.sabor }}</td>
 														<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
 														<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
-														<td class="text-center">
+														<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															{{ item.vlr_custo | numberFormat:2:',':'.' }}
 															<div class="btn-group">
 																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -269,7 +270,7 @@
 																	<li>
 																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_custo_real')">
 																			Custo: R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')"></i>
 																		</a>
 																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_atacado')">
 																			Atacado: R$ {{ item.vlr_venda_atacado | numberFormat:2:',':'.' }}
@@ -328,7 +329,8 @@
 														<th>Peso</th>
 														<th>Sabor</th>
 														<th class="text-center" >Estoque</th>
-														<th class="text-center" width="90">
+														<th class="text-center" width="90"
+															ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															Vlr. Custo
 															<div class="btn-group">
 																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -372,7 +374,7 @@
 														<td>{{ item.sabor }}</td>
 														<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
 														<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
-														<td class="text-center">
+														<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															{{ item.vlr_custo | numberFormat:2:',':'.' }}
 															<div class="btn-group">
 																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -494,7 +496,7 @@
 														<th>Peso</th>
 														<th>Sabor</th>
 														<th class="text-center" >Estoque</th>
-														<th class="text-center" width="90">
+														<th class="text-center" width="90" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															Vlr. Custo
 															<div class="btn-group">
 																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -538,7 +540,7 @@
 														<td>{{ item.sabor }}</td>
 														<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
 														<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
-														<td class="text-center">
+														<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															{{ item.vlr_custo | numberFormat:2:',':'.' }}
 															<div class="btn-group">
 																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
