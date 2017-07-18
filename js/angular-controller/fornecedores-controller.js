@@ -106,6 +106,7 @@ app.controller('FornecedoresController', function($scope, $http, $window, $dialo
 			var busca = ng.busca.fornecedor.replace(/\s/g, '%');
 			query_string += "&"+$.param({"(frn->nome_fornecedor":{exp:"like'%"+busca+"%' OR frn.nme_fantasia like '%"+busca+"%' OR frn.num_cnpj like '%"+buscaCnpj+"%' OR frn.num_cpf like '%"+buscaCpf+"%')"}})+"";
 		}
+		query_string += "&frn->id[exp]= NOT IN("+ng.configuracao.id_fornecedor_movimentacao_caixa+")";
 
 		aj.get(baseUrlApi()+url+query_string)
 			.success(function(data, status, headers, config) {
@@ -209,6 +210,7 @@ app.controller('FornecedoresController', function($scope, $http, $window, $dialo
 		aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.configuracao = data ;
+				ng.load();
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404){
@@ -294,7 +296,6 @@ app.controller('FornecedoresController', function($scope, $http, $window, $dialo
 			});
 	}
 
-	ng.load();
 	ng.loadConfig();
 	ng.loadBancos();
 	ng.loadPlanoContas();

@@ -479,7 +479,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 		ng.fornecedores = [];
-		var query_string = "?id_empreendimento="+ng.userLogged.id_empreendimento ;
+		var query_string = "?id_empreendimento="+ng.userLogged.id_empreendimento+"&frn->id[exp]= NOT IN("+ng.configuracao.id_fornecedor_movimentacao_caixa+")";
 		if(!empty(ng.busca.fornecedores)){
 			var buscaCpf  = ng.busca.fornecedores.replace(/\./g, '').replace(/\-/g, '');
 			var buscaCnpj = ng.busca.fornecedores.replace(/\./g, '').replace(/\-/g, '').replace(/\//g,'');
