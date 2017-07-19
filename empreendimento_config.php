@@ -297,7 +297,7 @@
 										<div class="col-sm-2">
 											<div id="cep" class="form-group">
 												<label class="control-label">CEP</label>
-												<input type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="cliente.cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)">
+												<input type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="empreendimento.num_cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)" ng-enter="validCep(cliente.cep)">
 											</div>
 										</div>
 
@@ -1817,6 +1817,22 @@
 			  	<!-- /.modal-content -->
 			</div>
 			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal load CEP-->
+		<div class="modal fade" id="busca-cep" style="display:none">
+  			<div class="modal-dialog">
+    			<div class="modal-content">
+    				<div class="modal-header">
+						<h4>Aguarde</h4>
+      				</div>
+
+				    <div class="modal-body">
+				   		<strong>buscando CEP ...</strong>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
 
