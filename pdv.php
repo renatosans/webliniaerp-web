@@ -672,6 +672,13 @@
 											</div>
 										</div>
 					    			</div>
+					    			<div class="col-sm-8">
+										<div class="form-group">
+											<label class="control-label">Observação:</label>
+											<textarea id="dsc_observacoes_gerais" class="form-control" ng-model="dados_venda.dsc_observacoes_gerais" rows="2"></textarea>
+										</div>
+										<pre>{{ dados_venda.dsc_observacoes_gerais }}</pre>
+									</div>
 					    		</div>
 
 								<table class="table table-bordered table-condensed table-striped table-hover">
