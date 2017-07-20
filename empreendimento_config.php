@@ -797,6 +797,20 @@
 													</select>
 												</div>
 											</div>
+
+											<div class="col-sm-2">
+												<div class="form-group">
+													<label class="control-label">Validade Certificado</label> 
+													<input class="form-control input-sm" maxlength="10" ng-model="configuracoes.dta_validade_certificado_digital">
+												</div>
+											</div>
+
+											<div class="col-sm-2">
+												<div class="form-group">
+													<label class="control-label">Dias de Antecedencia</label> 
+													<input class="form-control input-sm" ng-model="configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital">
+												</div>
+											</div>
 										</div>
 
 										<div class="row">
@@ -829,10 +843,11 @@
 
 												<div class="col-sm-1">
 													<div class="form-group">
-														<label class="control-label"><br></label>
-														<button  ng-if="edit_serie_documento_fiscal == false" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-															<i class="fa fa-plus-circle" ></i> Incluir
-														</button>
+														<label class="control-label"><br>
+															<button  ng-if="edit_serie_documento_fiscal == false" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+																<i class="fa fa-plus-circle" ></i> Incluir
+															</button>
+														</label>
 														<button  ng-if="edit_serie_documento_fiscal" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 															<i class="fa fa-edit"></i> Incluir Alterações
 														</button>
@@ -1971,6 +1986,11 @@
 
 	<!-- UnderscoreJS -->
 	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

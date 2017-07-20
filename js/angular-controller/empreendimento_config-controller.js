@@ -978,6 +978,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.dta_validade_certificado_digital != undefined){
+			var item = {
+							nome 				:'dta_validade_certificado_digital',
+							valor 				:ng.configuracoes.dta_validade_certificado_digital , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital != undefined){
+			var item = {
+							nome 				:'qtd_dias_antecedencia_alerta_vencimento_certificado_digital',
+							valor 				:ng.configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		if(empty(ng.lista_serie_documento_fiscal)){
 			ng.lista_serie_documento_fiscal = [] ;
