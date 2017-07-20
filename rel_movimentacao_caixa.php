@@ -367,6 +367,13 @@
 							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.transferencia_bancaria.valor | numberFormat : 2 : ',' : '.'}}</td>
 						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.promessa_pagamento.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.promessa_pagamento.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.promessa_pagamento.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
 					</tbody>
 				</table>
 
