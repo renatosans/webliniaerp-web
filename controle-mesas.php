@@ -1086,6 +1086,8 @@
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
 
+	<script src="js/jquery.noty.packaged.js"></script>
+
 	<!-- ease -->
 	<script src="js/jquery.ease.js"></script>
 

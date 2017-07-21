@@ -499,6 +499,11 @@
 	<!-- Chosen -->
 	<script src='js/chosen.jquery.min.js'></script>
 
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js?version=<?php echo date("dmY-His", filemtime("js/extras.js")) ?>"></script>
 

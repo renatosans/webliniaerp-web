@@ -264,6 +264,8 @@
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
 
+	<script src="js/jquery.noty.packaged.js"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 

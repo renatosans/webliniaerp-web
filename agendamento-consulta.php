@@ -675,6 +675,8 @@
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
 
+	<script src="js/jquery.noty.packaged.js"></script>
+
 	<!-- UI auto-complete -->
 	<script src="js/jquery-ui-auto-complete.js"></script>
 
