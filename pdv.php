@@ -677,7 +677,6 @@
 											<label class="control-label">Observação:</label>
 											<textarea id="dsc_observacoes_gerais" class="form-control" ng-model="dados_venda.dsc_observacoes_gerais" rows="2"></textarea>
 										</div>
-										<pre>{{ dados_venda.dsc_observacoes_gerais }}</pre>
 									</div>
 					    		</div>
 
