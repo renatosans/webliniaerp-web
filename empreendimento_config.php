@@ -569,6 +569,51 @@
 								<div class="row">
 									<div class="col-sm-5">
 										<div class="form-group">
+											<label for="" class="control-label">Baixa automática em pagamento de e cartão de crédito?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="1" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="0" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 ">
+										<div class="form-group">
+											<label class="control-label" >Título Cupom Não Fiscal</label>
+											<input ng-model="configuracoes.dsc_titulo_cnf" type="text" class="form-control input-sm parsley-validated" maxlength="41">
+										</div>
+									</div>
+									<div class="col-sm-3 col-sm-offset-1">
+										<div class="form-group" id="pth_local">
+											<label class="control-label">Código Identificador Balança</label>
+											<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
+										</div>
+									</div>
+									<div class="col-sm-3 col-sm-offset-1">
+										<div class="form-group">
+											<label class="control-label">Qtd. Casas Decimais</label>
+											<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label class="control-label">Observação Cupom Não Fiscal</label>
+											<textarea ng-model="configuracoes.dsc_observacoes_cnf" class="form-control" rows="7"></textarea>
+										</div>
+									</div>
+									<div class="col-sm-4 col-sm-offset-1">
+										<div class="form-group">
 										 <label for="txt_sign_ac">Formas de Pagamento Disponíveis no PDV:</label>
 										 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
 												 <label class="label-checkbox inline">
@@ -579,8 +624,7 @@
 											</div>
 										</div>
 									</div>
-
-									<div class="col-sm-4">
+									<div class="col-sm-3">
 										<div class="form-group">
 										 <label for="txt_sign_ac">Perfis disponíveis no cadastro rapido:</label>
 										 	<div class="clearfix" ng-repeat="item in perfis">
@@ -592,30 +636,8 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-3">
-										<div class="form-group" id="pth_local"  >
-											<label class="control-label">Código Identificador Balança</label>
-											<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
-										</div>
-										<div class="form-group" id="">
-											<label class="control-label">Qtd. Casas Decimais</label>
-											<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
-										</div>
-									</div>
 								</div>
 								<div class="row">
-									<div class="col-sm-4">
-										<div class="form-group">
-											<label class="control-label" >Título Cupom Não Fiscal</label>
-											<input ng-model="configuracoes.dsc_titulo_cnf" type="text" class="form-control input-sm parsley-validated" maxlength="41">
-										</div>
-									</div>
-									<div class="col-sm-7 col-sm-offset-1">
-										<div class="form-group">
-											<label class="control-label">Observação Cupom Não Fiscal</label>
-											<textarea ng-model="configuracoes.dsc_observacoes_cnf" class="form-control" rows="5"></textarea>
-										</div>
-									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12">
@@ -798,16 +820,16 @@
 												</div>
 											</div>
 
-											<div class="col-sm-2">
+											<div class="col-sm-2 col-sm-offset-2">
 												<div class="form-group">
-													<label class="control-label">Validade Certificado</label> 
+													<label class="control-label">Validade Certificado Digital</label> 
 													<input class="form-control input-sm" maxlength="10" ng-model="configuracoes.dta_validade_certificado_digital">
 												</div>
 											</div>
 
 											<div class="col-sm-2">
 												<div class="form-group">
-													<label class="control-label">Dias de Antecedencia</label> 
+													<label class="control-label">Dias de Antecedencia Alerta</label> 
 													<input class="form-control input-sm" ng-model="configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital">
 												</div>
 											</div>

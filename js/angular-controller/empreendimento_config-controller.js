@@ -728,6 +728,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.flg_baixa_automatica_pagamento_cartao_credito != undefined){
+			var item10 = {
+							nome 				:'flg_baixa_automatica_pagamento_cartao_credito',
+							valor 				:ng.configuracoes.flg_baixa_automatica_pagamento_cartao_credito , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.cod_identificador_balanca != undefined){
 			var item10 = {
 							nome 				:'cod_identificador_balanca',
