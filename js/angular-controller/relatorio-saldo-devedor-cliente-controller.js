@@ -49,8 +49,12 @@ app.controller('RelatorioSaldoDevedorClienteController', function($scope, $http,
 			.success(function(data, status, headers, config) {
 				if(ng.vendedor.id != "" && ng.vendedor.id != null)
 					ng.vendas.push(data);
-				else
-					ng.vendas = data;
+				else {
+					if(typeof(data.length) === "undefined")
+						ng.vendas = [data];
+					else
+						ng.vendas = data;
+				}
 
 				if(data == false)
 					ng.vendas = null;
