@@ -254,7 +254,7 @@
 						<tr ng-if="movimentacoes.length > 0">
 							<td colspan="4" class="text-right">Saldo Final</td>
 							<td style="color:#000;" class="text-right">
-								<strong>R$ {{ totais.total | numberFormat:2:',':'.'}}</strong>
+								<strong>R$ {{ totais.total - totais.formas_pagamento.sangria.valor| numberFormat:2:',':'.'}}</strong>
 							</td>
 							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
 
@@ -367,6 +367,13 @@
 							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.transferencia_bancaria.valor | numberFormat : 2 : ',' : '.'}}</td>
 						</tr>
+						<tr>
+							<td colspan="4" class="text-right text-bold">{{ totais.formas_pagamento.promessa_pagamento.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.promessa_pagamento.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.promessa_pagamento.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
 					</tbody>
 				</table>
 
@@ -422,6 +429,11 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

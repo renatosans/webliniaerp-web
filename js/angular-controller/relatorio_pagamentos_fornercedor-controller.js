@@ -30,15 +30,7 @@ app.controller('RelatorioTotalVendasClienteController', function($scope, $http, 
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
-		 ng.fornecedor = {} ;
-		 ng.busca = {
-							fornecedores:'',
-							id_forma_pagamento:'',
-							agrupar:false,
-							status_pagamento:''
-						}
-		ng.buscaExport 
-		ng.loadPagamentosFornecedor();
+		 ng.pagamentos = [];
 	}
 
 	ng.resetFilter = function() {

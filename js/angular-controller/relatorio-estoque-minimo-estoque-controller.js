@@ -6,15 +6,20 @@ app.controller('RelatorioProdutosEstoqueMinimoController', function($scope, $htt
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 
 
-	ng.itensEstoqueMinimo = [];
+	ng.itensEstoqueMinimo = null;
 
 	ng.loadProdutosEstoqueMinimo = function() {
+		ng.itensEstoqueMinimo = [];
+
 		aj.get(baseUrlApi()+"produtos/estoque/minimo?id_empreendimento="+ ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.itensEstoqueMinimo = data;
 			})
 			.error(function(data, status, headers, config) {
 				arr = null;
+				ng.status = status;
+				ng.itensEstoqueMinimo = null;
+				ng.msg_error = data;
 			});
 	}
 	

@@ -861,7 +861,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<i class="fa fa-tasks"></i> Clientes Cadastrados
-						<a href="util/export.php?c=usuarios&id_empreendimento={{ userLogged.id_empreendimento }}"target="_blank" class="btn btn-xs btn-success pull-right"  type="button">
+						<a href="util/export.php?c=usuarios&id_empreendimento={{ userLogged.id_empreendimento }}" target="_blank" ng-if="funcioalidadeAuthorized('ver_botao_exportar')" class="btn btn-xs btn-success pull-right"  type="button">
 							<i class="fa fa-download"></i>
 							Exportar
 						</a>
@@ -1154,6 +1154,11 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

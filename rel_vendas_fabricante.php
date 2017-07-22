@@ -211,7 +211,7 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(vendas != null)">
 					<thead>
 						<tr>
 							<th width="100" class="text-center">#</th>
@@ -236,11 +236,6 @@
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
 							</td>
 						</tr>
-						<tr ng-if="vendas == null">
-							<td class="text-center" colspan="14">
-								Nenhuma venda encontrada.
-							</td>
-						</tr>
 						<tr ng-repeat="item in vendas">
 							<td class="text-center">{{ item.cod_produto }}</td>
 							<td class="text-center">{{ item.dta_venda }}</td>
@@ -259,6 +254,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
 				<div class="pull-right hidden-print">
 					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
@@ -389,6 +385,8 @@
 
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

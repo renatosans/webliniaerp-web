@@ -55,7 +55,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.dadosOrcamento           = null ;
 	ng.margemAplicada           = {atacado:false,intermediario:false,varejo:true,parceiro:false} ;
 
-
+	ng.dados_venda = {};
 	ng.formas_pagamento = [
 		{nome:"Dinheiro",id:3},
 		{nome:"Cheque",id:2},
@@ -305,6 +305,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		else
 			var data_atual = $("#dta_venda").val();
 
+
 		$.each(ng.recebidos, function(i,v){
 			var parcelas = Number(v.parcelas);
 
@@ -425,7 +426,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							id_deposito 		: ng.caixa.depositos,
 							id_status_venda 	: ng.orcamento ? 1 : 4,
 							margem_aplicada     : ng.margem_aplicada_venda,
-							dta_venda           : (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') )
+							dta_venda           : (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') ),
+							dsc_observacoes_gerais : ng.dsc_observacoes_gerais
 						};
 
 		venda.id_cliente = (venda.id_cliente == "" || venda.id_cliente == undefined) ? ng.caixa.id_cliente_movimentacao_caixa : venda.id_cliente;
@@ -504,6 +506,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.salvar = function(){
+		ng.dsc_observacoes_gerais = $("#dsc_observacoes_gerais").val();
 		if(ng.finalizarOrcamento) ng.id_venda_ignore = params.id_orcamento ;
 		$("#input_auto_complete_cliente").parent().tooltip('destroy');
 		$("#input_auto_complete_cliente").parents('.form-group').removeClass("has-error");
@@ -628,6 +631,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.gravarVenda();
 					}else if(acao == 'receber'){
 						ng.receber_pagamento = true ;
+
+						ng.$watch('dados_venda', function(new_value, old_value) {
+							console.log(new_value, old_value);
+						});
 					}else if(acao == 'efetivar_orcamento'){
 						$('#text_status_venda').text('Salvando Venda');
 						ng.gravarVenda();

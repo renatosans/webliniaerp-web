@@ -141,7 +141,7 @@
 
 					<div class="panel-footer clearfix">
 						<div class="pull-right">
-							<button type="button" class="btn btn-sm btn-primary" ng-click="loadVendas(0,10)"><i class="fa fa-filter"></i> Aplicar Filtro</button>
+							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="limparBusca()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-show="itens.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
@@ -263,6 +263,8 @@
 
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

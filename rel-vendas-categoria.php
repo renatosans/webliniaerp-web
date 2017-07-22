@@ -195,7 +195,7 @@
 
 				<br/>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(items != null)">
 					<thead>
 						<tr>
 							<th>Categoria</th>
@@ -211,11 +211,6 @@
 						<tr ng-if="items.length == 0 && items != null">
 							<td class="text-center" colspan="7">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-if="items == null">
-							<td colspan="7" class="text-center">
-								Nenhum registro encontrado.
 							</td>
 						</tr>
 						<tr ng-repeat="item in items" bs-popover>
@@ -234,6 +229,7 @@
 						<td class="text-right">R$ {{ vlr_total_vendida | numberFormat : 2 : ',' : '.' }}</td>
 					</tfoot>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				</div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
@@ -388,6 +384,8 @@
 
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

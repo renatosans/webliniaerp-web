@@ -806,7 +806,7 @@ app.controller('MasterController', function($scope, $http, $window, UserService)
 	}
 });
 
-app.controller('AlertasController', function($scope, $http, $window, UserService) {
+app.controller('AlertasController', function($scope, $http, $window, UserService, ConfigService) {
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
@@ -818,6 +818,22 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 	ng.count = {
 		orcamentos : 0
 	};
+	ng.config = ConfigService.getConfig(ng.userLogged.id_empreendimento);
+	
+	if(!empty(ng.config.dta_validade_certificado_digital) 
+		&& !empty(ng.config.qtd_dias_antecedencia_alerta_vencimento_certificado_digital)) {
+		var today = moment();
+		var dta_validade_certificado_digital = moment(ng.config.dta_validade_certificado_digital, 'DD/MM/YYYY');
+		var qtd_dias_vencer_certificado_digital = dta_validade_certificado_digital.diff(today, 'days');
+		
+		if(qtd_dias_vencer_certificado_digital <= ng.config.qtd_dias_antecedencia_alerta_vencimento_certificado_digital) {
+			ng.alertas.push({
+				type: 'warning',
+				message: "Seu certificado digital expira em "+ qtd_dias_vencer_certificado_digital +" dia(s)!"
+			});
+		}
+	}
+
 	ng.loadCountOrcamentos = function(first_date,last_date) {
 		var vlrTotalVendasPeriodoComparativo = 0 ;
 		aj.get(baseUrlApi()+"count_orcamentos/dashboard?id_empreendimento="+ng.userLogged.id_empreendimento)

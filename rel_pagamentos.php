@@ -267,7 +267,7 @@
 				</div>
 				<div class="row" id="divImprimir">
 				<div class="col-sm-12">
-					<table id="registro" class="table table-bordered table-condensed table-striped table-hover">
+					<table id="registro" class="table table-bordered table-condensed table-striped table-hover" ng-if="(movimentacoes != null)">
 						<thead>
 							<tr>
 								<th rowspan="2" style="line-height: 46px;">Data Lançamento</th>
@@ -287,11 +287,6 @@
 							<tr ng-if="movimentacoes.length == null">
 								<td class="text-center" colspan="7">
 									<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando movimentações...
-								</td>
-							</tr>
-							<tr ng-if="movimentacoes.length <= 0">
-								<td colspan="7">
-									Nenhum registro encontrado
 								</td>
 							</tr>
 							<tr ng-repeat-start="item in movimentacoes">
@@ -365,6 +360,7 @@
 							</tr>
 						</tbody>
 					</table>
+					<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				</div>
 				</div>
 
@@ -423,6 +419,11 @@
 
 		<!-- Datepicker -->
 	<script src='js/bootstrap-datepicker.min.js'></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

@@ -518,11 +518,13 @@
 	<!-- UnderscoreJS -->
 	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 
-	<!-- Extras -->
-	<script src="js/extras.js"></script>
-
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Extras -->
+	<script src="js/extras.js"></script>
 
 	<!-- AngularJS -->
 	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  

@@ -193,14 +193,14 @@
 							<button class="btn btn-sm btn-primary" ng-click="loadProdutosVencer()"><i class="fa fa-filter"></i> Filtrar</button>
 							<button class="btn btn-sm btn-default" ng-show="itens" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success" ng-show="itens" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
-							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')" ng-if="itens != null"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(itens != null)">
 					<thead>
 						<tr>
 							<th class="text-center">Depósito</th>
@@ -226,6 +226,8 @@
 						</tr>
 					</tbody>
 				</table>
+
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
 				<div class="clearfix">
 					<div class="pull-right">
@@ -291,6 +293,11 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

@@ -62,6 +62,7 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 		 ng.paginacao.vendas = null;
 		 ng.busca.id_fabricante   = null;
 		 ng.busca.nome_fabricante = null;
+		 ng.msg_error = null;
 	}
 
 	ng.resetFilter = function() {
@@ -70,6 +71,7 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 
 	ng.aplicarFiltro = function() {
 		ng.loadVendas(0,ng.itensPorPagina);
+		ng.msg_error = null;
 	}
 
 	ng.loadVendas = function(offset,limit) {
@@ -107,6 +109,8 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 			.error(function(data, status, headers, config) {
 				$("#modal-aguarde").modal('hide');
 				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
 				ng.paginacao.vendas = null;
 			});
 	}

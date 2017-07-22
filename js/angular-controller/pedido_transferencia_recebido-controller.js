@@ -1,4 +1,4 @@
-app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop){
+app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop, FuncionalidadeService){
 	var ng = $scope
 		aj = $http;
 	ng.ctrl = $scope ;
@@ -30,6 +30,12 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
     	{ nome:'Deposito 2',validade:'2016-10-05',qtd:5 }
     ];
     ng.teste="jheizer";
+
+    ng.funcioalidadeAuthorized = function(cod_funcionalidade){
+    	val = FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
+    	console.log(val);
+		return val;
+	}
 
     ng.showBoxNovo = function(onlyShow){
     	ng.editing = !ng.editing;

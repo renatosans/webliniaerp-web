@@ -161,7 +161,7 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(pagamentos != null)">
 					<thead>
 						<tr>
 							<th class="text-center" width="160">Data da Retirada</th>
@@ -187,6 +187,7 @@
 						</tr>
 					</tfoot>
 				</table>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
 				<div class="row hidden-print">
 		    		<div class="col-sm-12">
@@ -252,6 +253,11 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

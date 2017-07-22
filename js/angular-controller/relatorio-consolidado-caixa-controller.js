@@ -4,9 +4,9 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 
 	ng.userLogged 		= UserService.getUserLogado();
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
-	ng.itens 			= [];
+	ng.itens 			= null;
 	ng.total 			= 0;
-	ng.formas_pagamento = [];
+	ng.formas_pagamento = null;
 	ng.paginacao 		= {};
 
 	var params = getUrlVars();
@@ -20,8 +20,8 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
     }
 
 	ng.reset = function() {
-		ng.itens = [];
-		ng.formas_pagamento = [];
+		ng.itens = null;
+		ng.formas_pagamento = null;
 		ng.total = 0;
 		$(".has-error").removeClass("has-error");
 		$("#dtaMovimentacao").tooltip('destroy');
@@ -79,6 +79,8 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 	}
 
 	ng.loadItens = function(dtaComparacao) {
+		ng.msg_error = null;
+		ng.itens = [];
 
 		var params = "?abt_caixa->id_empreendimento="+ ng.userLogged.id_empreendimento;
 			params += "&date_format(dta_abertura,%27%Y-%m-%d%27)="+ dtaComparacao;
@@ -128,7 +130,11 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 
 						console.log(fp);
 						ng.total += parseFloat(fp.valor);
-						formas_pagamento[x].valor += parseFloat(fp.valor);
+						if(!empty(formas_pagamento[x]))
+							formas_pagamento[x].valor += parseFloat(fp.valor);
+						else {
+							formas_pagamento[x] = fp;
+						}
 					});
 				});
 
@@ -137,7 +143,10 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 				$("#modal-aguarde").modal('hide');
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				$("#modal-aguarde").modal('hide');
+				ng.itens = null;
+				ng.status = status;
+				ng.msg_error = data;
 			});
 	}
 

@@ -58,6 +58,14 @@ app.controller('relMovimentacaoCaixaPeriodoController', function($scope, $http, 
 		},5000);
 	}
 
+	ng.resetFilter = function(){
+		ng.movimentacoes = null;
+		ng.busca.dtaInicial = '';
+		ng.busca.dtaFinal = '';
+		ng.movimentacoes = false;
+		ng.msg_error = null;
+	}
+
 	ng.reset = function(show) {
 		show = show == true ? true : false ;
 		ng.conta = {};
@@ -89,6 +97,7 @@ app.controller('relMovimentacaoCaixaPeriodoController', function($scope, $http, 
 	ng.total_vendas								= 0;
 
 	ng.loadMovimentacoes= function() {
+		ng.msg_error = null;
 		var queryString = "?cplSql=WHERE abt_caixa.id_empreendimento =  "+ng.userLogged.id_empreendimento ;
 		queryString += " AND mov.id_tipo_movimentacao != 4";
 
@@ -157,7 +166,9 @@ app.controller('relMovimentacaoCaixaPeriodoController', function($scope, $http, 
 			.error(function(data, status, headers, config) {
 				$('#modal-aguarde').modal('hide');
 				if(status == 404)
-					ng.movimentacoes = [];
+					ng.movimentacoes = null;
+					ng.status = status;
+					ng.msg_error = data;
 	 	});
 	}
 

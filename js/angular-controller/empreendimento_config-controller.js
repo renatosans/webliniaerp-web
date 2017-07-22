@@ -91,10 +91,10 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		aj.get("http://api.postmon.com.br/v1/cep/"+ng.cliente.cep)
 		.success(function(data, status, headers, config) {
 
-			ng.cliente.endereco = data.logradouro;
-			ng.cliente.bairro = data.bairro;
+			ng.empreendimento.nme_logradouro = data.logradouro;
+			ng.empreendimento.nme_bairro_logradouro = data.bairro;
 			var estado = ng.getEstado(data.estado);
-			ng.cliente.id_estado = estado.id;
+			ng.empreendimento.id_estado = estado.id;
 			ng.loadCidadesByEstado(data.cidade);
 			//ng.cliente.id_cidade = data.cidade_info.codigo_ibge.substr(0,6);
 			$("#num_logradouro").focus();
@@ -104,6 +104,34 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			$('#busca-cep').modal('hide');
 			alert('CEP inválido');
 		});
+	}
+
+	var cep_anterior = null;
+	ng.validCep = function(cep){
+		if(cep != cep_anterior){
+			 var exp  = /^[0-9]{8}$/;
+	         var cep = cep;
+	         if(exp.test(cep)){
+	         	cep_anterior = cep ;
+	         	$('#busca-cep').modal({
+				  backdrop: 'static',
+				  keyboard: false
+				});
+				ng.consultaCep();
+	         }
+		}
+	}
+
+	ng.getEstado = function(uf){
+		var estado = null ;
+		$.each(ng.estados,function(i,x){
+			if(x.uf.toUpperCase() == uf.toUpperCase()){
+			    estado = x;
+				return false;
+			}
+		});
+
+		return estado;
 	}
 
 	ng.modalDepositos = function(){
@@ -700,6 +728,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.flg_baixa_automatica_pagamento_cartao_credito != undefined){
+			var item10 = {
+							nome 				:'flg_baixa_automatica_pagamento_cartao_credito',
+							valor 				:ng.configuracoes.flg_baixa_automatica_pagamento_cartao_credito , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.cod_identificador_balanca != undefined){
 			var item10 = {
 							nome 				:'cod_identificador_balanca',
@@ -947,6 +984,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 		if(ng.configuracoes.token_focus_homologacao != undefined){
 			var item = {nome :'token_focus_homologacao',valor:ng.configuracoes.token_focus_homologacao , id_empreendimento	:ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.dta_validade_certificado_digital != undefined){
+			var item = {
+							nome 				:'dta_validade_certificado_digital',
+							valor 				:ng.configuracoes.dta_validade_certificado_digital , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital != undefined){
+			var item = {
+							nome 				:'qtd_dias_antecedencia_alerta_vencimento_certificado_digital',
+							valor 				:ng.configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
 			chaves.push(item);
 		}
 

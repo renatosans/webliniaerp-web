@@ -23,6 +23,8 @@ app.controller('RelatorioVendasCategoriaCtrl', function($scope, $http, $window, 
 		 $("#dtaFinal").val('');
 		 ng.categoria = {} ;
 		 ng.busca.categorias = '' ;
+		 ng.items = null;
+		 ng.msg_error = [];
 	}
 
 	ng.resetFilter = function() {
@@ -78,6 +80,8 @@ app.controller('RelatorioVendasCategoriaCtrl', function($scope, $http, $window, 
 			})
 			.error(function(data, status, headers, config) {
 				ng.items = null;
+				ng.status = status;
+				ng.msg_error = data;
 				$("#modal-aguarde").modal('hide');
 			});
 	}

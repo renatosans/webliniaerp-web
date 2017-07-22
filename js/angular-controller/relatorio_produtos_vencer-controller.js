@@ -21,11 +21,13 @@ app.controller('RelatorioProdutosVencerController', function($scope, $http, $win
 	ng.resetFilter = function() {
 		ng.tempoAvalicao = "30";
 		ng.itensPagina = "10";
-		ng.itens = [];
+		ng.itens = null;
 	}
 
 	ng.loadProdutosVencer = function(offset) {
 		offset = offset == null ? 0  : offset;
+		ng.itens = [];
+		ng.msg_error = null;
 
 		aj.get(baseUrlApi()+"produtos/vencer/"+ ng.userLogged.id_empreendimento +"/"+ ng.tempoAvalicao +"/"+ offset +"/"+ ng.itensPagina)
 			.success(function(data, status, headers, config) {
@@ -34,6 +36,9 @@ app.controller('RelatorioProdutosVencerController', function($scope, $http, $win
 			})
 			.error(function(data, status, headers, config) {
 				arr = null;
+				ng.status = status;
+				ng.itens = null;
+				ng.msg_error = data;
 			});
 	}
 

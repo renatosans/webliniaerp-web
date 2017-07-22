@@ -202,7 +202,8 @@
 
 				<div class="row">
 					<div class="col-sm-12">
-						<table id="registro" class="table table-bordered table-condensed table-striped table-hover">
+						<span ng-if="movimentacoes == false " class="alert alert-warning">Selecione um periodo para a busca</span>
+						<table id="registro" class="table table-bordered table-condensed table-striped table-hover" ng-if="(movimentacoes != null && movimentacoes != false)">
 							<thead>
 								<tr>
 									<th rowspan="2" style="line-height: 46px;">Data</th>
@@ -224,16 +225,6 @@
 								<tr ng-if="movimentacoes == null">
 									<td class="text-center" colspan="7">
 										<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando movimentações...
-									</td>
-								</tr>
-								<tr ng-if="movimentacoes.length == 0">
-									<td colspan="7">
-										Nenhuma movimentação encontrada para este caixa.
-									</td>
-								</tr>
-								<tr ng-if="movimentacoes == false ">
-									<td colspan="7" class="text-center">
-										Selecione um periodo para a busca
 									</td>
 								</tr>
 								<tr ng-repeat="item in movimentacoes">
@@ -366,6 +357,7 @@
 								</tr>
 							</tbody>
 						</table>
+						<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 					</div>
 				</div>
 
@@ -439,6 +431,11 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

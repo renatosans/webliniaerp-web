@@ -60,6 +60,7 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 		 ng.produto = null;
 		 ng.vendas = null;
 		 ng.paginacao.vendas = null;
+		 ng.msg_error = null;
 	}
 
 	ng.resetFilter = function() {
@@ -68,6 +69,7 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 
 	ng.aplicarFiltro = function() {
 		ng.loadVendas(0,ng.itensPorPagina);
+		ng.msg_error = null;
 	}
 
 	ng.loadVendas = function(offset,limit) {
@@ -108,6 +110,8 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 			.error(function(data, status, headers, config) {
 				$("#modal-aguarde").modal('hide');
 				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
 				ng.paginacao.vendas = null;
 			});
 	}

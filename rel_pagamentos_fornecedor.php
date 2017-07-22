@@ -249,6 +249,9 @@
 
 				<br/>
 
+				<span ng-if="pagamentos.length != null && pagamentos.length <= 0" class="alert alert-warning">Nenhum registro encontrado</span>
+				
+
 				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="!busca.agrupar">
 					<thead>
 						<tr ng-if="pagamentos.length != null && pagamentos.length > 0">
@@ -264,11 +267,6 @@
 						<tr ng-if="pagamentos.length == null">
 							<td class="text-center" colspan="4">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-if="pagamentos.length != null && pagamentos.length <= 0">
-							<td colspan="6" class="text-center">
-								<b>Nenhum registro encontrado</b>
 							</td>
 						</tr>
 						<tr ng-repeat="item in pagamentos">
@@ -434,6 +432,11 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

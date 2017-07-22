@@ -1,4 +1,4 @@
-app.controller('ClientesController', function($scope, $http, $window, $dialogs, UserService,PrestaShop){
+app.controller('ClientesController', function($scope, $http, $window, $dialogs, UserService,PrestaShop, FuncionalidadeService){
 
 	var ng = $scope
 		aj = $http;
@@ -16,6 +16,10 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
     ng.busca = {clientes:"", tipo_cliente: 'ambos'};
     ng.editing = false;
     ng.estadoSelecionado = {};
+
+    ng.funcioalidadeAuthorized = function(cod_funcionalidade){
+		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
+	}
 
     ng.showBoxNovo = function(onlyShow){
     	ng.editing = !ng.editing;

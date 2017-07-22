@@ -6,9 +6,9 @@ app.controller('RelatorioTotalVendasClienteController', function($scope, $http, 
 	ng.itensPorPagina 	= 10;
 	ng.deposito 		= {};
 	ng.depositos 		= [];
-	ng.vendas 		   	= [];
+	ng.vendas 		   	= null;
 	ng.paginacao 	   	= {};
-	ng.busca			= {}
+	ng.busca			= {};
 	ng.busca.clientes  	= '';
 	ng.cliente          = {};
 
@@ -25,11 +25,12 @@ app.controller('RelatorioTotalVendasClienteController', function($scope, $http, 
 		 $("#dtaFinal").val('');
 		 ng.cliente = {} ;
 		 ng.busca.clientes = '' ;
+   		ng.msg_error = null;
+
 	}
 
 	ng.resetFilter = function() {
 		ng.reset();
-		ng.loadVendas(0,ng.itensPorPagina);
 	}
 
 	ng.aplicarFiltro = function() {
@@ -66,7 +67,9 @@ app.controller('RelatorioTotalVendasClienteController', function($scope, $http, 
 
 			})
 			.error(function(data, status, headers, config) {
-				ng.vendas = [];
+				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
 				ng.paginacao.vendas = [];
 				$("#modal-aguarde").modal('hide');
 			});

@@ -11,6 +11,7 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 	ng.busca      		= {clientes:''};
 	ng.cliente    		= {};
 	ng.fornecedor 		= {};
+	ng.pagamentos 		= null;
 
 	var params = getUrlVars();
 
@@ -23,7 +24,7 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 
 	ng.resetFilter = function() {
 		ng.reset();
-		ng.loadPagamentos(0,ng.itensPorPagina);
+		ng.msg_error = null;
 	}
 
 	ng.doExportExcel = function(id_table){
@@ -40,6 +41,8 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 	}
 
 	ng.loadPagamentos = function(offset,limit) {
+		ng.msg_error = null;	
+		ng.pagamentos 	= [];
 		var dtaInicial  = $("#dtaInicial").val();
 		var dtaFinal    = $("#dtaFinal").val();
 		var queryString = "?pag->id_empreendimento="+ng.userLogged.id_empreendimento;
@@ -68,7 +71,9 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 				$("#modal-aguarde").modal('hide');
 			})
 			.error(function(data, status, headers, config) {
-				ng.pagamentos = [] ;
+				ng.pagamentos = null;
+				ng.status = status;
+				ng.msg_error = data;
 				ng.paginacao.pagamentos = [];
 				ng.calTotal();
 				$("#modal-aguarde").modal('hide');
@@ -89,9 +94,11 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 
 	ng.calTotal = function(){
 		var total =  0 ;
-		$.each(ng.pagamentos,function(key,value){
-			total += value.sub_total;
-		});
+		if(!empty(ng.pagamentos)) {
+			$.each(ng.pagamentos,function(key,value){
+				total += value.sub_total;
+			});
+		}
 		ng.total = total ;
 	}
 
