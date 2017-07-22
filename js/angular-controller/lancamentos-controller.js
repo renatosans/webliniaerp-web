@@ -12,7 +12,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
     ng.contas           		= [];
     ng.busca					= {dsc_conta_bancaria : "",clientes:"",fornecedores:"",op_valor:"" }
     ng.paginacao 				= {pagamentos:null}
-    ng.vlrTotalPeriodo 			= 0;
+    ng.vlr_total_periodo 			= 0;
     ng.dataGroups 				= [];
     ng.recorrencias			    = [
     								{periodo:"Semanal",dias:7},{periodo:"Quizenal",dias:15},{periodo:"Mensal",dias:30},
@@ -37,7 +37,14 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
     ng.editing 			= false;
     ng.cliente          = {} ;
-    ng.config_table     = {cheque:false,boleto:false,transferencia:false} ;
+    ng.config_table     = {
+		cheque: false,
+		boleto: false,
+		transferencia: false,
+		conta_bancaria: false,
+		forma_pagamento: false,
+		flg_considerar_pendente_saldo: false
+	};
 
     ng.pagamento_edit = {} ;
     ng.modalChangeStatusPagamento = function(item){
@@ -153,7 +160,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		}
 
 		if(ng.busca.dsc_conta_bancaria != ""){
-			queryString += "&dsc_conta_bancaria="+ng.busca.dsc_conta_bancaria;
+			queryString += "&id_conta_bancaria="+ng.busca.dsc_conta_bancaria;
 		}
 
 		if(ng.busca_avancada){
@@ -198,12 +205,22 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.dataGroups  = [] ;
 		aj.get(baseUrlApi()+"lancamentos/"+queryString)
 			.success(function(data, status, headers, config) {
-				ng.vlrTotalPeriodo 		= 0;
-
 				ng.pagamentos           = data.pagamentos;
 				ng.paginacao.pagamentos = data.paginacao;
-				ng.dataGroups 			= _.groupBy(ng.pagamentos, "data_pagamento");
 
+				ng.vlr_total_periodo 	= 0;
+				ng.vlr_total_credito 	= 0;
+				ng.vlr_total_debito 	= 0;
+
+				angular.forEach(ng.pagamentos, function(lancamento, index){
+					if(lancamento.flg_tipo_lancamento == 'C' && (lancamento.status_pagamento == 1 || (lancamento.status_pagamento == 0 && ng.config_table.flg_considerar_pendente_saldo))) // CRÉDITO
+						ng.vlr_total_credito += parseFloat(lancamento.valor_pagamento);
+					else if(lancamento.flg_tipo_lancamento == 'D' && (lancamento.status_pagamento == 1 || (lancamento.status_pagamento == 0 && ng.config_table.flg_considerar_pendente_saldo))) // DÉBITO
+						ng.vlr_total_debito += parseFloat(lancamento.valor_pagamento);
+					lancamento.vlr_saldo = (ng.vlr_total_credito - ng.vlr_total_debito);
+				});
+
+				ng.dataGroups = _.groupBy(ng.pagamentos, "data_pagamento");
 				$.each(ng.dataGroups, function(i, item) {
 					var obj = { vlr_total_item: 0, items: item };
 					var crd = 0;
@@ -211,28 +228,26 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					var sld = 0;
 					var a_receber = 0 ;
 					var a_pagar   = 0 ;
-					$.each(item, function(x, xItem){
+					
+					angular.forEach(item, function(xItem, x){
 						if((xItem.flg_tipo_lancamento == 'C') && (parseInt(xItem.status_pagamento) == 1))
 							crd += parseFloat(xItem.valor_pagamento);
 						else if ((xItem.flg_tipo_lancamento == 'C') && (parseInt(xItem.status_pagamento) == 0))
 							a_receber += parseFloat(xItem.valor_pagamento);
-						
 
 						if(xItem.flg_tipo_lancamento == 'D' && (parseInt(xItem.status_pagamento) == 1))
 							deb += parseFloat(xItem.valor_pagamento);
 						else if(xItem.flg_tipo_lancamento == 'D' && (parseInt(xItem.status_pagamento) == 0))
 							a_pagar += parseFloat(xItem.valor_pagamento);
 					});
-
 					
 					obj.recebido        = crd ;
 					obj.pago            = deb ;
 					obj.a_receber       = a_receber ;
 					obj.a_pagar         = a_pagar ;
 					obj.vlr_total_item += (crd - deb);
-					ng.vlrTotalPeriodo += (obj.vlr_total_item);
+					ng.vlr_total_periodo += (obj.vlr_total_item);
 					ng.dataGroups[i] = obj;
-					
 				});
 			})
 			.error(function(data, status, headers, config) {
@@ -479,7 +494,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 		ng.fornecedores = [];
-		var query_string = "?id_empreendimento="+ng.userLogged.id_empreendimento+"&frn->id[exp]= NOT IN("+ng.configuracao.id_fornecedor_movimentacao_caixa+")";
+		var query_string = "?id_empreendimento="+ng.userLogged.id_empreendimento+"&frn->id[exp]= NOT IN ("+ ng.configuracao.id_fornecedor_movimentacao_caixa +")";
 		if(!empty(ng.busca.fornecedores)){
 			var buscaCpf  = ng.busca.fornecedores.replace(/\./g, '').replace(/\-/g, '');
 			var buscaCnpj = ng.busca.fornecedores.replace(/\./g, '').replace(/\-/g, '').replace(/\//g,'');
@@ -1143,6 +1158,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				v.id_cliente			= ng.cliente.id;
 			if(Number(ng.flgTipoLancamento) == 1)
 				v.id_fornecedor			= ng.fornecedor.id;
+
 			v.id_forma_pagamento		= v.id_forma_pagamento;
 			v.valor_pagamento			= v.valor;
 			v.status         			= v.status;
@@ -1192,7 +1208,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				}
 
 				pagamentos.push({id_forma_pagamento : v.id_forma_pagamento ,id_tipo_movimentacao: 3, parcelas:itens_prc});
-
 			}else if(Number(v.id_forma_pagamento) == 2){
 				$.each(ng.pg_cheques,function(i_cheque, v_cheque){
 					v.id_banco 				= v_cheque.id_banco ;
@@ -1221,8 +1236,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			}
 		});
 
-		
-
 		if(ng.flgTipoLancamento == 0){
 			var url   = "cliente/pagamento"
 			var dados = {
@@ -1239,6 +1252,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		}
 
 		console.log(dados);
+
 		aj.post(baseUrlApi()+url, dados)
 			.success(function(data, status, headers, config) {
 				if(typeof data.msg_agenda == "object"){
@@ -1267,8 +1281,15 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				ng.modalProgressoPagamento('hide');
 				ng.vlr_saldo_devedor = data.vlr_saldo_devedor ;
 				ng.id_controle_pagamento = data.id_controle_pagamento ;
-				ng.refresh();
-				//ng.showModalPrint();
+				// ng.refresh();
+				// ng.showModalPrint();
+				ng.recebidos = [];
+				ng.cliente = {};
+				ng.fornecedor = {};
+				ng.pg_cheques = [];
+				ng.pg_boletos = [];
+				ng.total_pg = 0;
+				ng.load(0,20);
 			})
 			.error(function(data, status, headers, config) {
 				ng.modalProgressoPagamento('hide');

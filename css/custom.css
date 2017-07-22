@@ -237,6 +237,10 @@ div[data-tree-model] li .selected {
     }
 }
 
+.table-sm {
+	font-size: 11px;
+}
+
 .table th.text-middle,
 .table td.text-middle {
 	vertical-align: middle;
