@@ -192,13 +192,13 @@
 												<label class="label-radio inline">
 													<input name="tipoLancamento" ng-model="flgTipoLancamento" value="1" type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
-													<span class="text-danger">Contas a Pagar</span>
+													<span class="text-danger">Despesa</span>
 												</label>
 
 												<label class="label-radio inline">
 													<input name="tipoLancamento" ng-model="flgTipoLancamento" value="0" type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
-													<span class="text-success">Contas a Receber</span>
+													<span class="text-success">Receita</span>
 												</label>
 											</div>
 										</div>
@@ -659,8 +659,8 @@
 									<label class="control-label">Tipo</label>
 									<select class="form-control input-sm" ng-model="busca.flg_tipo_lancamento">
 										<option value="" ></option>
-										<option value="C">Cliente</option>
-										<option value="D">Fornecedor</option>
+										<option value="C">Receita</option>
+										<option value="D">Despesa</option>
 									</select>
 								</div>
 								<div class="col-sm-3" ng-if="busca.flg_tipo_lancamento == '' || busca.flg_tipo_lancamento == null ">
@@ -747,14 +747,14 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="form-group" id="container-tabela" style="overflow: auto">
-								<table id="tabela-lancamentos" class="table table-condensed table-bordered table-hover">
+								<table id="tabela-lancamentos" class="table table-condensed table-bordered table-hover table-sm">
 									<thead>
 										<tr>
 											<th ng-show="!config_table.groupPerDay" rowspan="2">Data</td>
-											<th class="text-center" rowspan="2">Conta</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Conta</th>
 											<th class="text-center" rowspan="2">Cliente/Fornecedor</th>
 											<th class="text-center" rowspan="2">Natureza da Operação</th>
-											<th class="text-center" rowspan="2">Forma de Pgto.</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Forma de Pgto.</th>
 
 											<th class="text-center" rowspan="2" ng-if="config_table.observacao == true">Observação</th>
 
@@ -764,7 +764,9 @@
 											<th class="text-center" colspan="3" ng-if="config_table.transferencia">Dados Transferência</th>
 											
 											<th class="text-center" rowspan="2">Status</th>
-											<th class="text-center" rowspan="2">Valor</th>
+											<th class="text-center" rowspan="2" width="90">Crédito</th>
+											<th class="text-center" rowspan="2" width="90">Débito</th>
+											<th class="text-center" rowspan="2" width="90">Saldo</th>
 											<th class="text-center" width="90px" rowspan="2">Ações</th>
 										</tr>
 										<tr>
@@ -797,10 +799,10 @@
 										</tr>
 										<tr ng-repeat="item in value.items">
 											<td ng-show="!config_table.groupPerDay">{{ key | dateFormat: 'date' }} </td>
-											<td class="text-center">{{ item.dsc_conta_bancaria }}</td>
+											<td class="text-center" ng-if="config_table.conta_bancaria">{{ item.dsc_conta_bancaria }}</td>
 											<td>{{ item.nome | uppercase }}</td>
 											<td>{{ item.cod_plano }} - {{ item.dsc_natureza_operacao | uppercase}}</td>
-											<td>{{ item.descricao_forma_pagamento }}</td>
+											<td ng-if="config_table.forma_pagamento">{{ item.descricao_forma_pagamento }}</td>
 
 											<td ng-if="config_table.observacao == true" control-size-string content="{{ item.obs_pagamento }}" size="16"></td>
 
@@ -818,23 +820,30 @@
 
 
 											<td class="text-center">
-												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-status btn-success"
+												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-success"
 													ng-if="item.status_pagamento == 1" ng-click="modalChangeStatusPagamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
-													<i class="fa fa-check-circle fa-lg"></i> Pago
+													<i class="fa fa-check-circle"></i>
 												</button>
-												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-status btn-warning"
+												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-warning"
 													ng-if="item.status_pagamento == 0" ng-click="modalChangeStatusPagamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
-													<i class="fa fa-times-circle fa-lg"></i> Pendente
+													<i class="fa fa-warning"></i>
 												</button>
 											</td>
 											<td class="text-right">
-												<span class="label label-success" ng-if="item.flg_tipo_lancamento == 'C'">
-													R$ {{ item.valor_pagamento | numberFormat:2 : ',' : '.' }}
+												<span class="text-success" ng-if="item.flg_tipo_lancamento == 'C'">
+													R$ {{ item.valor_pagamento | numberFormat : 2 : ',' : '.' }}
 												</span>
-												<span class="label label-danger" ng-if="item.flg_tipo_lancamento == 'D'">
-													R$ {{ item.valor_pagamento | numberFormat:2 : ',' : '.' }}
+											</td>
+											<td class="text-right">
+												<span class="text-danger" ng-if="item.flg_tipo_lancamento == 'D'">
+													R$ {{ item.valor_pagamento | numberFormat : 2 : ',' : '.' }}
+												</span>
+											</td>
+											<td class="text-right">
+												<span class="text-{{ (item.vlr_saldo < 0) ? 'danger' : ((item.vlr_saldo > 0) ? 'success' : 'primary') }}">
+													R$ {{ item.vlr_saldo | numberFormat : 2 : ',' : '.' }}
 												</span>
 											</td>
 											<!-- <td class="text-center" width="30">
@@ -942,16 +951,20 @@
 										</tr>
 									</tbody>
 									<tr ng-hide="dataGroups.length <= 0 || dataGroups == null">
-										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(5) : calculaColspan(6) }}" class="text-right">Total Período</td>
+										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Totais do Período</td>
 										<td class="text-right">
-											<span class="label label-success" ng-if="vlrTotalPeriodo > 0">
-												R$ {{ vlrTotalPeriodo | numberFormat: '2' : ',' : '.' }}
+											<span class="text-success">
+												R$ {{ vlr_total_credito | numberFormat: '2' : ',' : '.' }}
 											</span>
-											<span class="label label-danger" ng-if="vlrTotalPeriodo < 0">
-												R$ {{ vlrTotalPeriodo | numberFormat: '2' : ',' : '.' }}
+										</td>
+										<td class="text-right">
+											<span class="text-danger">
+												R$ {{ vlr_total_debito | numberFormat: '2' : ',' : '.' }}
 											</span>
-											<span class="label label-money-blue" ng-if="vlrTotalPeriodo == 0">
-												R$ {{ vlrTotalPeriodo | numberFormat: '2' : ',' : '.' }}
+										</td>
+										<td class="text-right">
+											<span class="text-{{ (vlr_total_periodo > 0) ? 'success' : ((vlr_total_periodo < 0) ? 'danger' : 'primary') }}">
+												R$ {{ vlr_total_periodo | numberFormat: '2' : ',' : '.' }}
 											</span>
 										</td>
 										<td></td>
@@ -1543,6 +1556,16 @@
 								<div class="row">
 									<div class="col-lg-6">
 										<label class="label-checkbox">
+											<input type="checkbox" ng-model="config_table.conta_bancaria">
+											<span class="custom-checkbox"></span>
+											Conta Bancária
+										</label>
+										<label class="label-checkbox">
+											<input type="checkbox" ng-model="config_table.forma_pagamento">
+											<span class="custom-checkbox"></span>
+											Forma de Pagamento
+										</label>
+										<label class="label-checkbox">
 											<input type="checkbox" ng-model="config_table.cheque">
 											<span class="custom-checkbox"></span>
 											Cheque
@@ -1577,6 +1600,22 @@
 										</label>
 									</div>
 						    	</div>
+						    	<div class="row">
+						    		<div class="col-sm-6">
+						    			<b>Configurações Gerais:</b>
+									</div>
+						    	</div>
+						    	<div class="row">
+									<div class="col-lg-12">
+										<div class="form-group">
+											<label class="label-checkbox">
+												<input type="checkbox" ng-model="config_table.flg_considerar_pendente_saldo">
+												<span class="custom-checkbox"></span>
+												Considerar lançamento pendente na coluna de saldo
+											</label>
+										</div>
+									</div>
+								</div>
 						    </div>
 						<div class="modal-footer">
 						    	<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal_config_table')" id="btn-aplicar-reforco"
@@ -1719,11 +1758,6 @@
 	<script src="js/endless/endless_form.js"></script>
 	<script src="js/endless/endless.js"></script>
 
-	<!-- Moment -->
-	<script src="js/moment/moment.min.js"></script>
-
-	<script src="js/jquery.noty.packaged.js"></script>
-
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
@@ -1737,6 +1771,8 @@
 	<script type="text/javascript" src="js/fixedHeadTable/fixedHeadTable.js"></script>
 
 	<script src='js/agenda/lib/moment.min.js'></script>
+	<script src='js/jquery.noty.packaged.js'></script>
+
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
