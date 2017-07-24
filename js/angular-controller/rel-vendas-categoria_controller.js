@@ -24,7 +24,7 @@ app.controller('RelatorioVendasCategoriaCtrl', function($scope, $http, $window, 
 		 ng.categoria = {} ;
 		 ng.busca.categorias = '' ;
 		 ng.items = null;
-		 ng.msg_error = [];
+		 ng.msg_error = null;
 	}
 
 	ng.resetFilter = function() {
@@ -115,7 +115,7 @@ app.controller('RelatorioVendasCategoriaCtrl', function($scope, $http, $window, 
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 20 : limit;
 
-    	var query_string = "?id_empreendimento="+ng.userLogged.id_empreendimento;
+    	var query_string = "?cat->id_empreendimento="+ng.userLogged.id_empreendimento;
 
     	if(!empty(ng.busca.categorias)){
     		var busca = ng.busca.categorias.replace(/\s/g, '%');
