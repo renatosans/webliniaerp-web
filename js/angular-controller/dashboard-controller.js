@@ -558,7 +558,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 
 		ng.loadCountClientes = function() {
 			var vlrTotalVendasPeriodoComparativo = 0 ;
-			aj.get(baseUrlApi()+"count_clientes/dashboard?tue->id_empreendimento="+ng.userLogged.id_empreendimento)
+			aj.get(baseUrlApi()+"count_clientes/dashboard?id_empreendimento="+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
 					ng.count.clientes = data.total_clientes ;
 				})
