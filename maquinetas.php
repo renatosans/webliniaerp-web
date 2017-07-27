@@ -23,6 +23,7 @@
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/custom.css">
 	<style type="text/css">
 
 		/* Fix for Bootstrap 3 with Angular UI Bootstrap */

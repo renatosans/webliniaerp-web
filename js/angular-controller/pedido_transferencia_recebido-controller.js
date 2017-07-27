@@ -164,7 +164,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		var produto = angular.copy(item) ;
 		produto.id_produto = item.id ;
 		produto.qtd_pedida = empty(produto.qtd_pedida) ? 0 : produto.qtd_pedida  ;
-		produto.qtd_transferida = (!empty(produto.qtd_transferida)) ? produto.qtd_transferida : (empty(produto.qtd_pedida) ? 0 : produto.qtd_pedida) ;
+		produto.qtd_transferida = (!empty(produto.qtd_transferida)) ? produto.qtd_transferida : 0 ;
 		produto.add 	   = item.add == 0 ? 0 : 1 ;
 
 		produto.vlr_custo_real = item.vlr_custo_real ;
@@ -512,7 +512,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 				
 				$.each(prd.produtos,function(x,i){ prd.produtos[x].id_item = aux[i.id_produto].id_item; });
 
-				prd.produtos = _.sortBy(prd.produtos,'id_item');
+				prd.produtos = _.sortBy(prd.produtos,'nome');
 				$.each(prd.produtos,function(x,i){
 					i.qtd_pedida = aux[i.id_produto].qtd_pedida;
 					i.qtd_transferida = aux[i.id_produto].qtd_transferida;
