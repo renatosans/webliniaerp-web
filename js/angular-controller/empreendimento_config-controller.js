@@ -228,6 +228,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(!empty(ng.configuracoes.flg_considerar_no_estoque_minimo) || ng.configuracoes.flg_considerar_no_estoque_minimo == 'deposito_padrao' ){
+			var item = {
+				nome 				: 'flg_considerar_no_estoque_minimo',
+				valor 				: ng.configuracoes.flg_considerar_no_estoque_minimo,
+				id_empreendimento	: ng.userLogged.id_empreendimento
+			};
+			chaves.push(item);
+		}
+
 		if(!empty(ng.configuracoes.flg_deposito_padrao_vitrine) || ng.configuracoes.flg_deposito_padrao_vitrine == 0 ){
 			var item = {
 				nome 				: 'flg_deposito_padrao_vitrine',
