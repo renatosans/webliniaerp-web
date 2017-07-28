@@ -1381,6 +1381,24 @@
 											</div>
 										</div>
 									</div>
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="" class="control-label">Considerar no estoque minimo:</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_considerar_no_estoque_minimo" value="todos_depositos" name="flg_considerar_no_estoque_minimo"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Todos depositos</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_considerar_no_estoque_minimo" value="deposito_padrao" name="flg_considerar_no_estoque_minimo"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Deposito padrao</span>
+												</label>
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<div class="row">
