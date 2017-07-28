@@ -3738,52 +3738,45 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.descontoAllItens.porcentagem = 0 ;
 		}else if(tipo == 'vlr'){
 			var tm = ng.carrinho.length ;
-			var aux_tm = tm ;
-			var aux_div = round((round(vlr,2)/tm),2);
-			var indexs_desconto = [] ;
-			var repeat = true ;
-			var count_repeat = 1;
-			while(repeat){
-				indexs_desconto = [] ;
+			var total_venda = ng.vlrTotalCompra;
+			var index_aux = null ;
+			var total_desconto = 0 ;
+			$.each(ng.carrinho,function(i,item){
+				var represents = (item.sub_total * 100) / total_venda;
+				represents = Math.round( represents * 100) /100  ;
+				vlr_desconto_total_item = (represents/100) * vlr ;
+				vlr_desconto_real = Math.round((vlr_desconto_total_item/item.qtd_total)*100)/100;
+				item.valor_desconto_real = vlr_desconto_real;
+
+				if(vlr_desconto_real > 0)
+					item.flg_desconto = 1;
+				else
+					item.flg_desconto = 0
+
+				ng.aplicarDesconto(i,null,false,true);
+				if(item.qtd_total == 1 &&  vlr_desconto_real > 0){
+					index_aux = i ;
+				}
+
+				total_desconto = Math.round( ( total_desconto +(vlr_desconto_real*item.qtd_total) ) * 100 ) / 100 ;
+				
+			});
+			var resto = Math.round( ( vlr - total_desconto ) * 100 ) / 100 ;
+			aux_rest = resto > 0
+			if(index_aux){
+				ng.carrinho[index_aux].valor_desconto_real = Math.round( ( ng.carrinho[index_aux].valor_desconto_real + resto  ) * 100 ) / 100 ;
+				ng.aplicarDesconto(index_aux,null,false,true);
+			}else{
 				$.each(ng.carrinho,function(i,item){
-					if(item.vlr_real >= aux_div){
-						indexs_desconto.push(i);
+					if((resto*100) % item.qtd_total == 0 || (resto*100) % item.qtd_total == -0){
+						var subtrair = resto > 0 ? 0.01 : -0.01 ;
+						ng.carrinho[i].valor_desconto_real = Math.round( ( ng.carrinho[i].valor_desconto_real + (subtrair)  ) * 100 ) / 100 ;
+						ng.aplicarDesconto(i,null,false,true);
+						return false ;
 					}
 				});
-
-				if(indexs_desconto.length == aux_tm || count_repeat >= tm)
-					repeat = false;
-				else{
-					aux_tm = indexs_desconto.length ;
-					aux_div = round((round(vlr,2)/aux_tm),2);
-				}
-				count_repeat ++ ;
 			}
-			var cnt = 1 ;
-			tm = indexs_desconto.length ;
-			var res = round( (((vlr*100)%tm)/100) ,2);
-			var div = round((vlr - res),2) ;
-			var vlr_div = round(div/tm,2);
 
-			$.each(ng.carrinho,function(i,item){
-				if(indexs_desconto.indexOf(i)>=0){
-					item.flg_desconto = 1 ;
-
-					var vlr_desc = vlr_div;
-					if(res > 0){
-						vlr_desc = round((vlr_desc+0.01),2);
-						res = round((res - 0.01),2);
-					}
-					item.valor_desconto_real = vlr_desc/item.qtd_total
-					ng.aplicarDesconto(i,null,false,true);
-					if(vlr <= 0)
-						item.flg_desconto = 0 ;
-				}else{
-					item.flg_desconto = 0 ;
-					item.valor_desconto_real = 0 ;
-					ng.aplicarDesconto(i,null,false,true);
-				}
-			});
 			ng.descontoAllItens.valor = 0 ;
 
 		}
@@ -3794,7 +3787,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	function closeWindow(){
 		$(window).bind('beforeunload', function(){ 
-			   //return "Se você fechar o navegador, seus dados serão perdidos. Desena Realmente sair?";
+			   //return "Se você fechar o navegador, seus dados serão perdidos. Deseja Realmente sair?";
 			  if(/Firefox[\/\s](\d+)/.test(navigator.userAgent) && new Number(RegExp.$1) >= 4) {
 				if(typeof ng.caixa_open == 'object' &&  Number(ng.caixa_open.flg_imprimir_sat_cfe) == 1){
 					 $.ajax({url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:'null',id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
