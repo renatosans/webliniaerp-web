@@ -230,7 +230,7 @@
 									<th class="text-middle text-center" rowspan="3">Sabor/Cor</th>
 									<th class="text-middle text-center" rowspan="3">Validade</th>
 									<th class="text-middle text-center" rowspan="3">Qtd</th>
-									<th class="text-middle text-center" rowspan="2" colspan="2">Custo</th>
+									<th class="text-middle text-center" rowspan="2" colspan="2" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Custo</th>
 									<th class="text-middle text-center" colspan="6">Estimativa Venda</th>
 								</tr>
 								<tr>
@@ -239,8 +239,8 @@
 									<th colspan="2" class="text-center">Varejo</th>
 								</tr>
 								<tr>
-									<th class="text-center">Unitário</th>
-									<th class="text-center">Total</th>
+									<th class="text-center" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Unitário</th>
+									<th class="text-center" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Total</th>
 
 									<th class="text-center">Unitário</th>
 									<th class="text-center">Total</th>

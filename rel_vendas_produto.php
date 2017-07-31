@@ -200,7 +200,7 @@
 							<th class="text-center">Tamanho</th>
 							<th class="text-center">Sabor/Cor</th>
 							<th class="text-center">Qtd. Vendida</th>
-							<th class="text-right" width="100">Custo Total</th>
+							<th class="text-right" width="100" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Custo Total</th>
 							<th class="text-right" width="100">Total Vendido</th>
 							<th class="text-right">Margem Lucro</th>
 							<th class="text-right" width="100">Lucro Bruto</th>
@@ -219,7 +219,7 @@
 							<td>{{ venda.peso }}</td>
 							<td>{{ venda.sabor }}</td>
 							<td class="text-center">{{ venda.qtd_vendida }}</td>
-							<td class="text-right">
+							<td class="text-right" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">
 								 <div class="cardBody"><a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
 									R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
 								 </a>

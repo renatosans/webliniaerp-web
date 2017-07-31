@@ -283,7 +283,7 @@
 																		<td class="text-center">Fabricante</td>
 																		<td class="text-center">Tamanho</td>
 																		<td class="text-center">Sabor/Cor</td>
-																		<td class="text-center">Custo</td>
+																		<td class="text-center" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Custo</td>
 																		<td class="text-center" width="50">Qtd.</td>
 																		<td class="text-center" align="center"></td>
 																	</tr>
@@ -293,7 +293,7 @@
 																		<td>{{ item.nome_fabricante }}</td>
 																		<td>{{ item.peso }}</td>
 																		<td>{{ item.sabor }}</td>
-																		<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+																		<td class="text-right" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
 																		<td  width="50"><input  ng-model="item.qtd" onKeyPress="return SomenteNumero(event);" ng-keyup="calVlrCustoInsumos()" type="text" class="form-control input-xs" /></td>
 																		<td align="center">
 																			<button class="btn btn-xs btn-danger" ng-click="delInsumo($index,item)"><i class="fa fa-trash-o"></i></button>
@@ -324,7 +324,7 @@
 													<thead>
 														<tr>
 															<th class="text-center" rowspan="2" style="line-height: 46px;width: 200px">Empreendimento</th>
-															<th class="text-center" rowspan="2" style="line-height: 46px" >Custo </th>
+															<th class="text-center" rowspan="2" style="line-height: 46px" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Custo </th>
 															<th class="text-center" colspan="2">Venda (Atacado)</th>
 															<th class="text-center" colspan="2">Venda (Intermediário)</th>
 															<th class="text-center" colspan="2">Venda (Varejo)</th>
@@ -348,7 +348,7 @@
 															<td>
 																#{{preco.id_empreendimento}} - {{ preco.nome_empreendimento }}
 															</td>
-															<td>
+															<td ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">
 																<div class="row">
 																	<div class="col-sm-9">
 																		<input ng-model="preco.vlr_custo" ng-keyup="calcularAllMargens(preco)"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}' type="text" class="form-control input-xs parsley-validated">
@@ -1229,7 +1229,7 @@
 											<th >Fabricante</th>
 											<th >Tamanho</th>
 											<th >Sabor/cor</th>
-											<th >Vlr. Custo</th>
+											<th ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Vlr. Custo</th>
 											<th >qtd</th>
 											<th ></th>
 										</tr>
@@ -1244,7 +1244,7 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
-											<td>{{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+											<td ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">{{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
 											<td  width="50"><input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd" type="text" class="form-control input-xs" /></td>
 											<td width="50" align="center">
 												<button ng-if="!existsInsumo(item.id)" type="button" class="btn btn-xs btn-success" ng-disabled="" ng-click="addInsumo(item)">
