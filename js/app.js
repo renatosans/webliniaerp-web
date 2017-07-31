@@ -827,10 +827,17 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 		var qtd_dias_vencer_certificado_digital = dta_validade_certificado_digital.diff(today, 'days');
 		
 		if(qtd_dias_vencer_certificado_digital <= ng.config.qtd_dias_antecedencia_alerta_vencimento_certificado_digital) {
-			ng.alertas.push({
-				type: 'warning',
-				message: "Seu certificado digital expira em "+ qtd_dias_vencer_certificado_digital +" dia(s)!"
-			});
+			if(today <= dta_validade_certificado_digital){
+				ng.alertas.push({
+					type: 'warning',
+					message: "Seu certificado digital expira em "+ qtd_dias_vencer_certificado_digital +" dia(s)!"
+				});
+			} else if(today >= dta_validade_certificado_digital){
+				ng.alertas.push({
+					type: 'danger',
+					message: "Seu certificado digital expirou há "+ - qtd_dias_vencer_certificado_digital +" dia(s)!"
+				});
+			}
 		}
 	}
 
