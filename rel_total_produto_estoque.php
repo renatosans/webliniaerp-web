@@ -235,7 +235,7 @@
 									<th width="200" class="text-center">Categoria</th>
 									<th width="100" class="text-center">Tamanho</th>
 									<th width="100" class="text-center">Sabor/Cor</th>
-									<th width="100" class="text-center" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ Custo</th>
+									<th width="100" class="text-center">R$ Custo</th>
 									<th width="100" class="text-center">R$ Atacado</th>
 									<th width="100" class="text-center">R$ Interm.</th>
 									<th width="100" class="text-center">R$ Varejo</th>
@@ -267,7 +267,7 @@
 									<td class="text-center">{{ item.peso }}</td>
 									<td class="text-center">{{ item.sabor }}</td>
 									
-									<td class="text-right" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
 									<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
 									<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
 									<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
