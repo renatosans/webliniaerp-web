@@ -166,8 +166,9 @@
 						<tr>
 							<th class="text-center" width="160">Data da Retirada</th>
 							<th>Operador</th>
-							<th>Sacado</th>
+							<th>Favorecido</th>
 							<th>Descrição</th>
+							<th>Plano de Contas</th>
 							<th class="text-right" width="100">Valor</th>
 						</tr>
 					</thead>
@@ -177,15 +178,24 @@
 							<td>{{ item.nome }}</td>
 							<td>{{ item.nome_fornecedor }}</td>
 							<td>{{ item.obs_pagamento }}</td>
+							<td>{{ item.dsc_plano }}</td>
 							<td class="text-right">R$ {{ item.valor_pagamento | numberFormat : 2 : ',' : '.' }}</td>
 						</tr>
 					</tbody>
 					<tfoot ng-show="pagamentos">
 						<tr>
-							<td class="text-right" colspan="4">Total Retiradas</td>
+							<td class="text-right" colspan="5">Total Retiradas</td>
 							<td class="text-right">R$ {{ vlr_total_sangrias | numberFormat : 2 : ',' : '.' }}</td>
 						</tr>
 					</tfoot>
+				</table>
+				<table class="table table-bordered table-hover table-striped table-condensed">
+					<tbody>
+						<tr ng-repeat="(index, item) in plano_contas">
+							<td>{{ index }}</td>
+							<td>{{ item.total }}</td>
+						</tr>
+					</tbody>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
