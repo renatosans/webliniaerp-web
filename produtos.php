@@ -324,7 +324,7 @@
 													<thead>
 														<tr>
 															<th class="text-center" rowspan="2" style="line-height: 46px;width: 200px">Empreendimento</th>
-															<th class="text-center" rowspan="2" style="line-height: 46px" >Custo </th>
+															<th class="text-center" rowspan="2" style="line-height: 46px">Custo </th>
 															<th class="text-center" colspan="2">Venda (Atacado)</th>
 															<th class="text-center" colspan="2">Venda (Intermediário)</th>
 															<th class="text-center" colspan="2">Venda (Varejo)</th>
@@ -1229,7 +1229,7 @@
 											<th >Fabricante</th>
 											<th >Tamanho</th>
 											<th >Sabor/cor</th>
-											<th >Vlr. Custo</th>
+											<th>Vlr. Custo</th>
 											<th >qtd</th>
 											<th ></th>
 										</tr>

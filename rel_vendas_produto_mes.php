@@ -195,7 +195,7 @@
 							<th >Tamanho</th>
 							<th >Sabor/Cor</th>
 							<th class="text-center">Qtd. Vendida</th>
-							<th class="text-right" width="100">Custo Total</th>
+							<th class="text-right" width="100" >Custo Total</th>
 							<th class="text-right" width="100">Total Vendido</th>
 							<th class="text-right">Margem Lucro</th>
 							<th class="text-right" width="100">Lucro Bruto</th>
@@ -221,7 +221,7 @@
 								<td>{{ venda.sabor }}</td>
 								<td class="text-center">{{ venda.qtd_vendida }}</td>
 								<td class="text-right">
-									 <div class="cardBody"><a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
+									 <div class="cardBody"><a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus" >
 										R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
 									 </a>
 								</td>
@@ -231,7 +231,10 @@
 								<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</a></td>
 							</tr>
 							<tr class="warning" id="saldo_{{key}}">
-							<td class="text-right" colspan="9"><strong class="ng-binding">Saldo</strong></td>
+							<td class="text-right" colspan="8"><strong class="ng-binding">Totais</strong></td>
+							<td class="text-center">
+								{{ countQtdItens(item.itens) }}
+							</td>
 							<td class="text-right">
 								<span class="label label-success ng-binding ng-scope" ng-if="item.saldo_vlr_custo_total >= 0">
 									R$ {{ item.saldo_vlr_custo_total | numberFormat:2:',':'.' }}

@@ -72,7 +72,7 @@
 							<div class="row">
 								<div class="col-sm-5">
 									<div id="nome" class="form-group">
-										<label for="nome" class="control-label">Nome</label>
+										<label for="nome" class="control-label">Nome <span style="color:red;font-weight: bold;">*</span></label>
 										<input type="text" class="form-control" id="nome" ng-model="cliente.nome">
 									</div>
 								</div>
