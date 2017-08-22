@@ -30,7 +30,7 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
    		$('#list_produtos').modal('show');
    	}
 
-   ng.loadProdutos = function(offset, limit) {
+   	ng.loadProdutos = function(offset, limit) {
 		ng.produtos = [];
 
 		offset = offset == null ? 0  : offset;
@@ -167,12 +167,14 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 		
 		if(ng.busca.id_status_op != null)
 			query_string += "&top->id_status="+ ng.busca.id_status_op;
+		else
+			query_string += "&"+$.param({'top->id_status':{exp:"<> 3"}});
 		
 		if(ng.busca.id_categoria_op != null)
 			query_string += "&prd->id_categoria="+ ng.busca.id_categoria_op;
 		
-		if(parseInt(ng.busca.show_concluidos, 10) === 0)
-			query_string += "&"+$.param({'top->id_status':{exp:"<> 3"}});
+		//if(parseInt(ng.busca.show_concluidos, 10) === 0)
+			//query_string += "&"+$.param({'top->id_status':{exp:"<> 3"}});
 
 		if($("#data").val() != ""){
 			var data = moment($("#data").val(), "DD/MM/YYYY").format("YYYY-MM-DD");
