@@ -242,7 +242,7 @@
 									<th width="100" class="text-center" >Depósito</th>
 									<th width="100" class="text-center" ng-if="grupo_tabela == 'validade'">Validade</th>
 									<th width="100" class="text-center">Estoque</th>
-									<th width="100" class="text-center">R$ Subtotal</th>
+									<th width="130" class="text-center">R$ Subtotal</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -281,11 +281,11 @@
 							</tbody>
 							<tfoot>
 								<tr>
-									<td class="text-right text-bold" colspan="10">Quantidade</td>
-									<td class="text-center">{{ total_produtos_estoque }}</td>
-									<td class="text-right text-bold">TOTAL</td>
-									<td class="text-center">{{ qtd_total_estoque }}</td>
-									<td class="text-right hide">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
+									<td class="text-right text-bold" colspan="2">QUANTIDADE DE PRODUTOS</td>
+									<td class="text-left text-bold">{{ total_produtos_estoque }}</td>
+									<td class="text-right text-bold" colspan="9">TOTAIS</td>
+									<td class="text-center text-bold">{{ qtd_total_estoque }}</td>
+									<td class="text-right text-bold">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
 								</tr>
 							</tfoot>
 						</table>
