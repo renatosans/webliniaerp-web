@@ -193,6 +193,7 @@
 					<tbody>
 						<tr ng-repeat="(index, item) in plano_contas">
 							<td>{{ index }}</td>
+							<td>{{ item.length }}</td>
 							<td>{{ item.total }}</td>
 						</tr>
 					</tbody>
