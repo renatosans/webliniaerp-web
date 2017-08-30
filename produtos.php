@@ -166,7 +166,7 @@
 				<div class="page-title">
 					<h3 class="no-margin"><i class="fa fa-archive"></i> Produtos</h3>
 					<br/>
-					<a class="btn btn-info" id="btn-novo"  ng-click="showBoxNovo()"><i class="fa fa-plus-circle"></i> Novo Produto</a>
+					<a class="btn btn-info" id="btn-novo"  ng-click="showBoxNovo()" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')"><i class="fa fa-plus-circle"></i> Novo Produto</a>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 
@@ -1029,7 +1029,7 @@
 											<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
 											<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
 											<td align="center">
-												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip">
+												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')">
 													<i class="fa fa-edit"></i>
 												</button>
 												<button type="button" ng-click="delete(item)"  ng-disabled="configuracao.id_produto_debito_anterior_cliente == item.id_produto" class="btn btn-xs btn-danger delete">
