@@ -1111,6 +1111,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			btn = $(btn.parent('button'));
 		var chaves = [];
 
+		if(ng.configuracoes.prc_taxa_servico != undefined){
+			var item = {
+							nome 				:'prc_taxa_servico',
+							valor 				:ng.configuracoes.prc_taxa_servico , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.id_produto_taxa_servico != undefined){
+			var item = {
+							nome 				:'id_produto_taxa_servico',
+							valor 				:ng.configuracoes.id_produto_taxa_servico , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		if(ng.configuracoes.printer_model_op != undefined){
 			var item = {
 				nome 				:'printer_model_op',

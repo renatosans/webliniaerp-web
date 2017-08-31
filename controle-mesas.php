@@ -609,8 +609,16 @@
 												<td class="text-right">{{ totalItensComanda()  }}</td>
 											</tr>
 											<tr>
-												<td>Total da Comanda</td>
+												<td>Total Consumo</td>
 												<td class="text-right">R$ {{ vlrTotalItensComanda() | numberFormat:2:',':'.' }}</td>
+											</tr>
+											<tr>
+												<td>Taxa de Serviço ({{ configuracao.prc_taxa_servico | numberFormat:2:',':'.'}}%)</td>
+												<td class="text-right">R$ {{ (vlrTotalItensComanda() * configuracao.prc_taxa_servico) / 100 | numberFormat:2:',':'.' }}</td>
+											</tr>
+											<tr>
+												<td>Total Comanda</td>
+												<td class="text-right">R$ {{ vlrTotalItensComanda() + ((vlrTotalItensComanda() * configuracao.prc_taxa_servico) / 100) | numberFormat:2:',':'.' }}</td>
 											</tr>
 										</thead>
 									</table>

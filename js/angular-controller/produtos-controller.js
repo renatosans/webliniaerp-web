@@ -87,6 +87,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			$('#box-novo').toggle(400, function(){
 				if($(this).is(':visible')){
 					$('i','#btn-novo').removeClass("fa-plus-circle").addClass("fa-minus-circle");
+					if(ng.depositos.length == 1) 
+						ng.addDeposito(ng.depositos[0]);
 				}else{
 					$('i','#btn-novo').removeClass("fa-minus-circle").addClass("fa-plus-circle");
 				}

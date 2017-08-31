@@ -213,12 +213,14 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 	}
 
 	function calculaTotais() {
+		ng.vlr_total_custo = 0;
 		ng.qtd_total_estoque = 0 ;
 		ng.total_produtos_estoque = 0 ;
 		$.each(ng.produtos, function(i, item) {
 			ng.qtd_total_estoque += parseInt(item.qtd_item);
 			ng.vlr_total_estoque += (parseFloat(item.vlr_custo_real) * parseInt(item.qtd_item));
 			ng.total_produtos_estoque ++ ;
+			ng.vlr_total_custo += item.vlr_custo_real;
 		});
 	}
 

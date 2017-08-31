@@ -1140,6 +1140,18 @@
 											</select>
 										</div>
 									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label class="control-label">% Taxa de serviço</label>
+											<input ng-model="configuracoes.prc_taxa_servico" name="prc_taxa_servico" thousands-formatter class="form-control input-sm">
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label class="control-label">ID Produto taxa de serviço</label>
+											<input ng-model="configuracoes.id_produto_taxa_servico" name="id_produto_taxa_servico" class="form-control input-sm">
+										</div>
+									</div>
 								</div>
 								
 								<div class="row">

@@ -174,6 +174,7 @@
 						<tr>
 							<th rowspan="2" style="line-height: 46px;">Data</th>
 							<th rowspan="2" class="text-center" style="line-height: 46px;">Cliente</th>
+							<th rowspan="2" class="text-center" style="line-height: 46px;">Usuario</th>
 							<th rowspan="2" class="text-center" style="line-height: 46px;">Tipo</th>
 							<th rowspan="2" class="text-center" style="line-height: 46px;width: 300px;">Descrição</th>
 							<th rowspan="2" class="text-center" style="line-height: 46px;">Valor</th>
@@ -199,6 +200,7 @@
 						<tr ng-repeat="item in movimentacoes">
 							<td>{{ item.dta_movimentacao | dateFormat:'dateTime' }}</td>
 							<td>{{ item.nme_cliente | uppercase }}</td>
+							<td>{{ item.nme_usuario | uppercase }}</td>
 							<td class="text-center">{{ item.tipo_movimentacao }}</td>
 
 							<td ng-if="item.id_forma_pagamento_entrada == 6 && item.id_venda != null">

@@ -223,7 +223,7 @@
 							<th width="100" class="text-center">Tamanho</th>
 							<th width="100" class="text-center">Cor/Sabor</th>
 							<th width="100" class="text-center">Qtd. Vendida</th>
-							<th width="100" class="text-center" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">Media Custo</th>
+							<th width="100" class="text-center">Media Custo</th>
 							<th width="100" class="text-center">Media Desc. %</th>
 							<th width="100" class="text-center">Media Desc. R$</th>
 							<th width="100" class="text-center">Vlr. C/ Desc.</th>
@@ -246,7 +246,7 @@
 							<td class="text-center">{{ item.nme_tamanho }}</td>
 							<td class="text-center">{{ item.nme_cor_sabor }}</td>
 							<td class="text-center">{{ item.qtd_vendida }}</td>
-							<td class="text-center" ng-show="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{item.med_custo | numberFormat:2:',':'.'}}</td>
+							<td class="text-center">R$ {{item.med_custo | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.med_desconto_perc | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">{{item.med_desconto_real | numberFormat:2:',':'.'}} %</td>
 							<td class="text-right">R$ {{item.vlr_desconto | numberFormat:2:',':'.'}}</td>

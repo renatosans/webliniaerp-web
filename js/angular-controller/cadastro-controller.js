@@ -139,7 +139,30 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 			});
 	}
 
+	ng.isCPF = function(strCPF) {
+	    strCPF = ""+strCPF;
+	    strCPF = strCPF.replace(/\./g, '').replace(/\-/g, ''); ;
+	    var Soma; 
+	    var Resto; 
+	    	Soma = 0; 
+	    	if (strCPF == "00000000000") 
+	    		return false; 
+	    		for (i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i); 
+	    			Resto = (Soma * 10) % 11; if ((Resto == 10) || (Resto == 11)) Resto = 0; 
+	    		if (Resto != parseInt(strCPF.substring(9, 10)) ) 
+	    			return false; 
+	    			Soma = 0; 
+	    			for (i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i); 
+	    				Resto = (Soma * 10) % 11; if ((Resto == 10) || (Resto == 11)) Resto = 0; 
+	    			if (Resto != parseInt(strCPF.substring(10, 11) ) ) 
+	    				return false; 
+
+	    	return true; 
+	}
+
 	ng.salvar = function() {
+		ng.isCPF();
+
 		ng.cliente.empreendimentos 		= [{id:ng.id_empreendimento}];
 		ng.cliente.id_empreendimento 	= ng.id_empreendimento ;
 		/*if(empty(ng.configuracoes)){
@@ -158,7 +181,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
    		btn.button('loading');
 		ng.removeError();
 		var cliente = angular.copy(ng.cliente);
-		var msg = 'Seu Cadastro foi efetuado com sucesso!';
+		var msg = 'Seu Cadastro foi efetuado com sucesso! Em breve você receberá um e-mail com seu login e senha.';
 		var url = 'cliente';
 
 		if(cliente.id != null && cliente.id > 0) {
@@ -177,8 +200,6 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 		 	cliente.dta_nacimento = ano+"-"+mes+"-"+dia ;
 
 		 }
-
-
 
 		 if((!empty(ng.cliente.id_estado) && !empty(ng.cliente.id_cidade) && !empty(ng.cliente.endereco) && !empty(ng.cliente.numero) && !empty(ng.cliente.bairro))){
 		 	 var estado_selecionado = ng.getEstadoByidIBGE(ng.cliente.id_estado);
