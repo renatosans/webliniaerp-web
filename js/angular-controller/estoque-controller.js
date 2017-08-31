@@ -1,10 +1,11 @@
-app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$filter, UserService,PrestaShop){
+app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$filter, UserService, ConfigService, PrestaShop){
 
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 			   = baseUrl();
 	ng.userLogged 		   = UserService.getUserLogado();
+	ng.configuracao 	   = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 
 	ng.nota			       = {vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0};
 

@@ -342,15 +342,15 @@
 												<th>Tamanho</th>
 												<th>Cor/Sabor</th>
 												<th style="width: 60px; text-align: center;" colspan="2">Qtd</th>
-												<th style="width: 80px; text-align: center;"
+												<th class="text-center" width="100" 
 													ng-show="nota.flg_alterar_valor_custo == 1">
 													Custo (R$)
 												</th>
-												<th style="width: 70px; text-align: center;"
+												<th class="text-center" width="100" 
 													ng-show="nota.flg_alterar_valor_custo == 1">
 													Imp. (%)
 												</th>
-												<th style="width: 75px; text-align: center;"
+												<th class="text-center" width="100" 
 													ng-show="nota.flg_alterar_valor_custo == 1">
 													Desc. (%)
 												</th>
@@ -381,16 +381,28 @@
 													<button type="button" class="btn btn-xs btn-primary" ng-click="showValidades(item)"><i class="fa fa-calendar"></i></button>
 												</td>
 												<td ng-show="nota.flg_alterar_valor_custo == 1">
-													<input ng-model="item.custo" thousands-formatter ng-keyup="atualizaValores();" 
-														ng-blur="atualizaValorTotal();" type="text" class="form-control input-xs">
+													<input type="text" class="form-control input-xs"
+														thousands-formatter 
+														precision='{{ configuracao.qtd_casas_decimais }}' 
+														ng-model="item.custo" 
+														ng-keyup="atualizaValores();" 
+														ng-blur="atualizaValorTotal();">
 												</td>
 												<td ng-show="nota.flg_alterar_valor_custo == 1">
-													<input ng-model="item.imposto" thousands-formatter ng-keyup="atualizaValores();" 
-														ng-blur="atualizaValorTotal();" type="text" class="form-control input-xs">
+													<input type="text" class="form-control input-xs"
+														thousands-formatter 
+														precision='{{ configuracao.qtd_casas_decimais }}' 
+														ng-model="item.imposto" 
+														ng-keyup="atualizaValores();" 
+														ng-blur="atualizaValorTotal();">
 												</td>
 												<td ng-show="nota.flg_alterar_valor_custo == 1">
-													<input ng-model="item.desconto" thousands-formatter ng-keyup="atualizaValores();" 
-														ng-blur="atualizaValorTotal();" type="text" class="form-control input-xs">
+													<input type="text" class="form-control input-xs"
+														thousands-formatter 
+														precision='{{ configuracao.qtd_casas_decimais }}' 
+														ng-model="item.desconto" 
+														ng-keyup="atualizaValores();" 
+														ng-blur="atualizaValorTotal();">
 												</td>
 												<td style="text-align: right; line-height: 1.5; vertical-align: middle;"
 													ng-show="nota.flg_alterar_valor_custo == 1">

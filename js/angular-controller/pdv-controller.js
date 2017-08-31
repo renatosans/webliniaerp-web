@@ -123,7 +123,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 			ng.calcTotalCompra();
 
-			if(orcamento.flg_comanda == 1) {
+			if(orcamento.flg_comanda == 1 && !empty(ng.configuracoes.id_produto_taxa_servico)) {
 				ng.getProdutoTaxaServico();
 				if(!empty(ng.produto_taxa_servico)) {
 					ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);

@@ -89,6 +89,9 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 	}
 
 	ng.loadDetalhesVenda = function(venda) {
+		window.location.href = ng.getUrlPDFVenda(venda);
+		
+		/*
 		ng.venda = venda;
 		$('#modal-print-venda').modal('show');
 		ng.url_pdf = baseUrlApi()+'relPDF?template=comprovante_venda&'+($.param({dados:{json:JSON.stringify({
@@ -106,7 +109,7 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 		    $(this).show();
 		   	$('#load-pdf-venda').hide();
 		});
-
+		*/
 		/*$('#list_clientes').modal('show');
 
 		aj.get(baseUrlApi()+"venda/itens/"+ venda.id)

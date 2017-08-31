@@ -163,6 +163,7 @@
 						<tr>
 							<th class="text-center" width="80">#</th>
 							<th class="text-center" width="80">Data</th>
+							<th class="text-center" width="80">Mesa</th>
 							<th class="text-center">Vendedor</th>
 							<th class="text-center">Cliente</th>
 							<th class="text-center" width="80">Status</th>
@@ -173,6 +174,7 @@
 						<tr bs-tooltip ng-repeat="item in vendas">
 							<td class="text-center">{{ item.id }}</td>
 							<td class="text-center">{{ item.dta_venda }}</td>
+							<td class="text-center">{{ item.dsc_mesa }}</td>
 							<td>{{ item.nme_vendedor }}</td>
 							<td>{{ item.nme_cliente }}</td>
 							<td class="text-center">
@@ -183,22 +185,22 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td class="text-right text-bold" colspan="5">Total Vendido</td>
+							<td class="text-right text-bold" colspan="6">Total Vendido</td>
 							<td class="text-right">R$ {{ vlr_total_vendido | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 						<tr>
-							<td class="text-right text-bold" colspan="5">Ticket Medio</td>
+							<td class="text-right text-bold" colspan="6">Ticket Medio</td>
 							<td class="text-right">R$ {{ vlr_ticket_medio | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 						<tr>
-							<td class="text-center text-bold" colspan="6">Total por Forma de Pagamento</td>
+							<td class="text-center text-bold" colspan="7">Total por Forma de Pagamento</td>
 						</tr>
 						<tr ng-repeat="item in formas_pagamento">
-							<td class="text-right" colspan="5">{{ item.dsc_forma_pagamento }} ({{ item.prc_respectivo | numberFormat : 0 : ',' : '.' }}%)</td>
+							<td class="text-right" colspan="6">{{ item.dsc_forma_pagamento }} ({{ item.prc_respectivo | numberFormat : 0 : ',' : '.' }}%)</td>
 							<td class="text-right">R$ {{ item.vlr_soma_pagamento | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 						<tr>
-							<td class="text-right text-bold" colspan="5">Total Recebido</td>
+							<td class="text-right text-bold" colspan="6">Total Recebido</td>
 							<td class="text-right">R$ {{ vlr_total_formas_pagamento | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 					</tfoot>
