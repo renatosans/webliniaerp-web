@@ -109,15 +109,39 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			}
 			if(Number(data.cliente.id) != Number(ng.config.id_cliente_movimentacao_caixa))
 				ng.cliente = data.cliente;
+
 			$.each(orcamento.itens,function(i,v){
 				v.valor_desconto_real = Number(v.valor_desconto)/100;
 				v.flg_desconto        = Number(v.desconto_aplicado);
 				v.nome_produto        = v.nome ;
 				ng.incluirCarrinho(v);
 			});
+
 			$.each(ng.carrinho,function(i,item){
 				ng.aplicarDesconto(i,null,false,false);
 			});
+
+			ng.calcTotalCompra();
+
+			if(orcamento.flg_comanda == 1) {
+				ng.getProdutoTaxaServico();
+				if(!empty(ng.produto_taxa_servico)) {
+					ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+					ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+					ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+					ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+
+					var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
+					ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+					ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+					ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+
+					ng.produto_taxa_servico.valor_desconto_real = 0;
+					ng.produto_taxa_servico.flg_desconto        = 0;
+					ng.incluirCarrinho(ng.produto_taxa_servico);
+				}
+			}
+
 			ng.calcTotalCompra();
 			ng.totalPagamento();
 			ng.calculaTroco();
@@ -1208,6 +1232,30 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			.error(function(data, status, headers, config) {
 				ng.produtos = [];
 			});
+	}
+
+	ng.getProdutoTaxaServico = function() {
+    	var qtd_minima = ng.config.flg_controlar_estoque != undefined && Number(ng.config.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
+    	var depositos = '';
+    		
+    	if(qtd_minima != 'null')
+    		depositos = $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
+
+    	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
+			query_string += "&tp->id=" + ng.configuracoes.id_produto_taxa_servico;
+			query_string += "&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC";
+
+		ng.produto_taxa_servico = null;
+		
+		$.ajax({
+			url: baseUrlApi()+"estoque_produtos/"+qtd_minima+"/0/10/"+query_string,
+			async: false,
+			type: 'GET',
+			success: function(data, status, headers, config) {
+				if(!empty(data.produtos) && data.produtos.length > 0)
+					ng.produto_taxa_servico = data.produtos[0];
+			}
+		});
 	}
 
 	ng.findProductByBarCode = function(offset,limit) {
