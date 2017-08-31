@@ -118,7 +118,7 @@ app.service('FuncionalidadeService', function($http) {
 });
 
 app.service('ConfigService', function($http) {
-	var configuracoes = {} ;
+	var configuracoes = null ;
 	this.getConfig = function(id_empreendimento) {
 		if(configuracoes != null)
 			return configuracoes ;
