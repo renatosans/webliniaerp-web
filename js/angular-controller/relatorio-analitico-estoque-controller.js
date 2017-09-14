@@ -44,6 +44,20 @@ app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $w
 				ng.reset();
 				ng.itens = data.dados;
 				ng.paginacao.itens = data.paginacao;
+				ng.qtd_estoque_total = 0;
+				ng.vlr_custo_total = 0;
+				ng.vlr_total_venda_atacado = 0;
+				ng.vlr_total_venda_intermediario = 0;
+				ng.vlr_total_venda_varejo = 0;
+				$.each(ng.itens, function(index, item) {
+					if(item.qtd_item > 0){
+						ng.qtd_estoque_total += item.qtd_item;
+						ng.vlr_custo_total += item.vlr_custo_total;
+						ng.vlr_total_venda_atacado += item.vlr_total_venda_atacado;
+						ng.vlr_total_venda_intermediario += item.vlr_total_venda_intermediario;
+						ng.vlr_total_venda_varejo += item.vlr_total_venda_varejo;
+					}
+				});
 				$("#modal-loading").modal('hide');
 			})
 			.error(function(data, status, headers, config) {

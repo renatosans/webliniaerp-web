@@ -274,6 +274,20 @@
 									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_total_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
 								</tr>
 							</tbody>
+							<tfoot>
+								<tr>
+									<td class="text-right text-bold" colspan="5">Totais</td>
+									<td class="text-center text-bold">{{ qtd_estoque_total }}</td>
+									<td></td>
+									<td class="text-right text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
+									<td></td>
+									<td class="text-right text-bold">R$ {{ vlr_total_venda_atacado | numberFormat: 2 : ',' : '.'}}</td>
+									<td></td>
+									<td class="text-right text-bold">R$ {{ vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.'}}</td>
+									<td></td>
+									<td class="text-right text-bold">R$ {{ vlr_total_venda_varejo | numberFormat: 2 : ',' : '.'}}</td>
+								</tr>
+							</tfoot>
 						</table>
 					</div>
 

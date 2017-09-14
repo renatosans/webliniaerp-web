@@ -68,6 +68,11 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 				ng.pagamentos 			 = data.pagamentos;
 				ng.paginacao.pagamentos  = data.paginacao ;
 				ng.calTotal();
+				ng.vlr_total = 0;
+				$.each(ng.pagamentos,function(index,item){
+					ng.vlr_total += item.valor_pagamento;
+				});
+
 				$("#modal-aguarde").modal('hide');
 			})
 			.error(function(data, status, headers, config) {

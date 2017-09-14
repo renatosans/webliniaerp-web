@@ -242,10 +242,18 @@
 							<td >
 								{{ item.nme_cidade }}
 							</td>
-							<td ng-if="item.vlr_saldo_devedor == 0" style="color:blue;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
-							<td ng-if="item.vlr_saldo_devedor < 0" style="color:red;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
+							<td ng-if="item.vlr_saldo_devedor == 0" style="color:blue;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
+							<td ng-if="item.vlr_saldo_devedor < 0" style="color:red;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td ng-if="vlr_total < 0" class="text-right text-bold" style="color:red;  font-weight: bold" colspan="9">Total</td>
+							<td ng-if="vlr_total < 0" class="text-right text-bold" style="color:red;  font-weight: bold">R$ {{ vlr_total | numberFormat:2:',':'.'}}</td>
+							<td ng-if="vlr_total >= 0" class="text-right text-bold" style="color:blue;  font-weight: bold" colspan="9">Total</td>
+							<td ng-if="vlr_total >= 0" class="text-right text-bold" style="color:blue;  font-weight: bold">R$ {{ vlr_total | numberFormat:2:',':'.'}}</td>
+						</tr>
+					</tfoot>
 				</table>
 
 				<div class="pull-right hidden-print">

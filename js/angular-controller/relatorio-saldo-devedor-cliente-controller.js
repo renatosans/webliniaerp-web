@@ -58,6 +58,11 @@ app.controller('RelatorioSaldoDevedorClienteController', function($scope, $http,
 
 				if(data == false)
 					ng.vendas = null;
+
+				ng.vlr_total = 0;
+				$.each(ng.vendas,function(index,item){
+					ng.vlr_total += item.vlr_saldo_devedor;
+				});
 				
 				$("#modal-aguarde").modal('hide');
 

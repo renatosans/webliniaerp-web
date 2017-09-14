@@ -239,7 +239,7 @@
 									<th width="100" class="text-center">R$ Atacado</th>
 									<th width="100" class="text-center">R$ Interm.</th>
 									<th width="100" class="text-center">R$ Varejo</th>
-									<th width="100" class="text-center" >Depósito</th>
+									<th width="100" class="text-center" ng-if="(grupo_busca)" >Depósito</th>
 									<th width="100" class="text-center" ng-if="grupo_tabela == 'validade'">Validade</th>
 									<th width="100" class="text-center">Estoque</th>
 									<th width="130" class="text-center">R$ Subtotal</th>
@@ -272,7 +272,7 @@
 									<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
 									<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
 
-									<td class="text-center" >{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
+									<td class="text-center" ng-if="(grupo_busca)">{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
 									<td class="text-center" ng-if="grupo_tabela == 'validade'">{{ item.dta_validade != '2099-12-31' && (item.dta_validade | dateFormat:'date') || ' ' }}</td>
 
 									<td class="text-center">{{ item.qtd_item }}</td>

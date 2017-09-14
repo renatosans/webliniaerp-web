@@ -249,6 +249,12 @@
 							<td class="text-right">R$ {{item.valor_pagamento | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td class="text-right text-bold" colspan="5">Total</td>
+							<td class="text-right text-bold">R$ {{ vlr_total | numberFormat:2:',':'.'}}</td>
+						</tr>
+					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				<div class="row hidden-print">

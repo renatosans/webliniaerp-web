@@ -188,7 +188,7 @@
 					</thead>
 					<tbody>
 						<tr ng-if="movimentacoes.length == 0 && movimentacoes != null">
-							<td class="text-center" colspan="7">
+							<td class="text-center" colspan="9">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando movimentações...
 							</td>
 						</tr>
