@@ -1,11 +1,18 @@
 <?php
+	# Session lifetime of 3 hours
+	ini_set('session.gc_maxlifetime', 10800);
+
+	# Enable session garbage collection with a 1% chance of
+	# running on each session_start()
+	ini_set('session.gc_probability', 1);
+	ini_set('session.gc_divisor', 100);
 
 	define('AMBIENTE','CLIENTES');
 	define('PAGE', substr($_SERVER['SCRIPT_NAME'],strripos($_SERVER['SCRIPT_NAME'],'/')+1));
 	
 	if($_SERVER['SERVER_NAME'] == 'localhost' || strpos($_SERVER['SERVER_NAME'], "192.168.") === 0){
-		define('URL_API','http://'. $_SERVER['SERVER_NAME'] .'/wbl-api/');
-		define('URL_BASE','http://'. $_SERVER['SERVER_NAME'] .'/wbl-web/');
+		define('URL_API','http://'. $_SERVER['SERVER_NAME'] .'/webliniaerp-api/');
+		define('URL_BASE','http://'. $_SERVER['SERVER_NAME'] .'/webliniaerp-web/');
 	}else{
 		define('URL_API','http://'.$_SERVER['SERVER_NAME'].'/api/');
 		define('URL_BASE','http://'.$_SERVER['SERVER_NAME'].'/');	

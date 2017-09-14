@@ -4,11 +4,37 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 	$scope.busca 				= { clientes: "", 	servicos: "", 	produtos: "",  nome: "", cod_status_servico: null};
 	$scope.paginacao			= { clientes: null, servicos: null, produtos: null, ordens_servico: null };
 	$scope.margemAplicada       = {atacado:false,intermediario:false,varejo:true,parceiro:false} ;
-	$scope.tipo_view = 'lista' ;
-	$scope.carrinho = [] ;
-	$scope.calcTotalCompra = 0 ;
-	$scope.total_itens = 0 ;
-	$scope.out_produtos = [];
+	$scope.tipo_view 			= 'grade-categorias' ;
+	$scope.carrinho 			= [] ;
+	$scope.calcTotalCompra 		= 0 ;
+	$scope.total_itens 			= 0 ;
+	$scope.out_produtos 		= [];
+
+	var isFullscreen = false;
+	$scope.resizeScreen = function() {
+		if(!isFullscreen){
+			$("#map_canvas").css("height", 700);
+			$("footer").addClass("hide");
+			$("#wrapper").css("min-height", "0px");
+			$("#main-container").css("min-height", "0px");
+			$("#main-container").css("margin-left", 0).css("padding-top", 45);
+			//$("#top-nav").toggle();
+			$("aside").toggle();
+			$("#breadcrumb").toggle();
+			isFullscreen = !isFullscreen;
+		}
+		else {
+			$("#map_canvas").css("height", 600);
+			$("footer").removeClass("hide");
+			$("#wrapper").css("min-height", "800px");
+			$("#main-container").css("min-height", "800px");
+			$("#main-container").css("margin-left", 194).css("padding-top", 45);
+			//$("#top-nav").toggle();
+			$("aside").toggle();
+			$("#breadcrumb").toggle();
+			isFullscreen = !isFullscreen;
+		}
+	}
 
 	$scope.changeTipoView=function(tipo){
 		$scope.tipo_view = tipo ;
@@ -84,7 +110,6 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 			$scope.imgProduto = 'img/imagem_padrao_produto.gif';
 
 		$scope.carrinho.push(produto) ;
-
 	}
 
 	$scope.calcTotalCompra = function() {
@@ -221,9 +246,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 		$scope.out_produtos = [] ;
 		//$scope.out_descontos = [] ;
 		$scope.verificaEstoque(produtos_enviar,0);
-		
 	}
-
 
 	$scope.verificaEstoque = function(produtos_enviar,init,acao){
 		$scope.out_descontos = [] ;
@@ -354,28 +377,15 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 				$scope.carrinho = [] ;
 				$scope.total_itens = 0 ;
 				$scope.vlrTotalCompra = 0 ;
+				$scope.voltarListaCategorias();
 			})
 			.error(function(data, status, headers, config) {
 				alert('Erro fatal');
 			});
 	}
 
-
 	$scope.isOutEstoque = function(id){
 		return _in(id,$scope.out_produtos);
-	}
-
-
-
-
-
-
-
-	if($.isNumeric($scope.configuracoes.id_conta_bancaria_padrao_fechamento_automatico) && $.isNumeric($scope.configuracoes.id_caixa_padrao)){
-		$scope.statusConfig = true;
-	}else{
-		$scope.statusConfig         = false ;
-		return ;
 	}
 
 	$scope.showBoxNovo = function(clearData){
@@ -386,7 +396,6 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 			clearObject();
 		}
 	}
-
  
 	$scope.loadProdutos = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
@@ -398,10 +407,20 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
     		query_string += "&"+$.param({'(tp->nome':{exp:"like'%"+$scope.busca.produtos+"%' OR tf.nome_fabricante like'%"+$scope.busca.produtos+"%')"}});
     	}
 
+    	if(!empty($scope.categoria))
+    		query_string += '&tp->id_categoria='+$scope.categoria.id; 
+
 		$scope.produtos = [];
 		$http.get(baseUrlApi()+"estoque_produtos/null/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
 			.success(function(data, status, headers, config) {
 				$scope.produtos = data ;
+
+				angular.forEach($scope.produtos, function(produto){
+					if(!empty(produto.img))
+						produto.imgProduto = 'assets/imagens/produtos/' + produto.img;
+					else
+						produto.imgProduto = 'img/imagem_padrao_produto.gif';
+				});
 			})
 			.error(function(data, status, headers, config) {
 				$scope.produtos = [] ;
@@ -446,6 +465,16 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
    		$http.get(baseUrlApi()+"pedido_venda/abrir_caixa/"+ $scope.configuracoes.id_caixa_padrao +"/"+ $scope.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				$scope.caixa = data;
+				if(empty($scope.caixa.depositos) && !empty($scope.configuracoes.id_deposito_padrao)) {
+					$scope.caixa.depositos = [$scope.configuracoes.id_deposito_padrao];
+
+					if($.isNumeric($scope.configuracoes.id_conta_bancaria_padrao_fechamento_automatico) && $.isNumeric($scope.configuracoes.id_caixa_padrao))
+						$scope.statusConfig = true;
+					else
+						$scope.statusConfig = false;
+				}
+				else
+					$scope.statusConfig = false;
 			})
 			.error(function(data, status, headers, config) {
 				console.log(data, status, headers, config);
@@ -571,9 +600,45 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 		$scope.loadOrdensServicos(0,10);
 	}
 
+	$scope.isSelected = function(produto) {
+		if(!empty(_.findWhere($scope.carrinho, {id_produto: produto.id_produto})))
+			return 'product-selected';
+		else
+			return '';
+	}
+
+	$scope.cancelarVenda = function() {
+		$scope.carrinho = [];
+		$scope.calcTotalCompra();
+	}
+
+	$scope.loadCategorias = function(){
+		$scope.categoriasProduto = null ;
+		$http.get(baseUrlApi()+'categorias?tce->id_empreendimento='+$scope.userLogged.id_empreendimento)
+		.success(function(data, status, headers, config) {
+			$scope.categoriasProduto = data.categorias ;
+		})
+		.error(function(data, status, headers, config) {
+			$scope.categoriasProduto = [] ;
+			if(status != 406)
+			console.log('Não foi possivel buscar as categorias');
+		}); 
+	}
+
+	$scope.setBuscaCategoria = function(categoria){
+		$scope.categoria = categoria;
+		$scope.loadProdutos();
+		$scope.tipo_view = 'grade-produtos';
+	}
+
+	$scope.voltarListaCategorias = function(){
+		$scope.produtos = [];
+		$scope.tipo_view = 'grade-categorias';
+	}
+
 	clearObject();
 	$scope.abrirCaixa();
-	$scope.loadProdutos();
-
-	$('#sizeToggle').trigger("click");
+	$scope.loadCategorias();
+	// $scope.loadProdutos();
+	$scope.resizeScreen();
 });
