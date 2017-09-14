@@ -933,9 +933,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				if(!empty(data.mesa)){
 					var msg = {
 						type : 'table_change',from : ng.caixa_open.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-						message : JSON.stringify({mesa:data.mesa})
+						message : JSON.stringify({mesa:data.mesa, id_comanda: ng.id_venda, closed: true})
 					}
 					ng.sendMessageWebSocket(msg);
+
+					if(!empty(params.close_before))
+						window.close();
 				}
 				if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
 

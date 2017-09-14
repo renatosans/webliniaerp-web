@@ -157,12 +157,20 @@
 			</div><!-- /main-header -->
 
 			<div class="grey-container shortcut-wrapper">
-				<a href="pdv.php" class="shortcut-link" ng-if="userLogged.id_empreendimento !=75">
+				<a href="pdv.php" class="shortcut-link" ng-if="(userLogged.id_empreendimento != 75) && (userLogged.id_empreendimento != 78)">
 					<span class="shortcut-icon">
 						<i class="fa fa-desktop"></i>
 					</span>
 					<span class="text">PDV</span>
 				</a>
+
+				<a href="pdv-simple.php" class="shortcut-link" ng-if="userLogged.id_empreendimento == 78">
+					<span class="shortcut-icon">
+						<i class="fa fa-desktop"></i>
+					</span>
+					<span class="text">PDV</span>
+				</a>
+
 				<a href="controle-mesas.php" class="shortcut-link">
 					<span class="shortcut-icon">
 						<i class="fa fa-table"></i>

@@ -544,7 +544,9 @@
 								Comanda <small>#{{ comandaSelecionada.comanda.id }}</small>
 								<div class="pull-right">
 									<button ng-click="changeTela('detMesa')" type="button" class="btn btn-xs btn-primary">
-									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i></button>
+										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
+										<span class="hidden-xs">Voltar</span>
+									</button>
 									<button ng-if="userLogged.flg_dispositivo==1"  type="button" class="btn btn-xs btn-default" ng-click="goChangeCliente()">
 										<i class="fa fa-user"></i>
 										<span class="hidden-xs">Informar Cliente</span>
@@ -585,7 +587,7 @@
 												<td class="text-middle text-center hidden-xs">{{ item.peso }}</td>
 												<td class="text-middle text-center hidden-xs">{{ item.sabor }}</td>
 												<td class="text-middle text-center">{{ item.qtd_total }}</td>
-												<td class="text-middle text-center">R$ {{ item.vlr_venda_varejo | numberFormat:2 : ',' : '.' }}</td>
+												<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:2 : ',' : '.' }}</td>
 												<td class="text-middle text-right" ng-if="userLogged.flg_dispositivo==1">
 													<button ng-click="selProduto(item,true)" type="button" class="btn btn-sm btn-warning">
 														<i class="fa fa-edit"></i>
@@ -614,11 +616,11 @@
 											</tr>
 											<tr>
 												<td>Taxa de Serviço ({{ configuracao.prc_taxa_servico | numberFormat:2:',':'.'}}%)</td>
-												<td class="text-right">R$ {{ (vlrTotalItensComanda() * configuracao.prc_taxa_servico) / 100 | numberFormat:2:',':'.' }}</td>
+												<td class="text-right">R$ {{ getValorTaxaServico() | numberFormat:2:',':'.' }}</td>
 											</tr>
 											<tr>
 												<td>Total Comanda</td>
-												<td class="text-right">R$ {{ vlrTotalItensComanda() + ((vlrTotalItensComanda() * configuracao.prc_taxa_servico) / 100) | numberFormat:2:',':'.' }}</td>
+												<td class="text-right">R$ {{ vlrTotalItensComanda() + getValorTaxaServico() | numberFormat:2:',':'.' }}</td>
 											</tr>
 										</thead>
 									</table>
@@ -629,12 +631,17 @@
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
 									<div class="pull-right">
+										<button type="button" class="btn btn-info"
+											ng-click="openModalMesasTrocar(comandaSelecionada.comanda)">
+											<i class="fa fa-exchange"></i>
+											Trocar de Mesa
+										</button>
 										<button type="button" class="btn btn-danger"
 											ng-click="cancelarComanda(comandaSelecionada.comanda.id)">
 											<i class="fa fa-times-circle"></i>
 											Cancelar Comanda
 										</button>
-										<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}" 
+										<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}&close_before=true" 
 											target="_blank" 
 											class="btn btn-success">
 											<i class="fa fa-dollar"></i>
@@ -894,6 +901,7 @@
 											<th>Fabricante</th>
 											<th>Tamanho</th>
 											<th>Sabor</th>
+											<th>Preço</th>
 											<th width="80">qtd</th>
 											<th width="80"></th>
 										</tr>
@@ -913,6 +921,7 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
+											<td class="text-right">R$ {{ item.vlr_venda_varejo  | numberFormat : 2 : ',' : '.' }}</td>
 											<td><input onKeyPress="return SomenteNumero(event);" ng-keyUp="" ng-model="item.qtd" type="text" class="form-control input-xs" width="50" /></td>
 											<td>
 											<button  ng-click="incluirItemComandaModal(item,$event)" class="btn btn-success btn-xs" type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
@@ -972,6 +981,47 @@
 														data-toggle="tooltip" title="{{ cozinha.id_ws_dsk }}"></i>
 													Conectada
 												</span>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer clearfix">
+						<div class="pull-right">
+							<button class="btn btn-default btn-sm" data-dismiss="modal">
+								Fechar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="changeComandaMesa" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Mesas</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-lg-12">
+								<table class="table table-condensed table-hover table-bordered table-striped">
+									<thead>
+										<th>Mesa</th>
+										<th width="90"></th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="mesa in mesas">
+											<td class="text-middle">{{ mesa.dsc_mesa }}</td>
+											<td class="text-middle text-center">
+												<button type="button" class="btn btn-sm btn-primary"
+													ng-click="trocarComandaMesa(mesa)">
+													Selecionar
+												</button>
 											</td>
 										</tr>
 									</tbody>

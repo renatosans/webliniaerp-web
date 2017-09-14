@@ -40,6 +40,13 @@ app.controller('ControleMesasController', function(
 
 	$('#sizeToggle').trigger("click");
 
+	ng.getValorTaxaServico = function(){
+		if(!empty(ng.configuracao.prc_taxa_servico))
+			return ((ng.vlrTotalItensComanda() * ng.configuracao.prc_taxa_servico) / 100);
+		else
+			return 0;
+	}
+
 	ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 	}
@@ -348,10 +355,37 @@ app.controller('ControleMesasController', function(
 			});
 	}
 
+	ng.openModalMesasTrocar = function(comanda) {
+		ng.comanda_troca = comanda;
+		$('#changeComandaMesa').modal('show');
+	}
+
+	ng.trocarComandaMesa = function(mesa) {
+		aj.post(baseUrlApi() + "comandas/"+ ng.comanda_troca.id +"/trocar/mesa/"+ mesa.id_mesa)
+			.success(function(data, status, headers, config) {
+				ng.changeTela('mesas');
+				$('#changeComandaMesa').modal('hide');
+				var msg = {
+					type 				: 'table_change',
+					from 				: ng.id_ws_web,
+					to_empreendimento 	: ng.userLogged.id_empreendimento,
+					message 			: ""
+				};
+				ng.sendMessageWebSocket(msg);
+			})
+			.error(function(data, status, headers, config) {
+				console.log(data, status, headers, config);
+			});
+	}
+
 	ng.openModalProdutos = function(){
 		ng.busca.produtosModal = '' ;
 		ng.loadProdutosModal();
-		$('#list_produtos').modal('show')
+		$('#list_produtos').modal('show');
+
+		$('#list_produtos').on('shown.bs.modal', function () {
+			$('input[ng-model="busca.produtosModal"]').focus();
+		})
 	}
 
 	ng.loadProdutosModal = function(offset, limit) {
@@ -869,8 +903,12 @@ app.controller('ControleMesasController', function(
 							ng.mesas[data.message.index_mesa] = data.message.mesa ;
 							if(!(empty(ng.mesaSelecionada.mesa)) && ng.mesaSelecionada.mesa.id_mesa == data.message.mesa.id_mesa)
 								ng.loadComandasByMesa();
-							if(( !empty(data.message.id_comanda) && !empty(ng.comandaSelecionada.comanda)) && ng.comandaSelecionada.comanda.id == data.message.id_comanda)
-								ng.loadComanda(data.message.id_comanda);
+							if(( !empty(data.message.id_comanda) && !empty(ng.comandaSelecionada.comanda)) && ng.comandaSelecionada.comanda.id == data.message.id_comanda) {
+								if(data.message.closed)
+									ng.changeTela('mesas');
+								else
+									ng.loadComanda(data.message.id_comanda);
+							}
 						}
 						
 					});
@@ -912,6 +950,8 @@ app.controller('ControleMesasController', function(
 			enviaTesteConexao();
 		},60000);
 	}
+
+
 
 	if(!empty(ng.configuracao.patch_socket_sat))
 		ng.newConnWebSocket();

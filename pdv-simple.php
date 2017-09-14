@@ -1,5 +1,5 @@
 <?php
-	//include_once "util/login/restrito.php";
+	include_once "util/login/restrito.php";
 	//restrito(array(1));
 ?>
 <!DOCTYPE html>
@@ -178,7 +178,6 @@
 					</a>
 					<?php include("menu-bar-buttons.php"); ?>
 				</div><!-- /size-toggle -->
-				
 				<div class="user-block clearfix">
 					<img src="img/hage.png" alt="User Avatar">
 					<div class="detail">
@@ -189,7 +188,16 @@
 					</div>
 				</div><!-- /user-block -->
 
-				<?php /*include_once('menu-modulos.php')*/ ?>
+				<!--<div class="search-block">
+					<div class="input-group">
+						<input type="text" class="form-control input-sm" placeholder="search here...">
+						<span class="input-group-btn">
+							<button class="btn btn-default btn-sm" type="button"><i class="fa fa-search"></i></button>
+						</span>
+					</div>--><!-- /input-group -->
+				<!--</div>--><!-- /search-block -->
+
+				<?php include_once('menu-modulos.php') ?>
 				
 			</div><!-- /sidebar-inner -->
 		</aside>
@@ -226,12 +234,17 @@
 						<h3 class="panel-title clearfix">
 							<i class="fa fa-desktop"></i> Frente de Caixa (PDV)
 							<div class="pull-right">
-								<button type="button" class="btn btn-xs btn-default">
+								<button type="button" class="btn btn-xs btn-default" 
+									ng-click="voltarListaCategorias()"
+									ng-if="tipo_view == 'grade-produtos'">
+									<i class="fa fa-arrow-left"></i> Voltar
+								</button>
+								<button type="button" class="btn btn-xs btn-default" ng-click="resizeScreen()">
 									<i class="fa fa-arrows-alt"></i> Tela Inteira
 								</button>
 								<div class="btn-group btn-group-xs" role="group" aria-label="Opções de Visualização">
-									<button type="button" class="btn btn-default" ng-class="{'btn-default':tipo_view == 'lista','btn-primary':tipo_view == 'grade'}" ng-click="changeTipoView('grade')">Grade</button>
-									<button type="button" class="btn btn-primary" ng-class="{'btn-default':tipo_view == 'grade','btn-primary':tipo_view == 'lista'}" ng-click="changeTipoView('lista')">Lista</button>
+									<button type="button" class="btn btn-default" ng-class="{'btn-default':tipo_view == 'lista','btn-primary':tipo_view == 'grade-produtos'}" ng-click="changeTipoView('grade')">Grade</button>
+									<button type="button" class="btn btn-default" ng-class="{'btn-default':tipo_view == 'grade-produtos','btn-primary':tipo_view == 'lista'}" ng-click="changeTipoView('lista')">Lista</button>
 								</div>
 								<i data-toggle="tooltip" data-placement="left" title="Caixa não configurado!" 
 									class="fa fa-circle {{ (caixa != null) ? 'text-success' : 'text-danger' }}"></i>
@@ -246,15 +259,34 @@
 								</div>
 							</div>
 						</div>
+
+						<style type="text/css">
+							.product-selected { border-color: #f3ce85 !important; background-color: #fff5e0; }
+						</style>
+
 						<div class="row">
 							<div class="col-lg-9">
-								<div class="row grade-produtos" ng-show="tipo_view == 'grade'">
-									<div class="col-xs-3" ng-repeat="produto in produtos">
+								<div class="row grade-produtos" ng-show="tipo_view == 'grade-categorias'">
+									<div class="col-xs-3" ng-repeat="categoria in categoriasProduto" ng-click="setBuscaCategoria(categoria)">
 										<div class="panel panel-default middle-frame">
 											<div class="panel-body">
 												<div class="text-center container clearfix">
+													<span class="product-name">{{ categoria.descricao_categoria }}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row grade-produtos" ng-show="tipo_view == 'grade-produtos'">
+									<div class="col-xs-3" ng-repeat="produto in produtos" ng-click="addProduto(produto)">
+										<div class="panel panel-default middle-frame {{ isSelected(produto) }}"
+											style="min-height: 202px;">
+											<div class="panel-body">
+												<div class="text-center container clearfix">
+													<img src="{{ produto.imgProduto }}">
 													<span class="product-name">{{ produto.nome_produto }}</span>
-													<span class="product-price">R$ R$ {{ produto.vlr_venda_varejo | numberFormat:2:',':'.' }}</span>
+													<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:2:',':'.' }}</span>
 												</div>
 											</div>
 										</div>
@@ -288,10 +320,10 @@
 													<td>{{ produto.peso }}</td>
 													<td>R$ {{ produto.vlr_venda_varejo | numberFormat:2:',':'.' }}</td>
 													<td>
-														<button ng-show="isSelect(produto)" ng-click="removeProduto(produto)" class="btn btn-block btn-xs btn-danger">
+														<button class="btn btn-block btn-xs btn-danger" ng-show="isSelect(produto)" ng-click="removeProduto(produto)">
 															<i class="fa fa-trash-o"></i> Remover
 														</button>
-														<button ng-show="!isSelect(produto)" class="btn btn-block btn-xs btn-primary" ng-click="addProduto(produto)">
+														<button class="btn btn-block btn-xs btn-primary" ng-show="!isSelect(produto)" ng-click="addProduto(produto)">
 															<i class="fa fa-check-circle"></i> Selecionar
 														</button>
 													</td>
@@ -302,22 +334,54 @@
 								</div>
 							</div>
 							<div class="col-lg-3 visible-lg clearfix">
-								<h5 class="text-right">{{ total_itens }} iten(s) selecionados</h5>
-								<h3 class="text-right">R$ {{ vlrTotalCompra | numberFormat:2:',':'.' }}</h3>
+								<div class="row">
+									<div class="col-lg-12">
+										<h5 class="text-right">{{ total_itens }} iten(s) selecionados</h5>
+										<h3 class="text-right">R$ {{ vlrTotalCompra | numberFormat:2:',':'.' }}</h3>
 
-								<div class="clearfix padding-sm"></div>
+										<div class="clearfix padding-sm"></div>
 
-								<button ng-click="efetivarCompra()" type="button" id="btn-fazer-compra" ng-if="total_itens>0" class="btn btn-block btn-lg btn-success">
-									<i class="fa fa-money"></i> Finalizar Venda
-								</button>
+										<button ng-click="efetivarCompra()" type="button" id="btn-fazer-compra" ng-if="total_itens>0" class="btn btn-block btn-lg btn-success">
+											<i class="fa fa-money"></i> Finalizar Venda
+										</button>
 
-								<button  type="button" id="btn-fazer-compra"  ng-if="total_itens==0" ng-disabled="true" class="btn btn-block btn-lg btn-success">
-									<i class="fa fa-money"></i> Finalizar Venda
-								</button>
+										<button  type="button" id="btn-fazer-compra"  ng-if="total_itens==0" ng-disabled="true" class="btn btn-block btn-lg btn-success">
+											<i class="fa fa-money"></i> Finalizar Venda
+										</button>
 
-								<button type="button" ng-disabled="total_itens==0" class="btn btn-block btn-lg btn-danger">
-									<i class="fa fa-times-circle"></i> Cancelar Venda
-								</button>
+										<button type="button" class="btn btn-block btn-lg btn-danger"
+											ng-disabled="total_itens==0"
+											ng-click="cancelarVenda()">
+											<i class="fa fa-times-circle"></i> Cancelar Venda
+										</button>
+									</div>
+								</div>
+
+								<div class="row" style="margin-top: 15px;">
+									<div class="col-lg-12">
+										<div class="table-responsive" style="max-height: 290px; overflow-x: hidden; overflow-y: scroll;">
+											<table class="table table-bordered table-condensed table-condensed table-hover">
+												<thead>
+													<th>Produto</th>
+													<th width="80">Subtotal</th>
+													<th width="50"></th>
+												</thead>
+												<tbody>
+													<tr ng-repeat="item in carrinho">
+														<td class="text-middle">{{ item.nome_produto }}</td>
+														<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}</td>
+														<td class="text-middle">
+															<button class="btn btn-block btn-xs btn-danger" 
+																ng-click="removeProduto(item)">
+																<i class="fa fa-trash-o"></i>
+															</button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
