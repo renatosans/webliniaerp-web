@@ -1138,6 +1138,23 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda != undefined){
+			var item = {
+							nome 				:'flg_fechar_guia_ao_finalizar_uma_comanda',
+							valor 				:ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+		if(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia != undefined){
+			var item = {
+							nome 				:'flg_imprimir_cnf_antes_de_fechar_guia',
+							valor 				:ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
