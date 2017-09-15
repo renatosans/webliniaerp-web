@@ -173,7 +173,7 @@
 					<tbody>
 						<tr bs-tooltip ng-repeat="item in vendas">
 							<td class="text-center">{{ item.id }}</td>
-							<td class="text-center">{{ item.dta_venda }}</td>
+							<td class="text-center">{{ item.dta_group | dateFormat : 'time' }}</td>
 							<td class="text-center">{{ item.dsc_mesa }}</td>
 							<td>{{ item.nme_vendedor }}</td>
 							<td>{{ item.nme_cliente }}</td>
