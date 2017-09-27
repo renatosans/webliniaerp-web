@@ -1148,7 +1148,7 @@
 									</div>
 									<div class="col-sm-2">
 										<div class="form-group">
-											<label class="control-label">ID Produto taxa de serviço</label>
+											<label class="control-label">ID Produto Taxa Serviço</label>
 											<input ng-model="configuracoes.id_produto_taxa_servico" name="id_produto_taxa_servico" class="form-control input-sm">
 										</div>
 									</div>

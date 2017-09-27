@@ -126,13 +126,37 @@
 					<div class="panel-body">
 						<form role="form">
 							<div class="row">
-								<div class="col-lg-3">
+								<div class="col-lg-2">
 									<div class="form-group">
-										<label class="control-label">Data</label>
+										<label class="control-label">Data Inicial</label>
 										<div class="input-group">
 											<input type="text" id="dtaInicial" class="datepicker form-control" name="dtaInicial" style="text-align: center;">
 											<span id="cld_dtaInicial" class="input-group-addon"><i class="fa fa-calendar"></i></span>
 										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label class="control-label">Hora Inicial</label>
+										<input type="time" id="hraInicial" class="form-control">
+									</div>
+								</div>
+
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label class="control-label">Data Final</label>
+										<div class="input-group">
+											<input type="text" id="dtaFinal" class="datepicker form-control" name="dtaFinal" style="text-align: center;">
+											<span id="cld_dtaFinal" class="input-group-addon"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label class="control-label">Hora Final</label>
+										<input type="time" id="hraFinal" class="form-control">
 									</div>
 								</div>
 							</div>

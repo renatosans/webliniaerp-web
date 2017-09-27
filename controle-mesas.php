@@ -641,7 +641,7 @@
 											<i class="fa fa-times-circle"></i>
 											Cancelar Comanda
 										</button>
-										<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}&close_before=true" 
+										<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}" 
 											target="_blank" 
 											class="btn btn-success">
 											<i class="fa fa-dollar"></i>
