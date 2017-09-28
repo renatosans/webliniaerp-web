@@ -272,7 +272,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			}
 		});
 		if(index !== false){
-			ng.carrinho[index].qtd_total ++ ;	
+			ng.carrinho[index].qtd_total += produto.qtd_total ;	
 			ng.calcSubTotal(ng.carrinho[index]);
 		}else
 			ng.carrinho.push(produto) ;
@@ -3126,37 +3126,39 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		if(!empty(new_cliente.dta_nacimento))
 			new_cliente.dta_nacimento = moment(new_cliente.dta_nacimento,'DD-MM-YYYY').format('YYYY-MM-DD');
 		aj.post(baseUrlApi()+"cliente/cadastro/rapido",new_cliente)
-		.success(function(data, status, headers, config) {
-			ng.addCliente(data.dados);
-			ng.cancelarModal('modal_cadastro_rapido_cliente');
-			btn.button('reset');
-			ng.new_cliente          = {tipo_cadastro:'pf'} ;
-			//ng.mensagens('alert-success','<strong>Cliente cadastrado com sucesso</strong>','.alert-cadastro-rapido');
-		})
-		.error(function(data, status, headers, config) {
-			btn.button('reset');
-			if(status == 406) {
-		 			var errors = data;
-		 			var count = 0 ;
-		 			$.each(errors, function(i, item) {
-		 				if(i == 'email'){
-			 				$("#"+i).addClass("has-error");
-			 				var formControl = $($("#"+i))
-			 					.attr("data-toggle", "tooltip")
-			 					.attr("data-placement", "bottom")
-			 					.attr("title", item)
-			 					.attr("data-original-title", item);
-			 				formControl.tooltip('show');
-			 				count ++ ;
-		 				}
-		 			});
-		 			if(count == 0){
-		 				ng.mensagens('alert-warning','<strong>Informe ao menos o nome ou CPF do cliente</strong>','.alert-cadastro-rapido-error');
-		 			}
-		 	}else{
-		 		ng.mensagens('alert-danger','<strong>Ocorreu um erro fatal</strong>','.alert-cadastro-rapido');
-		 	}
-		});
+			.success(function(data, status, headers, config) {
+				ng.addCliente(data.dados);
+				ng.cancelarModal('modal_cadastro_rapido_cliente');
+				btn.button('reset');
+				ng.new_cliente          = {tipo_cadastro:'pf'} ;
+				//ng.mensagens('alert-success','<strong>Cliente cadastrado com sucesso</strong>','.alert-cadastro-rapido');
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				if(status == 406) {
+			 			var errors = data;
+			 			var count = 0 ;
+			 			var msg_erro = "";
+			 			$.each(errors, function(campo, erro) {
+			 				if(campo == 'email'){
+				 				$("#"+campo).addClass("has-error");
+				 				var formControl = $($("#"+campo))
+				 					.attr("data-toggle", "tooltip")
+				 					.attr("data-placement", "bottom")
+				 					.attr("title", erro)
+				 					.attr("data-original-title", erro);
+				 				formControl.tooltip('show');
+				 				count ++ ;
+			 				}
+			 				msg_erro += erro + "<br>";
+			 			});
+			 			if(count == 0){
+			 				ng.mensagens('alert-warning','<strong>'+ msg_erro +'</strong>','.alert-cadastro-rapido-error');
+			 			}
+			 	}else{
+			 		ng.mensagens('alert-danger','<strong>Ocorreu um erro fatal</strong>','.alert-cadastro-rapido');
+			 	}
+			});
 	}
 
 	//
