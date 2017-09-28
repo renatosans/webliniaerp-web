@@ -936,9 +936,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						message : JSON.stringify({mesa:data.mesa, id_comanda: ng.id_venda, closed: true})
 					}
 					ng.sendMessageWebSocket(msg);
-
-					if(!empty(params.close_before))
-						window.close();
 				}
 				if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
 
@@ -992,7 +989,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.modalProgressoVenda('hide');
 					ng.vlr_saldo_devedor = data.vlr_saldo_devedor ;
 					ng.id_controle_pagamento = data.id_controle_pagamento ;
-					ng.showModalPrint();
+
+					if(!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1)
+						ng.printTermic(true);
+					else
+						ng.showModalPrint();
+					
 					ng.printPdf();
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 			 	}
@@ -2807,7 +2809,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					};
 					ng.sendMessageWebSocket(msg);
 
-					ng.resetPdv('venda',true);
+					if(!empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
+						window.close();
+					else
+						ng.resetPdv('venda',true);
 				} else {
 					alert('Não foi possível emitir o cupom pois a impressora não está configurada no cadastro do caixa');
 					

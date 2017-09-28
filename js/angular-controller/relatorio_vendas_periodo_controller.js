@@ -47,10 +47,20 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 
 	ng.loadPagamentosVendas = function() {
 		var dtaInicial  = $("#dtaInicial").val();
+		var hraInicial  = $("#hraInicial").val();
+		var dtaFinal  = $("#dtaFinal").val();
+		var hraFinal  = $("#hraFinal").val();
+
+		if(empty(dtaInicial) || empty(hraInicial) || empty(dtaFinal) || empty(hraFinal)) {
+			alert('Você precisa informar o período!');
+			return false;
+		}
+		
+		var date_initial 	= moment(dtaInicial + ' ' + hraInicial, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+		var date_final 		= moment(dtaFinal 	+ ' ' + hraFinal, 	'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
 
 		var query_string = "?ven->id_empreendimento="+ ng.userLogged.id_empreendimento+"&ven->flg_excluido=0";
-		var date = empty($("#dtaInicial").val()) ? null : formatDate($("#dtaInicial").val()) ;
-		query_string += empty(date) ? "" : "&date_format(ven->dta_venda,'%Y-%m-%d')="+date ;
+			query_string += "&"+$.param({'ven->dta_venda':{exp:"BETWEEN '"+ date_initial +"' AND '"+ date_final +"'"}});
 
 		ng.vlr_total_formas_pagamento = 0;
 
@@ -81,19 +91,22 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 
 	ng.loadVendas = function(offset,limit) {
 		var dtaInicial  = $("#dtaInicial").val();
+		var hraInicial  = $("#hraInicial").val();
+		var dtaFinal  = $("#dtaFinal").val();
+		var hraFinal  = $("#hraFinal").val();
 
-		if(empty(dtaInicial)){
-			alert('Você deve selecionar uma data');
-			return;
+		if(empty(dtaInicial) || empty(hraInicial) || empty(dtaFinal) || empty(hraFinal)) {
+			alert('Você precisa informar o período!');
+			return false;
 		}
+		
+		var date_initial 	= moment(dtaInicial + ' ' + hraInicial, 'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+		var date_final 		= moment(dtaFinal 	+ ' ' + hraFinal, 	'DD-MM-YYYY HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
 
 		var query_string = "?ven->id_empreendimento="+ ng.userLogged.id_empreendimento+"&ven->flg_excluido=0";
-			query_string += "&"+$.param({'ven->dta_venda':{exp:"BETWEEN '"+ moment(dtaInicial, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 00:00:00' AND '"+ moment(dtaInicial, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 23:59:59'"}});
+			query_string += "&"+$.param({'ven->dta_venda':{exp:"BETWEEN '"+ date_initial +"' AND '"+ date_final +"'"}});
 		if(params.status == 'orcamento')
 			query_string += "&ven->venda_confirmada=0";
-
-		var date =  empty($("#dtaInicial").val()) ? null : formatDate($("#dtaInicial").val()) ;
-		query_string += empty(date)                        ? "" : "&date_format(ven->dta_venda,'%Y-%m-%d')="+date ;
 
 		ng.vlr_total_vendido = 0;
 		ng.vlr_ticket_medio = 0;
