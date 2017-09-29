@@ -170,7 +170,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
 		if(!empty(ng.transferencia.id_deposito_padrao_pedido)){
 			query_string += "&id_deposito_estoque="+ng.transferencia.id_deposito_padrao_pedido;
-			query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
+			// query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
 		}
 		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
