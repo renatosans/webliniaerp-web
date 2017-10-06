@@ -840,7 +840,7 @@
 										<div class="panel-body">
 											<div class="text-center container">
 												<img pre-load-img imgpreload="img/img-preload-app.jpg" notimg="img/sem-imagem-app.png" datasrc="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}"  class="img-responsive">
-												<span class="product-name">{{ produto.nome }}</span>
+												<span class="product-name">{{ produto.nome }} - {{ produto.sabor }}</span>
 												<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:2:',':'.' }}</span>
 											</div>
 										</div>
