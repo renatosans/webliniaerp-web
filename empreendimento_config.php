@@ -638,6 +638,18 @@
 									</div>
 								</div>
 								<div class="row">
+									<div class="col-sm-4 col-sm-offset-1">
+										<div class="form-group">
+										 <label for="txt_sign_ac">Formas de Pagamento Disponíveis no PDV:</label>
+										 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
+												 <label class="label-checkbox inline">
+													<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
+													<span class="custom-checkbox"></span>
+													{{ item.descricao_forma_pagamento }}
+												</label>
+											</div>
+										</div>
+									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12">

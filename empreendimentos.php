@@ -650,6 +650,11 @@
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
+	<!-- Moment -->
+	<script src="js/moment/moment.min.js"></script>
+
+	<script src="js/jquery.noty.packaged.js"></script>
+
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
