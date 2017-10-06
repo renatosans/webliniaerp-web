@@ -45,6 +45,49 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
     	});
     }
 
+    ng.showPopoverMargemLucro = function(item, index, event){
+		$(event.target).popover({
+            title: 'Margem Lucro',
+            placement: 'top',
+            content: '<strong>Aguarde, carregando...</strong>',
+            html: true,
+            container: 'body',
+            trigger  :'focus',
+        }).popover('show');
+
+		dtaInicial = ng.busca.dtaInicial;
+		dtaFinal   = ng.busca.dtaFinal;
+		var queryString = "";
+
+		queryString = "?"+$.param({'ven->dta_venda':{exp:"BETWEEN '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59'"}});
+		queryString += "&ven->id_empreendimento="+ ng.userLogged.id_empreendimento;
+		queryString += "&itv->id_produto="+ item.cod_produto;
+
+		 aj.get(baseUrlApi()+"produto/venda/historico-margem-lucro"+ queryString)
+			.success(function(data, status, headers, config) {
+				console.log(data);
+				var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
+					tbl += '<tr>'+'<td class="text-right" width="70">Custo</td>'+'<td class="text-right" width="70">Margem</td>'+'<td class="text-center">QTD</td>'+'</tr>';
+				
+				$.each(data,function(i,v){
+					tbl += '<tr>'+'<td class="text-right">'+'R$ '+numberFormat(v.vlr_custo, 2, ',', '.') +'</td>'+'<td class="text-right">'+numberFormat(v.prc_margem_lucro, 2, ',', '.') +'%'+'</td>'+'<td class="text-center">'+v.qtd_vendido+'</td>'+'</tr>';
+				});
+				tbl += '</table>';
+				 $(event.target).popover('destroy').popover({
+	                    title: 'Margem Lucro',
+	                    placement: 'top',
+	                    content: tbl,
+	                    html: true,
+	                    container: 'body',
+	                    trigger  :'focus',
+	                }).popover('show');
+
+			})
+			.error(function(data, status, headers, config) {
+				console.log(data);		
+			});
+	}
+
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
@@ -129,7 +172,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 			queryString = "?"+$.param({'tv->dta_venda':{exp:"<='"+dtaFinal+" 23:59:59'"}});
 		}
 
-		aj.get(baseUrlApi()+"produtos/detail_custo_total_produto/"+ng.userLogged.id_empreendimento+"/"+item.cod_produto+queryString)
+		aj.get(baseUrlApi()+"produtos/detail_custo_total_produto/"+item.cod_produto+queryString)
 			.success(function(data, status, headers, config) {
 				var tr = "";
 				$.each(data,function(i,item){

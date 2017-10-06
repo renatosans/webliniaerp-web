@@ -212,7 +212,7 @@
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
 							</td>
 						</tr>
-						<tr ng-repeat="venda in vendas" bs-popover>
+						<tr ng-repeat="(index, venda) in vendas" bs-popover>
 							<td class="text-cente">{{ venda.cod_produto }}</td>
 							<td>{{ venda.nme_produto }}</td>
 							<td>{{ venda.nome_fabricante }}</td>
@@ -220,12 +220,20 @@
 							<td>{{ venda.sabor }}</td>
 							<td class="text-center">{{ venda.qtd_vendida }}</td>
 							<td class="text-right">
-								 <div class="cardBody"><a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
-									R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
-								 </a>
+								 <div class="cardBody">
+							 		<a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
+										R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
+								 	</a>
+							 	</div>
 							</td>
 							<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">{{ venda.med_margem_lucro * 100 | numberFormat:2:',':'.'}}%</td>
+							<td class="text-right">
+						 		<a id="pop{{venda.nme_produto }}" href="#" 
+						 			style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" 
+						 			ng-click="showPopoverMargemLucro(venda, index, $event)">
+									{{ venda.med_margem_lucro * 100 | numberFormat:2:',':'.'}}%
+							 	</a>
+							</td>
 							<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</td>
 							<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</a></td>
 						</tr>
