@@ -494,6 +494,22 @@
 											</div>
 										</div>
 									</div>	
+									<div style="padding: 10px 15px 10px 0px; margin-bottom:10px" class="panel-heading">
+										<i class="fa fa-dollar"></i> Cobrança
+									</div>
+									<div class="col-sm-3">
+									<label class="control-label">Responsável pela Cobrança</label>
+										<div class="input-group">
+											<input ng-model="cliente.nme_usuario_responsavel_cobranca" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
+											<span class="input-group-btn">
+												<button ng-click="selUsuario('vendedor')"  type="button" class="btn"><i class="fa fa-user-md"></i></button>
+											</span>
+										</div>
+									</div>
+									<div class="col-sm-9">
+										<label class="control-label">Historico de Acionamentos</label>
+										<textarea class="form-control" rows="5" ng-model="cliente.txt_historico_acionamentos"></textarea>
+									</div>
 								</div>
 								<div class="tab-pane fade" id="empreendimentos">
 									<div class="row">
@@ -1045,6 +1061,78 @@
 				    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.regimes.length > 1">
 									<li ng-repeat="item in paginacao.regimes" ng-class="{'active': item.current}">
 										<a href="" ng-click="loadRegimeEspecial(item.offset,item.limit)">{{ item.index }}</a>
+									</li>
+								</ul>
+				    		</div>
+				    	</div>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal Clientes-->
+		<div class="modal fade" id="list_usuarios" style="display:none">
+  			<div class="modal-dialog modal-lg" >
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>{{ busca.tipo_usuario == 'vendedor' && 'Vendedores' || 'Clientes' }}</span></h4>
+      				</div>
+				    <div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="input-group">
+						            <input ng-model="busca.usuarios"   type="text" class="form-control input-sm"
+						            	ng-enter="loadUsuarios(0,10,busca.tipo_usuario)"
+						            	ng-model="loadUsuarios(0,10,busca.tipo_usuario)"
+						            	ng-keyup="loadUsuarios(0,10,busca.tipo_usuario)"
+						            	>
+						            <div class="input-group-btn">
+						            	<button ng-click="loadUsuarios(0,10,busca.tipo_usuario)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+						            		<i class="fa fa-search"></i> Buscar
+						            	</button>
+						            </div> <!-- /input-group-btn -->
+						        </div> <!-- /input-group -->
+							</div><!-- /.col -->
+						</div>
+						<br />
+						<div class="row">
+							<div class="col-sm-12">
+								<table class="table table-bordered table-condensed table-striped table-hover">
+									<tr ng-if="usuarios.length <= 0 || usuarios == null">
+										<th ng-if="emptyBusca.usuarios == false"  class="text-center" colspan="9" style="text-align:center"><strong>Carregando</strong><img src="assets/imagens/progresso_venda.gif"></th>
+										<th ng-if="emptyBusca.usuarios == true"  class="text-center" colspan="9" style="text-align:center">Não a resultado para a busca</th>
+									</tr>
+									<thead ng-show="(usuarios.length != 0)">
+										<tr>
+											<th >Nome</th>
+											<th >Apelido</th>
+											<th >Perfil</th>
+											<th colspan="2">selecionar</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="item in usuarios">
+											<td>{{ item.nome }}</td>
+											<td>{{ item.apelido }}</td>
+											<td>{{ item.nome_perfil }}</td>
+											<td width="50" align="center">
+												<button  type="button" class="btn btn-xs btn-success" ng-click="addUsuario(item)">
+													<i class="fa fa-check-square-o"></i> Selecionar
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="row">
+				    		<div class="col-sm-12">
+				    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_usuarios.length > 1">
+									<li ng-repeat="item in paginacao_usuarios" ng-class="{'active': item.current}">
+										<a href="" h ng-click="loadUsuarios(item.offset,item.limit,busca.tipo_usuario)">{{ item.index }}</a>
 									</li>
 								</ul>
 				    		</div>

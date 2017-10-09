@@ -16,6 +16,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
     ng.busca = {clientes:"", tipo_cliente: 'ambos'};
     ng.editing = false;
     ng.estadoSelecionado = {};
+    ng.emptyBusca   = {};
 
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
@@ -145,6 +146,59 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		.error(function(data, status, headers, config) {
 
 		});
+	}
+
+	ng.emptyBusca.usuarios = false ;
+	ng.busca.tipo_usuario  = null ;
+	ng.loadUsuarios = function(offset,limit,tipo) {
+		offset = offset == null ? 0  : offset;
+    	limit  = limit  == null ? 10 : limit;
+
+		ng.emptyBusca.usuarios = false ;
+		ng.paginacao_usuarios  = [];
+		ng.usuarios = [];
+		ng.busca.tipo_usuario = tipo ;
+		if(tipo == 'vendedor')
+			query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+") AND (usu.flg_tipo='usuario')";
+		else
+			query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
+
+		if(ng.busca.usuarios != ""){
+			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.usuarios+"%' OR usu.apelido LIKE '%"+ng.busca.usuarios+"%')"}});
+		}
+
+		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
+			.success(function(data, status, headers, config) {
+				ng.usuarios = data.usuarios;
+				ng.paginacao_usuarios = data.paginacao;
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404){
+					ng.usuarios = [] ;
+					ng.emptyBusca.usuarios = true ;
+				}else{
+					alert('Ocorreu um erro ao carregar os usuários');
+				}
+			});
+	}
+
+	ng.selUsuario = function(tipo){
+		var offset = 0  ;
+    	var limit  =  10 ;;
+		ng.busca.usuarios = "";
+		ng.loadUsuarios(offset,limit,tipo);
+		$("#list_usuarios").modal("show");
+	}
+
+	ng.addUsuario = function(item){
+		if(ng.busca.tipo_usuario  == 'vendedor'){
+			ng.cliente.nme_usuario_responsavel_cobranca = item.nome ;
+			ng.cliente.id_usuario_responsavel_cobranca   = item.id;
+		}else if(ng.busca.tipo_usuario  == 'cliente'){
+			ng.cliente.nme_usuario_responsavel_cobranca = item.nome ;
+			ng.cliente.id_usuario_responsavel_cobranca   = item.id;
+		}
+		$("#list_usuarios").modal("hide");
 	}
 
 	ng.loadCidadesByEstado = function (nome_cidade) {
