@@ -584,6 +584,24 @@
 											</div>
 										</div>
 									</div>
+									<div class="col-sm-5">
+										<div class="form-group">
+											<label for="" class="control-label">Auto-Focus na pesquisa de produtos?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_auto_focus_pesquisa_produtos" value="1" name="flg_auto_focus_pesquisa_produtos"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_auto_focus_pesquisa_produtos" value="0" name="flg_auto_focus_pesquisa_produtos"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+
 								</div>
 								<div class="row">
 									<div class="col-sm-4 ">
@@ -638,6 +656,18 @@
 									</div>
 								</div>
 								<div class="row">
+									<div class="col-sm-4 col-sm-offset-1">
+										<div class="form-group">
+										 <label for="txt_sign_ac">Formas de Pagamento Disponíveis no PDV:</label>
+										 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
+												 <label class="label-checkbox inline">
+													<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
+													<span class="custom-checkbox"></span>
+													{{ item.descricao_forma_pagamento }}
+												</label>
+											</div>
+										</div>
+									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12">

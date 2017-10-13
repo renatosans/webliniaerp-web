@@ -431,19 +431,10 @@
 							</div>
 
 							<div class="row client-list">
-								<div class="col-lg-12">
+								<div class="col-lg-12 table-responsive">
 									<table class="table">
 										<tbody>
 											<tr ng-repeat="item in clientes">
-												<td class="text-middle">{{ item.nome | uppercase }}</td>
-												<td ng-if="item.tipo_cadastro=='pf'" class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cpfFormat }}</td>
-												<td ng-if="item.tipo_cadastro=='pj'"  class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cnpjFormat }}</td>
-												<td class="text-middle">{{ item.tel_fixo }}</td>
-												<td class="text-middle">{{ item.celular }}</td>
-												<td class="text-middle">{{ item.endereco }}</td>
-												<td class="text-middle">{{ item.numero }}</td>
-												<td class="text-middle">{{ item.end_complemento }}</td>
-												<td class="text-middle">{{ item.bairro }}</td>
 												<td class="text-middle text-center" width="50">
 													<button ng-if="!editComanda" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(item.id,$event)" type="button" class="btn btn-sm btn-info">
 														<i class="fa fa-check-square-o"></i>
@@ -454,6 +445,15 @@
 														<span class="hidden-xs">Selecionar</span>
 													</button>
 												</td>
+												<td class="text-middle">{{ item.nome | uppercase }}</td>
+												<td ng-if="item.tipo_cadastro=='pf'" class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cpfFormat }}</td>
+												<td ng-if="item.tipo_cadastro=='pj'"  class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cnpjFormat }}</td>
+												<td class="text-middle">{{ item.tel_fixo }}</td>
+												<td class="text-middle">{{ item.celular }}</td>
+												<td class="text-middle">{{ item.endereco }}</td>
+												<td class="text-middle">{{ item.numero }}</td>
+												<td class="text-middle">{{ item.end_complemento }}</td>
+												<td class="text-middle">{{ item.bairro }}</td>
 											</tr>
 										</tbody>
 									</table>
@@ -840,7 +840,7 @@
 										<div class="panel-body">
 											<div class="text-center container">
 												<img pre-load-img imgpreload="img/img-preload-app.jpg" notimg="img/sem-imagem-app.png" datasrc="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}"  class="img-responsive">
-												<span class="product-name">{{ produto.nome }}</span>
+												<span class="product-name">{{ produto.nome }} - {{ produto.sabor }}</span>
 												<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:2:',':'.' }}</span>
 											</div>
 										</div>
