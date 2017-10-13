@@ -1,0 +1,46 @@
+.content-outo-complete-cliente-pdv{
+	position: absolute;
+	height: auto;
+	width: 629px;
+	margin-top: 34px;
+	background: #F5F5F5;
+	z-index: 1;
+	border: 1px solid #BBB;
+	max-height: 300px;
+	overflow-y: auto;
+}
+.content-outo-complete-cliente-pdv .itens-outo-complete{
+	margin-bottom: 0;	
+}
+.content-outo-complete-cliente-pdv .itens-outo-complete tr{
+	cursor: pointer;
+}
+
+.content-outo-complete-cliente-pdv .itens-outo-complete tbody tr:hover{
+	font-weight: bolder;
+	font-size: 13px;
+}
+
+
+.content-outo-complete-produto-pdv{
+	position: absolute;
+	height: auto;
+	width: 629px;
+	margin-top: 34px;
+	background: #F5F5F5;
+	z-index: 1;
+	border: 1px solid #BBB;
+	max-height: 300px;
+	overflow-y: auto;
+}
+.content-outo-complete-produto-pdv .itens-outo-complete{
+	margin-bottom: 0;	
+}
+.content-outo-complete-produto-pdv .itens-outo-complete tr{
+	cursor: pointer;
+}
+
+.content-outo-complete-produto-pdv .itens-outo-complete tbody tr:hover{
+	font-weight: bolder;
+	font-size: 13px;
+}

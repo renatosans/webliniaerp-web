@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>teste</title>
+	<script type="text/javascript">
+		var wsocket;
+		function connect() {
+			wsocket = new WebSocket("ws://localhost:3000/socket.io/?EIO=3&transport=websocket");
+			wsocket.onmessage = onMessage;
+		}
+		function onMessage(evt) {
+			console.log(evt);
+		}
+		window.addEventListener("load", connect, false);
+	</script>
+</head>
+<body>
+
+</body>
+</html>

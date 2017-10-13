@@ -1,0 +1,452 @@
+/*
+  Allow angular.js to be loaded in body, hiding cloaked elements until
+  templates compile.  The !important is important given that there may be
+  other selectors that are more specific or come later and might alter display.
+ */
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+  display: none !important;
+}
+
+.borderless {
+    border: none;
+}
+
+.label-money-blue {
+	background-color: #5170D1;
+	color: #fff;
+}
+
+.input-group-addon {
+	cursor: pointer;
+}
+
+.input-xs {
+	height: 23px;
+}
+
+.input-xg {
+	height: 80px;
+	font-weight: bold;
+}
+
+input[type=text].input-xg {
+	background-color: #504f63;
+	color: #FFFFFF;
+	font-size: 25px;
+}
+
+.valor {
+	min-width: 100px;
+}
+
+/* TreeView */
+div[data-angular-treeview] {
+	/* prevent user selection */
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	/* default */
+	font-family: Tahoma;
+	font-size:13px;
+	color: #555;
+	text-decoration: none;
+}
+
+div[data-tree-model] ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: none;
+	overflow: hidden;
+}
+
+div[data-tree-model] li {
+	position: relative;
+	padding: 0 0 0 20px;
+	line-height: 20px;
+}
+
+div[data-tree-model] li .expanded {
+	padding: 1px 10px;
+	background-image: url("http://cfile23.uf.tistory.com/image/205B973A50C13F4B19D9BD");
+	background-repeat: no-repeat;
+}
+
+div[data-tree-model] li .collapsed {
+	padding: 1px 10px;
+	background-image: url("http://cfile23.uf.tistory.com/image/1459193A50C13F4B1B05FB");
+	background-repeat: no-repeat;
+}
+
+div[data-tree-model] li .normal {
+	padding: 1px 10px;
+	background-image: url("http://cfile23.uf.tistory.com/image/165B663A50C13F4B196CCA");
+	background-repeat: no-repeat;
+}
+
+div[data-tree-model] li i, div[data-tree-model] li span {
+	cursor: pointer;
+}
+
+div[data-tree-model] li .selected {
+	background-color: #aaddff;
+	font-weight: bold;
+	padding: 1px 5px;
+}
+
+.has-error thead>tr, .has-error thead>tr>td,.has-error label.selected, {
+	border: 1px solid #b94a48;
+	color: #b94a48;
+	font-weight: bold;
+}
+
+.has-error .label-radio span, .has-error .chosen-container span {
+	color: #a94442;
+}
+.selected{
+	overflow: hidden;
+}
+
+.btn-status {
+	width: 85px;
+}
+
+.btn-status i {
+	float: left;
+	padding-top: 4px;
+}
+
+.dark-warning {
+	background-color: #ffb512;
+}
+
+.feature-icon:hover {
+	background-color: #0098D6;
+}
+
+
+/*********************************************************************************************************/
+/* carousel */
+#quote-carousel 
+{
+  padding: 0 10px 30px 10px;
+  margin-top: 30px;
+}
+
+/* Control buttons  */
+#quote-carousel .carousel-control
+{
+  background: none;
+  color: #222;
+  font-size: 2.3em;
+  text-shadow: none;
+  margin-top: 30px;
+}
+/* Previous button  */
+#quote-carousel .carousel-control.left 
+{
+  left: -12px;
+}
+/* Next button  */
+#quote-carousel .carousel-control.right 
+{
+  right: -12px !important;
+}
+/* Changes the position of the indicators */
+#quote-carousel .carousel-indicators 
+{
+  right: 50%;
+  top: auto;
+  bottom: 0px;
+  margin-right: -19px;
+}
+/* Changes the color of the indicators */
+#quote-carousel .carousel-indicators li 
+{
+  background: #c0c0c0;
+}
+#quote-carousel .carousel-indicators .active 
+{
+  background: #333333;
+}
+#quote-carousel img
+{
+  width: 250px;
+  height: 100px
+}
+/* End carousel */
+
+.item blockquote {
+    border-left: none; 
+    margin: 0;
+}
+
+.item blockquote img {
+    margin-bottom: 10px;
+}
+
+.item blockquote p:before {
+    content: "\f10d";
+    font-family: 'Fontawesome';
+    float: left;
+    margin-right: 10px;
+}
+
+
+
+/**
+  MEDIA QUERIES
+*/
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) { 
+    #quote-carousel 
+    {
+      margin-bottom: 0;
+      padding: 0 40px 30px 40px;
+    }
+    
+}
+
+/* Small devices (tablets, up to 768px) */
+@media (max-width: 768px) { 
+    
+    /* Make the indicators larger for easier clicking with fingers/thumb on mobile */
+    
+    #quote-carousel .carousel-indicators {
+        bottom: -20px !important;  
+    }
+    #quote-carousel .carousel-indicators li {
+        display: inline-block;
+        margin: 0px 5px;
+        width: 15px;
+        height: 15px;
+    }
+    #quote-carousel .carousel-indicators li.active {
+        margin: 0px 5px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.table-sm {
+	font-size: 11px;
+}
+
+.table th.text-middle,
+.table td.text-middle {
+	vertical-align: middle;
+}
+
+.text-bold {
+	font-weight: bold !important;
+}
+
+@media print {
+	body {
+		color: red;
+	}
+
+	table.table {
+		margin-bottom: 0px !important;
+	}
+
+	legend {
+		margin-bottom: 0px !important;
+	}
+}
+
+.main-header {
+	padding-bottom: 0px !important;
+}
+
+.shortcut-link .text {
+	display: block !important;
+	margin-left: 0 !important;
+}
+
+.modal-body.bg-trans-dark {
+	background-color: rgba(0,0,0,0.05);
+	padding: 10px;
+}
+
+.modal .tab-content {
+	background-color: #fff;
+    padding: 15px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.05);
+}
+
+.img-demo {
+	background: none;
+}
+
+.ui-autocomplete { position: absolute; cursor: default;z-index:9999 !important;}
+.ui-autocomplete {
+max-height: 400px;
+overflow-y: auto;
+/* prevent horizontal scrollbar */
+overflow-x: hidden;
+/* add padding to account for vertical scrollbar */
+/*padding-right: 20px;*/
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
+}
+
+.tab-content{
+	overflow: visible !important;
+	padding-bottom: 0 !important;
+	border-right: none !important;
+}
+
+.loading-ajax{
+	position: absolute;
+    height: 100%;
+    width: 100%;
+    background: #000;
+    filter: alpha(opacity=65);
+    opacity: 0.65;
+    -moz-opacity: 0.65;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+.loading-ajax .fa{
+	margin: 0 auto;
+    margin-left: 47%;
+    margin-top: 18%;
+}
+
+.upload-file label {
+	cursor: pointer;
+}
+
+button:focus{
+	outline: none !important ;
+}
+
+.switch {
+	margin-top: 7px !important;
+}
+
+.text-primary {
+	color: #428bca;
+}
+
+.text-new-primary {
+	color: #2e3744;
+}
+
+input[type=radio]:checked+.custom-radio.new-primary:before {
+	background-color: #2e3744;
+}
+
+input[type=radio]:checked+.custom-radio.primary:before {
+	background-color: #428bca;
+}
+
+input[type=radio]:checked+.custom-radio.info:before {
+	background-color: #4c99a9;
+}
+
+input[type=radio]:checked+.custom-radio.success:before {
+	background-color: #65cea7;
+}
+
+input[type=radio]:checked+.custom-radio.warning:before {
+	background-color: #f3ce85;
+}
+
+input[type=radio]:checked+.custom-radio.danger:before {
+	background-color: #fc8675;
+}
+
+legend {
+	color: #777;
+}
+
+.table-bordered>thead>tr>th, 
+.table-bordered>tbody>tr>th, 
+.table-bordered>tfoot>tr>th, 
+.table-bordered>thead>tr>td, 
+.table-bordered>tbody>tr>td, 
+.table-bordered>tfoot>tr>td {
+	border: 1px solid #eee;
+}
+
+.chosen-container-single .chosen-single {
+	line-height: 30px;
+	height: 30px;
+}
+
+.chosen-container-single .chosen-single div {
+	top: 3px;
+}
+
+.popover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1999;
+  display: none;
+  max-width: 600px;
+  padding: 1px;
+  text-align: left;
+  white-space: normal;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+     -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+}
+
+.datepicker {
+	z-index: 100000;
+}
+
+.width-100 {
+	width: 100% !important;
+}
+
+.no-pad {
+	padding-left: 0px;
+	padding-top: 2px;
+}
+
+.btn-sm, 
+.btn-group-sm > .btn {
+	padding: 5px 4px;
+}
+
+ul.dropdown-menu.notification {
+	max-height: 500px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.krajee-default.file-preview-frame .kv-file-content {
+	overflow: hidden;
+}
+
+.input-group.form-control{
+	z-index: 0 !important ;
+}
