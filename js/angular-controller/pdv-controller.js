@@ -1320,7 +1320,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								data.produtos[0].vlr_venda_intermediario = Number(ng.vlr_produto_pesado.valor) ;
 							}
 							ng.incluirCarrinho(data.produtos[0]);
-							$('#buscaCodigo').focus();
+							if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+								$('#buscaCodigo').focus();
+							}
 						}else{
 							ng.modal_lote = data.produtos[0] ;
 							$('#modal-info-lote').modal('show');
@@ -1354,7 +1356,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.calcTotalCompra();
 			ng.totalPagamento();
 			ng.calculaTroco();
-			$('#foco').focus()
+			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+				$('#foco').focus();
+			}
+
 		}else{
 			ng.modal_lote = item ;
 			ng.modal_lote.qtd = item.qtd_total ;
@@ -2544,10 +2549,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.modo_venda = 'pdv' ;
 			ng.venda_aberta = true ;
 
-			setTimeout(function(){
-				var txtBox = document.getElementById("buscaCodigo");
-					txtBox.focus();
-			}, 500);
+			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+				setTimeout(function(){
+					var txtBox = document.getElementById("buscaCodigo");
+						txtBox.focus();
+				}, 500);
+			}
 		}else if (tipo == 'est'){
 			/*if(ng.cliente.id == undefined || ng.cliente.id == ""){
 				$dialogs.notify('Atenção!','<strong>Para realizar uma veda no modo estoque e necessário selecionar um cliente</strong>');
@@ -2555,10 +2562,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			}*/
 			ng.modo_venda = 'est';
 			ng.venda_aberta = true ;
-			setTimeout(function(){
-				var txtBox = document.getElementById("buscaCodigo");
-					txtBox.focus();
-			}, 500);
+			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+				setTimeout(function(){
+					var txtBox = document.getElementById("buscaCodigo");
+						txtBox.focus();
+				}, 500);
+			}
 		}
 	}
 	ng.configuracoes = {} ;
@@ -4161,7 +4170,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 
 	$('#list_produtos').on('shown.bs.modal', function () {
-		$('#foco').focus()
+		if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+			$('#foco').focus();
+		}
 	});
 
 	ng.loadEstados = function () {
