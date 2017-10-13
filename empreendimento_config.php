@@ -614,7 +614,7 @@
 									</div>
 									<div class="col-sm-3">
 										<div class="form-group">
-										 <label for="txt_sign_ac">Formas de Pagamento (PDV):</label>
+										 <label for="txt_sign_ac">Formas de Pagamento:</label>
 										 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
 												 <label class="label-checkbox inline">
 													<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
@@ -626,7 +626,7 @@
 									</div>
 									<div class="col-sm-3">
 										<div class="form-group">
-										 <label for="txt_sign_ac">Perfis disponíveis no cadastro rapido:</label>
+										 <label for="txt_sign_ac">Perfis (Cadastro Rápido):</label>
 										 	<div class="clearfix" ng-repeat="item in perfis">
 												 <label class="label-checkbox inline">
 													<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
