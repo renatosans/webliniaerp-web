@@ -68,6 +68,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	 var controla_error_estoque = 0 ;
 
+	if(!empty(ng.configuracoes.colunas_pesquisa_produto))
+		ng.configuracoes.colunas_pesquisa_produto = parseJSON(ng.configuracoes.colunas_pesquisa_produto);
+
+	ng.exibeColunaPesquisaProduto = function(nome_coluna) {
+		return !empty(_.findWhere(ng.configuracoes.colunas_pesquisa_produto, {name: nome_coluna, value: 1}));
+	}
+
+	ng.abreModalFotoProduto = function(produto) {
+		ng.produto_foto = produto;
+		$("#modal_foto_produto").modal('show');
+	}
+
 	 var isFullscreen = false;
 	ng.resizeScreen = function() {
 		if(!isFullscreen){
@@ -171,8 +183,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.calcSubTotal = function(item){
-		var qtd_total = isNaN(Number(item.qtd_total)) || Number(item.qtd_total) == 0  ? 1 : Number(item.qtd_total) ;
-		item.sub_total = qtd_total * Number(item.vlr_unitario);
+		item.qtd_total = isNaN(Number(item.qtd_total)) || Number(item.qtd_total) == 0  ? 1 : Number(item.qtd_total) ;
+		item.sub_total = item.qtd_total * Number(item.vlr_unitario);
 		ng.calcTotalCompra();
 	}
 
@@ -212,43 +224,53 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 	}
 
+	ng.showFotoProduto = function(produto) {
+		ng.produto_selecionado = produto;
+		
+		if(produto.img != null)
+			ng.imgProduto = 'assets/imagens/produtos/' + produto.img;
+		else
+			ng.imgProduto = 'img/imagem_padrao_produto.gif';
+	}
 
-	ng.incluirCarrinho = function(produto){
+	ng.incluirCarrinho = function(produto, event){
+		if(empty(event))
+			event = 'INCREMENT';
+
 		produto = angular.copy(produto);
+
 		if(ng.margemAplicada.atacado){
 			produto.vlr_unitario    	 = produto.vlr_venda_atacado;
 			produto.vlr_real        	 = produto.vlr_venda_atacado;
 			produto.perc_margem_aplicada = produto.margem_atacado;
 			ng.margem_aplicada_venda 	 = 'atacado';
-
-		}else if(ng.margemAplicada.varejo){
-
+		}
+		else if(ng.margemAplicada.varejo){
 			produto.vlr_unitario		 = produto.vlr_venda_varejo;
 			produto.vlr_real       		 = produto.vlr_venda_varejo;
 			produto.perc_margem_aplicada = produto.margem_varejo;
 			ng.margem_aplicada_venda 	 = 'varejo';
-
-		}else if(ng.margemAplicada.intermediario){
-
+		}
+		else if(ng.margemAplicada.intermediario){
 			produto.vlr_unitario		 = produto.vlr_venda_intermediario;
 			produto.vlr_real       		 = produto.vlr_venda_intermediario;
 			produto.perc_margem_aplicada = produto.margem_intermediario;
 			ng.margem_aplicada_venda 	 = 'intermediario';
-
-		}else if(ng.margemAplicada.parceiro){
-
+		}
+		else if(ng.margemAplicada.parceiro){
 			produto.vlr_unitario    	 = produto.vlr_custo_real;
 			produto.vlr_real       		 = produto.vlr_custo_real;
 			produto.perc_margem_aplicada = 0 ;
 			ng.margem_aplicada_venda 	 = 'parceiro';
-
-		}else{
+		}
+		else{
 			produto.vlr_unitario    	 = produto.vlr_venda_varejo;
 			produto.vlr_real        	 = produto.vlr_venda_varejo;
 			produto.perc_margem_aplicada = produto.margem_varejo;
-			ng.margemAplicada.varejo = true ;
+			ng.margemAplicada.varejo 	 = true ;
 			produto.margem_aplicada 	 = 'varejo';
 		}
+
 		produto.valor_desconto = empty(produto.valor_desconto) ?  0 : produto.valor_desconto ; 
 
 		produto.qtd_total = !$.isNumeric(produto.qtd_total) || Number(produto.qtd_total) < 1 ? 1 : Number(produto.qtd_total) ;
@@ -257,10 +279,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.vezes_valor			    = produto.qtd_total+' x R$ '+numberFormat(produto.vlr_unitario,2,',','.');
 		ng.nome_ultimo_produto      = produto.nome_produto ;
 
-		if(produto.img != null)
-			ng.imgProduto = 'assets/imagens/produtos/'+produto.img ;
-		else
-			ng.imgProduto = 'img/imagem_padrao_produto.gif';
+		ng.showFotoProduto(produto);
 
 		var index = false ;
 		$.each(ng.carrinho,function(i,v){
@@ -271,12 +290,68 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}
 			}
 		});
-		if(index !== false){
-			ng.carrinho[index].qtd_total += produto.qtd_total ;	
-			ng.calcSubTotal(ng.carrinho[index]);
-		}else
-			ng.carrinho.push(produto) ;
 
+		if(index !== false){
+			switch(event) {
+				case 'INCREMENT':
+					ng.carrinho[index].qtd_total += produto.qtd_total;
+					break;
+				case 'UPDATE':
+					ng.carrinho[index].qtd_total = produto.qtd_total;
+					break;
+			}
+			if(ng.exibeColunaPesquisaProduto('desconto'))
+				ng.ajustaDescontoProdutoCarrinho(produto);
+		}
+		else {
+			ng.carrinho.push(produto);
+			if(ng.exibeColunaPesquisaProduto('desconto'))
+				ng.ajustaDescontoProdutoCarrinho(produto);
+		}
+	}
+
+	ng.ajustaDescontoProdutoCarrinho = function(produto) {
+		var index = false ;
+		$.each(ng.carrinho,function(i,v){
+			if(!empty(produto.id_produto)){
+				if(v.id_produto == produto.id_produto){
+					index = i ;
+					return ;
+				}
+			}
+		});
+
+		if(index !== false) {
+			ng.carrinho[index].tipo_desconto 		= produto.tipo_desconto;
+			ng.carrinho[index].flg_desconto 		= produto.flg_desconto;
+			ng.carrinho[index].valor_desconto 		= produto.valor_desconto;
+			ng.carrinho[index].valor_desconto_real 	= produto.valor_desconto_real;
+			ng.aplicarDesconto(index, null, false, (produto.tipo_desconto == 'vlr'));
+			ng.calcSubTotal(ng.carrinho[index]);
+		}
+	}
+
+	ng.aplicarDescontoPesquisaProdutos = function(index, calc){
+		var vlr_real = parseFloat(accounting.toFixed(ng.produtos[index].vlr_real,2));
+		
+		if(!empty(ng.produtos[index].tipo_desconto)){
+			if(calc == true) {
+				var prc_dsc = (((ng.produtos[index].valor_desconto_real * 100) / vlr_real) * 100);
+				prc_dsc = (parseFloat(accounting.toFixed(prc_dsc, 2)) / 100);
+				ng.produtos[index].valor_desconto = prc_dsc;
+			}
+			else {
+				var ax_valor_desconto = (vlr_real * (ng.produtos[index].valor_desconto / 100));
+				ng.produtos[index].valor_desconto_real = parseFloat(accounting.toFixed(ax_valor_desconto, 2)); 
+			}
+		}
+
+		var valor_desconto = (!empty(ng.produtos[index].valor_desconto)) ? (ng.produtos[index].valor_desconto / 100) : 0;
+		
+		if(ng.produtos[index].flg_desconto == 1)
+			ng.produtos[index].vlr_unitario = (vlr_real - parseFloat(accounting.toFixed((vlr_real * valor_desconto), 2)));
+		else
+			ng.produtos[index].vlr_unitario = vlr_real;
 	}
 
 	ng.virificarQuantidade = function(key,index , $event){
@@ -1004,37 +1079,31 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	}
 
-	ng.aplicarDesconto = function(index,$event,checkebox,calc){
-		var vlr_real     = parseFloat(accounting.toFixed(ng.carrinho[index].vlr_real,2));
-		ng.carrinho[index].tipo_desconto = 'perc' ;
-		if(calc == true){
-			ng.carrinho[index].tipo_desconto = 'vlr' ;
-			var prc_dsc =((ng.carrinho[index].valor_desconto_real * 100)/vlr_real)*100;
-			prc_dsc = parseFloat(accounting.toFixed(prc_dsc,2))/100;
-			ng.carrinho[index].valor_desconto = prc_dsc ;
-		}else if(checkebox != null){
-			var ax_valor_desconto = (vlr_real * (ng.carrinho[index].valor_desconto/100)) ;
-			ng.carrinho[index].valor_desconto_real = parseFloat(accounting.toFixed(ax_valor_desconto,2)); 
+	ng.aplicarDesconto = function(index, $event, checkebox, calc){
+		var vlr_real = parseFloat(accounting.toFixed(ng.carrinho[index].vlr_real,2));
+		
+		ng.carrinho[index].tipo_desconto = 'perc';
+		
+		if(calc == true) {
+			ng.carrinho[index].tipo_desconto = 'vlr';
+			var prc_dsc = (((ng.carrinho[index].valor_desconto_real * 100) / vlr_real) * 100);
+				prc_dsc = (parseFloat(accounting.toFixed(prc_dsc,2)) / 100);
+			ng.carrinho[index].valor_desconto = prc_dsc;
 		}
-		checkebox = checkebox == null ? true : false ;
-		/*if(checkebox)
-			var element = $event.target ;
-		else if(calc != true){
-	    	var element = $($event.target).parent().prev().children().children('input');
-		}else if(calc == true){
-			var element = $($event.target).parent().prev().prev().children().children('input');
-		}*/
-		var valor_desconto = ng.carrinho[index].valor_desconto/100 ;
-		if(Number(ng.carrinho[index].flg_desconto) == 1){
-			if(checkebox)
-				ng.carrinho[index].vlr_unitario =  vlr_real - parseFloat(accounting.toFixed((vlr_real * valor_desconto),2));
-			else{
-	            ng.carrinho[index].vlr_unitario =  vlr_real - parseFloat(accounting.toFixed((vlr_real * valor_desconto),2)) ;
-			}
-		}else{
-			ng.carrinho[index].vlr_unitario =  vlr_real ;
+		else {
+			var ax_valor_desconto = (vlr_real * (ng.carrinho[index].valor_desconto / 100));
+			ng.carrinho[index].valor_desconto_real = parseFloat(accounting.toFixed(ax_valor_desconto, 2)); 
 		}
-		ng.carrinho[index].sub_total = ng.carrinho[index].qtd_total * ng.carrinho[index].vlr_unitario ;
+
+		var valor_desconto = (ng.carrinho[index].valor_desconto / 100);
+
+		if(Number(ng.carrinho[index].flg_desconto) == 1)
+			ng.carrinho[index].vlr_unitario =  (vlr_real - parseFloat(accounting.toFixed((vlr_real * valor_desconto), 2)));
+		else
+			ng.carrinho[index].vlr_unitario =  vlr_real;
+
+		ng.carrinho[index].sub_total = (ng.carrinho[index].qtd_total * ng.carrinho[index].vlr_unitario);
+
 		ng.calcTotalCompra();
 	}
 
@@ -1199,13 +1268,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
     		ng.cdb_busca = { status:false, codigo:null } ;
 
    		ng.busca.produtos = "" ;
-   		ng.loadProdutos(0,10);
+   		ng.loadProdutos(0,ng.configuracoes.qtd_registros_pesquisa_produtos);
    		$('#list_produtos').modal('show');
    	}
 
    	ng.loadProdutos = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 20 : limit;
+    	limit  = limit  == null ? 5 : ((limit > 0) ? limit : 5);
     	
     	var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
 
@@ -1231,12 +1300,46 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		
 		aj.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
 			.success(function(data, status, headers, config) {
-				ng.produtos        = data.produtos ;
+				angular.forEach(data.produtos, function(prd_modal){
+					if(ng.margemAplicada.atacado)
+						prd_modal.vlr_real = prd_modal.vlr_venda_atacado;
+					else if(ng.margemAplicada.varejo)
+						prd_modal.vlr_real = prd_modal.vlr_venda_varejo;
+					else if(ng.margemAplicada.intermediario)
+						prd_modal.vlr_real = prd_modal.vlr_venda_intermediario;
+					else if(ng.margemAplicada.parceiro)
+						prd_modal.vlr_real = prd_modal.vlr_custo_real;
+					else
+						prd_modal.vlr_real = prd_modal.vlr_venda_varejo;
+
+					prd_modal.vlr_unitario = prd_modal.vlr_real;
+				});
+
+				ng.produtos = data.produtos;
 				ng.paginacao.produtos = data.paginacao;
+
+				angular.forEach(ng.carrinho, function(prd_car){
+					angular.forEach(ng.produtos, function(prd_modal, idx_modal){
+						if(prd_modal.id_produto === prd_car.id_produto) {
+							prd_modal.qtd_total 			= prd_car.qtd_total;
+							prd_modal.flg_desconto 			= prd_car.flg_desconto;
+							prd_modal.tipo_desconto 		= prd_car.tipo_desconto;
+							prd_modal.valor_desconto 		= prd_car.valor_desconto;
+							prd_modal.valor_desconto_real 	= prd_car.valor_desconto_real;
+							
+							if(prd_car.flg_desconto == 1)
+								prd_modal.vlr_unitario = (prd_modal.vlr_real - prd_modal.valor_desconto_real);
+						}
+					});
+				});
 			})
 			.error(function(data, status, headers, config) {
 				ng.produtos = [];
 			});
+	}
+
+	ng.isProdutoSelecionado = function(produto) {
+		return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
 	}
 
 	ng.getProdutoTaxaServico = function() {
@@ -1346,21 +1449,33 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 	}
 
-	ng.addProduto = function(item){
-		if(item.flg_controlar_lote!=1){
-			item.vlr_venda_atacado = round(item.vlr_venda_atacado,2) ;
-			item.vlr_venda_intermediario = round(item.vlr_venda_intermediario,2) ;
-			item.vlr_venda_varejo = round(item.vlr_venda_varejo,2) ;
-			ng.incluirCarrinho(angular.copy(item));
-			item.qtd_total = "";
+	ng.addProduto = function(item, index){
+		item.qtd_total = (empty(item.qtd_total)) ? 1 : item.qtd_total;
+
+		if(item.flg_controlar_lote != 1){
+			ng.add_index = index;
+			ng.loading_add_produto = true;
+
+			item.vlr_venda_atacado = round(item.vlr_venda_atacado,2);
+			item.vlr_venda_intermediario = round(item.vlr_venda_intermediario,2);
+			item.vlr_venda_varejo = round(item.vlr_venda_varejo,2);
+
+			ng.incluirCarrinho(angular.copy(item), 'UPDATE');
 			ng.calcTotalCompra();
 			ng.totalPagamento();
 			ng.calculaTroco();
+
 			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
 				$('#foco').focus();
 			}
 
-		}else{
+			setTimeout(function(){
+				ng.add_index = null;
+				ng.loading_add_produto = false;
+				$scope.$apply();
+			}, 500);
+		}
+		else {
 			ng.modal_lote = item ;
 			ng.modal_lote.qtd = item.qtd_total ;
 			$('#list_produtos').modal('hide');
@@ -4186,7 +4301,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
             content: '<strong>Aguarde, carregando...</strong>',
             html: true,
             container: 'body',
-            trigger  :'focus',
+            trigger  :'click',
         }).popover('show');
 
 		 aj.get(baseUrlApi()+"produto/"+ item.id_produto +"/orcamento/"+ ng.userLogged.id_empreendimento +"/reservado/")
@@ -4203,7 +4318,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	                    content: tbl,
 	                    html: true,
 	                    container: 'body',
-	                    trigger  :'focus',
+	                    trigger  :'click',
 	                }).popover('show');
 
 			})

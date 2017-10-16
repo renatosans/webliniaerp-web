@@ -1975,12 +1975,6 @@
 
     <script src="js/bootstrap-treeview.js"></script>
 
-	 <!-- Fix for old browsers -->
-        <script src="http://nervgh.github.io/js/es5-shim.min.js"></script>
-        <script src="http://nervgh.github.io/js/es5-sham.min.js"></script>
-        <script src="../console-sham.js"></script>
-	
-
 	<!-- AngularJS -->
 	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
 	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>

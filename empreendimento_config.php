@@ -567,7 +567,7 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-sm-5">
+									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="" class="control-label">Baixa automática em pagamento de e cartão de crédito?</label>
 											<div class="form-group">
@@ -584,9 +584,30 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-5">
+									
+								</div>
+								<div class="row">
+									<div class="col-sm-3">
 										<div class="form-group">
-											<label for="" class="control-label">Auto-Focus na pesquisa de produtos?</label>
+											<label class="control-label" >Título Cupom Não Fiscal</label>
+											<input ng-model="configuracoes.dsc_titulo_cnf" type="text" class="form-control input-sm parsley-validated" maxlength="41">
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group" id="pth_local">
+											<label class="control-label">Código Identif. Balança</label>
+											<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label class="control-label">Qtd. Casas Decimais</label>
+											<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Auto-Focus (Pesquisa de Produtos)?</label>
 											<div class="form-group">
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_auto_focus_pesquisa_produtos" value="1" name="flg_auto_focus_pesquisa_produtos"   type="radio" class="inline-radio">
@@ -601,30 +622,15 @@
 											</div>
 										</div>
 									</div>
-
-								</div>
-								<div class="row">
-									<div class="col-sm-4 ">
+									<div class="col-sm-2">
 										<div class="form-group">
-											<label class="control-label" >Título Cupom Não Fiscal</label>
-											<input ng-model="configuracoes.dsc_titulo_cnf" type="text" class="form-control input-sm parsley-validated" maxlength="41">
-										</div>
-									</div>
-									<div class="col-sm-3 col-sm-offset-1">
-										<div class="form-group" id="pth_local">
-											<label class="control-label">Código Identificador Balança</label>
-											<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
-										</div>
-									</div>
-									<div class="col-sm-3 col-sm-offset-1">
-										<div class="form-group">
-											<label class="control-label">Qtd. Casas Decimais</label>
-											<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
+											<label class="control-label">Qtd. Itens (Pesq. Prod.)</label>
+											<input ng-model="configuracoes.qtd_registros_pesquisa_produtos" type="number" max="100" min="0" ng-model="" type="text" class="form-control input-sm parsley-validated">
 										</div>
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-sm-4">
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label class="control-label">Observação Cupom Não Fiscal</label>
 											<textarea ng-model="configuracoes.dsc_observacoes_cnf" class="form-control" rows="7"></textarea>
@@ -642,7 +648,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-3">
+									<div class="col-sm-2">
 										<div class="form-group">
 										 <label for="txt_sign_ac">Perfis (Cadastro Rápido):</label>
 										 	<div class="clearfix" ng-repeat="item in perfis">
@@ -654,16 +660,15 @@
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-4 col-sm-offset-1">
+
+									<div class="col-sm-4">
 										<div class="form-group">
-										 <label for="txt_sign_ac">Formas de Pagamento Disponíveis no PDV:</label>
-										 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
-												 <label class="label-checkbox inline">
-													<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
+											<label class="control-label">Colunas (Pesquisa de Produtos):</label>
+									 		<div class="controls">
+												 <label class="label-checkbox" ng-repeat="column in colunas_pesquisa_produto">
+													<input type="checkbox" ng-model="column.value"  ng-true-value="1" ng-false-value="0">
 													<span class="custom-checkbox"></span>
-													{{ item.descricao_forma_pagamento }}
+													{{ column.label }}
 												</label>
 											</div>
 										</div>
