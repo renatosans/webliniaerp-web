@@ -15,7 +15,7 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
 
 	<!-- Pace -->
 	<link href="css/pace.css" rel="stylesheet">
@@ -591,8 +591,8 @@
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="js/angular.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>

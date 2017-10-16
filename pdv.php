@@ -14,6 +14,9 @@
     <!-- Bootstrap core CSS -->
     <link rel='stylesheet prefetch' href='bootstrap/css/bootstrap.min.css?version=<?php echo date("dmY-His", filemtime("bootstrap/css/bootstrap.min.css")) ?>'>
 
+     <!-- ui treeview -->
+    <link rel="stylesheet" href="css/bootstrap-treeview.css"/>
+
 	<!-- Font Awesome -->
 	<link href="css/font-awesome-4.6.2/css/font-awesome.min.css?version<?php  echo date("dmY-His", filemtime("css/font-awesome-4.1.0.min.css")) ?>" rel="stylesheet">
 
@@ -47,6 +50,14 @@
 		.modal {
 			display: block;
 		}
+
+		/* Small Devices, Tablets */
+		@media only screen and (min-width : 768px) {
+			.modal-xl {
+				width: 100%;
+			}
+		}
+
 
 		/* Custom dialog/modal headers */
 
@@ -800,7 +811,7 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="form-group text-center">
-												<img pre-load-img="imgProduto" src="{{ imgProduto }}" imgpreload="img/imagem_padrao_produto.gif" notimg="img/imagem_padrao_produto.gif" style="max-height: 50%;">
+												<img pre-load-img="imgProduto" src="{{ imgProduto }}" imgpreload="img/imagem_padrao_produto.gif" notimg="img/imagem_padrao_produto.gif" style="max-height: 50%;" ng-click="abreModalFotoProduto(produto_selecionado)">
 											</div>
 										</div>
 									</div>
@@ -1002,7 +1013,8 @@
 									
 										<div class="col-sm-12">
 											<div class="form-group" >
-												<table id="tbl_carrinho" class="table table-condensed table-bordered">
+												<table id="tbl_carrinho" 
+													class="table table-condensed table-bordered table-hover table-striped">
 													<tr ng-hide="carrinho.length > 0" class="hidden-print">
 														<td colspan="4">
 															Carrinho de compras vazio
@@ -1014,7 +1026,7 @@
 															<th ng-show="show_aditional_columns">Fabricante</th>
 															<th ng-show="show_aditional_columns">Tamanho</th>
 															<th ng-show="show_aditional_columns">Sabor/Cor</th>
-															<th class="text-center" style="width: 80px;" >Quantidade</th>
+															<th class="text-center" style="width: 60px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
 															<th class="text-center" style="width: 230px;" colspan="3">Desconto</th>
@@ -1025,29 +1037,38 @@
 														</tr>
 													</thead>
 													<tbody>
-														<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}" ng-class="{'error-estoque': verificaOutEstoque(item) }">
+														<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}" 
+															ng-class="{'error-estoque': verificaOutEstoque(item) }"
+															ng-click="showFotoProduto(item)">
 															<td>{{ item.nome_produto }}</td>
 															<td ng-show="show_aditional_columns">{{ item.nome_fabricante }}</td>
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
 															<td class="text-center" width="20">
-																<input onKeyPress="return SomenteNumero(event);" ng-keyUp="calcSubTotal(item)"  ng-model="item.qtd_total" type="text" class="form-control input-xs" width="50" />
+																<input type="number" 
+																	class="form-control text-center input-xs"
+																	onKeyPress="return SomenteNumero(event);" 
+																	ng-keyUp="calcSubTotal(item)"  
+																	ng-model="item.qtd_total"/>
 															</td>
 															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
 															<td class="text-right">R$ {{ item.vlr_real | numberFormat : 2 : ',' : '.' }}</td>
 															<td class="text-center" style="width: 30px;">
 																<label class="label-checkbox">
-																	<input ng-model="item.flg_desconto"  type="checkbox" id="toggleLine" ng-true-value="1" ng-false-value="0" ng-click="aplicarDesconto($index,$event)" />
+																	<input type="checkbox" id="toggleLine"
+																		ng-model="item.flg_desconto" 
+																		ng-true-value="1" ng-false-value="0" 
+																		ng-click="aplicarDesconto($index,$event)" />
 																	<span class="custom-checkbox"></span>
 																</label>
 															</td>
 															<td class="text-right" style="width:100px;">
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">%</span>
-																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,false)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto" type="text" class="form-control input-xs" />
+																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,false)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto" type="text" class="form-control text-right input-xs" />
 															</td>
 															<td class="text-right" style="width:100px;">
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">R$</span>
-																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,true)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto_real" type="text" class="form-control input-xs" id="teste_teste" />
+																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,true)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto_real" type="text" class="form-control text-right input-xs" id="teste_teste" />
 															</td>
 															<td class="text-right">R$ {{ item.vlr_unitario    | numberFormat : 2 : ',' : '.' }}</td>
 															<td class="text-right">R$ {{ item.sub_total    | numberFormat : 2 : ',' : '.' }}</td>
@@ -1144,7 +1165,7 @@
 
 		<!-- Modal Pagamento  -->
 		<div class="modal fade" id="modal-receber" style="display:none">
-  			<div class="modal-dialog error modal-lg">
+  			<div class="modal-dialog error modal-xl">
     			<div class="modal-content">
       				<div class="modal-header">
 						<h4>Pagamento</h4>
@@ -1605,25 +1626,47 @@
 		</div>
 		<!-- /.modal -->
 
+		<div class="modal fade" id="modal_foto_produto" style="display:none; z-index: 2000;">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">{{ produto_foto.nome_produto | uppercase }}</h4>
+					</div>
+					<div class="modal-body text-center">
+						<img class="img-responsive" 
+							src="assets/imagens/produtos/{{produto_foto.img}}">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
 		<!-- /Modal Produtos-->
 		<div class="modal fade" id="list_produtos" style="display:none">
   			<div class="modal-dialog modal-xl">
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 ng-if="cdb_busca.status==false">Produtos</span></h4>
-						<h4 ng-if="cdb_busca.status==true" style="margin-bottom: 0px;">Produtos</span></h4>
+						<h4 ng-if="cdb_busca.status==false">Pesquisa de Produtos</span></h4>
+						<h4 ng-if="cdb_busca.status==true" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
 						<span ng-if="cdb_busca.status==true" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
       				</div>
+
 				    <div class="modal-body">
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" id="foco" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.produtos" id="foco" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" 
+						            	class="form-control">
 
 						            <div class="input-group-btn">
-						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutos(0,10)">
+						            	<button type="button" class="btn btn-primary"
+						            		ng-click="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
 						            </div> <!-- /input-group-btn -->
@@ -1634,78 +1677,210 @@
 						<br>
 
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-12 table-responsive">
 								<div class="alert alert-produtos" style="display:none"></div>
-						   		<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(produtos.length != 0)">
-										<tr>
-											<th rowspan="2" style="line-height: 46px;" class="text-center">#</th>
-											<th rowspan="2" style="line-height: 46px;" class="text-center">Cod. barra</th>
-											<th rowspan="2" style="line-height: 46px;" class="text-center">Nome</th>
-											<th rowspan="2" style="line-height: 46px;" class="text-center">Fabricante</th>
-											<th rowspan="2" style="line-height: 46px;" class="text-center">Tamanho</th>
-											<th rowspan="2" style="line-height: 46px;" class="text-center">Sabor/Cor</th>
-											<th colspan="3" class="text-center">Disponibilidade de Estoque</th>
-											<th rowspan="2" width="80" class="text-center" style="line-height: 46px;">Quantidade</th>
-											<th rowspan="2" width="80" class="text-center" style="line-height: 46px;">R$ Unit.</th>
-											<th rowspan="2" width="80" style="line-height: 46px;"></th>
-										</tr>
-										<tr>
-											<td width="50">Estoque</td>
-											<td width="50">Reservado</td>
-											<td width="50">Disponível</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-if="produtos == null">
-											<th class="text-center" colspan="12" style="text-align:center">
-												<strong>Carregando</strong>
-												<img src="assets/imagens/progresso_venda.gif">
-											</th>
-										</tr>
-										<tr ng-show="(produtos.length == 0)">
-											<td colspan="11">Nenhum produto encontrado</td>
-										</tr>
-										<tr ng-repeat="(index, item) in produtos">
-											<td class="text-center">{{ item.id_produto }}</td>
-											<td class="text-center">{{ item.codigo_barra }}</td>
-											<td>{{ item.nome_produto }}</td>
-											<td class="text-center">{{ item.nome_fabricante }}</td>
-											<td class="text-center">{{ item.peso }}</td>
-											<td class="text-center">{{ item.sabor }}</td>
-											<td class="text-center">{{ item.qtd_item }}</td>
-											<td class="text-center"><a id="prd_item_{{ index }}" href="#" ng-click="showPopoverOrcamentosProdutoReservado(item, index, $event)">{{ item.qtd_reservada }}</a></td>
-											<td class="text-center">{{ item.qtd_item - item.qtd_reservada  }}</td>
-											<td>
-												<input onKeyPress="return SomenteNumero(event);" ng-keyUp="" ng-model="item.qtd_total" type="text" class="form-control input-xs" width="50" />
-											</td>
-											<td class="text-right">
-												<span ng-show="margemAplicada.atacado">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</span>
-												<span ng-show="margemAplicada.intermediario">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</span>
-												<span ng-show="margemAplicada.varejo">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</span>
-											</td>
-											<td>
-												<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+
+								<div class="table-responsive">
+							   		<table class="table table-bordered table-striped table-hover">
+										<thead ng-show="(produtos.length != 0)">
+											<tr>
+												<th rowspan="2" style="line-height: 46px;" class="text-center"
+													ng-if="exibeColunaPesquisaProduto('id_produto')">
+													#
+												</th>
+												<th rowspan="2" style="line-height: 46px;" class="text-center" 
+													ng-if="exibeColunaPesquisaProduto('foto_produto')">
+													Foto
+												</th>
+												<th rowspan="2" style="min-width: 100px; line-height: 46px;" class="text-center"
+													ng-if="exibeColunaPesquisaProduto('codigo_barra')">
+													Cod. barra
+												</th>
+												<th rowspan="2" style="min-width: 250px; line-height: 46px;" class="text-center">Nome</th>
+												<th rowspan="2" style="line-height: 46px;" class="text-center"
+													ng-if="exibeColunaPesquisaProduto('nome_categoria')">
+													Categoria
+												</th>
+												<th rowspan="2" style="line-height: 46px;" class="text-center"
+													ng-if="exibeColunaPesquisaProduto('nome_fabricante')">
+													Fabricante
+												</th>
+												<th rowspan="2" style="line-height: 46px;" class="text-center"
+													ng-if="exibeColunaPesquisaProduto('nome_tamanho')">
+													Tamanho
+												</th>
+												<th rowspan="2" style="line-height: 46px;" class="text-center"
+													ng-if="exibeColunaPesquisaProduto('nome_cor_sabor')">
+													Cor/Sabor
+												</th>
+												<th colspan="3" class="text-center"
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													Disponibilidade de Estoque
+												</th>
+												<th colspan="3" class="text-center" style="line-height: 46px;"
+													ng-if="exibeColunaPesquisaProduto('desconto')">
+													Desconto
+												</th>
+												<th rowspan="2" width="120" class="text-center" style="line-height: 46px;">Qtd</th>
+												<th rowspan="2" width="80" class="text-center" style="line-height: 46px;">R$ Unit.</th>
+												<th rowspan="2" style="line-height: 46px;"></th>
+											</tr>
+											<tr ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque') || exibeColunaPesquisaProduto('desconto')">
+												<td width="50" 
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													Estoque
+												</td>
+												<td width="50" 
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													Reservado
+												</td>
+												<td width="50" 
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													Disponível
+												</td>
+												<td ng-if="exibeColunaPesquisaProduto('desconto')"></td>
+												<td width="80" class="text-center" 
+													ng-if="exibeColunaPesquisaProduto('desconto')">
+													%
+												</td>
+												<td width="80" class="text-center" 
+													ng-if="exibeColunaPesquisaProduto('desconto')">
+													R$
+												</td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-if="produtos == null">
+												<th class="text-center" colspan="14" style="text-align:center">
+													<strong>Carregando</strong>
+													<img src="assets/imagens/progresso_venda.gif">
+												</th>
+											</tr>
+											<tr ng-show="(produtos.length == 0)">
+												<td colspan="11">Nenhum produto encontrado</td>
+											</tr>
+											<tr ng-repeat="(index, item) in produtos">
+												<td class="text-center text-middle"
+													ng-if="exibeColunaPesquisaProduto('id_produto')">
+													{{ item.id_produto }}
+												</td>
+												<td class="text-center text-middle" ng-if="exibeColunaPesquisaProduto('foto_produto')">
+													<button type="button" class="btn btn-primary btn-xs"
+														ng-disabled="!(item.img)"
+														ng-click="abreModalFotoProduto(item)">
+														<i class="fa fa-camera"></i>
+													</button>
+												</td>
+												<td style="min-width: 100px;" class="text-center text-middle"
+													ng-if="exibeColunaPesquisaProduto('codigo_barra')">
+													{{ item.codigo_barra }}
+												</td>
+												<td style="min-width: 250px;" class="text-middle">{{ item.nome_produto }}</td>
+												<td class="text-center text-middle"
+													ng-if="exibeColunaPesquisaProduto('nome_categoria')">
+													{{ item.nome_categoria }}
+												</td>
+												<td class="text-center text-middle"
+													ng-if="exibeColunaPesquisaProduto('nome_fabricante')">
+													{{ item.nome_fabricante }}
+												</td>
+												<td class="text-center text-middle"
+													ng-if="exibeColunaPesquisaProduto('nome_tamanho')">
+													{{ item.peso }}
+												</td>
+												<td class="text-center text-middle"
+													ng-if="exibeColunaPesquisaProduto('nome_cor_sabor')">
+													{{ item.sabor }}
+												</td>
+
+												<td class="text-center text-middle"
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													{{ item.qtd_item }}
+												</td>
+												<td class="text-center text-middle"
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													<a id="prd_item_{{ index }}" href="#" 
+														ng-click="showPopoverOrcamentosProdutoReservado(item, index, $event)">
+														{{ item.qtd_reservada }}
+													</a>
+												</td>
+												<td class="text-center text-middle"
+													ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque')">
+													{{ item.qtd_item - item.qtd_reservada  }}
+												</td>
+												<td class="text-center text-middle" style="width: 30px;"
+													ng-if="exibeColunaPesquisaProduto('desconto')">
+													<label class="label-checkbox">
+														<input type="checkbox" id="toggleLine"
+															ng-model="item.flg_desconto" 
+															ng-click="aplicarDescontoPesquisaProdutos(index)"
+															ng-true-value="1" ng-false-value="0" />
+														<span class="custom-checkbox"></span>
+													</label>
+												</td>
+												<td class="text-right text-middle"
+													ng-if="exibeColunaPesquisaProduto('desconto')"
+													style="min-width: 80px;">
+													<input type="text" class="form-control text-right" thousands-formatter 
+														ng-if="item.flg_desconto == 1"
+														ng-keyUp="aplicarDescontoPesquisaProdutos(index, false); item.tipo_desconto = 'perc';"
+														ng-model="item.valor_desconto"/>
+												</td>
+												<td class="text-right text-middle"
+													ng-if="exibeColunaPesquisaProduto('desconto')"
+													style="min-width: 80px;">
+													<input type="text" class="form-control text-right" thousands-formatter 
+														ng-if="item.flg_desconto == 1"
+														ng-keyUp="aplicarDescontoPesquisaProdutos(index, true); item.tipo_desconto = 'vlr';"
+														ng-model="item.valor_desconto_real"/>
+												<td style="min-width: 80px;">
+													<input type="number" class="form-control text-center"
+														onKeyPress="return SomenteNumero(event);"
+														ng-model="item.qtd_total" 
+														ng-change="addProduto(item, index)"/>
+												</td>
+												<td class="text-right text-middle" style="min-width: 80px;">
+													R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}
+												</td>
+												<td class="text-center text-middle">
+													<button type="button" 
+														ng-click="addProduto(item, index)"
+														class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}}"
+														data-loading-text="Aguarde...">
+														<span ng-if="!(isProdutoSelecionado(item)) && !((add_index === index) && (loading_add_produto))">
+															<i class="fa fa-check-square-o"></i>
+														</span>
+														<span ng-if="(isProdutoSelecionado(item)) && !((add_index === index) && (loading_add_produto))">
+															<i class="fa fa-refresh"></i>
+														</span>
+														<span ng-if="((add_index === index) && (loading_add_produto))">
+															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div>
+					</div>
 
-					    <div class="row">
-					    	<div class="col-md-12">
-								<div class="input-group pull-right">
-						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.produtos.length > 1">
-										<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
-											<a href="" ng-click="loadProdutos(item.offset,item.limit)">{{ item.index }}</a>
-										</li>
-									</ul>
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
+					<div class="modal-footer">
+						<div class="pull-left">
+			    			<button class="btn btn-default" data-dismiss="modal">
+			    				Fechar Janela
+			    			</button>
+			    		</div>
+			    		<div class="pull-right">
+							<div class="input-group">
+					             <ul class="pagination m-top-none" ng-show="paginacao.produtos.length > 1">
+									<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
+										<a href="" ng-click="loadProdutos(item.offset,item.limit)">{{ item.index }}</a>
+									</li>
+								</ul>
+					        </div> <!-- /input-group -->
+				        </div>
 					</div>
 			  	</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -1953,7 +2128,7 @@
 
 		<!-- /Modal Cadastro rapido de clientes-->
 		<div class="modal fade" id="modal_cadastro_rapido_cliente" style="display:none">
-  			<div class="modal-dialog error modal-lg">
+  			<div class="modal-dialog error modal-xl">
     			<div class="modal-content">
       				<div class="modal-header">
 						<h4>Cadastro Rápido de Cliente</h4>
@@ -2401,11 +2576,11 @@
 						<!-- <div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" class="form-control input-sm">
 
 						            <div class="input-group-btn">
 						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutos(0,10)">
+						            		ng-click="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
 						            </div> 
@@ -2479,11 +2654,11 @@
 						<!-- <div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" class="form-control input-sm">
 
 						            <div class="input-group-btn">
 						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutos(0,10)">
+						            		ng-click="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
 						            </div> 
@@ -2547,7 +2722,7 @@
 
 		<!-- /Modal Fechamentos de Caixa-->
 		<div class="modal fade" id="list_fechamentos_caixa" style="display:none">
-				<div class="modal-dialog modal-lg">
+				<div class="modal-dialog modal-xl">
 				<div class="modal-content">
 						<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -2656,7 +2831,7 @@
 
 		<!-- /Modal Comandas-->
 		<div class="modal fade" id="list_comandas" style="display:none">
-				<div class="modal-dialog modal-lg">
+				<div class="modal-dialog modal-xl">
 				<div class="modal-content">
 						<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -2927,8 +3102,8 @@
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>

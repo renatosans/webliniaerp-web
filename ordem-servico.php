@@ -1017,8 +1017,8 @@
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
 	<script src="js/angular-controller/ordem_servico-controller.js?v=<?php echo filemtime('js/angular-controller/ordem_servico-controller.js') ?>"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript"></script>
 
 	<script type="text/javascript">

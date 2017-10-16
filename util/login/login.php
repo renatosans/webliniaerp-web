@@ -146,7 +146,8 @@
 
 		if($usuarioInfo['http_code'] != 200){
 			header("HTTP/1.1 404");
-			return ;
+			echo json_encode($usuarioInfo);
+			return;
 		}
 
 		$ch = curl_init();

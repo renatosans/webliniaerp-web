@@ -75,6 +75,20 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{'label':'Vestuário', 	'value':'Vestuário'}
 	];
 
+	ng.colunas_pesquisa_produto = [
+		{value: 0, name: 'id_produto', 				label: 'ID do Produto'},
+		{value: 0, name: 'foto_produto', 			label: 'Foto do Produto'},
+		{value: 0, name: 'codigo_barra', 			label: 'Código de Barras'},
+		{value: 0, name: 'nome_categoria', 			label: 'Categoria'},
+		{value: 0, name: 'nome_fabricante', 		label: 'Fabricante'},
+		{value: 0, name: 'nome_tamanho', 			label: 'Tamanho'},
+		{value: 0, name: 'nome_cor_sabor', 			label: 'Cor/Sabor'},
+		{value: 0, name: 'desconto', 				label: 'Desconto'}
+	];
+
+	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
+		ng.colunas_pesquisa_produto = parseJSON(ng.cfg.colunas_pesquisa_produto);
+
 	ng.loadPlanoContasSelect = function() {
 	 	ng.plano_contas = [{id:null,dsc_completa:"Selecione"}];
 		aj.get(baseUrlApi()+"planocontas?tpc->id_empreendimento="+ng.userLogged.id_empreendimento)
@@ -556,6 +570,8 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				ng.configuracoes.id_plano_conta_pagamento_profissional = ""+ng.configuracoes.id_plano_conta_pagamento_profissional ;
 				ng.notEmails = emails;
 
+
+
 				if(!empty(data.id_deposito_padrao))
 					ng.loadDepositoPadrao(data.id_deposito_padrao);
 
@@ -719,6 +735,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(typeof ng.colunas_pesquisa_produto == 'object'){
+			var colunas_pesquisa_produto = JSON.stringify(angular.copy(ng.colunas_pesquisa_produto));
+			var item11 = {
+							nome 				:'colunas_pesquisa_produto',
+							valor 				:colunas_pesquisa_produto , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
+		}
+
 		if(ng.configuracoes.flg_questionar_manutencao_precos_orcamento != undefined){
 			var item10 = {
 							nome 				:'flg_questionar_manutencao_precos_orcamento',
@@ -755,6 +781,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.flg_configurar_colunas_pesquisa_produtos != undefined){
+			var item10 = {
+							nome 				:'flg_configurar_colunas_pesquisa_produtos',
+							valor 				:ng.configuracoes.flg_configurar_colunas_pesquisa_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.cod_identificador_balanca != undefined){
 			var item10 = {
 							nome 				:'cod_identificador_balanca',
@@ -771,6 +806,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.qtd_registros_pesquisa_produtos != undefined){
+			var item2000 = {
+							nome 				:'qtd_registros_pesquisa_produtos',
+							valor 				:ng.configuracoes.qtd_registros_pesquisa_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item2000);
 		}
 
 		if(ng.configuracoes.dsc_titulo_cnf != undefined){
@@ -1311,7 +1355,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	ng.regimePisCofins = [{num_item:null,nme_item:null}] ;
 	ng.tipoEmpresa = [{num_item:null,nme_item:null}] ;
 	ng.zoneamentos = [{num_item:null,nme_item:null}] ;
-
 
 
 	ng.addIncricaoEstadual = function() {

@@ -1975,18 +1975,12 @@
 
     <script src="js/bootstrap-treeview.js"></script>
 
-	 <!-- Fix for old browsers -->
-        <script src="http://nervgh.github.io/js/es5-shim.min.js"></script>
-        <script src="http://nervgh.github.io/js/es5-sham.min.js"></script>
-        <script src="../console-sham.js"></script>
-	
-
 	<!-- AngularJS -->
 	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
 	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>

@@ -507,7 +507,7 @@
 	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
 	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="js/js-ui-popover/angular.min.js"></script>
-	<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src='js/js-ui-popover/ui-bootstrap-tpls.min.js'></script>

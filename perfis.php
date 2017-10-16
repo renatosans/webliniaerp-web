@@ -219,7 +219,7 @@
 								</div>		
 							</div>
 							<div class="row">
-								<div class="col-sm-12">
+								<div class="col-sm-6">
 									<div class="empreendimentos form-group" id="empreendimentos">
 										<table class="table table-bordered table-condensed table-striped table-hover">
 											<thead>
@@ -244,9 +244,8 @@
 										</table>
 									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12">
+							
+								<div class="col-sm-6">
 									<div class="padding-md" style="padding:0 !important">
 										<div class="panel panel-default" id="modulos">
 											<div class="panel-heading"><i class="fa fa-th fa-lg"></i> Módulos
@@ -458,9 +457,9 @@
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
 	<script src="js/bootstrap-treeview.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>

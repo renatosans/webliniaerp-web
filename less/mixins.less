@@ -1,119 +1,60 @@
-.background-image(@color1 ,@color2)
-{
-    background-color:  @color2;
-    background-image: -moz-linear-gradient(top, @color1, @color2);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@color1), to(@color2));
-    background-image: -webkit-linear-gradient(top, @color1, @color2);
-    background-image: -o-linear-gradient(top, @color1, @color2);
-    background-image: linear-gradient(to bottom, @color1, @color2);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=@color1, endColorstr=@color2, GradientType=0);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+// Mixins
+// --------------------------
+
+.fa-icon() {
+  display: inline-block;
+  font: normal normal normal @fa-font-size-base/@fa-line-height-base FontAwesome; // shortening font declaration
+  font-size: inherit; // can't have font-size inherit on line above, so need to override
+  text-rendering: auto; // optimizelegibility throws things off #1094
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
 }
 
-.box-shadow(@shadow)
-{
-    box-shadow: @shadow;
-    -moz-box-shadow: @shadow;
-    -webkit-box-shadow: @shadow;
+.fa-icon-rotate(@degrees, @rotation) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=@{rotation})";
+  -webkit-transform: rotate(@degrees);
+      -ms-transform: rotate(@degrees);
+          transform: rotate(@degrees);
 }
 
-.box-sizing()   {
-    box-sizing: border-box;  
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+.fa-icon-flip(@horiz, @vert, @rotation) {
+  -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=@{rotation}, mirror=1)";
+  -webkit-transform: scale(@horiz, @vert);
+      -ms-transform: scale(@horiz, @vert);
+          transform: scale(@horiz, @vert);
 }
 
-.border-radius(@radius :4px)
-{
-    border-radius: @radius;
-    -moz-border-radius: @radius;
-    -webkit-border-radius: @radius;
+
+// Only display content to screen readers. A la Bootstrap 4.
+//
+// See: http://a11yproject.com/posts/how-to-hide-content/
+
+.sr-only() {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
 }
 
-.transition(@value) {
-    transition: @value;   
-    -webkit-transition: @value;   
-    -moz-transition: @value;   
-    -ms-transition: @value;   
-    -o-transition: @value;   
-}
+// Use in conjunction with .sr-only to only display content when it's focused.
+//
+// Useful for "Skip to main content" links; see http://www.w3.org/TR/2013/NOTE-WCAG20-TECHS-20130905/G1
+//
+// Credit: HTML5 Boilerplate
 
-.transition-delay(@value) {
-    transition-delay: @value;   
-    -webkit-transition-delay: @value;   
-    -moz-transition-delay: @value;   
-    -ms-transition-delay: @value;   
-    -o-transition-delay: @value;   
-}
-
-.transform(@value) {
-    transform: @value;   
-    -webkit-transform: @value;   
-    -moz-transform: @value;   
-    -ms-transform: @value;   
-    -o-transform: @value;   
-}
-
-.animation(@value) {
-    animation: @value;   
-    -webkit-animation: @value;   
-    -moz-animation: @value;   
-    -ms-animation: @value;   
-    -o-animation: @value;   
-}
-
-.animation-name(@value) {
-    animation-name: @value;   
-    -webkit-animation-name: @value;   
-    -moz-animation-name: @value;   
-    -ms-animation-name: @value;   
-    -o-animation-name: @value;   
-}
-
-.animation-duration(@value) {
-    animation-duration: @value;   
-    -webkit-animation-duration: @value;   
-    -moz-animation-duration: @value;   
-    -ms-animation-duration: @value;   
-    -o-animation-duration: @value;   
-}
-
-.animation-delay(@value) {
-    animation-delay: @value;   
-    -webkit-animation-delay: @value;   
-    -moz-animation-delay: @value;   
-    -ms-animation-delay: @value;   
-    -o-animation-delay: @value;   
-}
-
-.animation-timing-function(@value) {
-    animation-timing-function: @value;   
-    -webkit-animation-timing-function: @value;   
-    -moz-animation-timing-function: @value;   
-    -ms-animation-timing-function: @value;   
-    -o-animation-timing-function: @value;   
-}
-
-.animation-fill-mode(@value)    {
-    animation-fill-mode: @value;
-    -webkit-animation-fill-mode: @value;
-    -moz-animation-fill-mode: @value;
-    -ms-animation-fill-mode: @value;
-    -o-animation-fill-mode: @value;
-}
-
-.animation-iteration-count(@value)  {
-    animation-iteration-count: @value;
-    -webkit-animation-iteration-count: @value;
-    -moz-animation-iteration-count: @value;
-    -ms-animation-iteration-count: @value;
-    -o-animation-iteration-count: @value;
-}
-
-.animation-direction(@value)    {
-    animation-direction: @value;   
-    -webkit-animation-direction: @value;
-    -moz-animation-direction: @value;
-    -ms-animation-direction: @value;
-    -o-animation-direction: @value;
+.sr-only-focusable() {
+  &:active,
+  &:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+  }
 }

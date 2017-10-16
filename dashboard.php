@@ -15,7 +15,7 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
 
 	<!-- Pace -->
 	<link href="css/pace.css" rel="stylesheet">
@@ -887,8 +887,8 @@
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="js/angular.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>
@@ -913,7 +913,7 @@
 		    removeTitle: 'Cancelar Alterações',
 		    elErrorContainer: '#kv-avatar-errors-2',
 		    msgErrorClass: 'alert alert-block alert-danger',
-		    defaultPreviewContent: '<img src="http://plugins.krajee.com/uploads/default_avatar_male.jpg" alt="" style="width:160px"><h6 class="text-muted">Selecionar</h6>',
+		    defaultPreviewContent: '<img src="img/default_avatar_male.jpg" alt="" style="width:160px"><h6 class="text-muted">Selecionar</h6>',
 		    layoutTemplates: {main2: '{preview} ' +  btnCust + ' {remove} {browse}'},
 		    allowedFileExtensions: ["jpg", "png", "gif"],
 		    uploadTitle :'salvar imagem',
@@ -922,7 +922,7 @@
 		    uploadAsync: true,
 		    maxFileCount: 1,
 		    initialPreview: [
-		        'https://scontent.fplu1-1.fna.fbcdn.net/v/t1.0-9/13428413_1344925185522957_3900445461738087085_n.jpg?oh=a050c8c0de58b7f2dc85cd11a65b2bd2&oe=57C4B836',
+		        'img/default_avatar_male.jpg',
 		    ],
 		    initialPreviewAsData: true,
 		    initialPreviewConfig: [
