@@ -5,11 +5,11 @@ function baseUrl(){
 	var pasta = "";
 
 	if(location.hostname == 'localhost' || window.location.hostname.indexOf("192.168.") != -1 || window.location.hostname.indexOf("120.1.") != -1)
-		pasta = "/webliniaerp-web";
+		pasta = "";
 
 	return location.protocol+'//'+location.hostname+pasta+'/';
 }
 
 function baseUrlApi(){
-	return 'http://192.168.1.35/webliniaerp-api/';
+	return location.protocol +'//'+ location.hostname +'/api/';
 }
