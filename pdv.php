@@ -1821,7 +1821,7 @@
 												<td class="text-right text-middle"
 													ng-if="exibeColunaPesquisaProduto('desconto')"
 													style="min-width: 80px;">
-													<input type="number" class="form-control text-right" thousands-formatter 
+													<input type="text" class="form-control text-right" thousands-formatter 
 														ng-if="item.flg_desconto == 1"
 														ng-keyUp="aplicarDescontoPesquisaProdutos(index, false); item.tipo_desconto = 'perc';"
 														ng-model="item.valor_desconto"/>
@@ -1829,7 +1829,7 @@
 												<td class="text-right text-middle"
 													ng-if="exibeColunaPesquisaProduto('desconto')"
 													style="min-width: 80px;">
-													<input type="number" class="form-control text-right" thousands-formatter 
+													<input type="text" class="form-control text-right" thousands-formatter 
 														ng-if="item.flg_desconto == 1"
 														ng-keyUp="aplicarDescontoPesquisaProdutos(index, true); item.tipo_desconto = 'vlr';"
 														ng-model="item.valor_desconto_real"/>
