@@ -498,16 +498,16 @@
 										<i class="fa fa-dollar"></i> Cobrança
 									</div>
 									<div class="col-sm-3">
-									<label class="control-label">Responsável pela Cobrança</label>
+									<label class="control-label">Vendedor Responsável</label>
 										<div class="input-group">
-											<input ng-model="cliente.nme_usuario_responsavel_cobranca" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
+											<input ng-model="cliente.nme_vendedor_responsavel" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
 											<span class="input-group-btn">
 												<button ng-click="selUsuario('vendedor')"  type="button" class="btn"><i class="fa fa-user-md"></i></button>
 											</span>
 										</div>
 									</div>
 									<div class="col-sm-9">
-										<label class="control-label">Historico de Acionamentos</label>
+										<label class="control-label">Histórico de Acionamentos</label>
 										<textarea class="form-control" rows="5" ng-model="cliente.txt_historico_acionamentos"></textarea>
 									</div>
 								</div>
