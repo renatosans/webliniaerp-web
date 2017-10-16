@@ -1635,8 +1635,8 @@
 						</button>
 						<h4 class="modal-title">{{ produto_foto.nome_produto | uppercase }}</h4>
 					</div>
-					<div class="modal-body text-center" style="display: initial;">
-						<img class="img-responsive" 
+					<div class="modal-body text-center">
+						<img class="img-responsive" style="display: initial;"
 							src="assets/imagens/produtos/{{produto_foto.img}}">
 					</div>
 					<div class="modal-footer">
