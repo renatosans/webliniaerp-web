@@ -11,5 +11,5 @@ function baseUrl(){
 }
 
 function baseUrlApi(){
-	return 'http://120.1.1.34/webliniaerp-api/';
+	return 'http://localhost/webliniaerp-api/';
 }
