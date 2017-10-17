@@ -265,7 +265,7 @@
 						</style>
 
 						<div class="row">
-							<div class="col-lg-9">
+							<div class="col-lg-8">
 								<div class="row grade-produtos" ng-show="tipo_view == 'grade-categorias'">
 									<div class="col-xs-3" ng-repeat="categoria in categoriasProduto" ng-click="setBuscaCategoria(categoria)">
 										<div class="panel panel-default middle-frame">
@@ -333,7 +333,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-lg-3 visible-lg clearfix">
+							<div class="col-lg-4 visible-lg clearfix">
 								<div class="row">
 									<div class="col-lg-12">
 										<h5 class="text-right">{{ total_itens }} iten(s) selecionados</h5>
@@ -341,16 +341,25 @@
 
 										<div class="clearfix padding-sm"></div>
 
-										<button ng-click="efetivarCompra()" type="button" id="btn-fazer-compra" ng-if="total_itens>0" class="btn btn-block btn-lg btn-success">
+										<button type="button" 
+											id="btn-fazer-compra" 
+											class="btn btn-lg btn-success"
+											ng-if="total_itens>0"
+											ng-click="efetivarCompra()">
 											<i class="fa fa-money"></i> Finalizar Venda
 										</button>
 
-										<button  type="button" id="btn-fazer-compra"  ng-if="total_itens==0" ng-disabled="true" class="btn btn-block btn-lg btn-success">
+										<button  type="button" 
+											id="btn-fazer-compra" 
+											class="btn btn-lg btn-success"
+											ng-if="total_itens==0" 
+											ng-disabled="true">
 											<i class="fa fa-money"></i> Finalizar Venda
 										</button>
 
-										<button type="button" class="btn btn-block btn-lg btn-danger"
-											ng-disabled="total_itens==0"
+										<button type="button" 
+											class="btn btn-lg btn-danger"
+											ng-disabled="total_itens==0" 
 											ng-click="cancelarVenda()">
 											<i class="fa fa-times-circle"></i> Cancelar Venda
 										</button>

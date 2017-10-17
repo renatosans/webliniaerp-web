@@ -199,7 +199,7 @@ function sanitizeString($str) {
 					input_filename: "roupas-black-skull.csv",
 					output_format: "sql",
 					output_filename: "roupas-black-skull.sql",
-					table_name: "tmp_produtos_importacao"
+					table_name: "tmp_fotos"
 				};
 				$.each($("select"), function(i, field){
 					data.fields.push({
