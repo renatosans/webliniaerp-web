@@ -281,15 +281,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		ng.showFotoProduto(produto);
 
-		var index = false ;
-		$.each(ng.carrinho,function(i,v){
-			if(!empty(produto.id_produto)){
-				if(v.id_produto == produto.id_produto){
-					index = i ;
-					return ;
-				}
-			}
-		});
+		var index = ng.getIndexProdutoCarrinho(produto);
 
 		if(index !== false){
 			switch(event) {
@@ -300,17 +292,23 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.carrinho[index].qtd_total = produto.qtd_total;
 					break;
 			}
+
 			if(ng.exibeColunaPesquisaProduto('desconto'))
 				ng.ajustaDescontoProdutoCarrinho(produto);
 		}
 		else {
 			ng.carrinho.push(produto);
+			
 			if(ng.exibeColunaPesquisaProduto('desconto'))
 				ng.ajustaDescontoProdutoCarrinho(produto);
+
+			index = ng.getIndexProdutoCarrinho(produto);
 		}
+
+		ng.calcSubTotal(ng.carrinho[index]);
 	}
 
-	ng.ajustaDescontoProdutoCarrinho = function(produto) {
+	ng.getIndexProdutoCarrinho = function(produto){
 		var index = false ;
 		$.each(ng.carrinho,function(i,v){
 			if(!empty(produto.id_produto)){
@@ -320,15 +318,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}
 			}
 		});
+		return index;
+	}
 
-		if(index !== false) {
-			ng.carrinho[index].tipo_desconto 		= produto.tipo_desconto;
-			ng.carrinho[index].flg_desconto 		= produto.flg_desconto;
-			ng.carrinho[index].valor_desconto 		= produto.valor_desconto;
-			ng.carrinho[index].valor_desconto_real 	= produto.valor_desconto_real;
-			ng.aplicarDesconto(index, null, false, (produto.tipo_desconto == 'vlr'));
-			ng.calcSubTotal(ng.carrinho[index]);
-		}
+	ng.ajustaDescontoProdutoCarrinho = function(produto) {
+		var index = ng.getIndexProdutoCarrinho(produto);
+		ng.carrinho[index].tipo_desconto 		= produto.tipo_desconto;
+		ng.carrinho[index].flg_desconto 		= produto.flg_desconto;
+		ng.carrinho[index].valor_desconto 		= produto.valor_desconto;
+		ng.carrinho[index].valor_desconto_real 	= produto.valor_desconto_real;
+		ng.aplicarDesconto(index, null, false, (produto.tipo_desconto == 'vlr'));
 	}
 
 	ng.aplicarDescontoPesquisaProdutos = function(index, calc){

@@ -1026,7 +1026,7 @@
 															<th ng-show="show_aditional_columns">Fabricante</th>
 															<th ng-show="show_aditional_columns">Tamanho</th>
 															<th ng-show="show_aditional_columns">Sabor/Cor</th>
-															<th class="text-center" style="width: 60px;" >Qtd</th>
+															<th class="text-center" style="width: 80px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
 															<th class="text-center" style="width: 230px;" colspan="3">Desconto</th>
@@ -1044,11 +1044,12 @@
 															<td ng-show="show_aditional_columns">{{ item.nome_fabricante }}</td>
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
-															<td class="text-center" width="20">
+															<td class="text-center" width="80">
 																<input type="number" 
 																	class="form-control text-center input-xs"
 																	onKeyPress="return SomenteNumero(event);" 
 																	ng-keyUp="calcSubTotal(item)"  
+																	ng-change="calcSubTotal(item)"  
 																	ng-model="item.qtd_total"/>
 															</td>
 															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
