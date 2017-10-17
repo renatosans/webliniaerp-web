@@ -363,12 +363,14 @@
 											<table class="table table-bordered table-condensed table-condensed table-hover">
 												<thead>
 													<th>Produto</th>
+													<th width="50">Qtd.</th>
 													<th width="80">Subtotal</th>
 													<th width="50"></th>
 												</thead>
 												<tbody>
 													<tr ng-repeat="item in carrinho">
 														<td class="text-middle">{{ item.nome_produto }}</td>
+														<td class="text-middle"><input class="form-control" type="text" ng-change="calcTotalCompra" ng-model="item.qtd_total"></td>
 														<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}</td>
 														<td class="text-middle">
 															<button class="btn btn-block btn-xs btn-danger" 
