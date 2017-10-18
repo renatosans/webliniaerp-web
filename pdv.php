@@ -2182,7 +2182,7 @@
 											</div>
 											<div class="col-sm-4">
 												<div id="email" class="form-group">
-													<label for="email" class="control-label">E-mail</label>
+													<label for="email" class="control-label">E-mail <span style="color:red;font-weight: bold;">*</label>
 													<input type="text" class="form-control" id="email" ng-model="new_cliente.email">
 												</div>
 											</div>
@@ -2190,13 +2190,13 @@
 									    <div class="row" ng-if="new_cliente.tipo_cadastro == 'pj'">
 									    	<div class="col-sm-2">
 												<div id="celular" class="form-group">
-													<label for="" class="control-label">Telefone </label>
+													<label for="" class="control-label">Telefone <span style="color:red;font-weight: bold;">*</label>
 													<input type="text" ui-mask="(99) 99999999?9" class="form-control input-sm" ng-model="new_cliente.celular">
 												</div>
 											</div>
 											<div class="col-sm-2">
 												<div id="cnpj" class="form-group">
-													<label class="control-label">CNPJ  <span style="color:red;font-weight: bold;">*</span></label>
+													<label class="control-label">CNPJ</span></label>
 													<input class="form-control" ui-mask="99.999.999/9999-99" ng-model="new_cliente.cnpj">
 												</div>
 											</div>
