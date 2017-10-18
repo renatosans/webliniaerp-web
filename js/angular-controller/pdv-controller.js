@@ -1422,7 +1422,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								data.produtos[0].vlr_venda_intermediario = Number(ng.vlr_produto_pesado.valor) ;
 							}
 							ng.incluirCarrinho(data.produtos[0]);
-							if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+							if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra) && ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra == 1) {
 								$('#buscaCodigo').focus();
 							}
 						}else{
@@ -2663,7 +2663,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.modo_venda = 'pdv' ;
 			ng.venda_aberta = true ;
 
-			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra) && ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra == 1) {
 				setTimeout(function(){
 					var txtBox = document.getElementById("buscaCodigo");
 						txtBox.focus();
@@ -2676,7 +2676,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			}*/
 			ng.modo_venda = 'est';
 			ng.venda_aberta = true ;
-			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos) && ng.configuracoes.flg_auto_focus_pesquisa_produtos == 1) {
+			if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra) && ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra == 1) {
 				setTimeout(function(){
 					var txtBox = document.getElementById("buscaCodigo");
 						txtBox.focus();

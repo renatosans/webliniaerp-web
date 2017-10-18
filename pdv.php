@@ -1045,11 +1045,10 @@
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
 															<td class="text-center" width="80">
-																<input type="number" 
+																<input type="text" 
 																	class="form-control text-center input-xs"
 																	onKeyPress="return SomenteNumero(event);" 
 																	ng-keyUp="calcSubTotal(item)"  
-																	ng-change="calcSubTotal(item)"  
 																	ng-model="item.qtd_total"/>
 															</td>
 															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
@@ -1835,10 +1834,10 @@
 														ng-keyUp="aplicarDescontoPesquisaProdutos(index, true); item.tipo_desconto = 'vlr';"
 														ng-model="item.valor_desconto_real"/>
 												<td style="min-width: 80px;">
-													<input type="number" class="form-control text-center"
+													<input type="text" class="form-control text-center"
 														onKeyPress="return SomenteNumero(event);"
-														ng-model="item.qtd_total" 
-														ng-change="addProduto(item, index)"/>
+														ng-model="item.qtd_total"
+														ng-keyUp="addProduto(item, index)"/>
 												</td>
 												<td class="text-right text-middle" style="min-width: 80px;">
 													R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}
