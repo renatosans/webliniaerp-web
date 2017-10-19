@@ -610,7 +610,7 @@
 										<div class="row">
 											<div class="col-sm-4">
 												<div class="form-group">
-													<label class="control-label">Colunas (Modal):</label>
+													<label class="control-label">Colunas:</label>
 											 		<div class="controls">
 														 <label class="label-checkbox" ng-repeat="column in colunas_pesquisa_produto">
 															<input type="checkbox" ng-model="column.value"  ng-true-value="1" ng-false-value="0">
@@ -620,15 +620,35 @@
 													</div>
 												</div>
 											</div>
+											
 											<div class="col-sm-3">
 												<div class="form-group">
-													<label class="control-label">Qtd. Itens (Modal)</label>
+													<label class="control-label">Qtd. Registros</label>
 													<input ng-model="configuracoes.qtd_registros_pesquisa_produtos" type="number" max="100" min="0" ng-model="" type="text" class="form-control input-sm parsley-validated">
 												</div>
 											</div>
-											<div class="col-sm-4 col-sm-offset-1">
+											
+											<div class="col-sm-4">
 												<div class="form-group">
-													<label for="" class="control-label">Auto Foco nos Campos?</label>
+													<label for="" class="control-label">Auto-Foco (Cód. Barras)?</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra" value="1" name="flg_auto_focus_pesquisa_produtos_codigo_barra"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Sim</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra" value="0" name="flg_auto_focus_pesquisa_produtos_codigo_barra"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Não</span>
+														</label>
+													</div>
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="" class="control-label">Auto-Foco (Modal)?</label>
 													<div class="form-group">
 														<label class="label-radio inline">
 															<input ng-model="configuracoes.flg_auto_focus_pesquisa_produtos" value="1" name="flg_auto_focus_pesquisa_produtos"   type="radio" class="inline-radio">
@@ -644,6 +664,56 @@
 												</div>
 											</div>
 										</div>
+
+										<div class="row">
+											<div class="col-sm-8">
+												<div class="form-group">
+													<label class="control-label">Ordenação de Produtos</label>
+													<div class="controls">
+														<table class="table table-bordered table-hover table-striped table-condensed">
+															<thead>
+																<th>Campo</th>
+																<th width="80">Ordem</th>
+																<th class="text-center" width="40">
+																	<button class="btn btn-xs btn-primary"
+																		tooltip title="Incluir campo"
+																		ng-click="addCampoOrdenacao()">
+																		<i class="fa fa-plus-circle"></i>
+																	</button>
+																</th>
+															</thead>
+															<tbody>
+																<tr ng-repeat="item in campos_ordenacao_produtos">
+																	<td>
+																		<select chosen 
+																		    option="colunas_ordenacao_produtos"
+																		    allow-single-deselect="true"
+																		    ng-model="item.field"
+																		    no-results-text="'Nenhum valor encontrado'"
+																		    ng-options="item.value as item.label for item in colunas_ordenacao_produtos">
+																		</select>
+																	</td>
+																	<td>
+																		<select class="form-control input-sm"
+																			ng-model="item.order">
+																			<option value="ASC">ASC</option>
+																			<option value="DESC">DESC</option>
+																		</select>
+																	</td>
+																	<td class="text-center">
+																		<button class="btn btn-xs btn-danger"
+																			tooltip title="Remover campo"
+																			ng-click="delCampoOrdenacao(item)">
+																			<i class="fa fa-trash-o"></i>
+																		</button>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>	
+										</div>
 									</div>
 									<div class="col-sm-6">
 										<fieldset>
@@ -652,7 +722,7 @@
 										<div class="row">
 											<div class="col-sm-6">
 												<div class="form-group">
-													<label for="" class="control-label">Filtrar clientes por vendedor responsável?</label>
+													<label for="" class="control-label">Filtrar clientes por vendedor?</label>
 													<div class="form-group">
 														<label class="label-radio inline">
 															<input ng-model="configuracoes.flg_filtrar_cliente_por_vendedor" value="1" name="flg_filtrar_cliente_por_vendedor"   type="radio" class="inline-radio">

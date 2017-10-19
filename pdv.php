@@ -427,13 +427,31 @@
 						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
-						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 9" ng-model="pagamento.valor" thousands-formatter type="text" class="form-control input-sm" />
+					    					<input type="text" class="form-control input-sm" thousands-formatter
+					    						ng-model="pagamento.valor"
+					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 9"/>
 						    			</div>
 						    		</div>
-						    		<div class="col-sm-6" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9 || pagamento.id_forma_pagamento == 4">
+						    		<div class="col-sm-3" id="numero_parcelas" 
+						    			ng-if="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9 || pagamento.id_forma_pagamento == 4">
 						    			<label class="control-label">Parcelas</label>
 						    			<div class="form-group ">
-						    					<input ng-blur="pushCheques()" ng-focus="qtdCheque()" ng-model="pagamento.parcelas" type="text" class="form-control input-sm" >
+					    					<input type="text" class="form-control input-sm"
+					    						ng-blur="pushCheques()" 
+					    						ng-focus="qtdCheque()" 
+					    						ng-model="pagamento.parcelas">
+						    			</div>
+						    		</div>
+
+						    		<div class="col-sm-3" id="periodicidade_parcelamento" 
+						    			ng-if="pagamento.id_forma_pagamento == 4">
+						    			<label class="control-label">A cada: (dias)</label>
+						    			<div class="form-group ">
+					    					<input type="text" class="form-control input-sm"
+					    						disabled="disabled" 
+					    						ng-blur="pushCheques()" 
+					    						ng-focus="qtdCheque()" 
+					    						ng-model="pagamento.periodicidade_parcelamento">
 						    			</div>
 						    		</div>
 						    	</div>
@@ -783,8 +801,18 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<button data-loading-text=" Aguarde..."  type="button" class="btn btn-lg btn-success btn-block" ng-click="abrirVenda('pdv')">Nova Venda (Modo Loja)</button>
-									<button data-loading-text=" Aguarde..."  type="button" class="btn btn-lg  btn-block" ng-click="abrirVenda('est')">Nova Venda (Modo Depósito)</button>
+									<button type="button" 
+										class="btn btn-lg btn-block btn-success" 
+										data-loading-text=" Aguarde..."
+										ng-click="abrirVenda('pdv', false)">
+										Nova Venda (Modo Loja)
+									</button>
+									<button type="button" 
+										class="btn btn-lg btn-block btn-default" 
+										data-loading-text=" Aguarde..."
+										ng-click="abrirVenda('est', false)">
+										Nova Venda (Modo Depósito)
+									</button>
 								</div>
 							</div>
 						</form>
@@ -994,7 +1022,13 @@
 											>
 											<i class="fa fa-usd" aria-hidden="true"></i>
 											</button>
-											
+											<label class="label-checkbox">
+												<input type="checkbox" id="toggleLine"
+													ng-model="is_venda_bonificada" 
+													ng-click="setVendaBonificada(is_venda_bonificada)"
+													ng-true-value="true" ng-false-value="false" />
+												<span class="custom-checkbox"></span> Venda Bonificada
+											</label>
 										</div>
 										<div class="col-sm-6">
 											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
@@ -1029,7 +1063,8 @@
 															<th class="text-center" style="width: 80px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
-															<th class="text-center" style="width: 230px;" colspan="3">Desconto</th>
+															<th class="text-center" style="width: 230px;" colspan="3"
+																ng-if="!(is_venda_bonificada)">Desconto</th>
 															<th class="text-center" style="width: 100px;">Vlr. c/ Desc.</th>
 															<th class="text-center" style="width: 100px;">Subtotal</th>
 															<th class="text-center" style="width: 20px;" class="hidden-print"></ul>
@@ -1053,7 +1088,8 @@
 															</td>
 															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
 															<td class="text-right">R$ {{ item.vlr_real | numberFormat : 2 : ',' : '.' }}</td>
-															<td class="text-center" style="width: 30px;">
+															<td class="text-center" style="width: 30px;"
+																ng-if="!(is_venda_bonificada)">
 																<label class="label-checkbox">
 																	<input type="checkbox" id="toggleLine"
 																		ng-model="item.flg_desconto" 
@@ -1062,11 +1098,13 @@
 																	<span class="custom-checkbox"></span>
 																</label>
 															</td>
-															<td class="text-right" style="width:100px;">
+															<td class="text-right" style="width:100px;"
+																ng-if="!(is_venda_bonificada)">
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">%</span>
 																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,false)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto" type="text" class="form-control text-right input-xs" />
 															</td>
-															<td class="text-right" style="width:100px;">
+															<td class="text-right" style="width:100px;"
+																ng-if="!(is_venda_bonificada)">
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">R$</span>
 																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,true)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto_real" type="text" class="form-control text-right input-xs" id="teste_teste" />
 															</td>
@@ -1835,9 +1873,7 @@
 														ng-model="item.valor_desconto_real"/>
 												<td style="min-width: 80px;">
 													<input type="text" class="form-control text-center"
-														onKeyPress="return SomenteNumero(event);"
-														ng-model="item.qtd_total"
-														ng-keyUp="addProduto(item, index)"/>
+														ng-model="item.qtd_total"/>
 												</td>
 												<td class="text-right text-middle" style="min-width: 80px;">
 													R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}

@@ -43,7 +43,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.carrinho = [];
 	ng.vlrTotalCompra = 0;
 	ng.exists_cookie = null ;
-
+	ng.is_venda_bonificada = false;
 	ng.venda        = null ;
 	ng.venda_aberta = false;
 	ng.id_venda     = null ;
@@ -72,7 +72,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.configuracoes.colunas_pesquisa_produto = parseJSON(ng.configuracoes.colunas_pesquisa_produto);
 
 	ng.exibeColunaPesquisaProduto = function(nome_coluna) {
-		return !empty(_.findWhere(ng.configuracoes.colunas_pesquisa_produto, {name: nome_coluna, value: 1}));
+		var can_show = !empty(_.findWhere(ng.configuracoes.colunas_pesquisa_produto, {name: nome_coluna, value: 1}));
+		switch(nome_coluna) {
+			case 'desconto':
+				can_show = !ng.is_venda_bonificada;
+				break;
+			default:
+				can_show = can_show;
+				break;
+		}
+		return can_show;
+	}
+
+	ng.setVendaBonificada = function(value) {
+		ng.is_venda_bonificada = value;
 	}
 
 	ng.abreModalFotoProduto = function(produto) {
@@ -271,7 +284,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			produto.margem_aplicada 	 = 'varejo';
 		}
 
-		produto.valor_desconto = empty(produto.valor_desconto) ?  0 : produto.valor_desconto ; 
+		if(!ng.is_venda_bonificada)
+			produto.valor_desconto = empty(produto.valor_desconto) ?  0 : produto.valor_desconto;
+		else {
+			produto.flg_desconto = 1;
+			produto.valor_desconto = 100;
+		}
 
 		produto.qtd_total = !$.isNumeric(produto.qtd_total) || Number(produto.qtd_total) < 1 ? 1 : Number(produto.qtd_total) ;
 		produto.sub_total = produto.qtd_total * produto.vlr_unitario;
@@ -293,13 +311,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					break;
 			}
 
-			if(ng.exibeColunaPesquisaProduto('desconto'))
+			if(ng.exibeColunaPesquisaProduto('desconto') || ng.is_venda_bonificada)
 				ng.ajustaDescontoProdutoCarrinho(produto);
 		}
 		else {
 			ng.carrinho.push(produto);
 			
-			if(ng.exibeColunaPesquisaProduto('desconto'))
+			if(ng.exibeColunaPesquisaProduto('desconto') || ng.is_venda_bonificada)
 				ng.ajustaDescontoProdutoCarrinho(produto);
 
 			index = ng.getIndexProdutoCarrinho(produto);
@@ -689,7 +707,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 											        	venda_confirmada : ng.venda_confirmada,
 											        	id_vendedor      : Number(ng.vendedor.id_vendedor),
 											        	id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore ),
-											        	id_autorizador_desconto	 : (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null
+											        	id_autorizador_desconto	 : (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
+											        	is_venda_bonificada : (!empty(ng.is_venda_bonificada)) ? ng.is_venda_bonificada : false
 	        										 }
 	        )
 			.success(function(data, status, headers, config) {
@@ -1109,9 +1128,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.selCliente = function(){
 		var offset = 0  ;
     	var limit  =  10 ;;
-
-			ng.loadCliente(offset,limit);
-			$("#list_clientes").modal("show");
+		ng.loadCliente(offset,limit);
+		$("#list_clientes").modal("show");
 	}
 
 	ng.addClienteAutoComplete = function(item){
@@ -1223,6 +1241,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
 		}
 
+		if(!empty(ng.configuracoes.flg_filtrar_cliente_por_vendedor) && ng.configuracoes.flg_filtrar_cliente_por_vendedor == 1){
+			query_string += "&usu->id_vendedor_responsavel="+ ng.userLogged.id;
+		}
+
 		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
 			.success(function(data, status, headers, config) {
 				ng.clientes = data.usuarios;
@@ -1297,7 +1319,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		ng.produtos =  null;
 		
-		aj.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
+		aj.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string) // +"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC"
 			.success(function(data, status, headers, config) {
 				angular.forEach(data.produtos, function(prd_modal){
 					if(ng.margemAplicada.atacado)
@@ -2984,24 +3006,36 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}else if(ng.pagamento.id_forma_pagamento == 4){
 			ng.pagamento.parcelas = empty(ng.pagamento.parcelas) ? 1 : ng.pagamento.parcelas ;
 			ng.pagamento.parcelas = ng.pagamento.parcelas == "" ?  1 : ng.pagamento.parcelas ;
-			if(ng.pagamento.parcelas > nParcelasAntBoleto){
-				var repeat = parseInt(ng.pagamento.parcelas) - parseInt(nParcelasAntBoleto) ;
+
+			if(parseInt(ng.pagamento.parcelas, 10) > parseInt(nParcelasAntBoleto, 10)){
+				var repeat = parseInt(ng.pagamento.parcelas, 10) - parseInt(nParcelasAntBoleto, 10) ;
 				while(repeat > 0){
-					var item = {id_banco:null,valor_pagamento:0,num_conta_corrente:null,num_cheque:null,status_pagamento:0};
+					var item = {
+						id_banco: null,
+						valor_pagamento: 0,
+						num_conta_corrente: null,
+						num_cheque: null,
+						status_pagamento: 0
+					};
 					ng.boletos.push(item);
 					repeat -- ;
 				}
 			}else if(ng.pagamento.parcelas < nParcelasAntBoleto){
-				var repeat = parseInt(nParcelasAntBoleto) - parseInt(ng.pagamento.parcelas) ;
+				var repeat = parseInt(nParcelasAntBoleto, 10) - parseInt(ng.pagamento.parcelas, 10) ;
 				while(repeat > 0){
 					var index = ng.cheques.length - 1;
 					ng.boletos.splice(index,1);
 					repeat -- ;
 				}
 			}
+			
 			nParcelasAntBoleto = ng.pagamento.parcelas;
 			ng.calTotalBoleto();
 			setTimeout(function(){ ng.loadDatapicker();}, 1000);
+
+			if(!empty(ng.pagamento.periodicidade_parcelamento)) {
+				// TODO: distribuir valor
+			}
 		}if(ng.pagamento.id_forma_pagamento == 9){
 			ng.pagamento.parcelas = empty(ng.pagamento.parcelas) ? 1 : ng.pagamento.parcelas ;
 			ng.pagamento.parcelas = ng.pagamento.parcelas == "" ?  1 : ng.pagamento.parcelas ;
@@ -3023,6 +3057,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			nParcelasAntPromessa = ng.pagamento.parcelas;
 			ng.calTotalPromessa();
 		}
+	}
+
+	ng.delItemBoleto = function(index) {
+		ng.boletos.splice(index-1,1);
+		ng.pagamento.parcelas = parseInt(ng.pagamento.parcelas, 10) - 1;
+		nParcelasAntBoleto = ng.pagamento.parcelas;
 	}
 
 
