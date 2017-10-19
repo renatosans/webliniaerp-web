@@ -109,7 +109,30 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 		else
 			$scope.imgProduto = 'img/imagem_padrao_produto.gif';
 
-		$scope.carrinho.push(produto) ;
+		var index = $scope.getIndexProdutoCarrinho(produto);
+
+		if(index !== false){
+			var item_carrinho = $scope.carrinho[index];
+				item_carrinho.qtd_total += produto.qtd_total;
+				item_carrinho.sub_total = (item_carrinho.qtd_total * produto.vlr_unitario);
+			$scope.carrinho[index] = item_carrinho;
+		}
+		else {
+			$scope.carrinho.push(produto);
+		}
+	}
+
+	$scope.getIndexProdutoCarrinho = function(produto){
+		var index = false ;
+		$.each($scope.carrinho,function(i,v){
+			if(!empty(produto.id_produto)){
+				if(v.id_produto == produto.id_produto){
+					index = i ;
+					return ;
+				}
+			}
+		});
+		return index;
 	}
 
 	$scope.calcTotalCompra = function() {

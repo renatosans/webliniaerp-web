@@ -243,8 +243,8 @@
 									<i class="fa fa-arrows-alt"></i> Tela Inteira
 								</button>
 								<div class="btn-group btn-group-xs" role="group" aria-label="Opções de Visualização">
-									<button type="button" class="btn btn-default" ng-class="{'btn-default':tipo_view == 'lista','btn-primary':tipo_view == 'grade-produtos'}" ng-click="changeTipoView('grade')">Grade</button>
-									<button type="button" class="btn btn-default" ng-class="{'btn-default':tipo_view == 'grade-produtos','btn-primary':tipo_view == 'lista'}" ng-click="changeTipoView('lista')">Lista</button>
+									<button type="button" class="btn btn-default" ng-class="{'btn-default' : tipo_view == 'lista', 'btn-primary' : (tipo_view == 'grade-produtos' || tipo_view == 'grade-categorias')}" ng-click="changeTipoView('grade-categorias')">Grade</button>
+									<button type="button" class="btn btn-default" ng-class="{'btn-default' : (tipo_view == 'grade-produtos' || tipo_view == 'grade-categorias'), 'btn-primary':tipo_view == 'lista'}" ng-click="changeTipoView('lista')">Lista</button>
 								</div>
 								<i data-toggle="tooltip" data-placement="left" title="Caixa não configurado!" 
 									class="fa fa-circle {{ (caixa != null) ? 'text-success' : 'text-danger' }}"></i>
@@ -265,7 +265,7 @@
 						</style>
 
 						<div class="row">
-							<div class="col-lg-9">
+							<div class="col-lg-8">
 								<div class="row grade-produtos" ng-show="tipo_view == 'grade-categorias'">
 									<div class="col-xs-3" ng-repeat="categoria in categoriasProduto" ng-click="setBuscaCategoria(categoria)">
 										<div class="panel panel-default middle-frame">
@@ -333,7 +333,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-lg-3 visible-lg clearfix">
+							<div class="col-lg-4 visible-lg clearfix">
 								<div class="row">
 									<div class="col-lg-12">
 										<h5 class="text-right">{{ total_itens }} iten(s) selecionados</h5>
@@ -341,16 +341,25 @@
 
 										<div class="clearfix padding-sm"></div>
 
-										<button ng-click="efetivarCompra()" type="button" id="btn-fazer-compra" ng-if="total_itens>0" class="btn btn-block btn-lg btn-success">
+										<button type="button" 
+											id="btn-fazer-compra" 
+											class="btn btn-lg btn-success"
+											ng-if="total_itens>0"
+											ng-click="efetivarCompra()">
 											<i class="fa fa-money"></i> Finalizar Venda
 										</button>
 
-										<button  type="button" id="btn-fazer-compra"  ng-if="total_itens==0" ng-disabled="true" class="btn btn-block btn-lg btn-success">
+										<button  type="button" 
+											id="btn-fazer-compra" 
+											class="btn btn-lg btn-success"
+											ng-if="total_itens==0" 
+											ng-disabled="true">
 											<i class="fa fa-money"></i> Finalizar Venda
 										</button>
 
-										<button type="button" class="btn btn-block btn-lg btn-danger"
-											ng-disabled="total_itens==0"
+										<button type="button" 
+											class="btn btn-lg btn-danger"
+											ng-disabled="total_itens==0" 
 											ng-click="cancelarVenda()">
 											<i class="fa fa-times-circle"></i> Cancelar Venda
 										</button>
@@ -363,13 +372,22 @@
 											<table class="table table-bordered table-condensed table-condensed table-hover">
 												<thead>
 													<th>Produto</th>
-													<th width="80">Subtotal</th>
+													<th width="80" class="text-center">Qtd.</th>
+													<th width="80" class="text-center">Subtotal</th>
 													<th width="50"></th>
 												</thead>
 												<tbody>
 													<tr ng-repeat="item in carrinho">
 														<td class="text-middle">{{ item.nome_produto }}</td>
-														<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}</td>
+														<td class="text-middle">
+															<input type="text"  class="form-control text-center"
+																onKeyPress="return SomenteNumero(event);" 
+																ng-change="item.sub_total = (item.qtd_total * item.vlr_unitario); calcTotalCompra();" 
+																ng-model="item.qtd_total">
+														</td>
+														<td class="text-middle text-right">
+															R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}
+														</td>
 														<td class="text-middle">
 															<button class="btn btn-block btn-xs btn-danger" 
 																ng-click="removeProduto(item)">

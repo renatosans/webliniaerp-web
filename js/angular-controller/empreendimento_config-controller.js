@@ -86,8 +86,31 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 0, name: 'desconto', 				label: 'Desconto'}
 	];
 
+	ng.colunas_ordenacao_produtos = [
+		{value: 'id_produto', label: 'ID do Produto'},
+		{value: 'codigo_barra', label: 'Código de Barras'},
+		{value: 'nome_categoria', label: 'Categoria'},
+		{value: 'nome_fabricante', label: 'Fabricante'},
+		{value: 'nome_tamanho', label: 'Tamanho'},
+		{value: 'sabor', label: 'Cor/Sabor'}
+	];
+
 	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
 		ng.colunas_pesquisa_produto = parseJSON(ng.cfg.colunas_pesquisa_produto);
+
+	if(typeof parseJSON(ng.cfg.campos_ordenacao_produtos) == 'object')
+		ng.campos_ordenacao_produtos = parseJSON(ng.cfg.campos_ordenacao_produtos);
+
+	ng.addCampoOrdenacao = function(){
+		if(empty(ng.campos_ordenacao_produtos))
+			ng.campos_ordenacao_produtos = [];
+
+		ng.campos_ordenacao_produtos.push({});
+	}
+
+	ng.delCampoOrdenacao = function(campo){
+		ng.campos_ordenacao_produtos = _.without(ng.campos_ordenacao_produtos, campo);
+	}
 
 	ng.loadPlanoContasSelect = function() {
 	 	ng.plano_contas = [{id:null,dsc_completa:"Selecione"}];
@@ -679,15 +702,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item4);
 		}
 
-		if(ng.configuracoes.patch_socket_sat != undefined){
-			var item5 = {
-							nome 				:'patch_socket_sat',
-							valor 				:ng.configuracoes.patch_socket_sat , 
-							id_empreendimento	:ng.userLogged.id_empreendimento
-						}
-			chaves.push(item5);
-		}
-
 		if(ng.configuracoes.cadastro_cpf_pdv != undefined){
 			var item6 = {
 							nome 				:'cadastro_cpf_pdv',
@@ -695,24 +709,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item6);
-		}
-
-		if(ng.configuracoes.num_cnpj_sw != undefined){
-			var item7 = {
-							nome 				:'num_cnpj_sw',
-							valor 				:ng.configuracoes.num_cnpj_sw , 
-							id_empreendimento	:ng.userLogged.id_empreendimento
-						}
-			chaves.push(item7);
-		}
-
-		if(ng.configuracoes.txt_sign_ac != undefined){
-			var item8 = {
-							nome 				:'txt_sign_ac',
-							valor 				:ng.configuracoes.txt_sign_ac , 
-							id_empreendimento	:ng.userLogged.id_empreendimento
-						}
-			chaves.push(item8);
 		}
 
 		if(typeof ng.formas_pagamento_pdv == 'object'){
@@ -745,6 +741,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item11);
 		}
 
+		if(typeof ng.campos_ordenacao_produtos == 'object'){
+			var campos_ordenacao_produtos = JSON.stringify(angular.copy(ng.campos_ordenacao_produtos));
+			var item11 = {
+							nome 				:'campos_ordenacao_produtos',
+							valor 				:campos_ordenacao_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
+		}
+
 		if(ng.configuracoes.flg_questionar_manutencao_precos_orcamento != undefined){
 			var item10 = {
 							nome 				:'flg_questionar_manutencao_precos_orcamento',
@@ -772,10 +778,28 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.flg_filtrar_cliente_por_vendedor != undefined){
+			var item10 = {
+							nome 				:'flg_filtrar_cliente_por_vendedor',
+							valor 				:ng.configuracoes.flg_filtrar_cliente_por_vendedor , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.flg_auto_focus_pesquisa_produtos != undefined){
 			var item10 = {
 							nome 				:'flg_auto_focus_pesquisa_produtos',
 							valor 				:ng.configuracoes.flg_auto_focus_pesquisa_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra != undefined){
+			var item10 = {
+							nome 				:'flg_auto_focus_pesquisa_produtos_codigo_barra',
+							valor 				:ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item10);
@@ -1015,37 +1039,85 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			btn = $(btn.parent('button'));
 		var chaves = [];
 		if(ng.configuracoes.id_operacao_padrao_venda != undefined){
-			var item = {nome:'id_operacao_padrao_venda',valor:ng.configuracoes.id_operacao_padrao_venda,id_empreendimento:ng.userLogged.id_empreendimento}
+			var item = {
+							nome:'id_operacao_padrao_venda',
+							valor:ng.configuracoes.id_operacao_padrao_venda,
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
 		if(ng.configuracoes.num_versao_ibpt != undefined){
-			var item = {nome:'num_versao_ibpt',valor:ng.configuracoes.num_versao_ibpt,id_empreendimento:ng.userLogged.id_empreendimento}
+			var item = {
+							nome:'num_versao_ibpt',
+							valor:ng.configuracoes.num_versao_ibpt,
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
 		if(ng.configuracoes.id_serie_padrao_nfce != undefined){
-			var item = {nome :'id_serie_padrao_nfce',valor:ng.configuracoes.id_serie_padrao_nfce ,id_empreendimento:ng.userLogged.id_empreendimento}
+			var item = {
+							nome :'id_serie_padrao_nfce',
+							valor:ng.configuracoes.id_serie_padrao_nfce ,
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
 		if(ng.configuracoes.id_serie_padrao_nfe != undefined){
-			var item = {nome :'id_serie_padrao_nfe',valor:ng.configuracoes.id_serie_padrao_nfe , id_empreendimento	:ng.userLogged.id_empreendimento}
+			var item = {
+							nome :'id_serie_padrao_nfe',
+							valor:ng.configuracoes.id_serie_padrao_nfe , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
 		if(ng.configuracoes.flg_ambiente_nfe != undefined){
-			var item = {nome :'flg_ambiente_nfe',valor:ng.configuracoes.flg_ambiente_nfe , id_empreendimento	:ng.userLogged.id_empreendimento}
+			var item = {
+							nome :'flg_ambiente_nfe',
+							valor:ng.configuracoes.flg_ambiente_nfe , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
 		if(ng.configuracoes.token_focus_producao != undefined){
-			var item = {nome :'token_focus_producao',valor:ng.configuracoes.token_focus_producao , id_empreendimento	:ng.userLogged.id_empreendimento}
+			var item = {
+							nome :'token_focus_producao',
+							valor:ng.configuracoes.token_focus_producao , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
 		if(ng.configuracoes.token_focus_homologacao != undefined){
-			var item = {nome :'token_focus_homologacao',valor:ng.configuracoes.token_focus_homologacao , id_empreendimento	:ng.userLogged.id_empreendimento}
+			var item = {
+							nome :'token_focus_homologacao',
+							valor:ng.configuracoes.token_focus_homologacao , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.patch_socket_sat != undefined){
+			var item = {
+							nome 				:'patch_socket_sat',
+							valor 				:ng.configuracoes.patch_socket_sat , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+		
+		if(ng.configuracoes.num_cnpj_sw != undefined){
+			var item = {
+							nome 				:'num_cnpj_sw',
+							valor 				:ng.configuracoes.num_cnpj_sw , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.txt_sign_ac != undefined){
+			var item = {
+							nome 				:'txt_sign_ac',
+							valor 				:ng.configuracoes.txt_sign_ac , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
 			chaves.push(item);
 		}
 
