@@ -75,7 +75,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var can_show = !empty(_.findWhere(ng.configuracoes.colunas_pesquisa_produto, {name: nome_coluna, value: 1}));
 		switch(nome_coluna) {
 			case 'desconto':
-				can_show = !ng.is_venda_bonificada;
+				can_show = !ng.is_venda_bonificada && (!empty(_.findWhere(ng.configuracoes.colunas_pesquisa_produto, {name: nome_coluna, value: 1})));
 				break;
 			default:
 				can_show = can_show;
@@ -121,6 +121,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
+	}
+
+	ng.diminuirQuantidadeProduto = function(item) {
+		if(empty(item.qtd_total))
+			item.qtd_total = 0;
+		
+		if(parseInt(item.qtd_total, 10) > 0)
+			item.qtd_total = (parseInt(item.qtd_total,10) - 1);
+	}
+
+	ng.aumentarQuantidadeProduto = function(item) {
+		if(empty(item.qtd_total))
+			item.qtd_total = 1;
+		else
+			item.qtd_total = (parseInt(item.qtd_total,10) + 1);
 	}
 
 	ng.loadOrcamento = function(tipo_valor){
@@ -196,8 +211,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.calcSubTotal = function(item){
-		item.qtd_total = isNaN(Number(item.qtd_total)) || Number(item.qtd_total) == 0  ? 1 : Number(item.qtd_total) ;
-		item.sub_total = item.qtd_total * Number(item.vlr_unitario);
+		if(!empty(item.qtd_total)) {
+			item.qtd_total = isNaN(Number(item.qtd_total)) || Number(item.qtd_total) == 0  ? 1 : Number(item.qtd_total) ;
+			item.sub_total = item.qtd_total * Number(item.vlr_unitario);
+		}
+		else
+			item.sub_total = 0;
+
 		ng.calcTotalCompra();
 	}
 
@@ -900,21 +920,25 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}else if(ng.configuracoes.id_cliente_movimentacao_caixa != ng.cliente.id) {
 			ng.venda.vlr_saldo_anterior = ng.cliente.vlr_saldo_devedor;
 		}
-		aj.post(baseUrlApi()+"venda/gravarVenda",{venda:ng.venda})
-			.success(function(data, status, headers, config) {
-				$('#text_status_venda').text('Salvando Itens');
-				if($.isNumeric(data.id_cliente)){
-					ng.cliente.id = $.isNumeric(data.id_cliente) ? Number(data.id_cliente) : ng.cliente.id ; 
-					$.each(ng.pagamentos_enviar,function(i,x){
-						ng.pagamentos_enviar[i].id_cliente = Number(data.id_cliente);
-					});
-				}
-				ng.id_venda = data.id_venda;
-				ng.salvarItensVenda(data.id_venda,ng.produtos_enviar,0);
-			})
-			.error(function(data, status, headers, config) {
-				alert('Erro fatal');
-			});
+
+		ng.venda.is_venda_bonificada = ng.is_venda_bonificada;
+
+		aj.post(baseUrlApi()+"venda/gravarVenda",{
+			venda: ng.venda
+		}).success(function(data, status, headers, config) {
+			$('#text_status_venda').text('Salvando Itens');
+			if($.isNumeric(data.id_cliente)){
+				ng.cliente.id = $.isNumeric(data.id_cliente) ? Number(data.id_cliente) : ng.cliente.id ; 
+				$.each(ng.pagamentos_enviar,function(i,x){
+					ng.pagamentos_enviar[i].id_cliente = Number(data.id_cliente);
+				});
+			}
+			ng.id_venda = data.id_venda;
+			ng.salvarItensVenda(data.id_venda,ng.produtos_enviar,0);
+		})
+		.error(function(data, status, headers, config) {
+			alert('Erro fatal');
+		});
 	};
 
 	ng.modalProgressoVenda = function(acao){
@@ -1098,6 +1122,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.aplicarDesconto = function(index, $event, checkebox, calc){
+		console.log(index, $event, checkebox, calc);
 		var vlr_real = parseFloat(accounting.toFixed(ng.carrinho[index].vlr_real,2));
 		
 		ng.carrinho[index].tipo_desconto = 'perc';
@@ -1123,6 +1148,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.carrinho[index].sub_total = (ng.carrinho[index].qtd_total * ng.carrinho[index].vlr_unitario);
 
 		ng.calcTotalCompra();
+	}
+
+	ng.openModalSelCliente = function(){
+		if(!ng.configuracoes.flg_ativar_auto_complete_clientes)
+			ng.selCliente(0,10);
 	}
 
 	ng.selCliente = function(){
@@ -1312,9 +1342,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
     	if(ng.busca.produtos != ""){
     		if(isNaN(Number(ng.busca.produtos)))
-    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
+    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tc.descricao_categoria like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
     		else
-    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.id = "+ng.busca.produtos+"  OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
+    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tc.descricao_categoria like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.id = "+ng.busca.produtos+"  OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
     	}
 
 		ng.produtos =  null;
@@ -1385,6 +1415,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.produto_taxa_servico = data.produtos[0];
 			}
 		});
+	}
+
+	ng.openModalSelProduto = function(){
+		if(!ng.configuracoes.flg_ativar_auto_complete_produtos)
+			ng.findProductByBarCode();
 	}
 
 	ng.findProductByBarCode = function(offset,limit) {
@@ -1494,7 +1529,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.add_index = null;
 				ng.loading_add_produto = false;
 				$scope.$apply();
-			}, 500);
+			}, 1);
 		}
 		else {
 			ng.modal_lote = item ;
@@ -3262,6 +3297,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var new_cliente = angular.copy(ng.new_cliente);
 		if(!empty(new_cliente.dta_nacimento))
 			new_cliente.dta_nacimento = moment(new_cliente.dta_nacimento,'DD-MM-YYYY').format('YYYY-MM-DD');
+		new_cliente.id_vendedor_responsavel = ng.userLogged.id;
 		aj.post(baseUrlApi()+"cliente/cadastro/rapido",new_cliente)
 			.success(function(data, status, headers, config) {
 				ng.addCliente(data.dados);
@@ -3450,6 +3486,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	        }else if(!empty(busca)){
 				query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+busca+"%' OR usu.apelido LIKE '%"+busca+"%')"}});
 			}
+
+			if(!empty(ng.configuracoes.flg_filtrar_cliente_por_vendedor) && ng.configuracoes.flg_filtrar_cliente_por_vendedor == 1){
+				query_string += "&usu->id_vendedor_responsavel="+ ng.userLogged.id;
+			}
+
 			aj.get(baseUrlApi()+"usuarios/"+query_string)
 				.success(function(data, status, headers, config) {
 					if((isCPF(busca) || isCnpj(busca)) && data.usuarios.length == 1)

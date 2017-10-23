@@ -92,7 +92,8 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 'nome_categoria', label: 'Categoria'},
 		{value: 'nome_fabricante', label: 'Fabricante'},
 		{value: 'nome_tamanho', label: 'Tamanho'},
-		{value: 'sabor', label: 'Cor/Sabor'}
+		{value: 'sabor', label: 'Cor/Sabor'},
+		{value: 'cod_interno', label: 'Código Interno'}
 	];
 
 	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
@@ -692,6 +693,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item3);
 		}
+		
+		if(ng.configuracoes.flg_ativar_auto_complete_produtos != undefined){
+			var item3 = {
+							nome 				:'flg_ativar_auto_complete_produtos',
+							valor 				:ng.configuracoes.flg_ativar_auto_complete_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
+		
+		if(ng.configuracoes.flg_ativar_auto_complete_clientes != undefined){
+			var item3 = {
+							nome 				:'flg_ativar_auto_complete_clientes',
+							valor 				:ng.configuracoes.flg_ativar_auto_complete_clientes , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
 
 		if(ng.configuracoes.id_plano_conta_pagamento_profissional != undefined){
 			var item4 = {
@@ -791,6 +810,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item10 = {
 							nome 				:'flg_auto_focus_pesquisa_produtos',
 							valor 				:ng.configuracoes.flg_auto_focus_pesquisa_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.flg_botoes_quantidade_pesquisa_produto != undefined){
+			var item10 = {
+							nome 				:'flg_botoes_quantidade_pesquisa_produto',
+							valor 				:ng.configuracoes.flg_botoes_quantidade_pesquisa_produto , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item10);

@@ -199,7 +199,7 @@ function sanitizeString($str) {
 					input_filename: "ordem.csv",
 					output_format: "sql",
 					output_filename: "ordem.sql",
-					table_name: "tmp_fotos"
+					table_name: "tmp_ordem"
 				};
 				$.each($("select"), function(i, field){
 					data.fields.push({

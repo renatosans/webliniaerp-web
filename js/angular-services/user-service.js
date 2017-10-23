@@ -16,6 +16,7 @@ app.service('UserService', function($http, $window) {
 			 		user.nme_usuario 			= usuario.nome;
 			 		user.end_email 				= usuario.email;
 			 		user.id_perfil 				= usuario.id_perfil;
+			 		user.nome_perfil 			= usuario.nome_perfil;
 			 		user.nome_empreendimento 	= usuario.nome_empreendimento;
 			 		user.nme_logo 				= usuario.nme_logo;
 			 		user.modulosAssociatePage 	= usuario.modulosAssociatePage;

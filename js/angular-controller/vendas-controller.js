@@ -1,4 +1,4 @@
-app.controller('VendasController', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService,PrestaShop){
+app.controller('VendasController', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService, PrestaShop, ConfigService){
 
 	var ng = $scope
 		aj = $http;
@@ -11,6 +11,7 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 	ng.detalhes     = [];
 	ng.busca        = {produtos:"",usuarios:"",vendedor:""};
 	ng.emptyBusca   = {};
+	ng.configuracoes = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	$scope.popover = {content: ''};
 	var params      = getUrlVars();
 
@@ -55,7 +56,11 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 		query_string += empty(ng.busca.ven_id_cliente)     ? "" : "&ven->id_cliente="+ng.busca.ven_id_cliente  ;
 		query_string += empty(ng.busca.ven_id_venda)       ? "" : "&ven->id="+ng.busca.ven_id_venda  ;
 
-
+		if(ng.userLogged.nome_perfil != 'admin') {
+			if(!empty(ng.configuracoes.flg_filtrar_cliente_por_vendedor) && ng.configuracoes.flg_filtrar_cliente_por_vendedor == 1){
+				query_string += "&ven->id_usuario="+ ng.userLogged.id;
+			}
+		}
 
 		aj.get(baseUrlApi()+"vendas/"+ offset +"/"+ limit + query_string)
 			.success(function(data, status, headers, config) {
