@@ -885,18 +885,18 @@
 
 					<div class="panel-body">
 						<div class="row">
-							<div class="col-lg-2">
+							<div class="col-lg-4">
 								<div class="form-group" style="padding-top:7px; margin-bottom:0px;">
 									<label class="label-radio inline">
 										<input  ng-click="busca.tipo_cliente = 'pf'" name="changeDetalhesCC" ng-checked="(busca.tipo_cliente == 'pf')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
-										<span>PF</span>
+										<span>Pessoa Física</span>
 									</label>
 
 									<label class="label-radio inline">
 										<input  ng-click="busca.tipo_cliente = 'pj'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'pj')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
-										<span>PJ</span>
+										<span>Pessoa Jurídica</span>
 									</label>
 
 									<label class="label-radio inline">
@@ -906,7 +906,7 @@
 									</label>
 								</div>
 							</div>
-							<div class=" col-sm-9">
+							<div class="col-sm-7">
 								<div class="input-group">
 						            <input ng-model="busca.clientes"  type="text" class="form-control input-sm"
 						            	ng-enter="loadClientes(0,10)" 

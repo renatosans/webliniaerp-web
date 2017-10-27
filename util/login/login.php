@@ -8,10 +8,10 @@
 		}
 		if(in_array('dashboard.php', $pages))
 			return 'dashboard.php';
-		elseif (in_array('produtos.php', $pages))
-			return 'produtos.php';
 		elseif (in_array('pdv.php', $pages))
 			return 'pdv.php';
+		elseif (in_array('produtos.php', $pages))
+			return 'produtos.php';
 		elseif (in_array('lancamentos.php', $pages))
 			return 'lancamentos.php';
 		elseif (in_array('clientes.php', $pages))
@@ -141,7 +141,7 @@
 		
 		$usuario  = curl_exec($ch);
 		$usuarioInfo = curl_getinfo($ch);
-		
+
 		curl_close ($ch);
 
 		if($usuarioInfo['http_code'] != 200){
@@ -167,6 +167,7 @@
 		}
 
 		$usuario = json_decode($usuario,true);
+		$saida['nome_perfil'] = $usuario['nome_perfil'];
 		$saida['id_perfil'] = $usuario['id_perfil'];
 
 		$empreendimentoUsuario = json_decode($empreendimentoUsuario,true);

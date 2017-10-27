@@ -30,14 +30,14 @@
 }
 
 .input-xg {
-	height: 80px;
+	height: 50px;
 	font-weight: bold;
 }
 
 input[type=text].input-xg {
 	background-color: #504f63;
 	color: #FFFFFF;
-	font-size: 25px;
+	font-size: 12px;
 }
 
 .valor {
@@ -449,4 +449,27 @@ ul.dropdown-menu.notification {
 
 .input-group.form-control{
 	z-index: 0 !important ;
+}
+
+body[ng-controller="LoginController"] {
+	background-color: #000 !important;
+}
+
+.especial-promotion-logo{
+	max-height: 50px;
+	position:fixed;
+	bottom:0;
+	right:0;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	z-index:100; /* or higher/lower depending on other elements */
+}
+
+.modal-header .close {
+	margin-top: 10px;
+}
+
+input[type=checkbox].checkbox-old {
+	opacity: 1;
+	position: initial;
 }

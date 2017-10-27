@@ -334,6 +334,7 @@
 								<i class="fa fa-chevron-down"></i> Mais Opções
 							</button>
 							<ul class="dropdown-menu slidedown">
+								<li><a href="vendas.php"><i class="fa fa-signal"></i> Minhas Vendas</a></li>
 								<li><a ng-if="modo_venda == 'est'" href="#" ng-click="abrirVenda('pdv')"><i class="fa fa-desktop"></i> Nova Venda (Modo Loja)</a></li>
 								<li><a ng-if="modo_venda == 'pdv'" href="#" ng-click="abrirVenda('est')"><i class="fa fa-desktop"></i> Nova Venda (Modo Depósito)</a></li>
 								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalListaReenviarSat()"><i class="fa fa-file-text-o"></i> Reprocessar Cupom SAT</a></li>
@@ -427,13 +428,31 @@
 						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
-						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 9" ng-model="pagamento.valor" thousands-formatter type="text" class="form-control input-sm" />
+					    					<input type="text" class="form-control input-sm" thousands-formatter
+					    						ng-model="pagamento.valor"
+					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 9"/>
 						    			</div>
 						    		</div>
-						    		<div class="col-sm-6" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9 || pagamento.id_forma_pagamento == 4">
+						    		<div class="col-sm-3" id="numero_parcelas" 
+						    			ng-if="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9 || pagamento.id_forma_pagamento == 4">
 						    			<label class="control-label">Parcelas</label>
 						    			<div class="form-group ">
-						    					<input ng-blur="pushCheques()" ng-focus="qtdCheque()" ng-model="pagamento.parcelas" type="text" class="form-control input-sm" >
+					    					<input type="text" class="form-control input-sm"
+					    						ng-blur="pushCheques()" 
+					    						ng-focus="qtdCheque()" 
+					    						ng-model="pagamento.parcelas">
+						    			</div>
+						    		</div>
+
+						    		<div class="col-sm-3" id="periodicidade_parcelamento" 
+						    			ng-if="pagamento.id_forma_pagamento == 4">
+						    			<label class="control-label">A cada: (dias)</label>
+						    			<div class="form-group ">
+					    					<input type="text" class="form-control input-sm"
+					    						disabled="disabled" 
+					    						ng-blur="pushCheques()" 
+					    						ng-focus="qtdCheque()" 
+					    						ng-model="pagamento.periodicidade_parcelamento">
 						    			</div>
 						    		</div>
 						    	</div>
@@ -765,7 +784,7 @@
 						}
 					</style>
 
-					<div class="panel-body" ng-if="receber_pagamento == false">
+					<div id="painel-principal" class="panel-body" ng-if="receber_pagamento == false">
 
 						<form role="form" ng-if="venda_aberta == false" class="panel-menor" >
 							<div class="row">
@@ -783,8 +802,18 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<button data-loading-text=" Aguarde..."  type="button" class="btn btn-lg btn-success btn-block" ng-click="abrirVenda('pdv')">Nova Venda (Modo Loja)</button>
-									<button data-loading-text=" Aguarde..."  type="button" class="btn btn-lg  btn-block" ng-click="abrirVenda('est')">Nova Venda (Modo Depósito)</button>
+									<button type="button" 
+										class="btn btn-lg btn-block btn-success" 
+										data-loading-text=" Aguarde..."
+										ng-click="abrirVenda('pdv', false)">
+										Nova Venda (Modo Loja)
+									</button>
+									<button type="button" 
+										class="btn btn-lg btn-block btn-default" 
+										data-loading-text=" Aguarde..."
+										ng-click="abrirVenda('est', false)">
+										Nova Venda (Modo Depósito)
+									</button>
 								</div>
 							</div>
 						</form>
@@ -799,7 +828,7 @@
 							</div>
 
 							<div class="row">
-								<div class="col-sm-3">
+								<div class="col-sm-2">
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="form-group">
@@ -819,11 +848,11 @@
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="form-group">
-												<label class="control-label"><i class="fa fa-barcode"></i> Pesquisa por Código Barras</label>
+												<label class="control-label"><i class="fa fa-barcode"></i> <span class="hidden-xs hidden-sm hidden-md">Pesquisa por </span>Código Barras</label>
 												<div class="input-group">
-													<input id="buscaCodigo" type="text" class="form-control input-lg" ng-model="busca.codigo" sync-focus-with="!busca.ok" ng-enter="findProductByBarCode();">
+													<input id="buscaCodigo" type="text" class="form-control input-sm" ng-model="busca.codigo" sync-focus-with="!busca.ok" ng-enter="findProductByBarCode();">
 													<span class="input-group-btn">
-														<button type="button" class="btn btn-lg btn-primary" ng-click="findProductByBarCode();"><i class="fa fa-search"></i></button>
+														<button type="button" class="btn btn-sm btn-primary" ng-click="findProductByBarCode();"><i class="fa fa-search"></i></button>
 													</span>
 												</div>
 											</div>
@@ -837,14 +866,21 @@
 									</div>
 								</div>
 
-								<div class="col-sm-9">
+								<div class="col-sm-10" style="padding-left: 0px;">
 									<div class="row">
-										<div class="col-sm-10" id="col-sm-auto-complete-cliente">
+										<div class="col-sm-2" id="col-sm-auto-complete-cliente">
 											<div class="form-group">
 												<label class="control-label"><h4>Cliente <span> <button  style="cursor:auto;height: 18px;padding-top: 0;
 " class="btn btn-xs btn-success" type="button" ng-if="isNumeric(cliente.id) && !esconder_cliente">{{ getIdentificadorCliente() }} <i style="cursor:pointer;" ng-click="removeCliente()" class="fa fa-times fa-lg fa-danger"></i></button></h4></label>
 												<div class="input-group">
-													<input id="input_auto_complete_cliente" onKeyPress="return SomenteNumeroLetras(event);" ng-focus="outoCompleteCliente(busca.cliente_outo_complete,$event)"  ng-keyUp="outoCompleteCliente(busca.cliente_outo_complete)" type="text" class="form-control" ng-model="busca.cliente_outo_complete"/>
+													<input id="input_auto_complete_cliente" 
+														type="text" class="form-control" 
+														onKeyPress="return SomenteNumeroLetras(event);" 
+														ng-focus="outoCompleteCliente(busca.cliente_outo_complete,$event)" 
+														ng-keyUp="outoCompleteCliente(busca.cliente_outo_complete)" 
+														ng-model="busca.cliente_outo_complete"
+														ng-click="openModalSelCliente()"
+														ng-readonly="(!configuracoes.flg_ativar_auto_complete_clientes)"/>
 													<div class="content-outo-complete-cliente-pdv" ng-show="clientes_auto_complete.length > 0 && clientes_auto_complete_visible">
 														<table class="table table-striped itens-outo-complete">
 															<thead>
@@ -874,11 +910,18 @@
 												</div>
 											</div>
 										</div>
-										<div class="col-sm-2" id="col-sm-auto-complete-produto">
+
+										<div class="col-sm-10" id="col-sm-auto-complete-produto">
 											<div class="form-group">
 												<label class="control-label"><h4>Produto</h4></label>
 												<div class="input-group">
-													<input id="input_auto_complete_produto" ng-focus="outoCompleteProduto(busca.produto_outo_complete,$event)"  ng-keyUp="outoCompleteProduto(busca.produto_outo_complete)" type="text" class="form-control" ng-model="busca.produto_outo_complete"/>
+													<input id="input_auto_complete_produto" 
+														type="text" class="form-control" 
+														ng-focus="outoCompleteProduto(busca.produto_outo_complete,$event)" 
+														ng-keyUp="outoCompleteProduto(busca.produto_outo_complete)" 
+														ng-model="busca.produto_outo_complete"
+														ng-click="openModalSelProduto()"
+														ng-readonly="(!configuracoes.flg_ativar_auto_complete_produtos)"/>
 													<div class="content-outo-complete-produto-pdv" ng-show="produtos_auto_complete.length > 0 && produtos_auto_complete_visible">
 														<table class="table table-striped itens-outo-complete">
 														<thead>
@@ -926,75 +969,98 @@
 
 									<div class="row">
 										<div class="col-sm-6">
-											<button ng-click="showVlrReal()" class="btn btn-xs btn-success" type="button" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')" tooltip data-original-title="Mostrar Custo">
-												<i ng-if="show_vlr_real == false" class="fa fa-eye fa-lg"></i>
-												<i ng-if="show_vlr_real == true" class="fa fa-eye-slash fa-lg"></i>
-											</button>
-											<button  ng-click="showAditionalColumns()" class="btn btn-xs btn-default" type="button" tooltip title="Ordenar">
-												<i ng-if="show_aditional_columns == true" class="fa fa-th-list fa-lg"></i>
-												<i ng-if="show_aditional_columns == false" class="fa fa-align-justify fa-lg"></i>
-											</button>
-											<button  class="btn btn-xs btn-default" id="pop-over-desconto-venda" tooltip title="Desconto na venda inteira"  type="button" init-popover placement="bottom" 
-											content='
-												<div class="input-group">
-							            			<input ng-model="descontoAllItens.valor"  placeholder="R$" thousands-formatter  type="text" class="form-control input-sm" ng-enter="DesAllVenda(descontoAllItens.valor)">
-										            <div class="input-group-btn">
-										            	<button ng-click="DesAllVenda(descontoAllItens.valor,descontoAllItens.vlr)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-										            		Aplicar
-										            	</button>
-										            </div> 
-										        </div> 
-										        <br/>
-										        <div class="input-group">
-							            			<input ng-model="descontoAllItens.porcentagem"  placeholder="%" thousands-formatter  type="text" class="form-control input-sm" ng-enter="DesAllVenda(descontoAllItens.porcentagem)">
-										            <div class="input-group-btn">
-										            	<button ng-click="DesAllVenda(descontoAllItens.porcentagem,descontoAllItens.per)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-										            		Aplicar
-										            	</button>
-										            </div> 
-										        </div> '
+											<div class="col-xs-1 no-padding">
+												<button ng-click="showVlrReal()" class="btn btn-xs btn-success" type="button" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')" tooltip data-original-title="Mostrar Custo">
+													<i ng-if="show_vlr_real == false" class="fa fa-eye fa-lg"></i>
+													<i ng-if="show_vlr_real == true" class="fa fa-eye-slash fa-lg"></i>
+												</button>
+											</div>
 
-											>
-												<i class="fa fa-minus-square-o fa-lg fa-align-justify"></i>
-											</button>
-											<button  class="btn btn-xs btn-default" id="popover-mudar-margem" tooltip title="Selecione a margem" type="button" init-popover placement="bottom" 
-											content='
-												<div class="row">
-													<div class="col-sm-12">
-														<button ng-click="changeMargemAplicada({atacado:true,intermediario:false,varejo:false,parceiro:false})" class="btn btn-sm btn-primary btn-block " type="button">
-															<i ng-if="margemAplicada.atacado" class="fa fa-check-circle-o" aria-hidden="true"></i>
-															Atacado
-														</button>
-													</div>
-												</div>
-												<div class="row" style="margin-top:5px">
-													<div class="col-sm-12">
-														<button  ng-click="changeMargemAplicada({atacado:false,intermediario:true,varejo:false,parceiro:false})" class="btn btn-sm btn-primary btn-block" type="button">
-															<i ng-if="margemAplicada.intermediario" class="fa fa-check-circle-o" aria-hidden="true"></i>
-															Intermediario
-														</button>
-													</div>
-												</div>
-												<div class="row" style="margin-top:5px">
-													<div class="col-sm-12">
-														<button ng-click="changeMargemAplicada({atacado:false,intermediario:false,varejo:true,parceiro:false})" class="btn btn-sm btn-primary btn-block" type="button">
-															<i ng-if="margemAplicada.varejo" class="fa fa-check-circle-o" aria-hidden="true"></i>
-															Varejo
-														</button>
-													</div>
-												</div>
-												<div class="row" style="margin-top:5px">
-													<div class="col-sm-12">
-														<button ng-click="changeMargemAplicada({atacado:false,intermediario:false,varejo:false,parceiro:true})" class="btn btn-sm btn-primary btn-block" type="button">
-															<i ng-if="margemAplicada.parceiro"  class="fa fa-check-circle-o" aria-hidden="true"></i> 
-															Parceiro
-														</button>
-													</div>
-												</div>'
-											>
-											<i class="fa fa-usd" aria-hidden="true"></i>
-											</button>
+											<div class="col-xs-1 no-padding">
+												<button  ng-click="showAditionalColumns()" class="btn btn-xs btn-default" type="button" tooltip title="Ordenar">
+													<i ng-if="show_aditional_columns == true" class="fa fa-th-list fa-lg"></i>
+													<i ng-if="show_aditional_columns == false" class="fa fa-align-justify fa-lg"></i>
+												</button>
+											</div>
 											
+											<div class="col-xs-1 no-padding">
+												<button  class="btn btn-xs btn-default" id="pop-over-desconto-venda" 
+													tooltip title="Desconto na venda inteira"  type="button" 
+													init-popover placement="bottom" 
+													content='
+														<div class="input-group">
+									            			<input ng-model="descontoAllItens.valor"  placeholder="R$" thousands-formatter  type="text" class="form-control input-sm" ng-enter="DesAllVenda(descontoAllItens.valor)">
+												            <div class="input-group-btn">
+												            	<button ng-click="DesAllVenda(descontoAllItens.valor,descontoAllItens.vlr)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+												            		Aplicar
+												            	</button>
+												            </div> 
+												        </div> 
+												        <br/>
+												        <div class="input-group">
+									            			<input ng-model="descontoAllItens.porcentagem"  placeholder="%" thousands-formatter  type="text" class="form-control input-sm" ng-enter="DesAllVenda(descontoAllItens.porcentagem)">
+												            <div class="input-group-btn">
+												            	<button ng-click="DesAllVenda(descontoAllItens.porcentagem,descontoAllItens.per)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+												            		Aplicar
+												            	</button>
+												            </div> 
+												        </div> '
+													>
+													<i class="fa fa-minus-square-o fa-lg fa-align-justify"></i>
+												</button>
+											</div>
+											
+											<div class="col-xs-1 no-padding">
+												<button  class="btn btn-xs btn-default" id="popover-mudar-margem" 
+													tooltip title="Selecione a margem" type="button" 
+													init-popover placement="bottom" 
+													content='
+														<div class="row">
+															<div class="col-sm-12">
+																<button ng-click="changeMargemAplicada({atacado:true,intermediario:false,varejo:false,parceiro:false})" class="btn btn-sm btn-primary btn-block " type="button">
+																	<i ng-if="margemAplicada.atacado" class="fa fa-check-circle-o" aria-hidden="true"></i>
+																	Atacado
+																</button>
+															</div>
+														</div>
+														<div class="row" style="margin-top:5px">
+															<div class="col-sm-12">
+																<button  ng-click="changeMargemAplicada({atacado:false,intermediario:true,varejo:false,parceiro:false})" class="btn btn-sm btn-primary btn-block" type="button">
+																	<i ng-if="margemAplicada.intermediario" class="fa fa-check-circle-o" aria-hidden="true"></i>
+																	Intermediario
+																</button>
+															</div>
+														</div>
+														<div class="row" style="margin-top:5px">
+															<div class="col-sm-12">
+																<button ng-click="changeMargemAplicada({atacado:false,intermediario:false,varejo:true,parceiro:false})" class="btn btn-sm btn-primary btn-block" type="button">
+																	<i ng-if="margemAplicada.varejo" class="fa fa-check-circle-o" aria-hidden="true"></i>
+																	Varejo
+																</button>
+															</div>
+														</div>
+														<div class="row" style="margin-top:5px">
+															<div class="col-sm-12">
+																<button ng-click="changeMargemAplicada({atacado:false,intermediario:false,varejo:false,parceiro:true})" class="btn btn-sm btn-primary btn-block" type="button">
+																	<i ng-if="margemAplicada.parceiro"  class="fa fa-check-circle-o" aria-hidden="true"></i> 
+																	Parceiro
+																</button>
+															</div>
+														</div>'
+													>
+													<i class="fa fa-usd" aria-hidden="true"></i>
+												</button>
+											</div>
+
+											<div class="col-xs-5 no-padding" style="padding-top: 2px;">
+												<label class="label-checkbox">
+													<input type="checkbox" id="toggleLine"
+														ng-model="is_venda_bonificada" 
+														ng-click="setVendaBonificada(is_venda_bonificada)"
+														ng-true-value="true" ng-false-value="false" />
+													<span class="custom-checkbox"></span> Venda Bonificada
+												</label>
+											</div>
 										</div>
 										<div class="col-sm-6">
 											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
@@ -1012,7 +1078,7 @@
 									<div class="row">
 									
 										<div class="col-sm-12">
-											<div class="form-group" >
+											<div class="form-group" style="overflow-y: scroll; max-height: 250px;">
 												<table id="tbl_carrinho" 
 													class="table table-condensed table-bordered table-hover table-striped">
 													<tr ng-hide="carrinho.length > 0" class="hidden-print">
@@ -1029,7 +1095,8 @@
 															<th class="text-center" style="width: 80px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
-															<th class="text-center" style="width: 230px;" colspan="3">Desconto</th>
+															<th class="text-center" style="width: 230px;" colspan="3"
+																ng-if="!(is_venda_bonificada)">Desconto</th>
 															<th class="text-center" style="width: 100px;">Vlr. c/ Desc.</th>
 															<th class="text-center" style="width: 100px;">Subtotal</th>
 															<th class="text-center" style="width: 20px;" class="hidden-print"></ul>
@@ -1045,29 +1112,36 @@
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
 															<td class="text-center" width="80">
-																<input type="number" 
+																<input type="text" 
 																	class="form-control text-center input-xs"
 																	onKeyPress="return SomenteNumero(event);" 
 																	ng-keyUp="calcSubTotal(item)"  
-																	ng-change="calcSubTotal(item)"  
 																	ng-model="item.qtd_total"/>
 															</td>
 															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
 															<td class="text-right">R$ {{ item.vlr_real | numberFormat : 2 : ',' : '.' }}</td>
-															<td class="text-center" style="width: 30px;">
-																<label class="label-checkbox">
-																	<input type="checkbox" id="toggleLine"
+															<td class="text-center" style="width: 30px;"
+																ng-if="!(is_venda_bonificada)">
+																<!-- <label class="label-checkbox" id="label-checkbox-{{ $index }}">
+																	<input type="checkbox" id="toggleLine-{{ $index }}"
 																		ng-model="item.flg_desconto" 
 																		ng-true-value="1" ng-false-value="0" 
 																		ng-click="aplicarDesconto($index,$event)" />
-																	<span class="custom-checkbox"></span>
-																</label>
+																	<span class="custom-checkbox" id="custom-checkbox-{{ $index }}"></span>
+																</label> -->
+
+																<input type="checkbox" class="checkbox-old" id="toggleLine-{{ $index }}"
+																	ng-model="item.flg_desconto" 
+																	ng-true-value="1" ng-false-value="0" 
+																	ng-click="aplicarDesconto($index,$event)" />
 															</td>
-															<td class="text-right" style="width:100px;">
+															<td class="text-right" style="width:100px;"
+																ng-if="!(is_venda_bonificada)">
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">%</span>
 																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,false)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto" type="text" class="form-control text-right input-xs" />
 															</td>
-															<td class="text-right" style="width:100px;">
+															<td class="text-right" style="width:100px;"
+																ng-if="!(is_venda_bonificada)">
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">R$</span>
 																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,true)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto_real" type="text" class="form-control text-right input-xs" id="teste_teste" />
 															</td>
@@ -1087,16 +1161,11 @@
 										<div class="col-sm-12">
 											<div class="form-group">
 												<div class="pull-right" ng-show="carrinho.length > 0">
-													<h2>R$ {{ vlrTotalCompra | numberFormat : 2 : ',' : '.' }}</h2>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-12">
-											<div class="form-group">
-												<div class="pull-right" ng-show="carrinho.length > 0">
-													<h2 style="font-size: 17px;">{{ total_itens }} Itens</h2>
+													<h2 class="no-margin">
+														{{ total_itens }} Itens
+														-
+														R$ {{ vlrTotalCompra | numberFormat : 2 : ',' : '.' }}
+													</h2>
 												</div>
 											</div>
 										</div>
@@ -1652,7 +1721,9 @@
   			<div class="modal-dialog modal-xl">
     			<div class="modal-content">
       				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        					<i class="fa fa-times-circle-o"></i> Fechar Janela
+        				</button>
 						<h4 ng-if="cdb_busca.status==false">Pesquisa de Produtos</span></h4>
 						<h4 ng-if="cdb_busca.status==true" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
 						<span ng-if="cdb_busca.status==true" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
@@ -1697,7 +1768,9 @@
 													ng-if="exibeColunaPesquisaProduto('codigo_barra')">
 													Cod. barra
 												</th>
-												<th rowspan="2" style="min-width: 250px; line-height: 46px;" class="text-center">Nome</th>
+												<th rowspan="2" style="min-width: 180px; line-height: 46px;" class="text-center">
+													Nome
+												</th>
 												<th rowspan="2" style="line-height: 46px;" class="text-center"
 													ng-if="exibeColunaPesquisaProduto('nome_categoria')">
 													Categoria
@@ -1722,8 +1795,13 @@
 													ng-if="exibeColunaPesquisaProduto('desconto')">
 													Desconto
 												</th>
-												<th rowspan="2" width="120" class="text-center" style="line-height: 46px;">Qtd</th>
-												<th rowspan="2" width="80" class="text-center" style="line-height: 46px;">R$ Unit.</th>
+												<th rowspan="2" width="{{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px" 
+													class="text-center" style="line-height: 46px;">
+													Qtd
+												</th>
+												<th rowspan="2" width="80" class="text-center" style="line-height: 46px;">
+													R$ Unit.
+												</th>
 												<th rowspan="2" style="line-height: 46px;"></th>
 											</tr>
 											<tr ng-if="funcioalidadeAuthorized('ver_disponibilidade_estoque') || exibeColunaPesquisaProduto('desconto')">
@@ -1776,7 +1854,9 @@
 													ng-if="exibeColunaPesquisaProduto('codigo_barra')">
 													{{ item.codigo_barra }}
 												</td>
-												<td style="min-width: 250px;" class="text-middle">{{ item.nome_produto }}</td>
+												<td style="min-width: 180px;" class="text-middle">
+													{{ item.nome_produto }}
+												</td>
 												<td class="text-center text-middle"
 													ng-if="exibeColunaPesquisaProduto('nome_categoria')">
 													{{ item.nome_categoria }}
@@ -1834,11 +1914,28 @@
 														ng-if="item.flg_desconto == 1"
 														ng-keyUp="aplicarDescontoPesquisaProdutos(index, true); item.tipo_desconto = 'vlr';"
 														ng-model="item.valor_desconto_real"/>
-												<td style="min-width: 80px;">
-													<input type="number" class="form-control text-center"
-														onKeyPress="return SomenteNumero(event);"
-														ng-model="item.qtd_total" 
-														ng-change="addProduto(item, index)"/>
+												<td style="min-width: {{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px;">
+													<input type="text" class="form-control text-center"
+														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto)"
+														ng-model="item.qtd_total"/>
+
+													<div class="input-group" ng-if="(configuracoes.flg_botoes_quantidade_pesquisa_produto)">
+														<span class="input-group-btn">
+															<button class="btn btn-primary" type="button"
+																ng-click="diminuirQuantidadeProduto(item)">
+																<i class="fa fa-minus-square"></i>
+															</button>
+														</span>
+														<input type="text" class="form-control text-center no-padding"
+															ng-model="item.qtd_total"
+															style="font-size: 10px;" />
+														<span class="input-group-btn">
+															<button class="btn btn-primary" type="button"
+																ng-click="aumentarQuantidadeProduto(item)">
+																<i class="fa fa-plus-square"></i>
+															</button>
+														</span>
+													</div>
 												</td>
 												<td class="text-right text-middle" style="min-width: 80px;">
 													R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}

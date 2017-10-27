@@ -29,16 +29,11 @@
 	<link href="css/custom.css" rel="stylesheet">
   </head>
 
-  <body class="overflow-hidden" ng-controller="LoginController" ng-cloak>
+  <body class="overflow-hidden login-black" ng-controller="LoginController" ng-cloak>
 	<div class="login-wrapper">
 		<div class="text-center">
 			<h2 class="fadeInUp animation-delay8" style="font-weight:bold">
-				<?php if(isset($_SESSION['loja'])): ?>
-					<span class="text-danger"><?php echo $_SESSION['loja']['nome_empreendimento'] ?></span>
-					<!--<img src="assets/imagens/logos/<?php //echo $_SESSION['loja']['nme_logo'] ?>"/>-->
-				<?php else: ?>
-				<span class="text-danger">Weblinia</span><span style="color:#ccc; text-shadow:0 1px #fff">ERP</span>
-				<?php endif ?>
+				<img src="assets/imagens/logos/logo-login.png" style="max-width: 170px;" />
 			</h2>
 		</div>
 		<div class="login-widget animation-delay1">
@@ -89,6 +84,8 @@
 		</div><!-- /login-widget -->
 	</div><!-- /login-wrapper -->
 
+
+	<img src="assets/imagens/logos/logo-marca-novo.png" class="especial-promotion-logo" />
 	<!-- /Modal fornecedor-->
 		<div class="modal fade" id="list_emp" style="display:none">
   			<div class="modal-dialog">
@@ -175,8 +172,8 @@
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="js/angular.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-strap/2.1.2/angular-strap.tpl.min.js"></script>
+	<script src="js/angular-strap.min.js"></script>
+	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>

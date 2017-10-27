@@ -86,8 +86,32 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 0, name: 'desconto', 				label: 'Desconto'}
 	];
 
+	ng.colunas_ordenacao_produtos = [
+		{value: 'id_produto', label: 'ID do Produto'},
+		{value: 'codigo_barra', label: 'Código de Barras'},
+		{value: 'nome_categoria', label: 'Categoria'},
+		{value: 'nome_fabricante', label: 'Fabricante'},
+		{value: 'nome_tamanho', label: 'Tamanho'},
+		{value: 'sabor', label: 'Cor/Sabor'},
+		{value: 'cod_interno', label: 'Código Interno'}
+	];
+
 	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
 		ng.colunas_pesquisa_produto = parseJSON(ng.cfg.colunas_pesquisa_produto);
+
+	if(typeof parseJSON(ng.cfg.campos_ordenacao_produtos) == 'object')
+		ng.campos_ordenacao_produtos = parseJSON(ng.cfg.campos_ordenacao_produtos);
+
+	ng.addCampoOrdenacao = function(){
+		if(empty(ng.campos_ordenacao_produtos))
+			ng.campos_ordenacao_produtos = [];
+
+		ng.campos_ordenacao_produtos.push({});
+	}
+
+	ng.delCampoOrdenacao = function(campo){
+		ng.campos_ordenacao_produtos = _.without(ng.campos_ordenacao_produtos, campo);
+	}
 
 	ng.loadPlanoContasSelect = function() {
 	 	ng.plano_contas = [{id:null,dsc_completa:"Selecione"}];
@@ -669,6 +693,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item3);
 		}
+		
+		if(ng.configuracoes.flg_ativar_auto_complete_produtos != undefined){
+			var item3 = {
+							nome 				:'flg_ativar_auto_complete_produtos',
+							valor 				:ng.configuracoes.flg_ativar_auto_complete_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
+		
+		if(ng.configuracoes.flg_ativar_auto_complete_clientes != undefined){
+			var item3 = {
+							nome 				:'flg_ativar_auto_complete_clientes',
+							valor 				:ng.configuracoes.flg_ativar_auto_complete_clientes , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
 
 		if(ng.configuracoes.id_plano_conta_pagamento_profissional != undefined){
 			var item4 = {
@@ -718,6 +760,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item11);
 		}
 
+		if(typeof ng.campos_ordenacao_produtos == 'object'){
+			var campos_ordenacao_produtos = JSON.stringify(angular.copy(ng.campos_ordenacao_produtos));
+			var item11 = {
+							nome 				:'campos_ordenacao_produtos',
+							valor 				:campos_ordenacao_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
+		}
+
 		if(ng.configuracoes.flg_questionar_manutencao_precos_orcamento != undefined){
 			var item10 = {
 							nome 				:'flg_questionar_manutencao_precos_orcamento',
@@ -758,6 +810,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item10 = {
 							nome 				:'flg_auto_focus_pesquisa_produtos',
 							valor 				:ng.configuracoes.flg_auto_focus_pesquisa_produtos , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.flg_botoes_quantidade_pesquisa_produto != undefined){
+			var item10 = {
+							nome 				:'flg_botoes_quantidade_pesquisa_produto',
+							valor 				:ng.configuracoes.flg_botoes_quantidade_pesquisa_produto , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra != undefined){
+			var item10 = {
+							nome 				:'flg_auto_focus_pesquisa_produtos_codigo_barra',
+							valor 				:ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item10);

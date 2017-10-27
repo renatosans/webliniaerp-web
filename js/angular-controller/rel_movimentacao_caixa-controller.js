@@ -10,7 +10,7 @@ app.controller('relMovimentacaoCaixaController', function($scope, $http, $window
     ng.busca               			= {empreendimento:""} ;
     ng.conta                        = {} ;
     ng.movimentacao 				= {};
-    ng.movimentacoes 				= [];
+    ng.movimentacoes 				= null;
     var params      = getUrlVars();
 
    ng.funcioalidadeAuthorized = function(cod_funcionalidade){
@@ -79,6 +79,7 @@ app.controller('relMovimentacaoCaixaController', function($scope, $http, $window
 	ng.total_vendas								= 0;
 
 	ng.loadMovimentacoes= function() {
+		ng.movimentacoes = [];
 		aj.get(baseUrlApi()+"caixa/movimentacoes/"+params['id'])
 			.success(function(data, status, headers, config) {
 				$.each(data,function(i,v){
@@ -103,7 +104,7 @@ app.controller('relMovimentacaoCaixaController', function($scope, $http, $window
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404)
-					ng.movimentacoes = [];
+					ng.movimentacoes = null;
 	 	});
 	}
 
