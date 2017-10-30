@@ -153,6 +153,7 @@
 				<div class="page-title">
 					<h3 class="no-margin"><i class="fa fa-dashboard"></i> Dashboard</h3>
 					<span>Bem Vindo de volta Sr(a). {{ userLogged.nme_usuario }}</span>
+					<span><?php echo ini_get('session.cookie_lifetime'); ?></span>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 

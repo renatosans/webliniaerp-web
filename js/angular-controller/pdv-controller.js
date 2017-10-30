@@ -1101,17 +1101,22 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 			 	}else{
 			 		var btn = $('#btn-fazer-compra');
-					btn.button('reset');
+						btn.button('reset');
 					ng.loadControleNfe('cfop','lista_operacao');
 					ng.modalProgressoVenda('hide');
 					ng.vlr_saldo_devedor = data.vlr_saldo_devedor ;
 					ng.id_controle_pagamento = data.id_controle_pagamento ;
 
-					if(!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1)
+					if((!ng.pagamento_fulso) && (!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1))
 						ng.printTermic(true);
-					else
+					else 
 						ng.showModalPrint();
-					
+
+					if(ng.pagamento_fulso) {
+						ng.receber_pagamento = false;
+						ng.pagamento_fulso = false;
+					}
+
 					ng.printPdf();
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 			 	}
@@ -1309,7 +1314,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.cancelar = function(){
-		ng.resetPdv('venda',true);
+		ng.resetPdv('inicial', true);
 	}
 
 	ng.produtos = [] ;
@@ -4095,7 +4100,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	}
 
-	ng.resetPdv = function(tela,ifOrcamento){
+	ng.resetPdv = function(tela, ifOrcamento){
 		ifOrcamento = ifOrcamento == null ? false : ifOrcamento ;
 		if(ifOrcamento && !empty(params.id_orcamento)){
 			window.location = 'pdv.php';

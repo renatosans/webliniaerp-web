@@ -1,11 +1,13 @@
 <?php
-	# Session lifetime of 3 hours
-	ini_set('session.gc_maxlifetime', 10800);
-
 	# Enable session garbage collection with a 1% chance of
 	# running on each session_start()
 	ini_set('session.gc_probability', 1);
 	ini_set('session.gc_divisor', 100);
+
+	ini_set('max_execution_time', 1800);
+    ini_set('session.cookie_lifetime', 28800);
+    ini_set('session.cache_expire', 28800);
+    ini_set('session.gc_maxlifetime', 28800);
 
 	define('AMBIENTE','CLIENTES');
 	define('PAGE', substr($_SERVER['SCRIPT_NAME'],strripos($_SERVER['SCRIPT_NAME'],'/')+1));

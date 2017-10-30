@@ -291,7 +291,7 @@
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"
-																ng-model="item.qtd_transferida" type="text" class="form-control input-xs" />
+																ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" />
 														</td>
 														<td id="td-prd-deposito-saida-{{ item.id }}">
 															<select chosen ng-change="loadestoque(item)" 
@@ -326,8 +326,8 @@
 														<th>ID</th>
 														<th>Produto</th>
 														<th>Fabricante</th>
-														<th>Peso</th>
-														<th>Sabor</th>
+														<th>Tamanho</th>
+														<th>Sabor/Cor</th>
 														<th class="text-center" >Estoque</th>
 														<th class="text-center" width="90"
 															ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
@@ -493,8 +493,8 @@
 														<th>ID</th>
 														<th>Produto</th>
 														<th>Fabricante</th>
-														<th>Peso</th>
-														<th>Sabor</th>
+														<th>Tamanho</th>
+														<th>Sabor/Cor</th>
 														<th class="text-center" >Estoque</th>
 														<th class="text-center" width="90" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
 															Vlr. Custo
@@ -569,7 +569,7 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
-														<td  width="100" align="center" id="td-prd-{{ item.id }}" ><input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control input-xs" /></td>
+														<td  width="100" align="center" id="td-prd-{{ item.id }}" ><input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" /></td>
 														<td id="td-prd-deposito-saida-{{ item.id }}">
 															<select chosen ng-change="loadestoque(item)" 
 														    option="depositos_chosen"
@@ -931,8 +931,8 @@
 											<th rowspan="2" style="line-height: 46px;" ></th>
 										</tr>
 										<tr>
-											<td class="text-center">Deposito</td>
-											<td width="50">validade</td>
+											<td class="text-center">Depósito</td>
+											<td width="50">Validade</td>
 											<td width="50">Qtd.</td>
 										</tr>
 									</thead>
@@ -969,7 +969,7 @@
 												{{ item.qtd_item }}
 											</td>
 											<td  width="50" ng-class="{'has-error': item.tooltip != undefined }">
-												<input controll-tooltip="item.tooltip"  ng-blur="clearTooltip(item)"  container="#list_produtos" somente-numeros ng-keyUp="vericarQtdByValidade(item,'#list_produtos')" ng-model="item.qtd_transferida" type="text" class="form-control input-xs" />
+												<input controll-tooltip="item.tooltip"  ng-blur="clearTooltip(item)"  container="#list_produtos" somente-numeros ng-keyUp="vericarQtdByValidade(item,'#list_produtos')" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" />
 											</td>
 											<td width="50" align="center">
 												<button ng-show="!produtoSelectedByValidade(item.id)" ng-disabled="!isNumeric(item.qtd_transferida)" type="button" class="btn btn-xs btn-success" ng-click="addProdutoByValidade(item)">
@@ -1052,9 +1052,9 @@
 											<th >Nome</th>
 											<th >Fabricante</th>
 											<th >Tamanho</th>
-											<th >Sabor/cor</th>
+											<th >Sabor/Cor</th>
 											<th >Estoque</th>
-											<th >qtd</th>
+											<th >Qtd.</th>
 											<th ></th>
 										</tr>
 									</thead>
@@ -1072,7 +1072,7 @@
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
 											<td>{{ item.qtd_item }}</td>
-											<td  width="50"><input  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" /></td>
+											<td  width="50"><input  ng-model="item.qtd_pedida" type="text" class="form-control text-center input-xs" /></td>
 											<td width="50" align="center">
 												<button ng-show="!produtoSelected(item.id)" type="button" class="btn btn-xs btn-success" ng-click="addProduto(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar

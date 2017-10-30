@@ -6,8 +6,9 @@ app.service('UserService', function($http, $window) {
 
 	this.getUserLogado = function() {
 		var user = {};
-		if(empty(sessionStorage.user)){
-			 $.ajax({
+		
+		if(empty(getStorage('user'))) {
+			$.ajax({
 			 	url: baseUrl() + "get_session.php",
 			 	async: false,
 			 	success: function(usuario) {
@@ -23,15 +24,17 @@ app.service('UserService', function($http, $window) {
 			 		user.perc_venda 			= usuario.perc_venda;
 			 		user.empreendimento_usuario = usuario.empreendimento_usuario;
 			 		user.flg_dispositivo 		= (!empty(usuario.flg_dispositivo) ? usuario.flg_dispositivo : null );
-
 			 	},
 			 	error: function(error) {
 			 		console.log(error);
 			 	}
-			 });
-			sessionStorage.user = angular.toJson(user);
-		}else
-			user = parseJSON(sessionStorage.user) ;
+			});
+			setStorage('user', angular.toJson(user));
+		}
+		else {
+			user = parseJSON(getStorage('user'));
+		}
+
 		return user;
 	}
 
@@ -57,7 +60,7 @@ app.service('UserService', function($http, $window) {
 	};
 
 	this.getSessionData = function(key) {
-		var value = $window.sessionStorage.getItem(key);
+		var value = getStorage(key);
 		
 		if(!value)
 			return null;
@@ -66,20 +69,20 @@ app.service('UserService', function($http, $window) {
 	};
 
 	this.setSessionData = function(key, value) {
-		$window.sessionStorage.setItem(key, JSON.stringify(value));
+		setStorage(key, JSON.stringify(value));
 	};
 
 	this.clearSessionData = function() {
-		$window.sessionStorage.removeItem(this.KEY_USER_LOGGED);
-		$window.sessionStorage.removeItem(this.KEY_MEUS_EMPREENDIMENTOS);
-		$window.sessionStorage.removeItem('user');
-		$window.sessionStorage.removeItem('funcionalidades');
+		removeStorage(this.KEY_USER_LOGGED);
+		removeStorage(this.KEY_MEUS_EMPREENDIMENTOS);
+		removeStorage('user');
+		removeStorage('funcionalidades');
 	}
 });
 
 app.service('FuncionalidadeService', function($http) {
 	this.getIdModulo = function(){
-		var aux = parseJSON(sessionStorage.user) ;
+		var aux = parseJSON(getStorage('user')) ;
 		modulos = aux.modulosAssociatePage ;
 		var page = location.pathname.substring(location.pathname.lastIndexOf("/") + 1) ;
 		if(!empty(modulos[page])){
@@ -90,7 +93,7 @@ app.service('FuncionalidadeService', function($http) {
 	this.getIdsPerfisAuthorizedByModulo = function(id_empreendimento,associativo) {
 		associativo = empty(associativo) ? 'false' : (associativo === true ? 'true' : 'false' ) ; 
 		id_modulo = this.getIdModulo();
-		var modulosFuncionalidades = (empty(sessionStorage.funcionalidades) ? [] : parseJSON(sessionStorage.funcionalidades)) ;
+		var modulosFuncionalidades = (empty(getStorage('funcionalidades')) ? [] : parseJSON(getStorage('funcionalidades'))) ;
 		var funcionalidades = empty(modulosFuncionalidades[id_modulo]) ? null : modulosFuncionalidades[id_modulo] ; 
 		if(funcionalidades == null) {
 			$.ajax({
@@ -105,7 +108,7 @@ app.service('FuncionalidadeService', function($http) {
 				}
 			});
 			modulosFuncionalidades[id_modulo] = funcionalidades ;
-			sessionStorage.funcionalidades = angular.toJson(modulosFuncionalidades) ;
+			setStorage('funcionalidades', angular.toJson(modulosFuncionalidades));
 		}
 		return funcionalidades;
 	};

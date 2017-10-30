@@ -768,16 +768,18 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 
-    	var query_string = "?tpe->id_empreendimento="+$scope.userLogged.id_empreendimento+"&tp->flg_excluido=0";
+    	var query_string = "?tpe->id_empreendimento="+$scope.userLogged.id_empreendimento+"&pro->flg_excluido=0";
 
     	if($scope.pesquisa.produto != ""){
-    		query_string += "&"+$.param({'(tp->nome':{exp:"like'%"+$scope.pesquisa.produto+"%' OR tp.codigo_barra like'%"+$scope.pesquisa.produto+"%' OR tf.nome_fabricante like'%"+$scope.pesquisa.produto+"%')"}});
+    		query_string += "&"+$.param({'(pro->nome':{exp:"like'%"+$scope.pesquisa.produto+"%' OR pro.codigo_barra like'%"+$scope.pesquisa.produto+"%' OR tf.nome_fabricante like'%"+$scope.pesquisa.produto+"%')"}});
     	}
 
 		$scope.produtos = [];
-		$http.get(baseUrlApi()+"estoque_produtos/null/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC")
+		// $http.get(baseUrlApi()+"estoque_produtos/null/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC")
+		$http.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit + query_string)
 			.success(function(data, status, headers, config) {
 				$.each(data.produtos, function(i, item) {
+					item.nome_produto = item.nome;
 					item.id_produto = parseInt(item.id_produto, 10);
 					$scope.produtos.push(item);
 				});
@@ -786,6 +788,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			.error(function(data, status, headers, config) {
 				$scope.produtos = [];
 			});
+	}
+
+	ng.isProdutoSelected = function(produto) {
+		return (!empty(_.findWhere(ng.entradaEstoque, {id_produto: produto.id_produto})));
 	}
 
 	ng.changeQtd = function(){

@@ -613,11 +613,22 @@
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
 											<td>
-												<input onKeyPress="return SomenteNumero(event);" ng-keyUp="" ng-model="item.qtd" type="text" class="form-control input-xs" width="50" />
+												<input type="text" class="form-control input-xs" width="50"
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-disabled="isProdutoSelected(item)"/>
 											</td>
-											<td>
-												<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
-													<i class="fa fa-check-square-o"></i> Selecionar
+											<td class="text-center">
+												<button type="button"
+													class="btn btn-xs btn-{{ (!isProdutoSelected(item)) ? 'success' : 'primary' }}"
+													ng-click="addProduto(item)"
+													ng-disabled="isProdutoSelected(item)">
+													<span ng-if="!isProdutoSelected(item)">
+														<i class="fa fa-check-square-o"></i> Selecionar
+													</span>
+													<span ng-if="isProdutoSelected(item)">
+														<i class="fa fa-check-circle-o"></i> Selecionado
+													</span>
 												</button>
 											</td>
 										</tr>

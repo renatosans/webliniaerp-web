@@ -88,6 +88,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 	ng.colunas_ordenacao_produtos = [
 		{value: 'id_produto', label: 'ID do Produto'},
+		{value: 'nome_produto', label: 'Nome do Produto'},
 		{value: 'codigo_barra', label: 'Código de Barras'},
 		{value: 'nome_categoria', label: 'Categoria'},
 		{value: 'nome_fabricante', label: 'Fabricante'},

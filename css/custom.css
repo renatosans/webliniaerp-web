@@ -452,7 +452,7 @@ ul.dropdown-menu.notification {
 }
 
 body[ng-controller="LoginController"] {
-	background-color: #000 !important;
+	// background-color: #000 !important;
 }
 
 .especial-promotion-logo{

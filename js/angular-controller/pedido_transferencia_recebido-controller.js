@@ -180,9 +180,12 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			produto.tipo_vlr_custo = item.tipo_vlr_custo ;
 		}
 	
-		if(ng.enviarNovaTransferencia) produto.qtd_pedida = 0 ;
+		if(ng.enviarNovaTransferencia){
+			produto.qtd_transferida = produto.qtd_pedida;
+			produto.qtd_pedida = 0;
+		}
 		ng.transferencia.produtos.push(produto);
-		item.qtd_pedida = null ;
+		item.qtd_pedida = null;
 	}
 
 	ng.deletarTransferencia = function(item){
@@ -870,7 +873,10 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 				produto.tipo_vlr_custo = item.tipo_vlr_custo ;
 			}
 		
-			if(ng.enviarNovaTransferencia) produto.qtd_pedida = 0 ;
+			if(ng.enviarNovaTransferencia){
+				produto.qtd_transferida = produto.qtd_pedida;
+				produto.qtd_pedida = 0 ;
+			}
 			ng.transferencia.produtos.push(produto);
 			item.qtd_pedida = null ;
 		})
@@ -897,7 +903,10 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 				produto.tipo_vlr_custo = item.tipo_vlr_custo ;
 			}
 		
-			if(ng.enviarNovaTransferencia) produto.qtd_pedida = 0 ;
+			if(ng.enviarNovaTransferencia){
+				produto.qtd_transferida = produto.qtd_pedida;
+				produto.qtd_pedida = 0 ;
+			}
 			ng.transferencia.produtos.push(produto);
 			item.qtd_pedida = null ;
 		});

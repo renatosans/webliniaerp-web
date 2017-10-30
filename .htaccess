@@ -8,3 +8,14 @@ RewriteRule ^ - [L]
     RewriteRule ^([a-zA-Z0-9_-]+)([/]?)$ loja.php?nickname=$1
     RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-z_]+)([/]?)$ loja.php?nickname=$1&template=$2
 </IfModule>
+
+<IfModule mod_php5.c> 
+    # Definir o tempo máximo de execucao do script para 30 mins (padrão: 60s)
+    php_value max_execution_time 1800
+ 
+    # Definir o tempo de expiração de sessao para 8 horas (padrão: 24 mins)
+    php_value session.cookie_lifetime 28800
+    php_value session.cache_expire 28800
+    php_value session.gc_maxlifetime 28800
+ 
+</IfModule>

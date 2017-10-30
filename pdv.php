@@ -1355,13 +1355,13 @@
 						    		<div class="col-sm-6" id="reforco_valor_pagamento">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group">
-						    					<input ng-model="reforco.valor" thousands-formatter type="text"  class="form-control input-sm" >
+						    				<input ng-model="reforco.valor" thousands-formatter type="text"  class="form-control input-sm" >
 						    			</div>
 						    		</div>
 						    		<div class="col-sm-6" id="reforco_conta_origem">
 						    			<label class="control-label">Conta de origem</label>
 							    		<select class="form-control input-sm" ng-model="reforco.conta_origem">
-													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+											<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
 										</select>
 									</div>
 						    	</div>
@@ -1917,7 +1917,7 @@
 												<td style="min-width: {{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px;">
 													<input type="text" class="form-control text-center"
 														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto)"
-														ng-model="item.qtd_total"/>
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
 
 													<div class="input-group" ng-if="(configuracoes.flg_botoes_quantidade_pesquisa_produto)">
 														<span class="input-group-btn">
@@ -1927,7 +1927,7 @@
 															</button>
 														</span>
 														<input type="text" class="form-control text-center no-padding"
-															ng-model="item.qtd_total"
+															ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
 															style="font-size: 10px;" />
 														<span class="input-group-btn">
 															<button class="btn btn-primary" type="button"
