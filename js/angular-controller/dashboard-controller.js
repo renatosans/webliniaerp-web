@@ -11,6 +11,8 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			vlrSaldoDevedorFornecedores 		: 0,
 			vlrSaldoDevedorClientes 			: 0,
 			vlrCustoTotalEstoque 				: 0,
+			vlrTicketMedio						: 0,
+			med_itens_venda						: 0,
 			vlrTotalPagamentosConfirmados 		: 0,
 			vlrTotalPagamentosNaoConfirmados 	: {
 				cheque 	: 0,
@@ -207,6 +209,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.totalCustoProdutosVendidos(date_first, date_last);
 			ng.totalTaxaMaquinetas(date_first, date_last);
 			ng.totalPagamentosFornecedores(date_first, date_last);
+			ng.loadVendas(date_first, date_last);
 
 			ng.loadTotalPagamentosConfirmados(date_first, date_last);
 			ng.loadTotalPagamentosNaoConfirmados(date_first, date_last, 2); // Cheque
@@ -237,6 +240,9 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 				.success(function(data, status, headers, config) {
 					ng.total.vlrTotalFaturamento = data.total_faturamento;
 					//$('#clientsSalesCount').text(ng.total.vlrTotalFaturamento);
+					if(!empty(ng.count.vendas)) {
+						ng.calcTicketMedio();
+					}
 				})
 				.error(function(data, status, headers, config) {
 					ng.total.vlrTotalFaturamento = 0 ;
@@ -468,7 +474,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.vendasProdutos = [];
 			aj.get(baseUrlApi()+"dashboard/vendas/top10/produto?fd="+first_date+'&ld='+last_date+'&id_empreendimento='+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
-					//console.log(data);
+					console.log(data);
 
 					ng.vendasProdutosTable = data;
 
@@ -583,6 +589,9 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			aj.get(baseUrlApi()+"count_vendas/dashboard/"+first_date+"/"+last_date+"?id_empreendimento="+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
 					ng.count.vendas = data.total_vendas  ;
+					if(!empty(ng.total.vlrTotalFaturamento)) {
+						ng.calcTicketMedio();
+					}
 				})
 				.error(function(data, status, headers, config) {
 					ng.count.vendas  = 0 ;
@@ -622,6 +631,25 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 					
 				});
 		}
+
+		ng.loadVendas = function(first_date,last_date) {
+
+			ng.total.med_itens_venda = 0;
+			
+			aj.get(baseUrlApi()+"total_unidade_produto_vendido/dashboard?fd="+first_date+'&ld='+last_date+'&id_empreendimento='+ng.userLogged.id_empreendimento)
+				.success(function(data, status, headers, config) {
+					ng.total.med_itens_venda = data.med_itens_venda;
+
+				})	
+				.error(function(data, status, headers, config) {
+					ng.total.med_itens_venda = 0;
+				});
+		}
+
+		ng.calcTicketMedio = function() {
+			ng.total.vlrTicketMedio = ng.total.vlrTotalFaturamento / ng.count.vendas;
+		}
+
 
 		$("#dtaInicial").val(getFirstDateOfMonthString());
 		$("#dtaFinal").val(getLastDateOfMonthString());
