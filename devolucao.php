@@ -247,7 +247,7 @@
 																<div class="col-sm-4">
 																	<div id="id_perfil" class="form-group">
 																		<label class="control-label">Perfil  <span style="color:red;font-weight: bold;">*</span></label>
-																		<select class="form-control" ng-model="cliente.id_perfil" ng-options="a.id as a.nome for a in perfis"></select>
+																		<select class="form-control" ng-model="cliente.id_perfil" ng-options="perfil.id as perfil.nome for perfil in perfisCadastro"></select>
 																	</div>
 																</div>
 														    </div>

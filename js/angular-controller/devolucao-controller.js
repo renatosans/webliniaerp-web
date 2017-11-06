@@ -78,16 +78,27 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		$('.modal-backdrop.in').css({opacity:1,'background-color':'#C7C7C7'});
 	}
 
-	ng.loadPerfil = function () {
-		ng.perfis = [];
-
-		aj.get(baseUrlApi()+"perfis")
-		.success(function(data, status, headers, config) {
-			ng.perfis = data;
-		})
-		.error(function(data, status, headers, config) {
-
-		});
+	ng.perfisCadastro = [] ;
+	ng.loadPerfis = function() {
+		aj.get(baseUrlApi()+"perfis?tpue->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				var aux = typeof parseJSON(ng.configuracoes.perfis_cadastro_rapido) == 'object' ?  parseJSON(ng.configuracoes.perfis_cadastro_rapido) : [] ;
+				var perfis = [];
+				$.each(data,function(i,x){
+					index = getIndex('id',data[i].id,data);
+					if($.isNumeric(index)){
+						if(aux[index].value == 1)
+							perfis.push(x);
+					}
+				});
+				ng.perfisCadastro = perfis ;
+				setTimeout(function(){
+					$("select").trigger("chosen:updated");
+				},300);
+			})
+			.error(function(data, status, headers, config) {
+				ng.perfis = [] ;
+			});
 	}
 
 	ng.removeError = function(){
@@ -415,7 +426,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 	}
 
 	ng.loadConfig();
-	ng.loadPerfil();
+	ng.loadPerfis();
 	ng.loadDevolucoes(0,10);
 
 
