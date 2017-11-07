@@ -97,7 +97,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 'cod_interno', label: 'Código Interno'}
 	];
 
-	ng.colunas_pesquisa_produto = [
+	ng.campos_ordenacao_produtos = [
 		{value: 'ASC', label: 'ASC'},
 		{value: 'DESC', label: 'DESC'}
 	];
