@@ -308,7 +308,7 @@
 						    					<input ng-model="pagamento.proprietario_conta_transferencia" type="text" class="form-control" />
 						    			</div>
 						    		</div>
-									<div  ng-class="{'col-sm-3':pagamento.id_forma_pagamento == 8,'col-sm-4':pagamento.id_forma_pagamento != 8}" ng-show="pagamento.id_forma_pagamento != 6 && pagamento.id_forma_pagamento != 2 && pagamento.id_forma_pagamento != 4">
+									<div  ng-class="{'col-sm-3':pagamento.id_forma_pagamento == 8,'col-sm-4':pagamento.id_forma_pagamento != 8}" ng-show="pagamento.id_forma_pagamento != 6 && pagamento.id_forma_pagamento != 2 && pagamento.id_forma_pagamento != 4 && pagamento.id_forma_pagamento != 11">
 											<div class="form-group cheque_data">
 												<label class="control-label">Data do pagamento</label>
 												<div class="input-group">
@@ -335,16 +335,16 @@
 						    		<div class="col-sm-4" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 8">
 						    			<label class="control-label">Valor</label
 	>					    			<div class="form-group ">
-						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
+						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 11 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
 						    			</div>
 						    		</div>
 						    		<div class="col-sm-3" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 8">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
-						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
+						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 11 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
 						    			</div>
 						    		</div>
-						    		<div class="col-sm-4" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 6 || pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4">
+						    		<div class="col-sm-4" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 6 || pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 11">
 						    			<label class="control-label">parcelas</label>
 						    			<div class="form-group ">
 						    					<input ng-blur="pushCheques()" ng-focus="qtdCheque()" ng-model="pagamento.parcelas" type="text" class="form-control" >
@@ -438,7 +438,7 @@
 										</div>
 
 									</div>
-									<div class="row" ng-show="pagamento.id_forma_pagamento == 4" ng-repeat="item in boletos">
+									<div class="row" ng-show="pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 11" ng-repeat="item in boletos">
 										<div class="col-sm-3">
 											<div class="form-group boleto_data">
 												<label class="control-label">Data</label>
@@ -456,31 +456,32 @@
 						    					</div>
 											</div>
 										</div>
-										<div class="col-sm-2">
-											<div class="form-group boleto_banco" >
-												<label class="control-label">Banco</label>
-												<select chosen
-													    option="bancos"
-													    ng-model="item.id_banco"
-													    ng-options="banco.id as banco.nome for banco in bancos">
-													</select>
-											</div>
-										</div>
+                                        <div ng-show="pagamento.id_forma_pagamento == 4">
+                                            <div class="col-sm-2">
+                                                <div class="form-group boleto_banco" >
+                                                    <label class="control-label">Banco</label>
+                                                    <select chosen
+                                                            option="bancos"
+                                                            ng-model="item.id_banco"
+                                                            ng-options="banco.id as banco.nome for banco in bancos">
+                                                        </select>
+                                                </div>
+                                            </div>
 
-										<div class="col-sm-2">
-											<div class="form-group boleto_doc">
-												<label class="control-label">Doc. Boleto</label>
-												<input ng-model="item.doc_boleto" type="text" class="form-control">
-											</div>
-										</div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group boleto_doc">
+                                                    <label class="control-label">Doc. Boleto</label>
+                                                    <input ng-model="item.doc_boleto" type="text" class="form-control">
+                                                </div>
+                                            </div>
 
-										<div class="col-sm-2">
-											<div class="form-group boleto_num">
-												<label class="control-label">Núm. Boleto</label>
-												<input ng-model="item.num_boleto" type="text" class="form-control">
-											</div>
-										</div>
-
+                                            <div class="col-sm-2">
+                                                <div class="form-group boleto_num">
+                                                    <label class="control-label">Núm. Boleto</label>
+                                                    <input ng-model="item.num_boleto" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
 										<div class="col-sm-1">
 											<div class="row">
 					    						<div class="col-sm-6">
@@ -1691,6 +1692,7 @@
 			</div><!-- /.row-->
 		</footer>
 	</div><!-- /wrapper -->
+    <div class="modal fade" id="billetPopup" style="display: none;"></div>
 
 	<a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
 

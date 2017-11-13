@@ -30,10 +30,11 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		{nome:"Cheque",id:2},
 		{nome:"Dinheiro",id:3},
 		{nome:"Boleto Bancário",id:4},
+		{nome:"Boleto Bancário - Pagare", id:11},
 		{nome:"Cartão de Débito",id:5},
 		{nome:"Cartão de Crédito",id:6},
 		{nome:"Transferência",id:8}
-	  ]
+	];
 
     ng.editing 			= false;
     ng.cliente          = {} ;
@@ -564,7 +565,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			nParcelasAntCheque = ng.pagamento.parcelas;
 			ng.calTotalCheque();
 			setTimeout(function(){ ng.loadDatapicker();}, 1000);
-		}else if(ng.pagamento.id_forma_pagamento == 4){
+		}else if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11){
 
 			ng.pagamento.parcelas = empty(ng.pagamento.parcelas) ? 1 : ng.pagamento.parcelas ;
 			ng.pagamento.parcelas = ng.pagamento.parcelas == "" ?  1 : ng.pagamento.parcelas ;
@@ -887,7 +888,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					error ++ ;
 				}
 
-				if(v.id_banco == "" || v.id_banco == 0 || v.id_banco == undefined ){
+				/*if(v.id_banco == "" || v.id_banco == 0 || v.id_banco == undefined ){
 					$('.boleto_banco').eq(i).addClass("has-error");
 
 					var formControl = $('.boleto_banco').eq(i)
@@ -921,7 +922,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 						.attr("data-original-title", 'O Núm. Cheque é obrigatório');
 					formControl.tooltip();
 					error ++ ;
-				}
+				}*/
 			});
 
 			//ng.calTotalCheque();
@@ -1221,11 +1222,11 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				});
 			}else if(Number(v.id_forma_pagamento) == 4){
 				$.each(ng.pg_boletos,function(i_boleto, v_boleto){
-					v.id_banco 				= v_boleto.id_banco ;
+					//v.id_banco 				= v_boleto.id_banco ;
 					v.data_pagamento 		= v_boleto.data_pagamento ;
 					v.valor_pagamento 		= v_boleto.valor_pagamento ;
-					v.doc_boleto            = v_boleto.doc_boleto ;
-					v.num_boleto            = v_boleto.num_boleto ;
+					//v.doc_boleto            = v_boleto.doc_boleto ;
+					//v.num_boleto            = v_boleto.num_boleto ;
 					v.status                = v_boleto.status_pagamento ;
 					v_push = angular.copy(v);
 					pagamentos.push(v_push);
@@ -1293,6 +1294,12 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			})
 			.error(function(data, status, headers, config) {
 				ng.modalProgressoPagamento('hide');
+				if (status === 400){
+					console.log(data);
+                    $dialogs.notify('Atenção!','<strong style="color:black">'+data.message+'</strong>');
+                    return false;
+				}
+
 				if(status == 406){
 					var dias_semanas    = {1:'Segunda-Feira',2:'Terça-Feira',3:'Quarta-Feira',4:'Quinta-Feira',5:'Sexta-Feira',6:'Sábado',7:'Domingo'};
 					var out_dias_agenda = data.out_dias_agenda ; 

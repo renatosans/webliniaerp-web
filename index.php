@@ -7,7 +7,7 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<meta http-equiv="refresh" content="0; url=login.php">
+	<!--<meta http-equiv="refresh" content="0; url=login.php">-->
 
 	<!-- Bootstrap core CSS -->
 	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">

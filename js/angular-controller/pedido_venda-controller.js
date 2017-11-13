@@ -685,8 +685,8 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 					v.id_banco 				= v_boleto.id_banco ;
 					v.data_pagamento 		= v_boleto.data_pagamento ;
 					v.valor_pagamento 		= v_boleto.valor_pagamento ;
-					v.doc_boleto            = v_boleto.doc_boleto ;
-					v.num_boleto            = v_boleto.num_boleto ;
+					//v.doc_boleto            = v_boleto.doc_boleto ;
+					//v.num_boleto            = v_boleto.num_boleto ;
 					v.status_pagamento      = v_boleto.status_pagamento ;
 					v_push = angular.copy(v);
 					pagamentos.push(v_push);
@@ -1258,7 +1258,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 			});
 
 			//ng.calTotalCheque();
-		}else if(ng.pagamento.id_forma_pagamento == 4){
+		}else if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11){
 			$.each(ng.boletos, function(i,v){
 				if($('.boleto_data input').eq(i).val() == "" || $('.boleto_data input').eq(i).val() == undefined ){
 					$('.boleto_data').eq(i).addClass("has-error");
@@ -1284,7 +1284,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 					error ++ ;
 				}
 
-				if(v.id_banco == "" || v.id_banco == 0 || v.id_banco == undefined ){
+				/* if(v.id_banco == "" || v.id_banco == 0 || v.id_banco == undefined ){
 					$('.boleto_banco').eq(i).addClass("has-error");
 
 					var formControl = $('.boleto_banco').eq(i)
@@ -1318,7 +1318,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 						.attr("data-original-title", 'O Núm. Cheque é obrigatório');
 					formControl.tooltip();
 					error ++ ;
-				}
+				}*/
 			});
 
 			//ng.calTotalCheque();
@@ -1374,7 +1374,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 			return;
 		}
 
-		if((ng.pagamento.id_forma_pagamento == 6 || ng.pagamento.id_forma_pagamento == 2 || ng.pagamento.id_forma_pagamento == 4 ) && (ng.pagamento.parcelas ==  undefined || ng.pagamento.parcelas ==  '') ){
+		if((ng.pagamento.id_forma_pagamento == 6 || ng.pagamento.id_forma_pagamento == 2 || ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11 ) && (ng.pagamento.parcelas ==  undefined || ng.pagamento.parcelas ==  '') ){
 			ng.pagamento.parcelas = 1 ;
 		}
 
@@ -1403,7 +1403,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				ng.pg_cheques.push(value);
 				count ++ ;
 			});
-		}else if(ng.pagamento.id_forma_pagamento == 4){
+		}else if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11){
 
 
 			$.each(ng.recebidos,function(a,b){
@@ -1541,7 +1541,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 			nParcelasAntCheque = ng.pagamento.parcelas;
 			ng.calTotalCheque();
 			setTimeout(function(){ ng.loadDatapicker();}, 1000);
-		}else if(ng.pagamento.id_forma_pagamento == 4){
+		}else if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11){
 			ng.pagamento.parcelas = empty(ng.pagamento.parcelas) ? 1 : ng.pagamento.parcelas ;
 			ng.pagamento.parcelas = ng.pagamento.parcelas == "" ?  1 : ng.pagamento.parcelas ;
 			if(ng.pagamento.parcelas > nParcelasAntBoleto){
@@ -1584,7 +1584,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				ng.calTotalCheque();
 		}else if(ng.pagamento.id_forma_pagamento == 6){
 			ng.pagamento.parcelas = 1 ;
-		}else if(ng.pagamento.id_forma_pagamento == 4){
+		}else if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11){
 			ng.pagamento.valor = 0 ;
 			ng.pagamento.parcelas = ng.boletos.length  > 0 ? ng.boletos.length : 1 ;
 			if(ng.boletos.length > 0)
@@ -1603,7 +1603,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 	ng.focusData  = function($index){
 		if(ng.pagamento.id_forma_pagamento == 2)
 			$(".chequeData").eq($index).trigger("focus");
-		if(ng.pagamento.id_forma_pagamento == 4)
+		if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 11)
 			$(".boletoData").eq($index).trigger("focus");
 	}
 
