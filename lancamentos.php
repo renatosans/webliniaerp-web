@@ -862,6 +862,9 @@
 												<button type="button" ng-click="printPagamentos(item)" tooltip="Imprimir" data-toggle="tooltip" class="btn btn-xs">
 													<i class="fa fa-print"></i>
 												</button>
+                                                <a ng-if="item.id_forma_pagamento == 11 && item.url_boleto" href="{{ item.url_boleto }}" target="_blank" tooltip="Boleto" data-toggle="tooltip" class="btn btn-xs">
+                                                    <i class="fa fa-external-link"></i>
+                                                </a>
 												<!--<button type="button" ng-click="editar(item)" tooltip="Editar" data-toggle="tooltip" class="btn btn-xs btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>-->
