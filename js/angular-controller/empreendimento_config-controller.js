@@ -341,6 +341,66 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			});
 	}
 
+	ng.savePagareSettings = function (e) {
+        var btn = $(e.target);
+        if(!(btn.is(':button')))
+            btn = $(btn.parent('button'));
+
+		var data = [];
+
+        if(ng.configuracoes.pagare_environment){
+            data.push({
+                nome: 'pagare_environment',
+                valor: ng.configuracoes.pagare_environment,
+                id_empreendimento: ng.userLogged.id_empreendimento
+            })
+        }
+
+		if(ng.configuracoes.pagare_username_development){
+			data.push({
+				nome: 'pagare_username_development',
+				valor: ng.configuracoes.pagare_username_development,
+				id_empreendimento: ng.userLogged.id_empreendimento
+			})
+		}
+
+        if(ng.configuracoes.pagare_password_development){
+            data.push({
+                nome: 'pagare_password_development',
+                valor: ng.configuracoes.pagare_password_development,
+                id_empreendimento: ng.userLogged.id_empreendimento
+            })
+        }
+
+        if(ng.configuracoes.pagare_username_production){
+            data.push({
+                nome: 'pagare_username_production',
+                valor: ng.configuracoes.pagare_username_production,
+                id_empreendimento: ng.userLogged.id_empreendimento
+            })
+        }
+
+        if(ng.configuracoes.pagare_password_production){
+            data.push({
+                nome: 'pagare_password_production',
+                valor: ng.configuracoes.pagare_password_production,
+                id_empreendimento: ng.userLogged.id_empreendimento
+            })
+        }
+
+        btn.button('loading');
+
+        aj.post(baseUrlApi()+"configuracao/save/",{chaves: data})
+            .success(function(data, status, headers, config) {
+                btn.button('reset');
+                ng.mensagens('alert-success', 'Configurações atualizadas com sucesso', '.alert-config-prestashop');
+                ng.loadConfig();
+            })
+            .error(function(data, status, headers, config) {
+                btn.button('reset');
+            });
+    };
+
 	ng.salvarConfigPrestaShop = function(event){
 		var btn = $(event.target);
 		if(!(btn.is(':button')))

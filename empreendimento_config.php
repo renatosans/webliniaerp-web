@@ -1782,6 +1782,11 @@
 												<i class="fa fa-shopping-cart"></i> PrestaShop
 											</a>
 										</li>
+                                        <li>
+                                            <a href="#pagare" data-toggle="tab">
+                                                <i class="fa fa-usd"></i> Pagare
+                                            </a>
+                                        </li>
 									</ul>
 								</div>
 
@@ -1925,12 +1930,72 @@
 											</div>
 										</div>
 									</div>
+                                    <div class="tab-pane fade in" id="pagare">
+                                        <div class="alert alert-config-prestashop" style="display:none; margin-top: 10px;"></div>
+                                        <div class="row" style="margin-top: 15px;">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="" class="control-label" style="float: left; margin-right: 15px;">Ambiente:</label>
+                                                    <div class="form-group" style="float: left;">
+                                                        <label class="label-radio inline">
+                                                            <input ng-model="configuracoes.pagare_environment" value="development" name="pagare_environment" type="radio" class="inline-radio">
+                                                            <span class="custom-radio"></span>
+                                                            <span>Desenvolvimento</span>
+                                                        </label>
+                                                        <label class="label-radio inline">
+                                                            <input ng-model="configuracoes.pagare_environment" value="production" name="pagare_environment" type="radio" class="inline-radio">
+                                                            <span class="custom-radio"></span>
+                                                            <span>Produção</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <fieldset style="margin-top: 10px;">
+                                            <legend>Desenvolvimento</legend>
+                                        </fieldset>
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                                <div class="form-group" id="pagare_username_development">
+                                                    <label class="control-label">Username</label>
+                                                    <input ng-model="configuracoes.pagare_username_development"
+                                                           type="text" class="form-control input-sm parsley-validated">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group" id="pagare_password_development">
+                                                    <label class="control-label">Password</label>
+                                                    <input ng-model="configuracoes.pagare_password_development"
+                                                           type="password" class="form-control input-sm parsley-validated">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <fieldset style="margin-top: 10px;">
+                                            <legend>Produção</legend>
+                                        </fieldset>
+                                        <div class="row">
+                                            <div class="col-sm-2">
+                                                <div class="form-group" id="pagare_username_production">
+                                                    <label class="control-label">Username </label>
+                                                    <input ng-model="configuracoes.pagare_username_production"
+                                                           type="text" class="form-control input-sm parsley-validated">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div class="form-group" id="pagare_password_production">
+                                                    <label class="control-label">Password</label>
+                                                    <input ng-model="configuracoes.pagare_password_production"
+                                                           type="password" class="form-control input-sm parsley-validated">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 								</div>
 
 								<div class="row">
 									<div class="col-sm-12">
 										<div class="pull-right">
-											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfigPrestaShop($event)" type="submit" class="btn btn-success btn-sm">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfigPrestaShop($event);savePagareSettings($event);" type="submit" class="btn btn-success btn-sm">
 												<i class="fa fa-save"></i> Salvar
 											</button>
 										</div>
