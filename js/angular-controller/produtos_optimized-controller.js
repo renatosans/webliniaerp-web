@@ -1,4 +1,4 @@
-app.controller('ProdutosController', function($scope, $http, $window, $dialogs, UserService,FuncionalidadeService){
+app.controller('ProdutosController', function($scope, $http, $window, $dialogs, UserService,FuncionalidadeService,TabelaPrecoService){
 	var ng = $scope
 		aj = $http;
 
@@ -38,6 +38,10 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
     ng.chosen_origem_mercadoria   = [{cod_controle_item_nfe:null,nme_item:'Selecione'}] ;
     ng.chosen_tipo_tributacao_ipi = [{cod_controle_item_nfe:null,nme_item:'Selecione'}] ;
     ng.chosen_especializacao_ncm  = [{cod_especializacao_ncm:null,dsc_especializacao_ncm:'Selecione'}] ;
+
+    ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
 
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
     	return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);

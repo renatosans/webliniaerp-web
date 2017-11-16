@@ -1,4 +1,4 @@
-app.controller('PerfisController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('PerfisController', function($scope, $http, $window, $dialogs, UserService, TabelaPrecoService){
 	var ng = $scope
 		aj = $http;
 
@@ -21,9 +21,46 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
     	}
     }
 
-    ng.chosen_perc_venda = [
-    	{dsc:'Selecione',vlr:null},{dsc:'Tabela',vlr:'vlr_custo'}, {dsc:'Atacado',vlr:'perc_venda_atacado'}, {dsc:'Intermediario',vlr:'perc_venda_intermediario'}, {dsc:'Varejo',vlr:'perc_venda_varejo'}
-    ]
+    ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
+
+	ng.createTabelasPrecoOptions = function() {
+		ng.chosen_perc_venda = [{
+			dsc: 'Selecione',
+			vlr: null
+		}, {
+			dsc: 'Tabela',
+			vlr: 'vlr_custo'
+		}];
+
+		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
+			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
+
+		if(hasAtacado) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Atacado',
+				vlr: 'perc_venda_atacado'
+			});
+		}
+
+		if(hasIntermediario) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Intermediario',
+				vlr: 'perc_venda_intermediario'
+			});
+		}
+
+		if(hasVarejo) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Varejo',
+				vlr: 'perc_venda_varejo'
+			});
+		}
+	}
+
+	ng.createTabelasPrecoOptions();
 
     ng.showBoxNovo = function(onlyShow){
     	ng.editing = !ng.editing;

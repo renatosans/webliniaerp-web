@@ -714,9 +714,9 @@
 											<td>Depósito</td>
 											<td class="text-center">Qtd.</td>
 											<td class="text-center">Custo Total</td>
-											<td class="text-center">Atacado Total</td>
-											<td class="text-center">Interm. Total</td>
-											<td class="text-center">Varejo Total</td>
+											<td class="text-center" ng-if="existeTabelaPreco('atacado')">Atacado Total</td>
+											<td class="text-center" ng-if="existeTabelaPreco('intermediario')">Interm. Total</td>
+											<td class="text-center" ng-if="existeTabelaPreco('varejo')">Varejo Total</td>
 										</tr>
 									</thead>
 									<tbody>
@@ -727,9 +727,9 @@
 											<td>{{ item.nme_deposito }}</td>
 											<td class="text-center">{{ item.qtd_item }}</td>
 											<td class="text-right">R$ {{ item.vlr_custo_total | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_total_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_total_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
 										</tr>
 									</tbody>
 								</table>

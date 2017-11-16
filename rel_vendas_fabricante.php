@@ -224,8 +224,8 @@
 							<th width="100" class="text-center">Cor/Sabor</th>
 							<th width="100" class="text-center">Qtd. Vendida</th>
 							<th width="100" class="text-center">Media Custo</th>
-							<th width="100" class="text-center">Media Desc. %</th>
 							<th width="100" class="text-center">Media Desc. R$</th>
+							<th width="100" class="text-center">Media Desc. %</th>
 							<th width="100" class="text-center">Vlr. C/ Desc.</th>
 							<th width="100" class="text-center">R$ Subtotal</th>
 						</tr>

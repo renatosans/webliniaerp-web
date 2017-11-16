@@ -175,6 +175,7 @@
 							<li class="active"><a href="#basico" data-toggle="tab"><i class="fa  fa-star-o"></i> Dados Gerais</a></li>
 							<li><a href="#loja" data-toggle="tab"><i class="fa fa-cloud"></i> Vitrine</a></li>
 							<li><a href="#estoque" data-toggle="tab"><i class="fa fa-sitemap"></i> Estoque</a></li>
+							<li><a href="#tab_preco" data-toggle="tab"><i class="fa fa-sitemap"></i> Tab Preços</a></li>
 							<li><a href="#pdv" data-toggle="tab"><i class="fa fa-desktop"></i> PDV</a></li>
 							<li><a href="#relatorios" data-toggle="tab"><i class="fa fa-copy"></i> Relatórios</a></li>
 							<li><a href="#mesas" data-toggle="tab"><i class="fa fa-table"></i> Controle Mesas</a></li>
@@ -1767,6 +1768,35 @@
 									<div class="col-sm-12">
 										<div class="pull-right">
 											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfigDepositoPadrao($event)" type="submit" class="btn btn-success btn-sm">
+												<i class="fa fa-save"></i> Salvar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane fade" id="tab_preco">
+								<div class="alert alert-config" style="display:none"></div>
+
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label class="control-label">Colunas de Preços:</label>
+									 		<div class="controls">
+												 <label class="label-checkbox" ng-repeat="column in tabela_de_vendas">
+													<input type="checkbox" ng-model="column.value"  ng-true-value="1" ng-false-value="0">
+													<span class="custom-checkbox"></span>
+													{{ column.label }}
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="pull-right">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
 												<i class="fa fa-save"></i> Salvar
 											</button>
 										</div>
