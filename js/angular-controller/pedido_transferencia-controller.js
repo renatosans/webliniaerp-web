@@ -1,4 +1,4 @@
-app.controller('PedidoTransferenciaController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop){
+app.controller('PedidoTransferenciaController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop, FuncionalidadeService){
 	var ng = $scope
 		aj = $http;
 	ng.ctrl = $scope ;
@@ -56,12 +56,16 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 
     ng.editing = false;
 
+    ng.funcioalidadeAuthorized = function(cod_funcionalidade){
+    	return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
+    }
+
     ng.showProductCost = function(transferencia) {
-    	var bool = (ng.isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3);
-    	var perfis = [15,50,64,92,106,120];
-    	if(perfis.indexOf($scope.userLogged.id_perfil) != -1)
-    		bool = false;
-    	return bool;
+    	if(ng.funcioalidadeAuthorized('ver_custo_transferencia')) {
+    		return (ng.isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3);
+    	}
+
+    	return false;
     }
 
     ng.showBoxNovo = function(onlyShow){
