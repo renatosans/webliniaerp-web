@@ -177,9 +177,9 @@
 											<th class="text-center">Fabricante</th>
 											<th class="text-center" width="80">Tamanho</th>
 											<th class="text-center" >Sabor/Cor</th>
-											<th class="text-center" width="100">Vlr. Atacado</th>
-											<th class="text-center" width="100">Vlr. Interm.</th>
-											<th class="text-center" width="100">Vlr. Varejo</th>
+											<th class="text-center" width="100" ng-if="existeTabelaPreco('atacado')">Vlr. Atacado</th>
+											<th class="text-center" width="100" ng-if="existeTabelaPreco('intermediario')">Vlr. Interm.</th>
+											<th class="text-center" width="100" ng-if="existeTabelaPreco('varejo')">Vlr. Varejo</th>
 											<th width="80" style="text-align: center;"><button class="btn btn-xs btn-primary" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i> Adicionar Item</button></th>
 										</tr>
 									</thead>
@@ -190,9 +190,9 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td class="text-center">{{ item.peso }}</td>
 											<td class="text-center">{{ item.sabor }}</td>
-											<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
 											<td align="center">
 												<button type="button" ng-click="delete(item)" tooltip="Excluir" class="btn btn-xs btn-danger delete" data-toggle="tooltip">
 													<i class="fa fa-trash-o"></i> Remover item

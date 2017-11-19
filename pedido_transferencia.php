@@ -311,7 +311,10 @@
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Fabricante</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Peso</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">sabor</th>
-														<th colspan="3" style="width:450px" class="text-center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Valor de Custo</th>
+														<th colspan="3" style="width:450px" class="text-center" 
+															ng-if="showProductCost(transferencia)">
+															Valor de Custo
+														</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Qtd.Pedida</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ;text-align:center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Validade</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ;width:100px" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Qtd. trans.</th>
@@ -322,7 +325,7 @@
 														</th>
 														<th rowspan="2" ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4" ></th>
 													</tr>
-													<tr ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">
+													<tr ng-if="showProductCost(transferencia)">
 														<th class="text-center">Atual</th>
 														<th class="text-center">Sugerido</th>
 														<th class="text-center">atualizar?</th>
@@ -337,9 +340,9 @@
 													<td>{{ item.nome_fabricante }}</td>
 													<td>{{ item.peso }}</td>
 													<td>{{ item.sabor }}</td>
-													<td ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-													<td ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">R$ {{ item.vlr_custo_sugerido | numberFormat:2:',':'.' }}</td>
-													<td ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3"> 
+													<td ng-if="showProductCost(transferencia)">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+													<td ng-if="showProductCost(transferencia)">R$ {{ item.vlr_custo_sugerido | numberFormat:2:',':'.' }}</td>
+													<td ng-if="showProductCost(transferencia)"> 
 														<div class="form-group">
 															<label class="label-radio inline">
 																<input ng-model="item.atualizar_custo" value="1" type="radio" class="inline-radio"/>

@@ -1,4 +1,4 @@
-app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, UserService, EmpreendimentoService) {
+app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, UserService, EmpreendimentoService, TabelaPrecoService) {
 	var ng 				= $scope,
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
@@ -13,6 +13,25 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 	ng.cliente          = {};
 	ng.qtd_total_estoque = 0;
 	ng.vlr_total_estoque = 0;
+
+	ng.existeTabelaPreco = function(nome_tabela){
+		return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+	}
+
+	ng.formataColspan = function() {
+		var qtd_colunas_colspan = 8;
+
+		if(!ng.existeTabelaPreco('varejo'))
+			qtd_colunas_colspan--;
+
+		if(!ng.existeTabelaPreco('intermediario'))
+			qtd_colunas_colspan--;
+
+		if(!ng.existeTabelaPreco('atacado'))
+			qtd_colunas_colspan--;
+
+		return qtd_colunas_colspan;
+	}
 
 	ng.doExportExcel = function(id_table){
     	$('#'+ id_table).tableExport({

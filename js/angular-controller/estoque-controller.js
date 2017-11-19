@@ -771,7 +771,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
     	var query_string = "?tpe->id_empreendimento="+$scope.userLogged.id_empreendimento+"&pro->flg_excluido=0";
 
     	if($scope.pesquisa.produto != ""){
-    		query_string += "&"+$.param({'(pro->nome':{exp:"like'%"+$scope.pesquisa.produto+"%' OR pro.codigo_barra like'%"+$scope.pesquisa.produto+"%' OR tf.nome_fabricante like'%"+$scope.pesquisa.produto+"%')"}});
+    		query_string += "&"+$.param({'(pro->nome':{exp:"like'%"+$scope.pesquisa.produto+"%' OR pro.codigo_barra like'%"+$scope.pesquisa.produto+"%' OR fab.nome_fabricante like'%"+$scope.pesquisa.produto+"%')"}});
     	}
 
 		$scope.produtos = [];

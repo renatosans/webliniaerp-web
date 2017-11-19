@@ -33,7 +33,7 @@
 	<link rel="stylesheet" type="text/css" href="css/custom.css">
   </head>
 
-  <body class="overflow-hidden" ng-controller="RelatorioVendasFabricante" ng-cloak>
+  <body class="overflow-hidden" ng-controller="RelatorioCurvasABC" ng-cloak>
 	<!-- Overlay Div -->
 	<!-- <div id="overlay" class="transparent"></div>
 
@@ -195,6 +195,34 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-sm-8">
+									<div class="form-group">
+										<label class="control-label">Fabricante</label>
+										<tags-input
+										 ng-model="busca.nome_fabricante"
+										 ng-focus="showCategorias()";
+										 key-press-false-tags-input-categorias
+										 placeholder="Add Categoria" >
+										</tags-input>
+									</div>
+								</div>
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label for="" class="control-label">Ordenar Por:</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="1" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Qtd</span>
+											</label>
+											<label class="label-radio inline">
+												<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="0" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Vlr</span>
+											</label>
+										</div>
+									</div>
+								</div>
 							</div>
 						</form>
 					</div>
@@ -224,8 +252,8 @@
 							<th width="100" class="text-center">Cor/Sabor</th>
 							<th width="100" class="text-center">Qtd. Vendida</th>
 							<th width="100" class="text-center">Media Custo</th>
-							<th width="100" class="text-center">Media Desc. R$</th>
 							<th width="100" class="text-center">Media Desc. %</th>
+							<th width="100" class="text-center">Media Desc. R$</th>
 							<th width="100" class="text-center">Vlr. C/ Desc.</th>
 							<th width="100" class="text-center">R$ Subtotal</th>
 						</tr>
@@ -405,7 +433,7 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/rel-vendas-fabricante-controller.js"></script>
+	<script src="js/angular-controller/rel-curvas-abc-controller.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {

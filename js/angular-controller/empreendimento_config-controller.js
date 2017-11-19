@@ -86,6 +86,12 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 0, name: 'desconto', 				label: 'Desconto'}
 	];
 
+	ng.tabela_de_vendas = [
+		{value: 0, name: 'atacado', 				label: 'Atacado'},
+		{value: 0, name: 'intermediario', 			label: 'Intermediário'},
+		{value: 0, name: 'varejo', 					label: 'Varejo'}
+	];
+
 	ng.colunas_ordenacao_produtos = [
 		{value: 'id_produto', label: 'ID do Produto'},
 		{value: 'nome_produto', label: 'Nome do Produto'},
@@ -97,11 +103,28 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 'cod_interno', label: 'Código Interno'}
 	];
 
+	ng.campos_ordenacao_produtos = [
+		{value: 'ASC', label: 'ASC'},
+		{value: 'DESC', label: 'DESC'}
+	];
+
+	ng.campos_curva_abc = [
+		{value: 'curva_a', label: 'A'},
+		{value: 'curva_b', label: 'B'},
+		{value: 'curva_c', label: 'C'}
+	];
+
 	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
 		ng.colunas_pesquisa_produto = parseJSON(ng.cfg.colunas_pesquisa_produto);
 
+	if(typeof parseJSON(ng.cfg.tabela_de_vendas) == 'object')
+		ng.tabela_de_vendas = parseJSON(ng.cfg.tabela_de_vendas);
+
 	if(typeof parseJSON(ng.cfg.campos_ordenacao_produtos) == 'object')
 		ng.campos_ordenacao_produtos = parseJSON(ng.cfg.campos_ordenacao_produtos);
+
+	if(typeof parseJSON(ng.cfg.faixas_curva_abc) == 'object')
+		ng.faixas_curva_abc = parseJSON(ng.cfg.faixas_curva_abc);
 
 	ng.addCampoOrdenacao = function(){
 		if(empty(ng.campos_ordenacao_produtos))
@@ -112,6 +135,17 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 	ng.delCampoOrdenacao = function(campo){
 		ng.campos_ordenacao_produtos = _.without(ng.campos_ordenacao_produtos, campo);
+	}
+
+	ng.addCampoCurvaABC = function(){
+		if(empty(ng.faixas_curva_abc))
+			ng.faixas_curva_abc = [];
+
+		ng.faixas_curva_abc.push({});
+	}
+
+	ng.delCampoCurvaABC = function(campo){
+		ng.faixas_curva_abc = _.without(ng.faixas_curva_abc, campo);
 	}
 
 	ng.loadPlanoContasSelect = function() {
@@ -770,6 +804,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item11);
 		}
+		
+		if(typeof ng.faixas_curva_abc == 'object'){
+			var faixas_curva_abc = JSON.stringify(angular.copy(ng.faixas_curva_abc));
+			var item11 = {
+							nome 				:'faixas_curva_abc',
+							valor 				:faixas_curva_abc , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
+		}
 
 		if(ng.configuracoes.flg_questionar_manutencao_precos_orcamento != undefined){
 			var item10 = {
@@ -886,6 +930,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item5);
+		}
+
+		if(typeof ng.tabela_de_vendas == 'object'){
+			var tabela_de_vendas = JSON.stringify(angular.copy(ng.tabela_de_vendas));
+			var item11 = {
+							nome 				:'tabela_de_vendas',
+							valor 				:tabela_de_vendas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
 		}
 
 		btn.button('loading');

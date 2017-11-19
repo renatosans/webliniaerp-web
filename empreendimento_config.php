@@ -175,7 +175,9 @@
 							<li class="active"><a href="#basico" data-toggle="tab"><i class="fa  fa-star-o"></i> Dados Gerais</a></li>
 							<li><a href="#loja" data-toggle="tab"><i class="fa fa-cloud"></i> Vitrine</a></li>
 							<li><a href="#estoque" data-toggle="tab"><i class="fa fa-sitemap"></i> Estoque</a></li>
+							<li><a href="#tab_preco" data-toggle="tab"><i class="fa fa-sitemap"></i> Tab Preços</a></li>
 							<li><a href="#pdv" data-toggle="tab"><i class="fa fa-desktop"></i> PDV</a></li>
+							<li><a href="#relatorios" data-toggle="tab"><i class="fa fa-copy"></i> Relatórios</a></li>
 							<li><a href="#mesas" data-toggle="tab"><i class="fa fa-table"></i> Controle Mesas</a></li>
 							<li><a href="#fiscal" data-toggle="tab"><i class="fa fa-barcode"></i> Fiscal</a></li>
 							<li><a href="#notificacoes" data-toggle="tab"><i class="fa fa-bell"></i> Notificações</a></li>
@@ -820,6 +822,68 @@
 										</div>
 									</div>
 								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="pull-right">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
+												<i class="fa fa-save"></i> Salvar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane fade" id="relatorios">
+								<div class="alert alert-config" style="display:none"></div>
+
+								<fieldset>
+									<legend>Relatório Curva ABC</legend>
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label class="control-label">Faixas</label>
+												<div class="controls">
+													<table class="table table-bordered table-hover table-striped table-condensed">
+														<thead>
+															<th>Faixa</th>
+															<th width="80">Percentual</th>
+															<th class="text-center" width="40">
+																<button class="btn btn-xs btn-primary"
+																	tooltip title="Incluir campo"
+																	ng-click="addCampoCurvaABC()">
+																	<i class="fa fa-plus-circle"></i>
+																</button>
+															</th>
+														</thead>
+														<tbody>
+															<tr ng-repeat="item in faixas_curva_abc">
+																<td>
+																	<select chosen 
+																	    option="campos_curva_abc"
+																	    allow-single-deselect="true"
+																	    ng-model="item.faixa"
+																	    no-results-text="'Nenhum valor encontrado'"
+																	    ng-options="item.value as item.label for item in campos_curva_abc">
+																	</select>
+																</td>
+																<td>
+																	<input ng-model="item.valor" name="percentual_abc" thousands-formatter class="form-control input-sm">
+																</td>
+																<td class="text-center">
+																	<button class="btn btn-xs btn-danger"
+																		tooltip title="Remover campo"
+																		ng-click="delCampoCurvaABC(item)">
+																		<i class="fa fa-trash-o"></i>
+																	</button>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>	
+									</div>
+								</fieldset>
 								<div class="row">
 									<div class="col-sm-12">
 										<div class="pull-right">
@@ -1721,6 +1785,35 @@
 									<div class="col-sm-12">
 										<div class="pull-right">
 											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfigDepositoPadrao($event)" type="submit" class="btn btn-success btn-sm">
+												<i class="fa fa-save"></i> Salvar
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane fade" id="tab_preco">
+								<div class="alert alert-config" style="display:none"></div>
+
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label class="control-label">Colunas de Preços:</label>
+									 		<div class="controls">
+												 <label class="label-checkbox" ng-repeat="column in tabela_de_vendas">
+													<input type="checkbox" ng-model="column.value"  ng-true-value="1" ng-false-value="0">
+													<span class="custom-checkbox"></span>
+													{{ column.label }}
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="pull-right">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
 												<i class="fa fa-save"></i> Salvar
 											</button>
 										</div>

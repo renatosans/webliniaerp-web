@@ -1,4 +1,4 @@
-app.controller('PedidoTransferenciaController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop){
+app.controller('PedidoTransferenciaController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop, FuncionalidadeService){
 	var ng = $scope
 		aj = $http;
 	ng.ctrl = $scope ;
@@ -56,12 +56,16 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 
     ng.editing = false;
 
+    ng.funcioalidadeAuthorized = function(cod_funcionalidade){
+    	return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
+    }
+
     ng.showProductCost = function(transferencia) {
-    	var bool = (ng.isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3);
-    	var perfis = [15,50,64,92,106,120];
-    	if(perfis.indexOf($scope.userLogged.id_perfil) != -1)
-    		bool = false;
-    	return bool;
+    	if(ng.funcioalidadeAuthorized('ver_custo_transferencia')) {
+    		return (ng.isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3);
+    	}
+
+    	return false;
     }
 
     ng.showBoxNovo = function(onlyShow){
@@ -183,8 +187,13 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 
 		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+query_string)
 			.success(function(data, status, headers, config) {
-			
-				ng.produtos = data.produtos;
+				angular.forEach(data.produtos, function(produto){
+					if(empty(ng.produtos))
+						ng.produtos = [];
+					if(produto.qtd_item > 0) {
+						ng.produtos.push(produto);
+					}
+				});
 				ng.paginacao.produtos = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
@@ -570,56 +579,58 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 			return ;
 		}
 
-		if(qtd_atualiza_custo==0){
+		if(ng.funcioalidadeAuthorized('ver_custo_transferencia') && qtd_atualiza_custo==0){
 			dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que não deseja atualizar os valores de custo ?</strong>');
 			$('#confirmModal').parent('.modal').show();
-			dlg.result.then(function(){
-				ng.transferencia.dta_recebido = moment().format('YYYY-MM-DD HH:mm:ss');
-				ng.transferencia.id_usuario_recebeu = ng.userLogged.id ;
-				var post = angular.copy(ng.transferencia);
-				if(ng.transferencia.flg_controle_validade == 1){
-					post.flg_controle_validade = 1 ;
-					post.produtos = formatPostValidades() ;
-				}
-				aj.post(baseUrlApi()+"estoque/pedido/transferencia/receber/",post)
-				.success(function(data, status, headers, config) {
-					aj.get(baseUrlApi()+"transferencias/estoque/?id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+"&tte->id="+ng.transferencia.id)
+			dlg.result.then(
+				function(){
+					ng.transferencia.dta_recebido = moment().format('YYYY-MM-DD HH:mm:ss');
+					ng.transferencia.id_usuario_recebeu = ng.userLogged.id ;
+					var post = angular.copy(ng.transferencia);
+					if(ng.transferencia.flg_controle_validade == 1){
+						post.flg_controle_validade = 1 ;
+						post.produtos = formatPostValidades() ;
+					}
+					aj.post(baseUrlApi()+"estoque/pedido/transferencia/receber/",post)
 					.success(function(data, status, headers, config) {
-						btn.button('reset');
-						ng.transferencia = angular.copy(transferenciaTO);
-						ng.showBoxNovo();
-						ng.mensagens('alert-success','<b>transferência realizada com sucesso</b>','.alert-transferencia-lista');
-						$('html,body').animate({scrollTop: 0},'slow');
-						if(data.length == 1) 
-							ng.listaTransferencias.transferencias[index_current_edit] = data[0];
-						else
-							ng.loadtransferencias(0,10);
-						PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
+						aj.get(baseUrlApi()+"transferencias/estoque/?id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+"&tte->id="+ng.transferencia.id)
+						.success(function(data, status, headers, config) {
+							btn.button('reset');
+							ng.transferencia = angular.copy(transferenciaTO);
+							ng.showBoxNovo();
+							ng.mensagens('alert-success','<b>transferência realizada com sucesso</b>','.alert-transferencia-lista');
+							$('html,body').animate({scrollTop: 0},'slow');
+							if(data.length == 1) 
+								ng.listaTransferencias.transferencias[index_current_edit] = data[0];
+							else
+								ng.loadtransferencias(0,10);
+							PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
+						})
+						.error(function(data, status, headers, config) {
+							btn.button('reset');
+							ng.transferencia = angular.copy(transferenciaTO);
+							ng.showBoxNovo();
+							ng.mensagens('alert-success','<b>transferência realizada com sucesso</b>','.alert-transferencia-lista');
+							$('html,body').animate({scrollTop: 0},'slow');
+				 			ng.loadtransferencias(0,10);
+				 			PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
+						});
 					})
 					.error(function(data, status, headers, config) {
 						btn.button('reset');
-						ng.transferencia = angular.copy(transferenciaTO);
-						ng.showBoxNovo();
-						ng.mensagens('alert-success','<b>transferência realizada com sucesso</b>','.alert-transferencia-lista');
-						$('html,body').animate({scrollTop: 0},'slow');
-			 			ng.loadtransferencias(0,10);
-			 			PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
-					});
-				})
-				.error(function(data, status, headers, config) {
+						if(status == 406){
+							$.each(data.out_estoque,function(i,x){	
+								var msg = 'A quantidade a ser transferêncida ( '+x.qtd_transferida+' ) é maior que a em estoque ( '+x.qtd_estoque+' )';			
+								$('#tr-prd-'+i).addClass('tr-out-estoque');
+								$('#tr-prd-'+i).find('input').eq(0).attr("data-placement", "top").attr("title", msg).attr("data-original-title", msg); 
+								$('#tr-prd-'+i).find('input').eq(0).tooltip();
+							});
+						}
+					});	
+				}, function(){
 					btn.button('reset');
-					if(status == 406){
-						$.each(data.out_estoque,function(i,x){	
-							var msg = 'A quantidade a ser transferêncida ( '+x.qtd_transferida+' ) é maior que a em estoque ( '+x.qtd_estoque+' )';			
-							$('#tr-prd-'+i).addClass('tr-out-estoque');
-							$('#tr-prd-'+i).find('input').eq(0).attr("data-placement", "top").attr("title", msg).attr("data-original-title", msg); 
-							$('#tr-prd-'+i).find('input').eq(0).tooltip();
-						});
-					}
-				});	
-			}, function(){
-				btn.button('reset');
-			});
+				}
+			);
 		}else{
 			ng.transferencia.dta_recebido = moment().format('YYYY-MM-DD HH:mm:ss');
 			ng.transferencia.id_usuario_recebeu = ng.userLogged.id ;
