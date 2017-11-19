@@ -10,6 +10,8 @@
 			return 'dashboard.php';
 		elseif (in_array('pdv.php', $pages))
 			return 'pdv.php';
+		elseif (in_array('controle-mesas.php', $pages))
+			return 'controle-mesas.php';
 		elseif (in_array('produtos.php', $pages))
 			return 'produtos.php';
 		elseif (in_array('lancamentos.php', $pages))

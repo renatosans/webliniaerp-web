@@ -785,9 +785,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					if(data.out_estoque.length > 0){
 						$.each(data.out_estoque,function(i, value){
 							ng.out_produtos.push(value);
-							/*setTimeout(function(){
+							setTimeout(function(){
 								$("#"+value+" td").css({background:"#FF9191"});
-							}, 300);*/
+							}, 300);
 							ng.recebidos = [];
 							ng.totalPagamento();
 						});
@@ -796,9 +796,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					if(data.out_desconto.length > 0){
 						$.each(data.out_desconto,function(i, value){
 							ng.out_descontos.push(value);
-							/*setTimeout(function(){
+							setTimeout(function(){
 								$("#"+value+" td").css({background:"#FF9191"});
-							}, 300);*/
+							}, 300);
 							ng.recebidos = [];
 							ng.totalPagamento();
 						});
@@ -1407,7 +1407,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
     	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
 			query_string += "&tp->id=" + ng.configuracoes.id_produto_taxa_servico;
-			query_string += "&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC";
+			// query_string += "&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC";
 
 		ng.produto_taxa_servico = null;
 		
@@ -1459,7 +1459,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			if(qtd_minima != 'null')
     			query_string += "&" + $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
 
-			$http.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
+			$http.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string)// +"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC"
 				.success(function(data, status, headers, config) {
 					ng.busca.codigo = "" ;
 					if(data.produtos.length == 1){

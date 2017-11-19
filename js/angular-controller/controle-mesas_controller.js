@@ -77,7 +77,7 @@ app.controller('ControleMesasController', function(
 		}, undefined);	
 	}
 
-	ng.changeTela = function(tela,changeValue){
+	ng.changeTela = function(tela,changeValue,event){
 		if(!empty(tela)){
 			$.each(ng.layout,function(i,x){
 				if(x) ng.telaAnterior = i ;
@@ -91,8 +91,14 @@ app.controller('ControleMesasController', function(
 
 			}
 
-			ng.layout[tela] = true ;
+			if((tela=='SelCliente') && (!empty(ng.configuracao.flg_controlar_comanda_cliente, true)) && (parseInt(ng.configuracao.flg_controlar_comanda_cliente,10) == 0)) {
+				ng.abrirComanda(ng.configuracao.id_cliente_movimentacao_caixa, event);
+			}
+
+			ng.layout[tela] = true;
+			
 			$('html,body').animate({scrollTop: 0});
+			
 			if(tela=='mesas')
 				ng.loadMesas();
 			if(tela=='SelCliente'){
@@ -176,12 +182,17 @@ app.controller('ControleMesasController', function(
 		aj.post(baseUrlApi()+'mesa',post)
 		.success(function(data, status, headers, config) {
 			var msg = {
-					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-					message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa})
-				}
+				type: 'table_change', 
+				from: ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+				message: JSON.stringify({
+					index_mesa: ng.indeMesaSelecionada, 
+					mesa: data.mesa
+				})
+			};
 			ng.sendMessageWebSocket(msg);
 			btn.button('reset');
-			ng.changeTela('detMesa');
+			// ng.changeTela('detMesa');
+			ng.abrirDetalhesComanda(data.id_venda);
 		})
 		.error(function(data, status, headers, config) {
 			console.log('Não foi possivel abrir a comanda');
@@ -325,9 +336,9 @@ app.controller('ControleMesasController', function(
 		if(!empty(ng.busca.produtos)){
 			var busca = ng.busca.produtos.replace(/\s/g, '%');
 			if(isNaN(Number(ng.busca.produtos)))
-				query_string += "&("+$.param({nome:{exp:"like '%"+busca+"%' OR codigo_barra like '%"+busca+"%'"}})+")";
+				query_string += "&("+$.param({nome:{exp:"LIKE '%"+busca+"%' OR pro.codigo_barra LIKE '%"+busca+"%' OR tcp.nome_cor LIKE '%"+busca+"%' OR tt.nome_tamanho LIKE '%"+busca+"%'"}})+")";
 			else
-				query_string += "&("+$.param({nome:{exp:"like '%"+busca+"%' OR codigo_barra like '%"+busca+"%' OR pro.id = "+busca+""}})+")";
+				query_string += "&("+$.param({nome:{exp:"LIKE '%"+busca+"%' OR pro.codigo_barra LIKE '%"+busca+"%' OR tcp.nome_cor LIKE '%"+busca+"%' OR tt.nome_tamanho LIKE '%"+busca+"%' OR pro.id = "+busca+""}})+")";
 		}
 
 		if(ng.getTipoBuscaProduto() == 'categoria'){

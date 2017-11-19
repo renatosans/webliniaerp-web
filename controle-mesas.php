@@ -343,12 +343,20 @@
 							<h3 class="panel-title">
 								{{ mesaSelecionada.mesa.dsc_mesa }}
 								<div class="pull-right">
-									<button ng-click="changeTela('mesas')" type="button" class="btn btn-xs btn-primary">
+									<button ng-click="changeTela('mesas', null, $event)" type="button" class="btn btn-xs btn-primary">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
 
-									<button ng-if="userLogged.flg_dispositivo==1" ng-click="changeTela('SelCliente')" type="button" class="btn btn-xs btn-info hidden-xs"><i class="fa fa-plus-circle"></i> Abrir Comanda</button>
+									<button type="button" class="btn btn-xs btn-info hidden-xs"
+										ng-if="userLogged.flg_dispositivo==1" 
+										ng-click="changeTela('SelCliente', null, $event)">
+										<i class="fa fa-plus-circle"></i> Abrir Comanda
+									</button>
 									
-									<button ng-if="userLogged.flg_dispositivo==1"  ng-click="changeTela('SelCliente')" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg"><i class="fa fa-plus-circle"></i> Abrir Comanda</button>
+									<button type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg"
+										ng-if="userLogged.flg_dispositivo==1" 
+										ng-click="changeTela('SelCliente', null, $event)">
+										<i class="fa fa-plus-circle"></i> Abrir Comanda
+									</button>
 								</div>
 							</h3>
 						</div>
@@ -406,12 +414,12 @@
 							<h3 class="panel-title clearfix">
 								Informe o Cliente
 								<div class="pull-right">
-									<button ng-if="!editComanda" ng-click="changeTela('detMesa')" type="button" class="btn btn-xs btn-primary">
+									<button ng-if="!editComanda" ng-click="changeTela('detMesa', null, $event)" type="button" class="btn btn-xs btn-primary">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
-									<button ng-if="editComanda" ng-click="changeTela('detComanda',{'editComanda':false});" type="button" class="btn btn-xs btn-primary">
+									<button ng-if="editComanda" ng-click="changeTela('detComanda',{'editComanda':false}, $event);" type="button" class="btn btn-xs btn-primary">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
 
-									<button ng-click="changeTela('cadCliente')" type="button" class="btn btn-xs btn-success hidden-xs">
+									<button ng-click="changeTela('cadCliente', null, $event)" type="button" class="btn btn-xs btn-success hidden-xs">
 										<i class="fa fa-plus-circle"></i>
 										Cadastrar Novo
 									</button>
@@ -462,7 +470,7 @@
 						</div>
 
 						<div class="panel-footer clearfix hidden-sm hidden-md hidden-lg">
-							<button ng-click="changeTela('cadCliente')" type="button" class="btn btn-md btn-block btn-success">
+							<button ng-click="changeTela('cadCliente', null, $event)" type="button" class="btn btn-md btn-block btn-success">
 								<i class="fa fa-plus-circle"></i>
 								Cadastrar Novo
 							</button>
@@ -483,7 +491,7 @@
 						<div class="panel-heading">
 							<h3 class="panel-title clearfix">Cadastro de Cliente
 								<div class="pull-right">
-									<button  ng-click="changeTela('SelCliente')" type="button" class="btn btn-xs btn-primary">
+									<button  ng-click="changeTela('SelCliente', null, $event)" type="button" class="btn btn-xs btn-primary">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
 								</div>
 							</h3>
@@ -543,7 +551,7 @@
 							<h3 class="panel-title clearfix">
 								Comanda <small>#{{ comandaSelecionada.comanda.id }}</small>
 								<div class="pull-right">
-									<button ng-click="changeTela('detMesa')" type="button" class="btn btn-xs btn-primary">
+									<button ng-click="changeTela('detMesa', null, $event)" type="button" class="btn btn-xs btn-primary">
 										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
 										<span class="hidden-xs">Voltar</span>
 									</button>
@@ -551,7 +559,7 @@
 										<i class="fa fa-user"></i>
 										<span class="hidden-xs">Informar Cliente</span>
 									</button>
-									<button ng-if="userLogged.flg_dispositivo==1" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" ng-click="changeTela('escTipoProduto')">
+									<button ng-if="userLogged.flg_dispositivo==1" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" ng-click="changeTela('escTipoProduto', null, $event)">
 										<i class="fa fa-plus-circle"></i>
 										Add Produto
 									</button>
@@ -738,7 +746,7 @@
 							<fieldset>
 								<legend style="height: 30px;">
 									Incluir Produto
-									<button  ng-click="changeTela('detComanda')" type="button" class="btn btn-xs btn-primary pull-right">
+									<button  ng-click="changeTela('detComanda', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
 								</legend>
 
@@ -767,7 +775,7 @@
 						<fieldset>
 							<legend style="height: 30px;">
 								Pesquisa por {{ getTipoBuscaProduto() }} 
-								<button ng-click="changeTela('escTipoProduto')" type="button" class="btn btn-xs btn-primary pull-right">
+								<button ng-click="changeTela('escTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
 							</legend>
@@ -806,10 +814,10 @@
 						<fieldset>
 							<legend style="height: 30px;">
 								{{ ( getTipoBuscaProduto()==null && 'PRODUTOS' || ( getTipoBuscaProduto()=='categoria' && buscaTipoProduto.categoria.descricao_categoria || buscaTipoProduto.fabricante.nome_fabricante ) ) }}
-								<button ng-if="getTipoBuscaProduto() != null" ng-click="changeTela('selTipoProduto')" type="button" class="btn btn-xs btn-primary pull-right">
+								<button ng-if="getTipoBuscaProduto() != null" ng-click="changeTela('selTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
-								<button ng-if="getTipoBuscaProduto()==null" ng-click="changeTela('escTipoProduto')" type="button" class="btn btn-xs btn-primary pull-right">
+								<button ng-if="getTipoBuscaProduto()==null" ng-click="changeTela('escTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
 

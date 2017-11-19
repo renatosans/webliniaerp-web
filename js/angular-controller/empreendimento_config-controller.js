@@ -1308,6 +1308,14 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item);
 		}
+		if(ng.configuracoes.flg_controlar_comanda_cliente != undefined){
+			var item = {
+							nome 				:'flg_controlar_comanda_cliente',
+							valor 				:ng.configuracoes.flg_controlar_comanda_cliente , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
 
 		btn.button('loading');
 		

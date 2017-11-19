@@ -1367,7 +1367,7 @@
 									</div>
 								</div>
 								<div class="row">
-									<div class="col-sm-5">
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="" class="control-label">Fechar guia ao Finalizar uma comanda?</label>
 											<div class="form-group">
@@ -1384,7 +1384,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-5">
+									<div class="col-sm-4">
 										<div class="form-group">
 											<label for="" class="control-label">Imprimir Cupom Não-Fiscal antes de fechar guia?</label>
 											<div class="form-group">
@@ -1395,6 +1395,23 @@
 												</label>
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_imprimir_cnf_antes_de_fechar_guia" value="0" name="flg_imprimir_cnf_antes_de_fechar_guia"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Controlar comanda por cliente?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_controlar_comanda_cliente" value="1" name="flg_controlar_comanda_cliente"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_controlar_comanda_cliente" value="0" name="flg_controlar_comanda_cliente"   type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
 													<span>Não</span>
 												</label>
