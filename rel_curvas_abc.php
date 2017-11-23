@@ -207,12 +207,12 @@
 											<label class="label-radio inline">
 												<input ng-model="busca.flg_campo_ordenacao" value="qtd" name="flg_campo_ordenacao"  ng-change="aplicarFiltro()" type="radio" class="inline-radio">
 												<span class="custom-radio"></span>
-												<span>Qtd</span>
+												<span>Qtde.</span>
 											</label>
 											<label class="label-radio inline">
 												<input ng-model="busca.flg_campo_ordenacao" value="vlr" name="flg_campo_ordenacao" ng-change="aplicarFiltro()"  type="radio" class="inline-radio">
 												<span class="custom-radio"></span>
-												<span>Vlr</span>
+												<span>Valor</span>
 											</label>
 										</div>
 									</div>
@@ -232,56 +232,71 @@
 				</div>
 
 				<br>
-				<div class="col-md-6">
-					<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(data != null)">
-						<thead>
-							<tr>
-								<th class="text-left">Fabricante</th>
-								<th width="100" class="text-right" ng-if="busca.flg_campo_ordenacao == 'qtd'">Qtd. Vendida</th>
-								<th width="100" class="text-right" ng-if="busca.flg_campo_ordenacao == 'vlr'">Vlr. Vendido</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-if="data.length == 0">
-								<td class="text-center" colspan="6">
-									<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-								</td>
-							</tr>
-							<tr ng-repeat="item in data">
-								<td class="text-left">{{ item.nome_fabricante }}</td>
-								<td class="text-right" width="100" ng-if="busca.flg_campo_ordenacao == 'qtd'">{{ item.qtd_vendida }}</td>
-								<td class="text-right" width="100" ng-if="busca.flg_campo_ordenacao == 'vlr'">R$ {{ item.vlr_vendido | numberFormat : 2 : ',' : '.' }}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
 
-				<div class="col-md-6">
-					<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(data != null)">
-						<thead>
-							<tr>
-								<th width="100" class="text-center"></th>
-								<th width="100" class="text-center"></th>
-								<th width="100" class="text-center">Linhas</th>
-								<th width="100" class="text-center">Quantidade</th>
-								<th width="100" class="text-center">Percentual</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-if="faixas_curva_abc.length == 0">
-								<td class="text-center" colspan="6">
-									<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-								</td>
-							</tr>
-							<tr ng-repeat="item in faixas_curva_abc">
-								<td class="text-center">{{ item.label }}</td>
-								<td class="text-center">{{ item.valor }}%</td>
-								<td class="text-center">{{ item.qtd_linhas }}</td>
-								<td class="text-center">{{ item.vlr_soma }}</td>
-								<td class="text-center">{{ item.prc_faixa | numberFormat : 2 : ',' }} %</td>
-							</tr>
-						</tbody>
-					</table>
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-6">
+									<div class="row">
+										<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(data != null)">
+											<thead>
+												<tr>
+													<th width="100" class="text-center"></th>
+													<th width="100" class="text-center"></th>
+													<th width="100" class="text-center">Linhas</th>
+													<th width="100" class="text-center" ng-if="busca.flg_campo_ordenacao == 'qtd'">Quantidade</th>
+													<th width="100" class="text-center" ng-if="busca.flg_campo_ordenacao == 'vlr'">Valor</th>
+													<th width="100" class="text-center">Percentual</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-if="faixas_curva_abc.length == 0">
+													<td class="text-center" colspan="6">
+														<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+													</td>
+												</tr>
+												<tr ng-repeat="item in faixas_curva_abc" class="{{ item.color }}">
+													<td class="text-center">{{ item.label }}</td>
+													<td class="text-center">{{ item.valor }}%</td>
+													<td class="text-center">{{ item.qtd_linhas }}</td>
+													<td class="text-right" ng-if="busca.flg_campo_ordenacao == 'qtd'">{{ item.vlr_soma | numberFormat : 0 : ',' : '.' }}</td>
+													<td class="text-right" ng-if="busca.flg_campo_ordenacao == 'vlr'">R$ {{ item.vlr_soma | numberFormat : 2 : ',' : '.' }}</td>
+													<td class="text-center">{{ item.prc_faixa | numberFormat : 2 : ',' }} %</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="row">
+										<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(data != null)">
+											<thead>
+												<tr>
+													<th class="text-left">Fabricante</th>
+													<th width="100" class="text-right" ng-if="busca.flg_campo_ordenacao == 'qtd'">Qtde. Vendida</th>
+													<th width="100" class="text-right" ng-if="busca.flg_campo_ordenacao == 'vlr'">Valor Vendido</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-if="data.length == 0">
+													<td class="text-center" colspan="6">
+														<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+													</td>
+												</tr>
+												<tr ng-repeat="item in data" class="{{ item.color }}">
+													<td class="text-left">{{ item.nome_fabricante }}</td>
+													<td class="text-right" width="100" ng-if="busca.flg_campo_ordenacao == 'qtd'">{{ item.qtd_vendida | numberFormat : 0 : ',' : '.' }}</td>
+													<td class="text-right" width="100" ng-if="busca.flg_campo_ordenacao == 'vlr'">R$ {{ item.vlr_vendido | numberFormat : 2 : ',' : '.' }}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div id="container" style="width:100%; height:400px;"></div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
@@ -429,6 +444,10 @@
 
 	<!-- UnderscoreJS -->
 	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+
+	<!-- HighCharts -->
+	<script type="text/javascript" src="bower_components/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="bower_components/highcharts/modules/exporting.js"></script>
 
 	<!-- AngularJS -->
 	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  

@@ -75,7 +75,7 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 
 	ng.aplicarFiltro = function() {
 		if((ng.busca.arrFabricantes.length > 0) && (ng.busca.arrFabricantes.length < 3)){
-			alert("Você deve informar ao menos 3 fornecedores");
+			alert("Você deve informar ao menos 3 fabricantes");
 		}
 		else {
 			ng.getData(0,ng.itensPorPagina);
@@ -137,12 +137,17 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 				var index_faixa_c = _.findIndex(ng.faixas_curva_abc, {faixa: 'curva_c'});
 
 				ng.faixas_curva_abc[index_faixa_a].label = 'A';
+				ng.faixas_curva_abc[index_faixa_a].color = 'success';
+				
 				ng.faixas_curva_abc[index_faixa_b].label = 'B';
+				ng.faixas_curva_abc[index_faixa_b].color = 'warning';
+				
 				ng.faixas_curva_abc[index_faixa_c].label = 'C';
+				ng.faixas_curva_abc[index_faixa_c].color = 'danger';
 
-				ng.faixas_curva_abc[index_faixa_a].qtd_linhas = Math.ceil((ng.qtd_linhas * ng.faixas_curva_abc[index_faixa_a].valor) / 100);
+				ng.faixas_curva_abc[index_faixa_c].qtd_linhas = Math.ceil((ng.qtd_linhas * ng.faixas_curva_abc[index_faixa_c].valor) / 100);
 				ng.faixas_curva_abc[index_faixa_b].qtd_linhas = Math.ceil((ng.qtd_linhas * ng.faixas_curva_abc[index_faixa_b].valor) / 100);
-				ng.faixas_curva_abc[index_faixa_c].qtd_linhas = Math.floor((ng.qtd_linhas * ng.faixas_curva_abc[index_faixa_c].valor) / 100);
+				ng.faixas_curva_abc[index_faixa_a].qtd_linhas = ng.qtd_linhas - (ng.faixas_curva_abc[index_faixa_c].qtd_linhas + ng.faixas_curva_abc[index_faixa_b].qtd_linhas	);
 
 				var idx_inicio_faixa_a = 0;
 					idx_fim_faixa_a = ((idx_inicio_faixa_a + ng.faixas_curva_abc[index_faixa_a].qtd_linhas) - 1);
@@ -158,6 +163,8 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 					if(empty(ng.faixas_curva_abc[index_faixa_a].vlr_soma))
 						ng.faixas_curva_abc[index_faixa_a].vlr_soma = 0;
 
+					ng.data[i].color = 'success';
+
 					if(ng.busca.flg_campo_ordenacao == 'qtd'){
 						ng.faixas_curva_abc[index_faixa_a].vlr_soma += ng.data[i].qtd_vendida;
 					}
@@ -170,6 +177,8 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 					if(empty(ng.faixas_curva_abc[index_faixa_b].vlr_soma))
 						ng.faixas_curva_abc[index_faixa_b].vlr_soma = 0;
 
+					ng.data[i].color = 'warning';
+
 					if(ng.busca.flg_campo_ordenacao == 'qtd'){
 						ng.faixas_curva_abc[index_faixa_b].vlr_soma += ng.data[i].qtd_vendida;
 					}
@@ -181,6 +190,8 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 				for (var i=idx_inicio_faixa_c;i<=idx_fim_faixa_c;i++) {
 					if(empty(ng.faixas_curva_abc[index_faixa_c].vlr_soma))
 						ng.faixas_curva_abc[index_faixa_c].vlr_soma = 0;
+
+					ng.data[i].color = 'danger';
 
 					if(ng.busca.flg_campo_ordenacao == 'qtd'){
 						ng.faixas_curva_abc[index_faixa_c].vlr_soma += ng.data[i].qtd_vendida;
@@ -195,6 +206,79 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 				});
 
 				console.log(ng.faixas_curva_abc);
+
+				Highcharts.setOptions({
+					lang: {
+						decimalPoint: ',',
+						thousandsSep: '.'
+					}
+				});
+
+				var pointFormat = '';
+
+				if(ng.busca.flg_campo_ordenacao == 'qtd')
+					pointFormat = '<tr><td style="padding:0;text-align:right;"><b>{point.y:,.0f}</b></td></tr>';
+				else
+					pointFormat = '<tr><td style="padding:0;text-align:right;"><b>R$ {point.y:,.2f}</b></td></tr>';
+
+			 	var myChart = Highcharts.chart('container', {
+			 		colors: ['#A4D092', '#FFF18F', '#E27373'],
+				 	chart: {
+				 		type: 'column'
+				 	},
+				 	title: {
+				 		text: 'Curva ABC'
+				 	},
+				 	xAxis: {
+				 		categories: [((ng.busca.flg_campo_ordenacao == 'qtd') ? 'Quantidade' : 'Valor')]
+				 	},
+				 	yAxis: {
+				 		title: {
+				 			text: (ng.busca.flg_campo_ordenacao == 'qtd') ? 'Qtde.' : 'R$'
+				 		}
+				 	},
+				 	series: [
+				 		{
+				 			name: 'A',
+				 			data: [
+				 				ng.faixas_curva_abc[index_faixa_a].vlr_soma
+				 			],
+				 			tooltip: {
+					 			headerFormat: '<span style="font-size:10px">{point.key}</span><br/><table>',
+					 			pointFormat: pointFormat,
+					 			footerFormat: '</table>',
+					 			shared: true,
+					 			useHTML: true
+					 		}
+				 		},
+				 		{
+				 			name: 'B',
+				 			data: [
+				 				ng.faixas_curva_abc[index_faixa_b].vlr_soma
+				 			],
+				 			tooltip: {
+					 			headerFormat: '<span style="font-size:10px">{point.key}</span><br/><table>',
+					 			pointFormat: pointFormat,
+					 			footerFormat: '</table>',
+					 			shared: true,
+					 			useHTML: true
+					 		}
+				 		},
+				 		{
+				 			name: 'C',
+				 			data: [
+				 				ng.faixas_curva_abc[index_faixa_c].vlr_soma
+				 			],
+				 			tooltip: {
+					 			headerFormat: '<span style="font-size:10px">{point.key}</span><br/><table>',
+					 			pointFormat: pointFormat,
+					 			footerFormat: '</table>',
+					 			shared: true,
+					 			useHTML: true
+					 		}
+				 		}
+				 	]
+				});
 			})
 			.error(function(data, status, headers, config) {
 				$("#modal-aguarde").modal('hide');
