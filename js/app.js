@@ -745,6 +745,16 @@ app.directive('keyPressFalseTagsInputCategorias', function () {
     };
 });
 
+app.directive('keyPressFalseTagsInputFabricantes', function () {
+    return function (scope, element, attrs) {
+        element.bind("keypress", function (event) {
+          scope.modalFabricantes(0,10);
+		  return false;
+		    
+        });
+    };
+});
+
 app.directive('bsTooltip', function ($timeout) {
     return {
         restrict: 'A',
