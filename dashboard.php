@@ -290,7 +290,7 @@
 				</div>
 
 				<div class="row">
-					<div class="col-lg-3 col-sm-6 col-md-6">
+					<div class="col-lg-3 col-sm-6 col-md-6" ng-if="userLogged.id_empreendimento != 75">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamento | numberFormat:2:',':'.' }}</span></h2>
 							<h6>Total Faturamento</h6>
@@ -302,6 +302,23 @@
 								<i class="fa fa-refresh"></i>
 							</div>-->
 							<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamento == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div><!-- /.col -->
+
+					<div class="col-lg-3 col-sm-6 col-md-6" ng-if="userLogged.id_empreendimento == 75">
+						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamentoClinicas | numberFormat:2:',':'.' }}</span></h2>
+							<h6>Total Faturamento</h6>
+							(no período)
+							<div class="stat-icon">
+								<i class="fa fa-shopping-cart fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>-->
+							<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamentoClinicas == 'loading'}">
 								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
 							</div> 
 						</div>

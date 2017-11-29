@@ -14,6 +14,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			vlrCustoTotalEstoque 				: 0,
 			vlrTicketMedio						: 0,
 			med_itens_venda						: 0,
+			vlrTotalFaturamentoClinicas 		: 0,
 			vlrTotalPagamentosConfirmados 		: 0,
 			vlrTotalPagamentosNaoConfirmados 	: {
 				cheque 	: 0,
@@ -214,6 +215,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.totalCustoProdutosVendidos(date_first, date_last);
 			ng.totalTaxaMaquinetas(date_first, date_last);
 			ng.totalPagamentosFornecedores(date_first, date_last);
+			ng.loadTotalFaturamentoClinicas(date_first, date_last);
 			ng.loadVendas(date_first, date_last);
 
 			ng.loadTotalPagamentosConfirmados(date_first, date_last);
@@ -289,6 +291,18 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 					ng.total.vlr_pagamento_fornecedor = 0 ;
 				});
 		}
+
+		ng.loadTotalFaturamentoClinicas = function(first_date, last_date) {
+			ng.total.vlrTotalFaturamentoClinicas = 'loading';
+			aj.get(baseUrlApi()+"dashboard/total/pagamentos/confirmados/"+first_date+'/'+last_date+'?tv->id_empreendimento='+ng.userLogged.id_empreendimento)
+				.success(function(data, status, headers, config) {
+					ng.total.vlrTotalFaturamentoClinicas = data.total_faturamento_clinicas;
+					//$('#clientsOkPaymentsCount').text(ng.total.vlrTotalFaturamentoClinicas);
+				})
+				.error(function(data, status, headers, config) {
+					ng.total.vlrTotalFaturamentoClinicas = 0 ;
+				});
+		}		
 
 		ng.loadTotalPagamentosConfirmados = function(first_date, last_date) {
 			ng.total.vlrTotalPagamentosConfirmados = 'loading';
