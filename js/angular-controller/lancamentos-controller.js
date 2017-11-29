@@ -121,13 +121,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 	var nParcelasAnt = 1 ;
 
-	ng.reset = function() {
-		ng.empreendimento = {};
-		ng.editing = false;
-		$($(".has-error").find(".form-control")).tooltip('destroy');
-		$(".has-error").removeClass("has-error");
-	}
-
 	ng.limparBusca = function(){
 		$("#dtaInicial").val('');
 		$("#dtaFinal").val('');
@@ -274,14 +267,24 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	}
 
 	ng.reset = function() {
-		ng.pagamento = {} ;
-		ng.cheques	 =[{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
+		// ng.refresh();
+		// ng.showModalPrint();
+		ng.editing 		= false;
+		ng.recebidos 	= [];
+		ng.cliente 		= {};
+		ng.fornecedor 	= {};
+		ng.pg_cheques 	= [];
+		ng.pg_boletos 	= [];
+		ng.total_pg 	= 0;
+		ng.pagamento 	= null;
+		ng.cheques	 	= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
+		
 		ng.loadPlanoContas();
+		
 		$("#pagamentoData").val('');
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$($(".has-error").find("button")).tooltip('destroy');
 		$(".has-error").removeClass("has-error");
-		ng.editing = false;
 	}
 
 	ng.loadPlanoContas = function() {
@@ -1282,15 +1285,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				ng.modalProgressoPagamento('hide');
 				ng.vlr_saldo_devedor = data.vlr_saldo_devedor ;
 				ng.id_controle_pagamento = data.id_controle_pagamento ;
-				// ng.refresh();
-				// ng.showModalPrint();
-				ng.recebidos = [];
-				ng.cliente = {};
-				ng.fornecedor = {};
-				ng.pg_cheques = [];
-				ng.pg_boletos = [];
-				ng.total_pg = 0;
-				ng.pagamento = null;
+				ng.reset();
 				ng.load(0,20);
 			})
 			.error(function(data, status, headers, config) {

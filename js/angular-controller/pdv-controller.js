@@ -3374,6 +3374,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		if(!empty(new_cliente.dta_nacimento))
 			new_cliente.dta_nacimento = moment(new_cliente.dta_nacimento,'DD-MM-YYYY').format('YYYY-MM-DD');
 		new_cliente.id_vendedor_responsavel = ng.userLogged.id;
+
+		if(!(isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete))){
+			$("#input_auto_complete_cliente").parents('.form-group').addClass("has-error");
+			var formControl = $("#input_auto_complete_cliente").parent()
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "top")
+				.attr("title", "CPF/CNPJ inválido")
+				.attr("data-original-title", "CPF/CNPJ inválido");
+			formControl.tooltip('show');
+			$('html,body').animate({scrollTop: 0},'slow');
+			return false;
+		}
+
 		aj.post(baseUrlApi()+"cliente/cadastro/rapido",new_cliente)
 			.success(function(data, status, headers, config) {
 				ng.addCliente(data.dados);
