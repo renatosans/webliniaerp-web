@@ -168,7 +168,7 @@
 									<div class="form-group">
 										<label class="control-label">Inicial</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
+											<input readonly="readonly" ng-model="busca.dta_inicial" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
 											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
@@ -178,7 +178,7 @@
 									<div class="form-group">
 										<label class="control-label">Final</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
+											<input readonly="readonly" ng-model="busca.dta_final" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
 											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
@@ -188,7 +188,7 @@
 									<div class="form-group">
 										<label class="control-label">Vendedor</label>
 										<div class="input-group">
-											<input ng-click="selCliente()" type="text" class="form-control" ng-model="vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
+											<input ng-click="selCliente()" type="text" class="form-control" ng-value="busca.vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
 											<span class="input-group-btn">
 												<button ng-click="selCliente()" ng-click="selCliente(0,10)" type="button" class="btn"><i class="fa fa-users"></i></button>
 											</span>
@@ -200,7 +200,7 @@
 									<div class="form-group">
 										<label class="control-label">Produto</label>
 										<div class="input-group">
-											<input ng-click="showProdutos(0,10)" type="text" class="form-control" ng-model="produto.nome_produto" readonly="readonly" style="cursor: pointer;"></input>
+											<input ng-click="showProdutos(0,10)" type="text" class="form-control" ng-value="busca.produto.nome_produto" readonly="readonly" style="cursor: pointer;"></input>
 											<span class="input-group-btn">
 												<button ng-enter="showProdutos(0,10)" ng-click="showProdutos(0,10)" type="button" class="btn"><i class="fa fa-archive"></i></button>
 											</span>
@@ -208,7 +208,37 @@
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-sm-6" style="margin-bottom:8px;">
+									<div class="control-label text-center" style="font-weight: 700;background: #D6D5D5;">Faixa de desconto</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-2 valor_inicio" ng-show="busca.op_valor == 'between'" >
+									<input thousands-formatter ng-model="busca.valor_inicio" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group">
+										<select ng-model="busca.op_valor" ng-change="limparErrorValor()" class="form-control input-sm">
+											<option value=""></option>
+											<option value="between">Entre</option>
+											<option value=">">Maior</option>
+											<option value=">=">Maior igual</option>
+											<option value="<">Menor</option>
+											<option value="<=">Menor igual</option>
+											<option value="=">Igual</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-2 valor_fim">
+									<input thousands-formatter ng-model="busca.valor_fim" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+								</div>
+							</div>
 						</form>
+
+						<pre>{{ busca | json }}</pre>
 					</div>
 
 					<div class="panel-footer clearfix">
@@ -263,6 +293,17 @@
 							<td class="text-center">R$ {{item.vlr_subtotal_item | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td class="text-right text-bold" colspan="7">Totais</td>
+							<td class="text-center text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ vlr_real_item_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td></td>
+							<td class="text-right text-bold">R$ {{ vlr_venda_item_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td></td>
+							<td class="text-center text-bold">R$ {{ vlr_subtotal_item_total | numberFormat: 2 : ',' : '.'}}</td>
+						</tr>
+					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
@@ -302,7 +343,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca_modal.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
@@ -365,7 +406,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-keyup="loadProdutos(0,10)"  ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca_modal.produtos" ng-keyup="loadProdutos(0,10)"  ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
 
 						            <div class="input-group-btn">
 						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-search"></i> Buscar</button>
@@ -495,7 +536,10 @@
 			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
 
-			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
+			$('.datepicker').on('changeDate', function(ev){
+				$(this).datepicker('hide');
+				$(this).trigger('change');
+			});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});
 	</script>
