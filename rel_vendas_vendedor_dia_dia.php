@@ -264,8 +264,8 @@
 							<th width="100" class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ Custo</th>
 							<th width="100" class="text-center">R$ Real</th>
 							<th width="100" class="text-center">Desc. %</th>
-							<th width="100" class="text-center">Vlr. c/ Desc.</th>
 							<th width="100" class="text-center">Diferença</th>
+							<th width="100" class="text-center">Vlr. c/ Desc.</th>
 							<th width="100" class="text-center">Qtd.</th>
 							<th width="100" class="text-center">R$ Subtotal</th>
 						</tr>
@@ -287,8 +287,8 @@
 							<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{item.vlr_custo | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.vlr_real_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">{{item.num_percentual_desconto | numberFormat:2:',':'.'}} %</td>
-							<td class="text-right">R$ {{item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.vlr_real_item - item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
+							<td class="text-right">R$ {{item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-center">{{ item.qtd }}</td>
 							<td class="text-center">R$ {{item.vlr_subtotal_item | numberFormat:2:',':'.'}}</td>
 						</tr>
@@ -299,8 +299,8 @@
 							<td class="text-center text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold">R$ {{ vlr_real_item_total | numberFormat: 2 : ',' : '.'}}</td>
 							<td></td>
-							<td class="text-right text-bold">R$ {{ vlr_venda_item_total | numberFormat: 2 : ',' : '.'}}</td>
 							<td></td>
+							<td class="text-right text-bold">R$ {{ vlr_venda_item_total | numberFormat: 2 : ',' : '.'}}</td>
 							<td></td>
 							<td class="text-center text-bold">R$ {{ vlr_subtotal_item_total | numberFormat: 2 : ',' : '.'}}</td>
 						</tr>
