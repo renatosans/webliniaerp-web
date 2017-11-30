@@ -237,8 +237,6 @@
 								</div>
 							</div>
 						</form>
-
-						<pre>{{ busca | json }}</pre>
 					</div>
 
 					<div class="panel-footer clearfix">
