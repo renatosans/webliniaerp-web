@@ -1,4 +1,4 @@
-app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService,PrestaShop, EmpreendimentoService){
+app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService,PrestaShop, EmpreendimentoService){
 
 	var ng = $scope
 		aj = $http;
@@ -6,6 +6,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.venda 		= {};
 	ng.vendas 		= null;
 	ng.paginacao 	= {vendas:null}
