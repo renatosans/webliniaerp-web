@@ -108,7 +108,7 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 			}else
 				queryString +="&" + $.param({num_percentual_desconto:{exp:"between "+ng.busca.valor_inicio+" AND "+ng.busca.valor_fim+""}}) ;
 		}else if(ng.busca.op_valor == "=")
-			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"CAST(num_percentual_desconto AS CHAR) ='"+ng.busca.valor_fim+"'" }}) ;
+			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"CAST(num_percentual_desconto AS CHAR) ="+ng.busca.valor_fim+"" }}) ;
 		else if(ng.busca.op_valor == "<")
 			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"num_percentual_desconto  <'"+ng.busca.valor_fim+"'" }})  ;
 		else if(ng.busca.op_valor == ">")
