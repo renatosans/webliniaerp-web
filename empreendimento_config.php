@@ -1407,7 +1407,7 @@
 							<div class="tab-pane fade" id="mesas">
 								<div class="alert alert-config-mesas" style="display:none"></div>
 								<div class="row">
-									<div class="col-sm-5">
+									<div class="col-sm-4">
 										<div class="form-group">
 											<label class="control-label">Modelo de Impressora</label>
 											<select chosen
@@ -1427,6 +1427,23 @@
 										<div class="form-group">
 											<label class="control-label">ID Produto Taxa Serviço</label>
 											<input ng-model="configuracoes.id_produto_taxa_servico" name="id_produto_taxa_servico" class="form-control input-sm">
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Modo de Controle de Mesa:</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_modo_controle_mesas" value="mesas_comandas" name="flg_modo_controle_mesas"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Mesas/Comandas</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_modo_controle_mesas" value="comandas" name="flg_modo_controle_mesas"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Comandas</span>
+												</label>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -1465,7 +1482,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-3">
+									<div class="col-sm-2">
 										<div class="form-group">
 											<label for="" class="control-label">Controlar comanda por cliente?</label>
 											<div class="form-group">
