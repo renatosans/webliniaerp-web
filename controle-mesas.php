@@ -369,8 +369,8 @@
 						</div>
 
 						<div class="panel-body">
-							<div class="row">
-								<div class="col-xs-9 col-sm-4">
+							<div class="row" ng-if="configuracao.flg_modo_controle_mesas == 'comandas'">
+								<div class="col-xs-12 col-sm-4">
 									<div class="form-group">
 										<label class="control-label">Localizar comanda</label>
 										<div class="contorls">
@@ -394,10 +394,10 @@
 							<table class="table table-bordered table-hover mesa">
 								<caption class="text-left text-bold mesa-caption">Comandas abertas</caption>
 								<thead ng-show="mesaSelecionada.comandas.length > 0">
-									<th width="100">Nº Comanda</th>
-									<th>Cliente</th>
-									<th class="text-center">Itens</th>
-									<th class="text-center">Subtotal</th>
+									<th width="70" class="text-middle text-center">Nº Comanda</th>
+									<th class="text-middle">Cliente</th>
+									<th class="text-middle text-center">Itens</th>
+									<th class="text-middle text-center">Subtotal</th>
 								</thead>
 								<thead ng-show="mesaSelecionada.comandas.length == 0">
 									<th colspan="3">No momento não há nenhuma comanda aberta</th>
@@ -673,12 +673,13 @@
 								<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
 									<div class="pull-right">
 										<button type="button" class="btn btn-sm btn-default"
+											ng-if="configuracao.flg_imprime_comanda_eletronica == 1"
 											ng-click="imprimirComandaEletronica(comandaSelecionada.comanda)">
 											<i class="fa fa-print"></i>
 											Imprimir Comanda Eletrônica
 										</button>
 										<button type="button" class="btn btn-sm btn-info"
-											ng-if="configuracao.flg_modo_controle_mesas == 'mesas_comandas'"
+											ng-if="configuracao.flg_modo_controle_mesas != 'comandas'"
 											ng-click="openModalMesasTrocar(comandaSelecionada.comanda)">
 											<i class="fa fa-exchange"></i>
 											Trocar de Mesa

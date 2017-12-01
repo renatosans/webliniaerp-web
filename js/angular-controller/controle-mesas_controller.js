@@ -59,7 +59,10 @@ app.controller('ControleMesasController', function(
 
 	ng.openQRCodeCapture = function(){
 		$('#modalCameraQRCode').modal('show');
-		let scanner = new Instascan.Scanner({ video: document.getElementById('qrcode-preview') });
+		let scanner = new Instascan.Scanner({ 
+			video: document.getElementById('qrcode-preview'),
+			mirror: false
+		});
 			
 		scanner.addListener('scan', function (content) {
 			scanner.stop();
@@ -69,7 +72,10 @@ app.controller('ControleMesasController', function(
 
 		Instascan.Camera.getCameras().then(function (cameras) {
 			if (cameras.length > 0) {
-				scanner.start(cameras[0]);
+				if(cameras.length > 1)
+					scanner.start(cameras[1]);
+				else
+					scanner.start(cameras[0]);
 			} else {
 				alert('No cameras found.');
 			}
@@ -900,7 +906,12 @@ app.controller('ControleMesasController', function(
 	}
 
 	ng.newConnWebSocket = function(){
-		ng.conn = new WebSocket(ng.configuracao.patch_socket_sat);
+		var patch_socket_sat = ng.configuracao.patch_socket_sat;
+
+		if(location.protocol == "https:")
+			patch_socket_sat = patch_socket_sat.replace('ws', 'wss');
+
+		ng.conn = new WebSocket(patch_socket_sat);
 		ng.conn.onopen = function(e) {
 			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - WebSocket conectado.');
 		};
