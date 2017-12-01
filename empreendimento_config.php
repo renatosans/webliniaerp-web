@@ -1071,7 +1071,25 @@
 												</div>
 											</div>
 
-											<div class="col-sm-2 col-sm-offset-2">
+											<div class="col-sm-2" ng-if="userLogged.id == 498 || userLogged.id == 222">
+												<div class="form-group">
+													<label for="" class="control-label">Pagamento Pendente?</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_pagamento_pendente" value="1" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Sim</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_pagamento_pendente" value="0" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Não</span>
+														</label>
+													</div>
+												</div>
+											</div>
+
+											<div class="col-sm-2">
 												<div class="form-group">
 													<label class="control-label">Validade Certificado Digital</label> 
 													<input class="form-control input-sm" maxlength="10" ng-model="configuracoes.dta_validade_certificado_digital">

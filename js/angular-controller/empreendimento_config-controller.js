@@ -1222,6 +1222,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_pagamento_pendente != undefined){
+			var item = {
+							nome 				:'flg_pagamento_pendente',
+							valor 				:ng.configuracoes.flg_pagamento_pendente , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		if(empty(ng.lista_serie_documento_fiscal)){
 			ng.lista_serie_documento_fiscal = [] ;
