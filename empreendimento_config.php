@@ -28,6 +28,9 @@
 	<!-- Tags Input -->
 	<link href="css/ng-tags-input.min.css" rel="stylesheet"/>
 	<link href="css/ng-tags-input.bootstrap.min.css" rel="stylesheet"/>
+
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
 	
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -511,22 +514,22 @@
 											</div>
 										</div>
 											<div class="col-sm-3">
-											<div class="form-group">
-												<label for="" class="control-label">Questionar manutenção dos preços ao <br> concluir orçamentos?</label>
 												<div class="form-group">
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="1" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="0" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
+													<label for="" class="control-label">Questionar manutenção dos preços ao <br> concluir orçamentos?</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="1" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Sim</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="0" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Não</span>
+														</label>
+													</div>
 												</div>
 											</div>
-										</div>
 										<div class="col-sm-3">
 											<div class="form-group">
 												<label for="" class="control-label">Baixa automática em pagamento de <br> cheque e cartão de crédito?</label>
@@ -1068,7 +1071,25 @@
 												</div>
 											</div>
 
-											<div class="col-sm-2 col-sm-offset-2">
+											<div class="col-sm-2" ng-if="userLogged.id == 498 || userLogged.id == 222">
+												<div class="form-group">
+													<label for="" class="control-label">Pagamento Pendente?</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_pagamento_pendente" value="1" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Sim</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_pagamento_pendente" value="0" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Não</span>
+														</label>
+													</div>
+												</div>
+											</div>
+
+											<div class="col-sm-2">
 												<div class="form-group">
 													<label class="control-label">Validade Certificado Digital</label> 
 													<input class="form-control input-sm" maxlength="10" ng-model="configuracoes.dta_validade_certificado_digital">
@@ -1450,23 +1471,6 @@
 								<div class="row">
 									<div class="col-sm-3">
 										<div class="form-group">
-											<label for="" class="control-label">Fechar guia ao Finalizar uma comanda?</label>
-											<div class="form-group">
-												<label class="label-radio inline">
-													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="1" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span>Sim</span>
-												</label>
-												<label class="label-radio inline">
-													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="0" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span>Não</span>
-												</label>
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="form-group">
 											<label for="" class="control-label">Imprimir Cupom Não-Fiscal antes de fechar guia?</label>
 											<div class="form-group">
 												<label class="label-radio inline">
@@ -1482,10 +1486,29 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-2">
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Fechar guia ao Finalizar uma comanda?</label>
+											<div class="form-group">
+											<br>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="1" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="0" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="" class="control-label">Controlar comanda por cliente?</label>
 											<div class="form-group">
+												<br>
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_controlar_comanda_cliente" value="1" name="flg_controlar_comanda_cliente"   type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
@@ -1493,6 +1516,24 @@
 												</label>
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_controlar_comanda_cliente" value="0" name="flg_controlar_comanda_cliente"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Imprime Comanda Eletrônica?</label>
+											<div class="form-group">
+												<br>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_imprime_comanda_eletronica" value="1" name="flg_imprime_comanda_eletronica"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_imprime_comanda_eletronica" value="0" name="flg_imprime_comanda_eletronica"   type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
 													<span>Não</span>
 												</label>
@@ -2419,6 +2460,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
