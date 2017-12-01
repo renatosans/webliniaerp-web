@@ -55,6 +55,7 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
+		 ng.busca = {};
 		 ng.vendedor = null;
 		 ng.produto = null;
 		 ng.vendas = null;
