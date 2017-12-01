@@ -38,6 +38,8 @@
 	<!-- Endless -->
 	<link href="css/endless.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
+	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
 
 	<link href="css/fileinput/fileinput.css" media="all" rel="stylesheet" type="text/css" />
 
@@ -153,7 +155,6 @@
 				<div class="page-title">
 					<h3 class="no-margin"><i class="fa fa-dashboard"></i> Dashboard</h3>
 					<span>Bem Vindo de volta Sr(a). {{ userLogged.nme_usuario }}</span>
-					<span><?php echo ini_get('session.cookie_lifetime'); ?></span>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 
@@ -176,7 +177,7 @@
 					<span class="shortcut-icon">
 						<i class="fa fa-table"></i>
 					</span>
-					<span class="text">Posições</span>
+					<span class="text">Mesas</span>
 				</a>
 				<a href="ordem-servico.php" class="shortcut-link">
 					<span class="shortcut-icon">
@@ -908,6 +909,9 @@
 
 	 <script src="js/fileinput/fileinput.js" type="text/javascript"></script>
      <script src="js/fileinput/locales/pt-BR.js" type="text/javascript"></script>
+
+     <script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+     <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
      <!-- Moment -->
   	<script src="js/moment/moment.min.js"></script>

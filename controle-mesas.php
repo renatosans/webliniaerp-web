@@ -292,21 +292,21 @@
 				<ul class="breadcrumb">
 					<li><i class="fa fa-home"></i> <a href="dashboard.php">Home</a></li>
 					<li class="active" ng-click="showAvaliableKitchens()">
-						<i class="fa fa-table"></i> Controle de Posições
+						<i class="fa fa-table"></i> Controle de Mesas
 					</li>
 				</ul>
 			</div><!-- breadcrumb -->
 
 			<div class="main-header clearfix hidden-xs">
 				<div class="page-title">
-					<h3 class="no-margin"><i class="fa fa-table"></i> Controle de Posições</h3>
+					<h3 class="no-margin"><i class="fa fa-table"></i> Controle de Mesas</h3>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 
 			<div class="mesa-container">
 				<div class="alert alert-sistema" style="display:none"></div>
-
-				<div class="panel panel-default"> <!-- SE ESTIVER NA VISUALIZAÇÃO DA MESA OU COMANDA TROCAR POR 'panel-warning' --> 
+				
+				<div class="panel panel-primary"> <!-- SE ESTIVER NA VISUALIZAÇÃO DA MESA OU COMANDA TROCAR POR 'panel-warning' --> 
 					<!-- INICIO - EXIBIR APENAS NA VISUALIZAÇÃO DE TODAS AS MESAS -->
 					<div class="panel-body" ng-show="layout.mesas">
 						<div class="row">
@@ -339,7 +339,7 @@
 
 					<!-- INICIO - EXIBIR APENAS QUANDO ESTIVER VISUALIZANDO A MESA SELECIONADA -->
 					<div ng-show="layout.detMesa">
-						<div class="panel-heading ">
+						<div class="panel-heading">
 							<h3 class="panel-title">
 								{{ mesaSelecionada.mesa.dsc_mesa }}
 								<div class="pull-right">
@@ -361,27 +361,42 @@
 							</h3>
 						</div>
 
-						<div class="panel-body ">
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-lg-3">
+									<div class="form-group">
+										<label class="control-label">Pesquisa de Comanda</label>
+										<input class="form-control" type="text" 
+											placeholder="comece a digitar..." 
+											ng-model="busca.numero_comanda">
+									</div>
+								</div>
+							</div>
+
 							<table class="table table-bordered table-hover mesa">
-								<caption class="text-left text-bold mesa-caption">Comandas da Mesa</caption>
+								<caption class="text-left text-bold mesa-caption">Comandas abertas</caption>
 								<thead ng-show="mesaSelecionada.comandas.length > 0">
+									<th width="100">Nº Comanda</th>
 									<th>Cliente</th>
 									<th class="text-center">Itens</th>
 									<th class="text-center">Subtotal</th>
 								</thead>
 								<thead ng-show="mesaSelecionada.comandas.length == 0">
-									<th colspan="3">Não existe nenhuma comanda aberta para esta mesa</th>
+									<th colspan="3">No momento não há nenhuma comanda aberta</th>
 								</thead>
 								<thead ng-show="mesaSelecionada.comandas == null">
-									<th colspan="3" class="text-center"><i class='fa fa-refresh fa-spin'></i> Carregando comandas</th>
+									<th colspan="3"><i class='fa fa-refresh fa-spin'></i> Carregando comandas...</th>
 								</thead>
 								<tbody>
-									<tr ng-repeat="comanda in mesaSelecionada.comandas" style="cursor:pointer" ng-click="abrirDetalhesComanda(comanda.id_comanda)">
+									<tr style="cursor: pointer;"
+										ng-click="abrirDetalhesComanda(comanda.id_comanda)"
+										ng-repeat="comanda in mesaSelecionada.comandas | filter : busca.numero_comanda">
+										<td class="text-center">#{{ comanda.id_comanda }}</td>
 										<td ng-if="comanda.id_cliente != configuracao.id_cliente_movimentacao_caixa" >{{ comanda.nome_cliente }}</td>
 										<td ng-if="comanda.id_cliente == configuracao.id_cliente_movimentacao_caixa" ><b>(Cliente não informado)</b></td>
 
 										<td class="text-center">{{ comanda.qtd_total }}</td>
-										<td class="text-right">R$ {{ comanda.valor_total | numberFormat:2:',':'.' }}</td>
+										<td class="text-right">R$ {{ comanda.valor_total | numberFormat : 2 : ',' : '.' }}</td>
 									</tr>
 								</tbody>
 							</table>

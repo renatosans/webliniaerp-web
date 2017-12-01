@@ -37,6 +37,7 @@ app.controller('ControleMesasController', function(
 	var TimeWaitingResponseTestConection = 10000;
 	var timeOutSendTestConection = null ;
 	var timeOutWaitingResponseTestConection = null ;
+	ng.baseUrl = baseUrl;
 
 	$('#sizeToggle').trigger("click");
 
@@ -113,10 +114,6 @@ app.controller('ControleMesasController', function(
 		}
 	}
 
-	ng.baseUrl = function(){
-		return baseUrl();
-	}
-
 	ng.loadMesas = function(offset,limit){
 		offset = offset ==  null ? 0 : offset ; 
 		limit  = limit  ==  null ? 10 : limit ;
@@ -124,6 +121,8 @@ app.controller('ControleMesasController', function(
 		aj.get(baseUrlApi()+"mesas/resumo/?tm->id_empreendimento="+ng.userLogged.id_empreendimento)
 		.success(function(data, status, headers, config) {
 			ng.mesas = data;
+			if(ng.mesas.length == 1)
+				ng.abrirMesa(ng.mesas[0], 0);
 		})
 		.error(function(data, status, headers, config) {
 			ng.mesas = [] ;

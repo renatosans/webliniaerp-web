@@ -851,6 +851,85 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 		}
 	}
 
+	var mojsShow = function (promise) {
+		var n = this
+		var Timeline = new mojs.Timeline()
+		var body = new mojs.Html({
+			el: n.barDom,
+			x: {500: 0, delay: 0, duration: 500, easing: 'elastic.out'},
+			isForce3d: true,
+			onComplete: function () {
+				promise(function (resolve) {
+					resolve()
+				})
+			}
+		})
+
+		var parent = new mojs.Shape({
+			parent: n.barDom,
+			width: 200,
+			height: n.barDom.getBoundingClientRect().height,
+			radius: 0,
+			x: {[150]: -150},
+			duration: 1.2 * 500,
+			isShowStart: true
+		})
+
+		n.barDom.style['overflow'] = 'visible'
+		parent.el.style['overflow'] = 'hidden'
+
+		var burst = new mojs.Burst({
+			parent: parent.el,
+			count: 10,
+			top: n.barDom.getBoundingClientRect().height + 75,
+			degree: 90,
+			radius: 75,
+			angle: {[-90]: 40},
+			children: {
+				fill: '#EBD761',
+				delay: 'stagger(500, -50)',
+				radius: 'rand(8, 25)',
+				direction: -1,
+				isSwirl: true
+			}
+		})
+
+		var fadeBurst = new mojs.Burst({
+			parent: parent.el,
+			count: 2,
+			degree: 0,
+			angle: 75,
+			radius: {0: 100},
+			top: '90%',
+			children: {
+				fill: '#EBD761',
+				pathScale: [.65, 1],
+				radius: 'rand(12, 15)',
+				direction: [-1, 1],
+				delay: .8 * 500,
+				isSwirl: true
+			}
+		})
+
+		Timeline.add(body, burst, fadeBurst, parent)
+		Timeline.play()
+	}
+
+	if((!empty(ng.config.flg_pagamento_pendente)) && (parseInt(ng.config.flg_pagamento_pendente, 10) === 1)) {
+		setTimeout(function() {
+			new Noty({
+				type: 'warning',
+				text: '<h4>Olá, tudo bom?</h4><br/>Não conseguimos identificar o pagamento da fatura esse mês, caso já tenha realizado você pode nos enviar o comprovante de pagamento pelo WhatsApp, <a target="_blank" href="https://api.whatsapp.com/send?phone=5511968697611&text=Ol%C3%A1%20gostaria%20de%20comunicar%20o%20pagamento%20da%20fatura%20do%20empreendimento%20'+ ng.userLogged.nome_empreendimento +'">clicando aqui</a> ou pelo e-mail financeiro@webliniaerp.com.br.<br/><br/>Ah, já ia me esquecendo: caso não identificarmos o pagamento dentro de 5 dias após o vencimento, o acesso ao sistema poderá ser bloqueado.',
+				progressBar: false,
+				timeout: false,
+				theme: 'mint',
+				animation: {
+					open: mojsShow
+				}
+			}).show();
+		}, 2000);
+	}
+
 	ng.loadCountOrcamentos = function(first_date,last_date) {
 		var vlrTotalVendasPeriodoComparativo = 0 ;
 		aj.get(baseUrlApi()+"count_orcamentos/dashboard?id_empreendimento="+ng.userLogged.id_empreendimento)
