@@ -28,6 +28,9 @@
 	<!-- Tags Input -->
 	<link href="css/ng-tags-input.min.css" rel="stylesheet"/>
 	<link href="css/ng-tags-input.bootstrap.min.css" rel="stylesheet"/>
+
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
 	
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -2419,6 +2422,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
