@@ -514,22 +514,22 @@
 											</div>
 										</div>
 											<div class="col-sm-3">
-											<div class="form-group">
-												<label for="" class="control-label">Questionar manutenção dos preços ao <br> concluir orçamentos?</label>
 												<div class="form-group">
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="1" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="0" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
+													<label for="" class="control-label">Questionar manutenção dos preços ao <br> concluir orçamentos?</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="1" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Sim</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="0" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Não</span>
+														</label>
+													</div>
 												</div>
 											</div>
-										</div>
 										<div class="col-sm-3">
 											<div class="form-group">
 												<label for="" class="control-label">Baixa automática em pagamento de <br> cheque e cartão de crédito?</label>
@@ -1471,23 +1471,6 @@
 								<div class="row">
 									<div class="col-sm-3">
 										<div class="form-group">
-											<label for="" class="control-label">Fechar guia ao Finalizar uma comanda?</label>
-											<div class="form-group">
-												<label class="label-radio inline">
-													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="1" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span>Sim</span>
-												</label>
-												<label class="label-radio inline">
-													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="0" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span>Não</span>
-												</label>
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="form-group">
 											<label for="" class="control-label">Imprimir Cupom Não-Fiscal antes de fechar guia?</label>
 											<div class="form-group">
 												<label class="label-radio inline">
@@ -1503,10 +1486,29 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-2">
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Fechar guia ao Finalizar uma comanda?</label>
+											<div class="form-group">
+											<br>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="1" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda" value="0" name="flg_fechar_guia_ao_finalizar_uma_comanda"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="" class="control-label">Controlar comanda por cliente?</label>
 											<div class="form-group">
+												<br>
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_controlar_comanda_cliente" value="1" name="flg_controlar_comanda_cliente"   type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
@@ -1514,6 +1516,24 @@
 												</label>
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_controlar_comanda_cliente" value="0" name="flg_controlar_comanda_cliente"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Imprime Comanda Eletrônica?</label>
+											<div class="form-group">
+												<br>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_imprime_comanda_eletronica" value="1" name="flg_imprime_comanda_eletronica"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_imprime_comanda_eletronica" value="0" name="flg_imprime_comanda_eletronica"   type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
 													<span>Não</span>
 												</label>

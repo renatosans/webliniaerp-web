@@ -1380,6 +1380,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_imprime_comanda_eletronica != undefined){
+			var item = {
+							nome 				:'flg_imprime_comanda_eletronica',
+							valor 				:ng.configuracoes.flg_imprime_comanda_eletronica , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		if(ng.configuracoes.flg_modo_controle_mesas != undefined){
 			var item = {
 							nome 				:'flg_modo_controle_mesas',
