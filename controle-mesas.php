@@ -343,17 +343,21 @@
 							<h3 class="panel-title">
 								{{ mesaSelecionada.mesa.dsc_mesa }}
 								<div class="pull-right">
-									<button ng-click="changeTela('mesas', null, $event)" type="button" class="btn btn-xs btn-primary">
-									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
+									<button type="button" class="btn btn-xs btn-primary"
+										ng-if="mesas.length > 1"
+										ng-click="changeTela('mesas', null, $event)">
+										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
+										Voltar
+									</button>
 
 									<button type="button" class="btn btn-xs btn-info hidden-xs"
-										ng-if="userLogged.flg_dispositivo==1" 
+										ng-if="userLogged.flg_dispositivo===1" 
 										ng-click="changeTela('SelCliente', null, $event)">
 										<i class="fa fa-plus-circle"></i> Abrir Comanda
 									</button>
 									
 									<button type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg"
-										ng-if="userLogged.flg_dispositivo==1" 
+										ng-if="userLogged.flg_dispositivo===1" 
 										ng-click="changeTela('SelCliente', null, $event)">
 										<i class="fa fa-plus-circle"></i> Abrir Comanda
 									</button>
@@ -363,12 +367,23 @@
 
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-lg-3">
+								<div class="col-xs-9 col-sm-4">
 									<div class="form-group">
-										<label class="control-label">Pesquisa de Comanda</label>
-										<input class="form-control" type="text" 
-											placeholder="comece a digitar..." 
-											ng-model="busca.numero_comanda">
+										<label class="control-label">Localizar comanda</label>
+										<div class="contorls">
+											<div class="input-group">
+												<input class="form-control" type="text" 
+													id="txt_numero_comanda"
+													placeholder="comece a digitar..." 
+													ng-model="busca.numero_comanda">
+												<span class="input-group-btn">
+													<button class="btn btn-block btn-default"
+														ng-click="openQRCodeCapture()">
+														&nbsp;&nbsp;<i class="fa fa-camera"></i>&nbsp;&nbsp;
+													</button>
+												</span>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -408,7 +423,7 @@
 									<table class="table">
 										<thead>
 											<tr>
-												<td>Total de Comandas</td>
+												<td>Comandas abertas</td>
 												<td class="text-right">{{ mesaSelecionada.comandas.length }}</td>
 											</tr>
 											<tr>
@@ -570,15 +585,15 @@
 										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
 										<span class="hidden-xs">Voltar</span>
 									</button>
-									<button ng-if="userLogged.flg_dispositivo==1"  type="button" class="btn btn-xs btn-default" ng-click="goChangeCliente()">
+									<button ng-if="userLogged.flg_dispositivo===1"  type="button" class="btn btn-xs btn-default" ng-click="goChangeCliente()">
 										<i class="fa fa-user"></i>
 										<span class="hidden-xs">Informar Cliente</span>
 									</button>
-									<button ng-if="userLogged.flg_dispositivo==1" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" ng-click="changeTela('escTipoProduto', null, $event)">
+									<button ng-if="userLogged.flg_dispositivo===1" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" ng-click="changeTela('escTipoProduto', null, $event)">
 										<i class="fa fa-plus-circle"></i>
 										Add Produto
 									</button>
-									<button ng-if="userLogged.flg_dispositivo==1" type="button" class="btn btn-xs btn-info hidden-xs" ng-click="openModalProdutos()">
+									<button ng-if="userLogged.flg_dispositivo===1" type="button" class="btn btn-xs btn-info hidden-xs" ng-click="openModalProdutos()">
 										<i class="fa fa-plus-circle"></i>
 										Adicionar Produto
 									</button>
@@ -600,8 +615,8 @@
 											<th class="text-middle text-center hidden-xs">Cor/Sabor</th>
 											<th class="text-middle text-center">Qtd.</th>
 											<th class="text-middle text-center">Valor</th>
-											<th class="text-middle text-right hidden-xs" width="100" ng-if="userLogged.flg_dispositivo==1">Ações</th>
-											<th class="text-middle text-right hidden-sm hidden-sm hidden-lg" ng-if="userLogged.flg_dispositivo==1" width="50">Ações</th>
+											<th class="text-middle text-right hidden-xs" width="100" ng-if="userLogged.flg_dispositivo===1">Ações</th>
+											<th class="text-middle text-right hidden-sm hidden-lg" ng-if="userLogged.flg_dispositivo===1" width="50">Ações</th>
 										</thead>
 										<tbody>
 											<tr ng-repeat="item in comandaSelecionada.comanda.itens">
@@ -611,7 +626,7 @@
 												<td class="text-middle text-center hidden-xs">{{ item.sabor }}</td>
 												<td class="text-middle text-center">{{ item.qtd_total }}</td>
 												<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:2 : ',' : '.' }}</td>
-												<td class="text-middle text-right" ng-if="userLogged.flg_dispositivo==1">
+												<td class="text-middle text-right" ng-if="userLogged.flg_dispositivo===1">
 													<button ng-click="selProduto(item,true)" type="button" class="btn btn-sm btn-warning">
 														<i class="fa fa-edit"></i>
 														<span class="hidden-xs">Alterar item</span>
@@ -654,19 +669,25 @@
 							<div class="row">
 								<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
 									<div class="pull-right">
-										<button type="button" class="btn btn-info"
+										<button type="button" class="btn btn-sm btn-default"
+											ng-click="imprimirComandaEletronica(comandaSelecionada.comanda)">
+											<i class="fa fa-print"></i>
+											Imprimir Comanda Eletrônica
+										</button>
+										<button type="button" class="btn btn-sm btn-info"
+											ng-if="configuracao.flg_modo_controle_mesas == 'mesas_comandas'"
 											ng-click="openModalMesasTrocar(comandaSelecionada.comanda)">
 											<i class="fa fa-exchange"></i>
 											Trocar de Mesa
 										</button>
-										<button type="button" class="btn btn-danger"
+										<button type="button" class="btn btn-sm btn-danger"
 											ng-click="cancelarComanda(comandaSelecionada.comanda.id)">
 											<i class="fa fa-times-circle"></i>
 											Cancelar Comanda
 										</button>
 										<a href="pdv.php?id_orcamento={{ comandaSelecionada.comanda.id }}" 
 											target="_blank" 
-											class="btn btn-success">
+											class="btn btn-sm btn-success">
 											<i class="fa fa-dollar"></i>
 											Fechar Comanda
 										</a>
@@ -1063,6 +1084,27 @@
 			</div>
 		</div>
 
+		<div class="modal fade" id="modalCameraQRCode" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Capturar QRCode de Comanda</h4>
+					</div>
+					<div class="modal-body">
+						<video id="qrcode-preview" style="width: 100%;"></video>
+					</div>
+					<div class="modal-footer clearfix">
+						<div class="pull-right">
+							<button class="btn btn-default btn-sm" data-dismiss="modal">
+								Fechar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- Footer
 		================================================== -->
 		<footer>
@@ -1171,6 +1213,8 @@
 
 	<!-- ease -->
 	<script src="js/jquery.ease.js"></script>
+	
+	<script src="js/instascan.min.js"></script>
 
 	<!-- accounting -->
 	<script type="text/javascript" src="js/accounting.min.js"></script>

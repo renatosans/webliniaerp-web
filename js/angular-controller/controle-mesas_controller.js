@@ -18,7 +18,7 @@ app.controller('ControleMesasController', function(
 		selTipoProduto:false,
 		escProduto:false
 	} ;
-	ng.userLogged.flg_dispositivo=1;
+	ng.userLogged.flg_dispositivo = 1;
 	ng.telaAnterior = null ;
 	ng.mesas = [];
 	ng.mesaSelecionada = {mesa:{},comandas:[]} ;
@@ -55,6 +55,42 @@ app.controller('ControleMesasController', function(
 	ng.showAvaliableKitchens = function(){
 		$('#avaliableKitchens').modal('show');
 		$('[data-toggle="tooltip"]').tooltip();
+	}
+
+	ng.openQRCodeCapture = function(){
+		$('#modalCameraQRCode').modal('show');
+		let scanner = new Instascan.Scanner({ video: document.getElementById('qrcode-preview') });
+			
+		scanner.addListener('scan', function (content) {
+			scanner.stop();
+			$('#modalCameraQRCode').modal('hide');
+			ng.abrirDetalhesComanda(content);
+		});
+
+		Instascan.Camera.getCameras().then(function (cameras) {
+			if (cameras.length > 0) {
+				scanner.start(cameras[0]);
+			} else {
+				alert('No cameras found.');
+			}
+		}).catch(function (e) {
+			alert(e);
+		});
+	}
+
+	ng.imprimirComandaEletronica = function(comanda){
+		var post = {
+			id : comanda.id,
+			value : 0
+		}
+
+		aj.post(baseUrlApi()+'comanda/atualiza/impressao/',post)
+		.success(function(data, status, headers, config) {
+			ng.changeTela('detMesa');
+		})
+		.error(function(data, status, headers, config) {
+			console.log('Não foi possivel abrir a comanda');
+		}); 
 	}
 
 	ng.cancelarComanda = function(id_comanda) {
