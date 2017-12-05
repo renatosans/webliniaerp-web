@@ -3305,7 +3305,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.showCadastroRapido = function(){
-		ng.new_cliente          = {tipo_cadastro: 'pf', id_perfil: 6} ;
+		ng.new_cliente = {
+			tipo_cadastro: 'pf', 
+			id_perfil: 6, 
+			id_estado: ng.empreendimento.cod_estado,
+			id_cidade: ng.empreendimento.cod_cidade
+		};
+
+		ng.loadCidadesByEstado(ng.empreendimento.nme_cidade);
+
 		$("#modal_cadastro_rapido_cliente").modal({
 		  backdrop: 'static',
 		  keyboard: false
