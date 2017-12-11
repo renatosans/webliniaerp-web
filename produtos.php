@@ -1035,7 +1035,7 @@
 												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')">
 													<i class="fa fa-edit"></i>
 												</button>
-												<button type="button" ng-click="delete(item)"  ng-disabled="configuracao.id_produto_debito_anterior_cliente == item.id_produto" class="btn btn-xs btn-danger delete">
+												<button type="button" ng-click="delete(item)" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')"  ng-disabled="configuracao.id_produto_debito_anterior_cliente == item.id_produto" class="btn btn-xs btn-danger delete">
 													<i class="fa fa-trash-o"></i>
 												</button>
 											</td>
