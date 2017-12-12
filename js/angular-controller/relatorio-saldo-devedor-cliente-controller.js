@@ -40,7 +40,7 @@ app.controller('RelatorioSaldoDevedorClienteController', function($scope, $http,
 		var dtaInicial  = $("#dtaInicial").val();
 		var dtaFinal    = $("#dtaFinal").val();
 		var queryString = "?(usu->id[exp]= NOT IN("+ng.configuracao.id_cliente_movimentacao_caixa+","+ng.configuracao.id_usuario_venda_vitrine+"))";
-		queryString      += "&having=vlr_saldo_devedor<0";
+			queryString      += "&having=vlr_saldo_devedor<0";
 		if(ng.vendedor.id != "" && ng.vendedor.id != null){
 			queryString += "&usu->id="+ng.vendedor.id;
 		}
