@@ -180,7 +180,9 @@
 			<div class="padding-md" ng-show="caixa_aberto == false && abrir_pdv == false && caixa_configurado == true && caixa_other_operador == false && operador_other_caixa == false">
 				<div class="panel panel-primary" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-desktop"></i>
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-primary hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -203,8 +205,9 @@
 			<div class="padding-md" ng-if="caixa_other_operador == true">
 				<div class="panel panel-warning" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -226,8 +229,9 @@
 			<div class="padding-md" ng-if="operador_other_caixa == true">
 				<div class="panel panel-warning" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -249,7 +253,9 @@
 			<div class="padding-md" ng-if="caixa_configurado == false">
 				<div class="panel panel-danger" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-danger hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -275,7 +281,9 @@
 			<div class="padding-md" ng-if="abrir_pdv">
 				<div class="panel panel-primary" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 					</div>
 
 
@@ -322,7 +330,10 @@
 				<div class="panel panel-primary" style="margin-bottom: 0px !important;">
 					<div class="panel-heading">
 						<i style="cursor: pointer" id="dados-websocket" class="fa fa-desktop" 
-							ng-class="{'text-danger':  (status_websocket == 0), 'text-warning': (status_websocket == 1), 'text-success': (status_websocket == 2)}"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+							ng-class="{'text-danger':  (status_websocket == 0), 'text-warning': (status_websocket == 1), 'text-success': (status_websocket == 2)}"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"
+							ng-click="changeFlagImprimirSATCFe()"></i>
 						<div class="btn-group"  style="margin-left: 40px;" >
 							<i class="fa fa-user"></i> Vendedor - {{ vendedor.nome_vendedor }}
 						</div>
@@ -3114,6 +3125,35 @@
 							data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
 							ng-click="autorizarDesconto()">
 							<i class="fa fa-unlock"></i> Autorizar
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal CPF na venda-->
+		<div class="modal fade" id="modal-cpf-venda" style="display:none">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>CPF do Cliente</h4>
+					</div>
+					<div class="modal-body" style="padding-top: 10px; padding-bottom: 0px;">
+						<div class="form-group">
+							<label class="control-label">Insira o CPF do cliente:</label>
+							<input type="text" class="form-control" 
+								ng-model="cliente.cpf"
+								ng-keyup="validaDocumentoCliente()"/>
+						</div>
+					</div>
+					<br>
+					<div class="modal-footer" style="margin-top: 0px;">
+						<button type="button" class="btn btn-md btn-default fechar-modal"
+							data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+							ng-click="cancelarModal('modal-cpf-venda')">
+							<i class="fa fa-times-circle"></i> Cancelar
 						</button>
 					</div>
 				</div>

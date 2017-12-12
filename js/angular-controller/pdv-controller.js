@@ -39,7 +39,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.abertura_reforco    = {} ;
 	ng.pagamentos          = [];
 	ng.caixa_configurado   = true ;
-
+	ng.flg_incluir_cpf_sat_cfe = true;
 	ng.carrinho = [];
 	ng.vlrTotalCompra = 0;
 	ng.exists_cookie = null ;
@@ -594,18 +594,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		var produtos = angular.copy(ng.carrinho);
 		var venda    = {
-							id        			: empty(params.id_orcamento) ?  null : params.id_orcamento ,
-							id_usuario			: ng.vendedor.id_vendedor,
-							id_cliente 			: ng.cliente.id,
-							id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
-							venda_confirmada 	: ng.orcamento ? 0 : 1,
-							id_empreendimento	: ng.userLogged.id_empreendimento,
-							id_deposito 		: ng.caixa.depositos,
-							id_status_venda 	: ng.orcamento ? 1 : 4,
-							margem_aplicada     : ng.margem_aplicada_venda,
-							dta_venda           : (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') ),
-							dsc_observacoes_gerais : ng.dsc_observacoes_gerais
-						};
+			id        						: empty(params.id_orcamento) ?  null : params.id_orcamento ,
+			id_usuario						: ng.vendedor.id_vendedor,
+			id_cliente 						: ng.cliente.id,
+			cpf_cliente 					: (!empty(ng.cliente.id)) ? ng.cliente.cpf : null,
+			id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
+			venda_confirmada 				: ng.orcamento ? 0 : 1,
+			id_empreendimento				: ng.userLogged.id_empreendimento,
+			id_deposito 					: ng.caixa.depositos,
+			id_status_venda 				: ng.orcamento ? 1 : 4,
+			margem_aplicada     			: ng.margem_aplicada_venda,
+			dta_venda           			: (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') ),
+			dsc_observacoes_gerais 			: ng.dsc_observacoes_gerais
+		};
 
 		venda.id_cliente = (venda.id_cliente == "" || venda.id_cliente == undefined) ? ng.caixa.id_cliente_movimentacao_caixa : venda.id_cliente;
 
@@ -707,9 +708,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			return
 		}else if( !$.isNumeric(ng.cliente.id) && !empty(ng.busca.cliente_outo_complete) && (isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete) ) ){
 			if(isCPF(ng.busca.cliente_outo_complete)){
-				ng.newCliente = { tipo_cadastro : 'pf', cpf: ng.busca.cliente_outo_complete }
+				ng.newCliente = { 
+					tipo_cadastro : 'pf', 
+					cpf: ng.busca.cliente_outo_complete, 
+					id_estado: ng.empreendimento.cod_estado, 
+					id_cidade: ng.empreendimento.cod_cidade
+				};
 			}else{
-				ng.newCliente = { tipo_cadastro : 'pj', cnpj: ng.busca.cliente_outo_complete }
+				ng.newCliente = { 
+					tipo_cadastro : 'pj', 
+					cnpj: ng.busca.cliente_outo_complete, 
+					id_estado: ng.empreendimento.cod_estado, 
+					id_cidade: ng.empreendimento.cod_cidade 
+				};
 			}
 		}else if(existsFormaPag(9) && !$.isNumeric(ng.cliente.id)){
 			$dialogs.notify('Atenção!','<strong>Para realizar um pagamento "Promessa de Pagamneto" é necessário informar um cliente</strong>');
@@ -903,6 +914,52 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		return msg;
 	}
 
+	ng.formatMsgCpf = function(){
+		var msg = '';
+			msg = "Deseja incluir o CPF do cliente no cupom fiscal?";
+
+		return msg;
+	}
+
+	ng.validaDocumentoCliente = function(){
+		if(!empty(ng.cliente.cpf)) {
+			if(ng.cliente.cpf.length === 11 && isCPF(ng.cliente.cpf)){
+				ng.pesquisaClienteByCpf();
+			}
+			else if(ng.cliente.cpf.length === 11 && !isCPF(ng.cliente.cpf)){
+				$('#modal-cpf-venda input[ng-model="cliente.cpf"]').parents('.form-group').addClass("has-error");
+				var formControl = $('#modal-cpf-venda input[ng-model="cliente.cpf"]').parent()
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", "CPF inválido")
+					.attr("data-original-title", "CPF/CNPJ inválido");
+				formControl.tooltip('show');
+			}
+		}
+	}
+
+	ng.pesquisaClienteByCpf = function () {
+		var query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
+			query_string += "&"+$.param({'(cpf':{exp:" LIKE '%"+ng.cliente.cpf+"%' OR cnpj LIKE '%"+ng.cliente.cpf+"%')"}});
+
+		if(!empty(ng.configuracoes.flg_filtrar_cliente_por_vendedor) && ng.configuracoes.flg_filtrar_cliente_por_vendedor == 1){
+			query_string += "&usu->id_vendedor_responsavel="+ ng.userLogged.id;
+		}
+
+		aj.get(baseUrlApi()+"usuarios/"+query_string)
+			.success(function(data, status, headers, config) {
+				if(data.usuarios.length == 1) {
+					ng.addClienteAutoComplete(data.usuarios[0]);
+					ng.cancelarModal('modal-cpf-venda');
+				}
+			})
+			.error(function(data, status, headers, config) {
+				ng.clientes_auto_complete = [];
+				ng.busca.cliente_outo_complete = angular.copy(ng.cliente.cpf);
+				ng.cancelarModal('modal-cpf-venda');
+			});
+	}
+
 	ng.verificaOutEstoque = function(item){
 		exists = false ;
 		$.each(ng.out_produtos,function(i,v){
@@ -1071,6 +1128,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	};
 
+	ng.changeFlagImprimirSATCFe = function() {
+		var actual_value = angular.copy(ng.caixa_aberto.flg_imprimir_sat_cfe);
+		if(parseInt(actual_value, 10) === 1)
+			ng.caixa_aberto.flg_imprimir_sat_cfe = 0;
+		else
+			ng.caixa_aberto.flg_imprimir_sat_cfe = 1;
+	}
+
 	ng.gravarMovimentacoes = function(){
 			console.log(ng.pagamentos_enviar);
 			var id_venda = ng.finalizarOrcamento == true ? ng.id_orcamento : ng.id_venda;
@@ -1125,6 +1190,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								txt_sign_ac : ng.configuracoes.txt_sign_ac,
 								num_cnpj_sw : ng.configuracoes.num_cnpj_sw
 							};
+							data.flg_incluir_cpf_sat_cfe = ng.flg_incluir_cpf_sat_cfe;
+
 							var dadosWebSocket = {
 								from 		: ng.caixa_open.id_ws_web ,
 								to  		: ng.caixa_open.id_ws_dsk ,
@@ -2103,6 +2170,30 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.out_produtos = [] ;
 		ng.out_descontos = [] ;
 		ng.verificaEstoque(produtos_enviar,0,'receber');
+
+		if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
+			dlg = $dialogs.confirm(
+				'Atenção!!!',
+				'<strong>'+ ng.formatMsgCpf() +'</strong>',
+				{
+					size: 'modal-sm'
+				}
+			);
+			dlg.result.then(
+				function(btn){
+					if(!empty(ng.cliente.id) && !((!empty(ng.cliente.cpf) && isCPF(ng.cliente.cpf)) || (!empty(ng.cliente.cnpj) && isCnpj(ng.cliente.cnpj)))) {
+						$("#modal-cpf-venda").modal('show');
+						ng.validaDocumentoCliente();
+					}
+					else if(empty(ng.cliente.id)) {
+						$("#modal-cpf-venda").modal('show');
+					}
+				},
+				function(){
+					ng.flg_incluir_cpf_sat_cfe = false;
+				}
+			);
+		}
 	}
 
 	ng.receber = function(){
