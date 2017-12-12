@@ -2670,6 +2670,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				total_desconto_taxa_maquineta_debito: 0,
 				total_desconto_taxa_maquineta_credito: 0,
 				total_reforco_caixa: 0,
+				total_sangria: 0,
 				total_vendas: 0
 			},
 			printerModel: ng.caixa.mod_impressora,
@@ -2707,6 +2708,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 					if(v.id_tipo_movimentacao == 1) // Reforço de Caixa
 						ng.fechamento_caixa.totais.total_reforco_caixa += Number(v.valor_entrada);
+
+					if((data[i].isSaida) && (v.tipo_movimentacao == 'Sangria')) // Sangria
+						ng.fechamento_caixa.totais.total_sangria += Number(v.valor_entrada);
 
 					if(!empty(v.id_venda))
 						ng.fechamento_caixa.totais.total_vendas += Number(v.valor_entrada);
@@ -3383,7 +3387,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			new_cliente.dta_nacimento = moment(new_cliente.dta_nacimento,'DD-MM-YYYY').format('YYYY-MM-DD');
 		new_cliente.id_vendedor_responsavel = ng.userLogged.id;
 
-		if(!(isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete))){
+		if( (!empty(ng.busca.cliente_outo_complete)) && (!(isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete))) ){
 			$("#input_auto_complete_cliente").parents('.form-group').addClass("has-error");
 			var formControl = $("#input_auto_complete_cliente").parent()
 				.attr("data-toggle", "tooltip")
@@ -3676,6 +3680,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.newConnWebSocket = function(){
 		ng.id_ws_dsk = ng.caixa_open.id_ws_dsk ;
 		ng.conn = null;
+
+		if(location.protocol === 'https:')
+			ng.configuracoes.patch_socket_sat = ng.configuracoes.patch_socket_sat.replace('ws', 'wss');
+
 		ng.conn = new WebSocket(ng.configuracoes.patch_socket_sat);
 		ng.conn.onopen = function(e) {
 			$scope.$apply(function () { ng.status_websocket = 1 ;});
