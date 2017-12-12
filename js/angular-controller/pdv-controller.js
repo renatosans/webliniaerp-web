@@ -459,6 +459,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		if(ng.finalizarOrcamento) ng.id_venda_ignore = params.id_orcamento ;
 		ng.finalizarOrcamento = false
 		ng.salvar() ;
+		ng.addCloseWindowBlock();
 	}
 
 
@@ -721,6 +722,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}else{
 			$('#btn-fazer-compra').button('loading');
 		}
+
+		ng.addCloseWindowBlock();
+
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
 				if(data.open_today){
@@ -1002,6 +1006,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				btn.button('reset');
 				ng.modalProgressoVenda('hide');
 				ng.showModalPrint();
+				ng.clearCloseWindowBlock();
 				ng.printPdf();
 				PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 				return ;
@@ -1049,6 +1054,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				btn.button('reset');
 				ng.modalProgressoVenda('hide');
 				ng.showModalPrint();
+				ng.clearCloseWindowBlock();
 				ng.printPdf();
 				return ;
 			}
@@ -1150,8 +1156,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 					if((!ng.pagamento_fulso) && (!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1))
 						ng.printTermic(true);
-					else 
+					else { 
 						ng.showModalPrint();
+						ng.clearCloseWindowBlock();
+					}
 
 					if(ng.pagamento_fulso) {
 						ng.receber_pagamento = false;
@@ -2103,6 +2111,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.out_produtos = [] ;
 		ng.out_descontos = [] ;
 		ng.verificaEstoque(produtos_enviar,0,'receber');
+		ng.addCloseWindowBlock();
 	}
 
 	ng.receber = function(){
@@ -4559,6 +4568,25 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		});
 
 		return estado;
+	}
+
+	ng.addCloseWindowBlock = function() {
+		window.onbeforeunload = function goodbye(e){
+			if(!e) e = window.event;
+			//e.cancelBubble is supported by IE - this will kill the bubbling process.
+			e.cancelBubble = true;
+			e.returnValue = 'You sure you want to leave?'; //This is displayed on the dialog
+
+			//e.stopPropagation works in Firefox.
+			if (e.stopPropagation) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
+		}; 
+	}
+
+	ng.clearCloseWindowBlock = function() {
+		window.onbeforeunload = undefined;
 	}
 
 	ng.selectMargemAplicadaInicial();	
