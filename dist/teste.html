@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <title>WebliniaERP Admin Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Bootstrap core CSS-->
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="../css/custom.css">
+    <!-- Font Awesome-->
+    <link href="../css/font-awesome-4.6.2/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/font-awesome-4.1.0.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <!-- Pace-->
+    <link href="../css/pace.css" rel="stylesheet">
+    <!-- Gritter-->
+    <link href="../css/gritter/jquery.gritter.css" rel="stylesheet">
+    <!-- Datepicker-->
+    <link href="../css/datepicker.css" rel="stylesheet">
+    <link href="../css/datepicker/bootstrap-datepicker.css" rel="stylesheet">
+    <!-- Timepicker-->
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap-timepicker.css">
+    <!-- Color box-->
+    <link href="../css/colorbox/colorbox.css" rel="stylesheet">
+    <!-- Morris-->
+    <link href="../css/morris.css" rel="stylesheet">
+    <!-- Endless-->
+    <link href="../css/endless.css" rel="stylesheet">
+    <link href="../css/endless.min.css" rel="stylesheet">
+    <!-- Bower Components-->
+    <link href="../bower_components/noty/lib/noty.css" rel="stylesheet">
+    <!-- Chosen-->
+    <link href="../css/chosen/chosen.min.css" rel="stylesheet">
+    <!-- Tags Input-->
+    <link href="../css/ng-tags-input.min.css" rel="stylesheet">
+    <link href="../css/ng-tags-input.bootstrap.min.css" rel="stylesheet">
+    <!-- Agenda-->
+    <link href="../js/agenda/fullcalendar.css" rel="stylesheet">
+    <link href="../js/agenda/fullcalendar.print.css" rel="stylesheet" media="print">
+    <!-- autocomplete-->
+    <link href="../css/autocomplete.css" rel="stylesheet">
+    <!-- ui switch-->
+    <link rel="stylesheet" href="../css/angular-ui-switch.min.css">
+    <link href="../css/animate.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/jquery-ui.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="../css/bootstrap-treeview.css">
+    <link rel="apple-touch-icon" href="../img/logo-marca-novo.png">
+    <link rel="stylesheet prefetch" href="../bootstrap/css/bootstrap.min.css">
+    <link rel="apple-touch-icon-precomposed" href="../img/logo-marca-novo.png">
+    <link href="../css/fileinput/fileinput.css" media="all" rel="stylesheet" type="text/css">
+    <link href="../js/Trumbowyg-master/dists/ui/trumbowyg.css" media="all" rel="stylesheet" type="text/css">
+    <link rel="stylesheet prefetch" href="../bootstrap/css/bootstrap.min.css?version=&lt;?php echo date(&quot;dmY-His&quot;, filemtime(&quot;bootstrap/css/bootstrap.min.css&quot;)) ?&gt;">
+    <!--link(href="css/font-awesome-4.6.2/css/font-awesome.min.css?version<?php  echo date("dmY-His", filemtime("css/font-awesome-4.1.0.min.css")) ?>" rel="stylesheet")-->
+  </head>
+  <body class="overflow-hidden">
+    <!-- #overlay.transparent-->
+    <div id="wrapper" class="preload">
+      <!-- top-nav-->
+      <div id="top-nav" class="fixed skin-1">
+        <!-- brand--><a href="#" class="brand"><span>WebliniaERP</span><span class="text-google"> Admin</span></a>
+        <!-- mobile menu icon-->
+        <button id="sidebarToggle" type="button" class="navbar-toggle pull-left"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        <ul class="nav-notification clearfix">
+          <li dta-toggle="tooltip" data-placement="bottom" title="Ir p/ Transferências" class="dropdown"><a href="pedido_transferencia.php"><i class="fa fa-arrows-h fa-lg"></i></a></li>
+          <li ng-controller="AlertasController" class="dropdown"><a data-toggle="dropdown" href="#" class="dropdown-toggle"><i class="fa fa-bell fa-lg"></i><span ng-if="alertas.length &gt; 0" class="notification-label bounceIn animation-delay6">{{ alertas.length }}</span></a>
+            <ul style="width:300px;" class="dropdown-menu notification dropdown-3">
+              <li ng-if="alertas.length == 0"><a href="#">Você não tem novos alertas</a></li>
+              <li ng-if="alertas.length &gt; 0"><a href="#">Você tem {{ alertas.length }} {{ alertas.length > 1 && 'novas alertas' || 'nova alerta' }}</a></li>
+              <li ng-repeat="item in alertas"><a href="{{ item.link }}"><span class="notification-icon bg-">{{item.type}}<i ng-class="{'fa fa-warning': item.type == 'warning', 'fa fa-flash': item.type == 'danger'}"></i></span><span style="white-space: normal;" class="m-left-xs">{{ item.messege}}</span>
+                  <!-- span.time.text-muted{{ item.time }}--></a></li>
+              <!-- li(ng-if="alertas.length > 0")a(href="#") Ver todas as alertas
+              -->
+            </ul>
+          </li>
+          <li class="profile dropdown"><a data-toggle="dropdown" href="#" class="dropdown-toggle"><strong>userLogged.nme_usuario</strong><span><i class="fa fa-chevron-down"></i></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" class="clearfix"><img src="img/hage.png" alt="User Avatar">
+                  <div class="detail"><strong>userLogged.nme_usuario</strong>
+                    <p style="font-size: 7px;" class="grey">userLogged.end_email</p>
+                  </div></a></li>
+              <li><a tabindex="-1" href="#" class="main-link"><i class="fa fa-inbox fa-lg"></i> userLogged.nome_empreendimento</a></li>
+              <li><a tabindex="-1" href="#" class="main-link"><i class="fa fa-list-alt fa-lg"></i> Meus Pedidos</a></li>
+              <li class="divider"></li>
+              <li><a tabindex="-1" href="#logoutConfirm" class="main-link logoutConfirm_open"><i class="fa fa-lock fa-lg"></i> Log Out</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <!-- aside-bar-->
+      <aside class="fixed skin-1">
+        <div class="sidebar-inner scrollable-sidebar">
+          <div class="size-toggle"><a id="sizeToggle" class="btn btn-sm"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a>
+            <div ng-controller="MasterController" class="pull-right"><a data-toggle="tooltip" title="Configurações" data-placement="bottom" href="empreendimento_config.php" class="btn btn-sm"><i class="fa fa-cog"></i></a><a data-toggle="tooltip" title="Tranferências" data-placement="bottom" href="pedido_transferencia.php" class="btn btn-sm"><i class="fa fa-arrows-h"></i></a><a data-toggle="tooltip" title="Controle de Mesas" data-placement="bottom" href="controle-mesas.php" class="btn btn-sm"><i class="fa fa-table"></i></a><a data-toggle="tooltip" title="Frente de Caixa (PDV)" data-placement="bottom" href="pdv.php" class="btn btn-sm"><i class="fa fa-desktop"></i></a><a ng-click="openModalMeusEmpreendimentos()" data-toggle="tooltip" title="Trocar Empreendimento" data-placement="bottom" class="btn btn-sm"><i class="fa fa-building-o"></i></a><a href="#logoutConfirm" data-toggle="tooltip" title="Sair do Sistema" data-placement="bottom" class="btn btn-sm logoutConfirm_open"><i class="fa fa-power-off"></i></a></div>
+          </div>
+          <div class="user-block clearfix"><img src="img/hage.png" alt="User Avatar">
+            <div class="detail"><strong>{{ userLogged.nme-usuario}}</strong>
+              <ul class="list-inline">
+                <li><a href="">{{ userLogged.nome_empreendimento }}</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="main-menu">
+            <ul>
+              <li><a href=""><span class="menu-icon"><i class="fa fa-lg"></i></span><span class="text"></span><span class="menu-hover"></span></a>
+                <ul class="submenu">
+                  <li><a href=""><span class="submenu-label"><i class="fa"></i></span></a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+      <!-- Container-->
+      <div id="main-container">
+        <div class="padding-md">
+          <div class="clearfix">
+            <div class="pull-left"><span class="img-demo"><img src="assets/imagens/logos/{{ userLogged.nme_logo }}"></span>
+              <div class="pull-left m-left-sm">
+                <h3 class="m-bottom-xs m-top-xs">Conferência de Caixa</h3><small>Teste</small>
+              </div>
+            </div>
+            <div class="pull-right text-right">
+              <h6>{{ dados_empreendimento.num_cnpj }} - {{ dados_empreendimento.nome_empreendimento }}</h6>
+              <h6>{{ dados_empreendimento.nme_logradouro }}, {{ dados_empreendimento.num_logradouro }}</h6>
+              <h6>CEP: {{ dados_empreendimento.num_cep }} - {{ dados_empreendimento.nme_cidade }} - {{ dados_empreendimento.uf }}</h6>
+              <h6>Telefone: {{ dados_empreendimento.num_telefone }}</h6>
+            </div>
+          </div>
+          <hr>
+          <div style="margin-top: 50px;" class="panel panel-default hidden-print">
+            <div class="panel-heading"><i class="fa fa-calendar"></i> Entradas</div>
+            <div class="panel-body">
+              <form role="form">
+                <div class="row">
+                  <div class="col-sm-12 table-responsive">
+                    <table class="table table-bordered table-condensed table-striped table-hover">
+                      <thead>
+                        <tr>
+                          <th class="text-center">Forma de Pagamento</th>
+                          <th class="text-center">Valor</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- tr
+                        td.text-center(colspan="2")
+                        	i.fa.fa-refresh.fa-spin
+                        	|  asdasd
+                        -->
+                        <!-- tr
+                        td.text-center(colspan="2")
+                        	i.fa.fa-refresh.fa-spin
+                        	|  asdasd
+                        -->
+                        <!-- tr(ng-repeat="item in itens")-->
+                        <tr>
+                          <td class="text-left">Dinheiro</td>
+                          <td class="text-right">R$ 310,00</td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">Cartão de Débito</td>
+                          <td class="text-right">R$ 150,00</td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">Cartão de Crédito</td>
+                          <td class="text-right">R$ 200,00</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <hr>
+                <h4 class="text-bold">Débito</h4>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label class="control-label">Maquinetas</label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Maquineta --</option>
+                        <option>Getnet</option>
+                        <option>Rede</option>
+                        <option>Cielo</option>
+                      </select>
+                      <label class="control-label"><br></label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Maquineta --</option>
+                        <option>Getnet</option>
+                        <option>Rede</option>
+                        <option>Cielo</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label class="control-label">Bandeiras</label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Bandeira --</option>
+                        <option>Visa</option>
+                        <option>MasterCard</option>
+                      </select>
+                      <label class="control-label"><br></label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Bandeira --</option>
+                        <option>Visa</option>
+                        <option>MasterCard</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label class="control-label">Valor:</label>
+                      <input class="form-control">
+                      <label class="control-label"></label>
+                      <input class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-md-offset-1 col-sm-1">
+                    <buttom class="btn btn-xs btn-primary"><i class="fa fa-plus-circle"></i></buttom>
+                  </div>
+                </div>
+                <hr>
+                <h4 class="text-bold">Crédito</h4>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label class="control-label">Maquinetas</label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Maquineta --</option>
+                        <option>Getnet</option>
+                        <option>Rede</option>
+                        <option>Cielo</option>
+                      </select>
+                      <label class="control-label"><br></label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Maquineta --</option>
+                        <option>Getnet</option>
+                        <option>Rede</option>
+                        <option>Cielo</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label class="control-label">Bandeiras</label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Bandeira --</option>
+                        <option>Visa</option>
+                        <option>MasterCard</option>
+                      </select>
+                      <label class="control-label"><br></label>
+                      <select class="form-control">
+                        <option>-- Selecione uma Bandeira --</option>
+                        <option>Visa</option>
+                        <option>MasterCard</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label class="control-label">Valor:</label>
+                      <input class="form-control">
+                      <label class="control-label"></label>
+                      <input class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-md-offset-1 col-sm-1">
+                    <buttom class="btn btn-xs btn-primary"><i class="fa fa-plus-circle"></i></buttom>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

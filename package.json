@@ -1,0 +1,21 @@
+{
+  "name": "jade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-jade": "^1.1.0"
+  },
+  "dependencies": {
+    "gulp-minify-html": "^1.0.6",
+    "jade-bootstrap": "^1.0.14"
+  }
+}
