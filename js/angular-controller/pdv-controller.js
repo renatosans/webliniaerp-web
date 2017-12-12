@@ -4206,6 +4206,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			window.location = 'pdv.php';
 			return ;
 		}
+		ng.orcamento = false;
 		$('.modal').modal('hide');
 		//ng.receber_pagamento = false;
 		if(tela == null || tela == 'inicial'){
