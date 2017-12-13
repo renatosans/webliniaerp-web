@@ -599,6 +599,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			id_usuario						: ng.vendedor.id_vendedor,
 			id_cliente 						: ng.cliente.id,
 			cpf_cliente 					: (!empty(ng.cliente.id)) ? ng.cliente.cpf : null,
+			vlr_total_venda					: ng.vlrTotalCompra,
+			vlr_troco						: ng.troco,
 			id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
 			venda_confirmada 				: ng.orcamento ? 0 : 1,
 			id_empreendimento				: ng.userLogged.id_empreendimento,
@@ -2225,12 +2227,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.calculaTroco = function(){
-		var troco = 0 ;
-		troco = ng.total_pg - ng.vlrTotalCompra;
+		var troco = 0;
+			troco = ng.total_pg - ng.vlrTotalCompra;
 		if(troco > 0)
 			ng.troco = troco;
 		else
-			ng.troco = 0 ;
+			ng.troco = 0;
 	}
 
 	ng.pagamento = {};
