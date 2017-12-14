@@ -456,177 +456,222 @@
 								<fieldset>
 									<legend>Configurações Gerais</legend>
 									<div class="row">
-										<div class="col-sm-3" id="id_plano_caixa">
-											<div class="input-group">
-												<label class="control-label">Plano de Contas p/ Mov. de Caixa</label>
-								            	<input ng-model="config.nome_plano_movimentacao" type="text" class="form-control input-sm">
-								            	<div class="input-group-btn" style="top: 11px;">
-								            		<button ng-click="modalPlanoContas('movimentacao')" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-code-fork"></i></button>
-								            	</div>
-								        	</div>
-										</div>
-
-										<div class="col-sm-3" id="id_plano_fechamento_caixa">
-											<div class="input-group">
-												<label class="control-label">Plano de Contas p/ Fech. de Caixa</label>
-									            <input ng-model="config.nome_plano_fechamento" type="text" class="form-control input-sm">
-
-									            <div class="input-group-btn" style="top: 11px;">
-									            	<button ng-click="modalPlanoContas('fechamento')" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-code-fork"></i></button>
-									            </div>
-									        </div>
-										</div>
-										<div class="col-sm-2">
-											<div class="form-group" id="pth_local"  >
-												<label class="control-label">IP do Caixa</label>
-												<input ng-model="config.pth_local"  type="text" class="form-control input-sm parsley-validated">
-											</div>
-										</div>
-										<div class="col-sm-2">
-											<div class="form-group" id="pth_local">
-												<label class="control-label">Código Identif. Balança</label>
-												<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
-											</div>
-										</div>
-										<div class="col-sm-2">
-											<div class="form-group">
-												<label class="control-label">Qtd. Casas Decimais</label>
-												<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-3">
-											<div class="form-group">
-												<label for="" class="control-label">Considerar pagamento pendente no <br> Saldo Devedor do cliente?</label>
-												<div class="form-group">
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_considerar_pagamento_pendente_saldo_devedor" value="1" name="flg_considerar_pagamento_pendente_saldo_devedor"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_considerar_pagamento_pendente_saldo_devedor" value="0" name="flg_considerar_pagamento_pendente_saldo_devedor"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
-												</div>
-											</div>
-										</div>
-											<div class="col-sm-3">
-												<div class="form-group">
-													<label for="" class="control-label">Questionar manutenção dos preços ao <br> concluir orçamentos?</label>
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-6">
 													<div class="form-group">
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="1" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Sim</span>
-														</label>
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="0" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Não</span>
-														</label>
+														<label for="" class="control-label">Baixa automática em pagamento de <br> cheque e cartão de crédito?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="1" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="0" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="" class="control-label">Emitir NF-e no PDV?</label>
+														<div class="form-group">
+															<br>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_emitir_nfe_pdv" value="1" name="flg_emitir_nfe_pdv"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_emitir_nfe_pdv" value="0" name="flg_emitir_nfe_pdv"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
 													</div>
 												</div>
 											</div>
-										<div class="col-sm-3">
-											<div class="form-group">
-												<label for="" class="control-label">Baixa automática em pagamento de <br> cheque e cartão de crédito?</label>
-												<div class="form-group">
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="1" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="0" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
-												</div>
-											</div>
 										</div>
-										<div class="col-sm-2">
-											<div class="form-group">
-												<label for="" class="control-label">Emitir NF-e no PDV?</label>
-												<div class="form-group">
-													<br>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_emitir_nfe_pdv" value="1" name="flg_emitir_nfe_pdv"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_emitir_nfe_pdv" value="0" name="flg_emitir_nfe_pdv"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-6" id="id_plano_caixa">
+													<div class="input-group">
+														<label class="control-label">Plano de Contas p/ Mov. de Caixa</label>
+										            	<input ng-model="config.nome_plano_movimentacao" type="text" class="form-control input-sm">
+										            	<div class="input-group-btn" style="top: 11px;">
+										            		<button ng-click="modalPlanoContas('movimentacao')" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-code-fork"></i></button>
+										            	</div>
+										        	</div>
+												</div>
+
+												<div class="col-sm-6" id="id_plano_fechamento_caixa">
+													<div class="input-group">
+														<label class="control-label">Plano de Contas p/ Fech. de Caixa</label>
+											            <input ng-model="config.nome_plano_fechamento" type="text" class="form-control input-sm">
+
+											            <div class="input-group-btn" style="top: 11px;">
+											            	<button ng-click="modalPlanoContas('fechamento')" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-code-fork"></i></button>
+											            </div>
+											        </div>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-sm-3">
-											<div class="form-group">
-												<label for="txt_sign_ac">Perfis (Cadastro Rápido):</label>
-											 	<div class="clearfix" ng-repeat="item in perfis">
-													<label class="label-checkbox inline">
-														<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
-														<span class="custom-checkbox"></span>
-														{{ item.nome }}
-													</label>
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="" class="control-label">Considerar pagamento pendente no <br> Saldo Devedor do cliente?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_considerar_pagamento_pendente_saldo_devedor" value="1" name="flg_considerar_pagamento_pendente_saldo_devedor"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_considerar_pagamento_pendente_saldo_devedor" value="0" name="flg_considerar_pagamento_pendente_saldo_devedor"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="" class="control-label">Questionar manutenção dos preços ao <br> concluir orçamentos?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="1" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_questionar_manutencao_precos_orcamento" value="0" name="flg_questionar_manutencao_precos_orcamento"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
-
-										<div class="col-sm-3">
-											<div class="form-group">
-											 <label for="txt_sign_ac">Formas de Pagamento:</label>
-											 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
-													 <label class="label-checkbox inline">
-														<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
-														<span class="custom-checkbox"></span>
-														{{ item.descricao_forma_pagamento }}
-													</label>
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group" id="pth_local"  >
+														<label class="control-label">IP do Caixa</label>
+														<input ng-model="config.pth_local"  type="text" class="form-control input-sm parsley-validated">
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group" id="pth_local">
+														<label class="control-label">Código Identif. Balança</label>
+														<input ng-model="configuracoes.cod_identificador_balanca"  type="text" class="form-control input-sm parsley-validated">
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label class="control-label">Qtd. Casas Decimais</label>
+														<input ng-model="configuracoes.qtd_casas_decimais" type="number" max="5" min="2" ng-model="" type="text" class="form-control input-sm parsley-validated">
+													</div>
 												</div>
 											</div>
 										</div>
-
-										<div class="col-sm-2">
-											<div class="form-group">
-												<label for="" class="control-label">Ativar Auto-Complete (Produtos)?</label>
-												<div class="form-group">
-													<br>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="1" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="0" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="" class="control-label">Ativar Auto-Complete (Produtos)?</label>
+														<div class="form-group">
+															<br>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="1" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="0" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="" class="control-label">Ativar Auto-Complete (Clientes)?</label>
+														<div class="form-group">
+															<br>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_ativar_auto_complete_clientes" value="1" name="flg_ativar_auto_complete_clientes"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_ativar_auto_complete_clientes" value="0" name="flg_ativar_auto_complete_clientes"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
-
-										<div class="col-sm-2">
-											<div class="form-group">
-												<label for="" class="control-label">Ativar Auto-Complete (Clientes)?</label>
-												<div class="form-group">
-													<br>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_ativar_auto_complete_clientes" value="1" name="flg_ativar_auto_complete_clientes"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_ativar_auto_complete_clientes" value="0" name="flg_ativar_auto_complete_clientes"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label class="control-label">Caixa Padrão</label>
+														<input ng-model="configuracoes.id_caixa_padrao"  type="text" class="form-control input-sm parsley-validated">
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label class="control-label">Vendedor Padrão</label>
+														<input ng-model="configuracoes.id_vendedor_padrao"  type="text" class="form-control input-sm parsley-validated">
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label class="control-label">Maquineta Padrão</label>
+														<input ng-model="configuracoes.id_maquineta_padrao" type="text" ng-model="" class="form-control input-sm parsley-validated">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="txt_sign_ac">Perfis (Cadastro Rápido):</label>
+													 	<div class="clearfix" ng-repeat="item in perfis">
+															<label class="label-checkbox inline">
+																<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
+																<span class="custom-checkbox"></span>
+																{{ item.nome }}
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+													 <label for="txt_sign_ac">Formas de Pagamento:</label>
+													 	<div class="clearfix" ng-repeat="item in formas_pagamento_pdv">
+															 <label class="label-checkbox inline">
+																<input type="checkbox" ng-model="item.value"  ng-true-value="1" ng-false-value="0">
+																<span class="custom-checkbox"></span>
+																{{ item.descricao_forma_pagamento }}
+															</label>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
