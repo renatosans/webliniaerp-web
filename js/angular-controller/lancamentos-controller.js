@@ -4,7 +4,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		aj = $http;
 
 	ng.baseUrl 					= baseUrl();
-
 	ng.userLogged 				= UserService.getUserLogado();
 	ng.empreendimento 			= {};
     ng.empreendimentos 			= [];
@@ -12,7 +11,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
     ng.contas           		= [];
     ng.busca					= {dsc_conta_bancaria : "",clientes:"",fornecedores:"",op_valor:"" }
     ng.paginacao 				= {pagamentos:null}
-    ng.vlr_total_periodo 			= 0;
+    ng.vlr_total_periodo 		= 0;
     ng.dataGroups 				= [];
     ng.recorrencias			    = [
     								{periodo:"Semanal",dias:7},{periodo:"Quizenal",dias:15},{periodo:"Mensal",dias:30},
@@ -21,12 +20,11 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
     ng.cheques					= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
     ng.recebidos 				= [] ;
     ng.boletos					= [{id_banco:null,num_conta_corrente:null,num_cheque:null,status_pagamento:0}];
-
-    ng.roleList = [];
-    ng.pagamento         = {status:0};
-    ng.status = 0 ;
-    ng.flgTipoLancamento = 0 ;
-    ng.formas_pagamento = [
+    ng.roleList 				= [];
+    ng.pagamento         		= {status:0};
+    ng.status 					= 0 ;
+    ng.flgTipoLancamento 		= 0 ;
+    ng.formas_pagamento 		= [
 		{nome:"Cheque",id:2},
 		{nome:"Dinheiro",id:3},
 		{nome:"Boleto Bancário",id:4},
@@ -34,10 +32,9 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		{nome:"Cartão de Crédito",id:6},
 		{nome:"Transferência",id:8}
 	  ]
-
-    ng.editing 			= false;
-    ng.cliente          = {} ;
-    ng.config_table     = {
+    ng.editing 					= false;
+    ng.cliente          		= {} ;
+    ng.config_table     		= {
 		cheque: false,
 		boleto: false,
 		transferencia: false,
@@ -53,6 +50,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
     	$("#dta_change_pagamento").val(formatDateBR(item.data_pagamento));
     	$("#modal_change_date_pagamento").modal('show');
     }
+
     ng.updateStatusLancamento = function(item) {
     	var obj = {
     		idLancamento 	: item.id,
@@ -133,7 +131,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		$('.has-error').removeClass('has-error');
 	}
 
-	ng.load = function(offset,limit) {
+	ng.load = function(offset,limit) {		
 		$('.has-error').tooltip('destroy');
 		$('.has-error').removeClass('has-error');
 
@@ -142,7 +140,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		var dataInicial = $("#dtaInicial").val();
 		var dataFinal   = $("#dtaFinal").val();
-		var queryString = "?(id_tipo_conta[exp]= <> 5 OR (id_tipo_conta =5 AND (flg_caixa_fechado = 0 OR flg_caixa_fechado IS NULL ) )  AND flg_tipo_lancamento = 'C' ) AND (flg_transferencia_conta = 0 OR flg_transferencia_conta IS NULL)&flg_excluido[exp]=<>1&id_empreendimento="+ng.userLogged.id_empreendimento ;
+		var queryString = "?id_empreendimento="+ ng.userLogged.id_empreendimento;
 
 		if(dataInicial != "" &&  dataFinal != "" ){
 			var data_arr = dataInicial.split('/');
@@ -196,7 +194,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		}
 		ng.dataGroups  = [] ;
-		aj.get(baseUrlApi()+"lancamentos/"+queryString)
+		aj.get(baseUrlApi()+"lancamentos/financeiros"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.pagamentos           = data.pagamentos;
 				ng.paginacao.pagamentos = data.paginacao;
@@ -249,6 +247,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					ng.paginacao.pagamentos = [];
 					ng.dataGroups = null;
 			});
+		
 	}
 
 	ng.loadContas = function(offset,limit) {
@@ -374,7 +373,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			$("#list_clientes").modal("show");
 	}
 
-
 	ng.addCliente = function(item){
     	ng.cliente = item;
     	ng.pagamento.id_banco = ""+angular.copy(item.id_banco);
@@ -477,8 +475,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		var offset = 0  ;
     	var limit  =  10;
 
-			ng.loadFornecedor(offset,limit);
-			$("#list_fornecedores").modal("show");
+		ng.loadFornecedor(offset,limit);
+		$("#list_fornecedores").modal("show");
 	}
 
 	ng.fornecedor = {} ;
@@ -599,7 +597,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		});
 
 		ng.pagamento.valor = valor;
-
 	}
 
 	ng.calTotalBoleto = function(){
@@ -609,7 +606,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		});
 
 		ng.pagamento.valor = valor;
-
 	}
 
 	ng.getDadosMaquineta = function(){
@@ -624,7 +620,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		});
 
 		return dados ;
-
 	}
 
 	ng.selIdMaquineta = function(){
@@ -674,6 +669,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.pagamento.parcelas = ng.cheques.length ;
 		nParcelasAntCheque  = ng.pagamento.parcelas
 	}
+
 	ng.delItemBoleto = function($index){
 		ng.boletos.splice($index,1);
 		ng.pagamento.parcelas = ng.boletos.length ;
@@ -684,7 +680,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		if(ng.pagamento.id_forma_pagamento == 2){
 			ng.pagamento.parcelas = ng.cheques.length  > 0 ? ng.cheques.length : 1 ;
 		}
-
 	}
 
 	ng.bancos = [] ;
@@ -702,7 +697,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 			});
 	}
-
 
 	ng.loadDatapicker = function(){
 		$(".chequeData").datepicker();
@@ -1318,7 +1312,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					alert('Ocorreu um erro');
 				}
 			});
-
 	}
 
 	ng.deleteRecebidos = function(index){
@@ -1383,7 +1376,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ant_transferencia	= ng.config_table.transferencia ;
 
 		return init
-
 	}
 
 	ng.showModalPrint = function(){
@@ -1393,6 +1385,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		});
 		$('.modal-backdrop.in').css({opacity:1,'background-color':'#C7C7C7'});
 	}
+	
 	ng.vendaPrint = {} ;
 	ng.printPagamentos = function(item){
 		ng.itensPrint = [] ;
@@ -1509,6 +1502,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	function defaulErrorHandler(data, status, headers, config) {
 		ng.mensagens('alert-danger','<strong>'+ data +'</strong>');
 	}
+	
 	ng.busca_avancada = false;
 	ng.buscaAvancada = function(){
 		$("select").trigger("chosen:updated");

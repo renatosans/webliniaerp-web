@@ -856,7 +856,12 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 		var Timeline = new mojs.Timeline()
 		var body = new mojs.Html({
 			el: n.barDom,
-			x: {500: 0, delay: 0, duration: 500, easing: 'elastic.out'},
+			x: {
+				500: 0, 
+				delay: 0, 
+				duration: 500, 
+				easing: 'elastic.out'
+			},
 			isForce3d: true,
 			onComplete: function () {
 				promise(function (resolve) {
@@ -870,7 +875,9 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 			width: 200,
 			height: n.barDom.getBoundingClientRect().height,
 			radius: 0,
-			x: {[150]: -150},
+			x: {
+				[150]: -150
+			},
 			duration: 1.2 * 500,
 			isShowStart: true
 		})
@@ -918,13 +925,13 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 	if((!empty(ng.config.flg_pagamento_pendente)) && (parseInt(ng.config.flg_pagamento_pendente, 10) === 1)) {
 		setTimeout(function() {
 			new Noty({
-				type: 'warning',
+				type: 'warning',	
 				text: '<h4>Olá, tudo bom?</h4><br/>Não conseguimos identificar o pagamento da fatura esse mês, caso já tenha realizado você pode nos enviar o comprovante de pagamento pelo WhatsApp, <a target="_blank" href="https://api.whatsapp.com/send?phone=5511968697611&text=Ol%C3%A1%20gostaria%20de%20comunicar%20o%20pagamento%20da%20fatura%20do%20empreendimento%20'+ ng.userLogged.nome_empreendimento +'">clicando aqui</a> ou pelo e-mail financeiro@webliniaerp.com.br.<br/><br/>Ah, já ia me esquecendo: caso não identificarmos o pagamento dentro de 5 dias após o vencimento, o acesso ao sistema poderá ser bloqueado.',
 				progressBar: false,
 				timeout: false,
 				theme: 'mint',
 				animation: {
-					open: mojsShow
+					open: 'animated bounceInUp' /*mojsShow*/
 				}
 			}).show();
 		}, 2000);
