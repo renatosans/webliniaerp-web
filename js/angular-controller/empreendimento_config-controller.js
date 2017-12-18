@@ -905,6 +905,33 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.id_caixa_padrao != undefined){
+			var item10 = {
+							nome 				:'id_caixa_padrao',
+							valor 				:ng.configuracoes.id_caixa_padrao , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.id_vendedor_padrao != undefined){
+			var item10 = {
+							nome 				:'id_vendedor_padrao',
+							valor 				:ng.configuracoes.id_vendedor_padrao , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.id_maquineta_padrao != undefined){
+			var item10 = {
+							nome 				:'id_maquineta_padrao',
+							valor 				:ng.configuracoes.id_maquineta_padrao , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.qtd_registros_pesquisa_produtos != undefined){
 			var item2000 = {
 							nome 				:'qtd_registros_pesquisa_produtos',
