@@ -1,9 +1,10 @@
-app.controller('ProdutosController', function($scope, $http, $window, $dialogs, UserService,FuncionalidadeService,TabelaPrecoService){
+app.controller('ProdutosController', function($scope, $http, $window, $dialogs, UserService, ConfigService ,FuncionalidadeService,TabelaPrecoService){
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
+	ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.produto 		= {
 							id_tamanho : null,
 							id_cor     : null,

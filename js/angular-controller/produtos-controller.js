@@ -4,6 +4,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.ids_empreendimento_usuario = [] ;
 	console.log(ng.ids_empreendimento_usuario);
 	var $checkableTree ;
@@ -12,6 +13,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		id_cor     : null,
 		flg_produto_composto : 0,
 		flg_controlar_lote: 0,
+		flg_unidade_fracao: 0,
 		estoque:[],
 		peso_frete : 0 ,
 		largura_pacote : 0 ,
@@ -224,10 +226,13 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 	}
 
 	ng.addInsumo = function(item){
-		var insumo = {id:item.id,nome:item.nome,qtd:(empty(item.qtd)? 1 : item.qtd ),vlr_custo_real:item.vlr_custo_real};
+		var insumo = angular.copy(item);
+			insumo = _.extend(insumo, { qtd: (empty(item.qtd)) ? 1 : item.qtd });
+
 		ng.insumos.push(insumo);
 		ng.calVlrCustoInsumos();
-		item.qtd = null ;
+		item.qtd = null;
+
 		//$('#list_fornecedores').modal('hide');
 	}
 
@@ -944,13 +949,13 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				aj.get(baseUrlApi()+"produto/precos?cplSql=tp.id="+id_produto+" AND te.id IN("+ids_empreendimento_usuario+")")
 				.success(function(dataPrc, statusPrc) {
 					$.each(dataPrc,function(i,x){
-						dataPrc[i].vlr_custo =  numberFormat( ( empty(x.vlr_custo) ? 0  : x.vlr_custo  )					  ,2,'.','');
+						dataPrc[i].vlr_custo =  (empty(x.vlr_custo) ? 0  : x.vlr_custo);
 						dataPrc[i].perc_imposto_compra =  0 ;
 						dataPrc[i].perc_desconto_compra =  0 ;
-						dataPrc[i].perc_venda_atacado =  numberFormat( ( empty(x.perc_venda_atacado) ? 0  : x.perc_venda_atacado  )       * 100 ,2,'.','');
-						dataPrc[i].perc_venda_varejo =  numberFormat( ( empty(x.perc_venda_varejo) ? 0  : x.perc_venda_varejo  )        * 100 ,2,'.','');
-						dataPrc[i].perc_venda_intermediario =  numberFormat( ( empty(x.perc_venda_intermediario) ? 0  : x.perc_venda_intermediario  ) * 100 ,2,'.','');
-						dataPrc[i].valor_desconto_cliente =  numberFormat( ( empty(x.valor_desconto_cliente) ? 0  : x.valor_desconto_cliente  )   * 100 ,2,'.','');
+						dataPrc[i].perc_venda_atacado = (empty(x.perc_venda_atacado) ? 0  : x.perc_venda_atacado) * 100;
+						dataPrc[i].perc_venda_varejo = (empty(x.perc_venda_varejo) ? 0  : x.perc_venda_varejo) * 100;
+						dataPrc[i].perc_venda_intermediario = (empty(x.perc_venda_intermediario) ? 0  : x.perc_venda_intermediario) * 100;
+						dataPrc[i].valor_desconto_cliente = (empty(x.valor_desconto_cliente) ? 0  : x.valor_desconto_cliente) * 100;
 					});
 					ng.produto.precos = dataPrc ;
 					$.each(ng.produto.precos,function(i,x){

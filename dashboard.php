@@ -293,7 +293,7 @@
 				<div class="row">
 					<div class="col-lg-3 col-sm-6 col-md-6" ng-if="userLogged.id_empreendimento != 75">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamento | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamento | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Faturamento</h6>
 							(no período)
 							<div class="stat-icon">
@@ -310,7 +310,7 @@
 
 					<div class="col-lg-3 col-sm-6 col-md-6" ng-if="userLogged.id_empreendimento == 75">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamentoClinicas | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamentoClinicas | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Faturamento</h6>
 							(no período)
 							<div class="stat-icon">
@@ -327,7 +327,7 @@
 
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_custo_produto | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_custo_produto | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Custo Produtos Vendidos</h6>
 							(no período)
 							<div class="stat-icon">
@@ -344,7 +344,7 @@
 
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_taxa_maquineta | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_taxa_maquineta | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Taxa Maquineta</h6>
 							(no período)
 							<div class="stat-icon">
@@ -361,7 +361,7 @@
 
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_pagamento_fornecedor | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_pagamento_fornecedor | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Pago aos Fornecedores</h6>
 							(no período)
 							<div class="stat-icon">
@@ -381,7 +381,7 @@
 				<div class="row">
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-success fadeInDown animation-delay6">
-							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{(total.vlrTotalFaturamento  - (total.vlr_custo_produto + total.vlr_taxa_maquineta + total.vlr_pagamento_fornecedor)) | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{(total.vlrTotalFaturamento  - (total.vlr_custo_produto + total.vlr_taxa_maquineta + total.vlr_pagamento_fornecedor)) | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Lucro Previsto</h6>
 							(no período)
 							<div class="stat-icon">
@@ -397,7 +397,7 @@
 					</div><!-- /.col -->
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-success fadeInDown animation-delay6">
-							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{ total.vlrTotalPagamentosConfirmados | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{ total.vlrTotalPagamentosConfirmados | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Pagamentos Confirmados</h6>
 							(no período)
 							<div class="stat-icon">
@@ -413,7 +413,7 @@
 					</div><!-- /.col -->
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTicketMedio | numberFormat: 2 : ',' : '.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTicketMedio | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Ticket Médio de Vendas</h6>
 							(no período)
 							<div class="stat-icon">
@@ -429,7 +429,7 @@
 					</div><!-- /.col -->
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none"><span id="clientsSalesCount">{{ total.med_itens_venda | numberFormat:2:',':'.' }} UN.</span></h2>
+							<h2 class="m-top-none"><span id="clientsSalesCount">{{ total.med_itens_venda | numberFormat:config.qtd_casas_decimais:',':'.' }} UN.</span></h2>
 							<h6>Qtde. Média Un. Prod. Vendidos</h6>
 							(no período)
 							<div class="stat-icon">
@@ -449,7 +449,7 @@
 				<div class="row">
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-warning fadeInDown animation-delay5">
-							<h2 class="m-top-none">R$ <span id="suppliersSalesCount">{{ total.vlrSaldoDevedorFornecedores }}</span></h2>
+							<h2 class="m-top-none">R$ <span >{{ total.vlrSaldoDevedorFornecedores | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Pagamentos Agendados</h6>
 							(a fornecedores)
 							<div class="stat-icon">
@@ -465,7 +465,7 @@
 					</div><!-- /.col -->
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-warning fadeInDown animation-delay5">
-							<h2 class="m-top-none">R$ <span id="clientsNonOkPaymentsChequeCount">{{ total.vlrTotalPagamentosNaoConfirmados.cheque | numberFormat:2:',':'.' }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsNonOkPaymentsChequeCount">{{ total.vlrTotalPagamentosNaoConfirmados.cheque | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Cheques a Compensar</h6>
 							(no período)
 							<div class="stat-icon">
@@ -482,7 +482,7 @@
 					
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-warning fadeInDown animation-delay4">
-							<h2 class="m-top-none">R$ <span id="clientsNonOkPaymentsBoletoCount">{{ total.vlrTotalPagamentosNaoConfirmados.boleto | numberFormat: 2 : ',' : '.'  }}</span></h2>
+							<h2 class="m-top-none">R$ <span id="clientsNonOkPaymentsBoletoCount">{{ total.vlrTotalPagamentosNaoConfirmados.boleto | numberFormat: config.qtd_casas_decimais : ',' : '.'  }}</span></h2>
 							<h6>Boletos a Compensar</h6>
 							(no período)
 							<div class="stat-icon">
@@ -499,7 +499,7 @@
 
 					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-warning fadeInDown animation-delay3">
-							<h2 class="m-top-none"><span id="clientsNonOkPaymentsCreditoCount">R$ {{ total.vlrTotalPagamentosNaoConfirmados.credito | numberFormat: 2 : ',' : '.' }}</span></h2>
+							<h2 class="m-top-none"><span id="clientsNonOkPaymentsCreditoCount">R$ {{ total.vlrTotalPagamentosNaoConfirmados.credito | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>C. Crédito a Compensar</h6>
 							(no período)
 							<div class="stat-icon">
@@ -517,7 +517,7 @@
 				<div class="row">
 					<div class="col-lg-6 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-info fadeInDown animation-delay3">
-							<h2 class="m-top-none"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: 2 : ',' : '.' }}</span></h2>
+							<h2 class="m-top-none"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Custo Total</h6>
 							(Produtos em Estoque)
 							<div class="stat-icon">
@@ -533,7 +533,7 @@
 					</div><!-- /.col -->
 					<div class="col-lg-6 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-danger fadeInDown animation-delay4">
-							<h2 class="m-top-none">R$ <span id="negativeCount">{{ total.vlrSaldoDevedorClientes }}</span></h2>
+							<h2 class="m-top-none">R$ <span>{{ total.vlrSaldoDevedorClientes | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Saldo Devedor</h6>
 							(de clientes)
 							<div class="stat-icon">
@@ -571,7 +571,7 @@
 										<tr ng-repeat="item in vendasCategoriaTable">
 											<td>{{ item.nome_categoria }}</td>
 											<td class="text-center">{{ item.qtd_total_vendas }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -598,7 +598,7 @@
 									<tbody>
 										<tr ng-repeat="item in vendasFabricantesTable">
 											<td>{{ item.nome_fabricante }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -625,7 +625,7 @@
 									<tbody>
 										<tr ng-repeat="item in vendasProdutosTable">
 											<td>{{ item.nome }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -652,7 +652,7 @@
 									<tbody>
 										<tr ng-repeat="item in vendasClientesTable">
 											<td>{{ item.nome }}</td>
-											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_vendas | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -744,10 +744,10 @@
 										<tr ng-repeat="item in estoqueDepositos">
 											<td>{{ item.nme_deposito }}</td>
 											<td class="text-center">{{ item.qtd_item }}</td>
-											<td class="text-right">R$ {{ item.vlr_custo_total | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_total_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_total_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_custo_total | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_total_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_total_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_total_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -768,7 +768,7 @@
 							<div class="panel-footer">
 								<div class="row">
 									<div class="col-xs-12 text-right">
-										<span><i class="fa fa-shopping-cart"></i> Total Vendas R$ {{ vlrTotalVendasPeriodoComparativo | numberFormat:2:',':'.' }}</span>
+										<span><i class="fa fa-shopping-cart"></i> Total Vendas R$ {{ vlrTotalVendasPeriodoComparativo | numberFormat:config.qtd_casas_decimais:',':'.' }}</span>
 									</div><!-- /.col -->
 								</div><!-- /.row -->
 							</div>

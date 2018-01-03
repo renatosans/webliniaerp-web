@@ -254,7 +254,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.calcSubTotal = function(item){
 		if(!empty(item.qtd_total)) {
 			item.qtd_total = isNaN(Number(item.qtd_total)) || Number(item.qtd_total) == 0  ? 1 : Number(item.qtd_total) ;
-			item.sub_total = item.qtd_total * Number(item.vlr_unitario);
+
+			if(item.flg_unidade_fracao == 1) // Se o controle de estoque do item for fração
+				item.sub_total = ((Number(item.qtd_total) * 1000) * Number(item.vlr_unitario));
+			else
+				item.sub_total = (Number(item.qtd_total) * Number(item.vlr_unitario));
 		}
 		else
 			item.sub_total = 0;
@@ -352,8 +356,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			produto.valor_desconto = 100;
 		}
 
-		produto.qtd_total = !$.isNumeric(produto.qtd_total) || Number(produto.qtd_total) < 1 ? 1 : Number(produto.qtd_total) ;
-		produto.sub_total = produto.qtd_total * produto.vlr_unitario;
+		produto.qtd_total = !$.isNumeric(produto.qtd_total) ? 1 : Number(produto.qtd_total) ;
+
+		if(produto.flg_unidade_fracao == 1) // Se o controle de estoque do produto for fração
+			produto.sub_total = ((produto.qtd_total * 1000) * produto.vlr_unitario);
+		else
+			produto.sub_total = (produto.qtd_total * produto.vlr_unitario);
+
 
 		ng.vezes_valor			    = produto.qtd_total+' x R$ '+numberFormat(produto.vlr_unitario,2,',','.');
 		ng.nome_ultimo_produto      = produto.nome_produto ;
@@ -1536,6 +1545,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 					});
 				});
+				console.log(data.produtos);
 			})
 			.error(function(data, status, headers, config) {
 				ng.produtos = [];
@@ -1665,9 +1675,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.add_index = index;
 			ng.loading_add_produto = true;
 
-			item.vlr_venda_atacado = round(item.vlr_venda_atacado,2);
-			item.vlr_venda_intermediario = round(item.vlr_venda_intermediario,2);
-			item.vlr_venda_varejo = round(item.vlr_venda_varejo,2);
+			item.vlr_venda_atacado = item.vlr_venda_atacado;
+			item.vlr_venda_intermediario = item.vlr_venda_intermediario;
+			item.vlr_venda_varejo = item.vlr_venda_varejo;
 
 			ng.incluirCarrinho(angular.copy(item), 'UPDATE');
 			ng.calcTotalCompra();

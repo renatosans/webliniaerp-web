@@ -234,9 +234,9 @@
 						<tr>
 							<td class="info text-bold" colspan="5">{{ fabricante }}</td>
 							<td class="info text-bold text-center">{{ item_data.qtd_total_vendida }}</td>
-							<td class="info text-bold text-center">R$ {{ item_data.vlr_total_custo_medio | numberFormat:2:',':'.' }}</td>
+							<td class="info text-bold text-center">R$ {{ item_data.vlr_total_custo_medio | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 							<td class="info text-bold text-center" colspan="3"></td>
-							<td class="info text-bold text-center">R$ {{ item_data.vlr_total_vendido | numberFormat:2:',':'.'}}</td>
+							<td class="info text-bold text-center">R$ {{ item_data.vlr_total_vendido | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
 						</tr>
 						<tr ng-repeat="(index, item) in item_data.items">
 							<td class="text-center">{{ item.cod_produto }}</td>
@@ -245,11 +245,11 @@
 							<td class="text-center">{{ item.nme_tamanho }}</td>
 							<td class="text-center">{{ item.nme_cor_sabor }}</td>
 							<td class="text-center" ng-click="loadVendasByProduto(item,$event)">{{ item.qtd_vendida }}</td>
-							<td class="text-center">R$ {{item.med_custo | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">R$ {{item.med_desconto_perc | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">{{item.med_desconto_real | numberFormat:2:',':'.'}} %</td>
-							<td class="text-right">R$ {{item.vlr_desconto | numberFormat:2:',':'.'}}</td>
-							<td class="text-center">R$ {{item.vlr_subtotal | numberFormat:2:',':'.'}}</td>
+							<td class="text-center">R$ {{item.med_custo | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+							<td class="text-right">R$ {{item.med_desconto_perc | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+							<td class="text-right">{{item.med_desconto_real | numberFormat:config.qtd_casas_decimais:',':'.'}} %</td>
+							<td class="text-right">R$ {{item.vlr_desconto | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+							<td class="text-center">R$ {{item.vlr_subtotal | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
 						</tr>
 					</tbody>
 				</table>

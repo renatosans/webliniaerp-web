@@ -225,20 +225,20 @@
 							<td class="text-right">
 								 <div class="cardBody">
 							 		<a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
-										R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
+										R$ {{venda.vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.'}}
 								 	</a>
 							 	</div>
 							</td>
-							<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:2:',':'.'}}</td>
+							<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
 							<td class="text-right">
 						 		<a id="pop{{venda.nme_produto }}" href="#" 
 						 			style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" 
 						 			ng-click="showPopoverMargemLucro(venda, index, $event)">
-									{{ venda.med_margem_lucro * 100 | numberFormat:2:',':'.'}}%
+									{{ venda.med_margem_lucro * 100 | numberFormat:config.qtd_casas_decimais:',':'.'}}%
 							 	</a>
 							</td>
-							<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</td>
-							<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</a></td>
+							<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+							<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</a></td>
 						</tr>
 					</tbody>
 				</table>
@@ -372,9 +372,9 @@
 											<td>{{ item.dta_venda | dateFormat:'dateTime' }}</td>
 											<td>{{ item.nome_usuario }}</td>
 											<td>{{ item.nome_cliente }}</td>
-											<td class="text-right">R${{ item.vlr_custo_total | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R${{ item.vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 											<td class="text-center">{{ item.qtd }}</td>
-											<td class="text-right">R${{ item.valor_real_item | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R${{ item.valor_real_item | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 										</tr>
 									</tbody>
 								</table>

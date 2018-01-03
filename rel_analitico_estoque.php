@@ -264,17 +264,17 @@
 									<td class="text-middle text-center">{{ item.dta_validade | dateFormat: 'date' }}</td>
 									<td class="text-middle text-center">{{ item.qtd_item }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_real | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_total | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_real | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_total | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_total_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_total_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_total_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_total_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_total_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 								</tr>
 							</tbody>
 							<tfoot>
@@ -282,13 +282,13 @@
 									<td class="text-right text-bold" colspan="5">Totais</td>
 									<td class="text-center text-bold">{{ qtd_estoque_total }}</td>
 									<td></td>
-									<td class="text-right text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
+									<td class="text-right text-bold">R$ {{ vlr_custo_total | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
 									<td ng-if="existeTabelaPreco('atacado')"></td>
-									<td class="text-right text-bold" ng-if="existeTabelaPreco('atacado')">R$ {{ vlr_total_venda_atacado | numberFormat: 2 : ',' : '.'}}</td>
+									<td class="text-right text-bold" ng-if="existeTabelaPreco('atacado')">R$ {{ vlr_total_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
 									<td ng-if="existeTabelaPreco('intermediario')"></td>
-									<td class="text-right text-bold" ng-if="existeTabelaPreco('intermediario')">R$ {{ vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.'}}</td>
+									<td class="text-right text-bold" ng-if="existeTabelaPreco('intermediario')">R$ {{ vlr_total_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
 									<td ng-if="existeTabelaPreco('varejo')"></td>
-									<td class="text-right text-bold" ng-if="existeTabelaPreco('varejo')">R$ {{ vlr_total_venda_varejo | numberFormat: 2 : ',' : '.'}}</td>
+									<td class="text-right text-bold" ng-if="existeTabelaPreco('varejo')">R$ {{ vlr_total_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
 								</tr>
 							</tfoot>
 						</table>

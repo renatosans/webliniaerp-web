@@ -1131,12 +1131,20 @@
 															<td class="text-center" width="80">
 																<input type="text" 
 																	class="form-control text-center input-xs"
-																	onKeyPress="return SomenteNumero(event);" 
+																	onKeyPress="return SomenteNumero(event);"
 																	ng-keyUp="calcSubTotal(item)"  
-																	ng-model="item.qtd_total"/>
+																	ng-model="item.qtd_total"
+																	ng-if="item.flg_unidade_fracao != 1"/>
+																<input type="text" 
+																	class="form-control text-center input-xs"
+																	onKeyPress="return SomenteNumero(event);"
+																	thousands-formatter precision="3" 
+																	ng-keyUp="calcSubTotal(item)"  
+																	ng-model="item.qtd_total"
+																	ng-if="item.flg_unidade_fracao == 1"/>
 															</td>
-															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
-															<td class="text-right">R$ {{ item.vlr_real | numberFormat : 2 : ',' : '.' }}</td>
+															<td class="text-center" ng-if="show_vlr_real" >R${{ item.vlr_custo_real | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+															<td class="text-right">R$ {{ item.vlr_real | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 															<td class="text-center" style="width: 30px;"
 																ng-if="!(is_venda_bonificada)">
 																<!-- <label class="label-checkbox" id="label-checkbox-{{ $index }}">
@@ -1162,8 +1170,8 @@
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">R$</span>
 																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,true)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto_real" type="text" class="form-control text-right input-xs" id="teste_teste" />
 															</td>
-															<td class="text-right">R$ {{ item.vlr_unitario    | numberFormat : 2 : ',' : '.' }}</td>
-															<td class="text-right">R$ {{ item.sub_total    | numberFormat : 2 : ',' : '.' }}</td>
+															<td class="text-right">R$ {{ item.vlr_unitario    | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+															<td class="text-right">R$ {{ item.sub_total    | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 															<td class="text-center" class="hidden-print">
 																<button type="button" class="btn btn-xs btn-danger"  ng-click="delItem($index)"><i class="fa fa-trash-o"></i></button>
 															</td>
@@ -1181,7 +1189,7 @@
 													<h2 class="no-margin">
 														{{ total_itens }} Itens
 														-
-														R$ {{ vlrTotalCompra | numberFormat : 2 : ',' : '.' }}
+														R$ {{ vlrTotalCompra | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}
 													</h2>
 												</div>
 											</div>
@@ -1933,7 +1941,11 @@
 														ng-model="item.valor_desconto_real"/>
 												<td style="min-width: {{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px;">
 													<input type="text" class="form-control text-center"
-														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto)"
+														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && !(item.flg_unidade_fracao == 1)"
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
+													<input type="text" class="form-control text-center"
+														thousands-formatter precision="3"
+														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && (item.flg_unidade_fracao == 1)"
 														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
 
 													<div class="input-group" ng-if="(configuracoes.flg_botoes_quantidade_pesquisa_produto)">
@@ -1955,7 +1967,7 @@
 													</div>
 												</td>
 												<td class="text-right text-middle" style="min-width: 80px;">
-													R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}
+													R$ {{ item.vlr_unitario | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}
 												</td>
 												<td class="text-center text-middle">
 													<button type="button" 
@@ -2121,9 +2133,9 @@
 									<td>{{ item.nome_fabricante }}</td>
 									<td>{{ item.peso }}</td>
 									<td class="text-center" width="20">{{ item.qtd_total }}</td>
-									<td class="text-right">R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_unitario | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 									<td class="text-center"><span ng-if="item.valor_desconto_real > 0 && item.valor_desconto_real != undefined">R$<span> {{ item.valor_desconto_real }}</td>
-									<td class="text-right">R$ {{ item.sub_total | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.sub_total | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 								</tr>
 								<tr>
 									<td></td>

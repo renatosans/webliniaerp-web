@@ -296,8 +296,21 @@
 																		<td>{{ item.nome_fabricante }}</td>
 																		<td>{{ item.peso }}</td>
 																		<td>{{ item.sabor }}</td>
-																		<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-																		<td  width="50"><input  ng-model="item.qtd" onKeyPress="return SomenteNumero(event);" ng-keyup="calVlrCustoInsumos()" type="text" class="form-control input-xs" /></td>
+																		<td class="text-right" width="70">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+																		<td width="80">
+																			<input type="text" class="form-control input-xs"
+																				onKeyPress="return SomenteNumero(event);" 
+																				ng-model="item.qtd" 
+																				ng-keyup="calVlrCustoInsumos()" 
+																				ng-if="item.flg_unidade_fracao != 1"/>
+
+																			<input type="text" class="form-control input-xs"
+																				thousands-formatter precision="3"
+																				onKeyPress="return SomenteNumero(event);" 
+																				ng-model="item.qtd" 
+																				ng-keyup="calVlrCustoInsumos()" 
+																				ng-if="item.flg_unidade_fracao == 1"/>
+																		</td>
 																		<td align="center">
 																			<button class="btn btn-xs btn-danger" ng-click="delInsumo($index,item)"><i class="fa fa-trash-o"></i></button>
 																		</td>
@@ -419,6 +432,23 @@
 														</div>
 													</div>
 												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="" class="control-label">Unidade de Medida</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_unidade_fracao"  name="unidade_fracao" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Unidade</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_unidade_fracao"  name="unidade_fracao" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Fração</span>
+															</label>
+														</div>
+													</div>
+												</div>
 											</div>
 
 
@@ -457,10 +487,16 @@
 														<input ng-model="inventario_novo.lote" type="text" class="form-control input-xs">
 													</div>
 												</div>
-												<div class="col-sm-1">
+												<div class="col-sm-1" ng-if="produto.flg_unidade_fracao != 1">
 													<div class="form-group" id="inventario_novo_qtd">
 														<label class="control-label">Qtd.</label>
 														<input ng-model="inventario_novo.qtd_ivn" onkeypress="return SomenteNumero(event);" type="text" class="form-control input-xs">
+													</div>
+												</div>
+												<div class="col-sm-2" ng-if="produto.flg_unidade_fracao == 1">
+													<div class="form-group" id="inventario_novo_qtd">
+														<label class="control-label">Qtd.</label>
+														<input ng-model="inventario_novo.qtd_ivn" thousands-formatter precision="3" onkeypress="return SomenteNumero(event);" type="text" class="form-control input-xs">
 													</div>
 												</div>
 												<div class="col-sm-1">
@@ -494,7 +530,8 @@
 																<td class="text-center" ng-if="value.dta_validade == '2099-12-31'"></td>
 																<td class="text-center" ng-if="produto.flg_controlar_lote==1">{{ value.lote }}</td>
 																<td  ng-if="funcioalidadeAuthorized('alterar_quantidade')" class="text-center" >
-																	<input type="text" ng-if="value.flg_visivel == 1"  onkeypress="return SomenteNumero(event);"   class="form-control input-xs text-center" ng-model="value.qtd_ivn" >
+																	<input type="text" ng-if="value.flg_visivel == 1 && produto.flg_unidade_fracao != 1" onkeypress="return SomenteNumero(event);"   class="form-control input-xs text-center" ng-model="value.qtd_ivn" >
+																	<input type="text" ng-if="value.flg_visivel == 1 && produto.flg_unidade_fracao == 1" thousands-formatter precision="3" onkeypress="return SomenteNumero(event);"   class="form-control input-xs text-center" ng-model="value.qtd_ivn" >
 																	<span ng-if="value.flg_visivel != 1">{{ value.qtd_ivn }}</span>
 																</td>
 																<td ng-if="!funcioalidadeAuthorized('alterar_quantidade')" class="text-center">{{ value.qtd_ivn }} </td>
@@ -1028,9 +1065,9 @@
 											<td class="text-center">{{ item.peso }}</td> 
 											<td class="text-center">{{ item.sabor }}</td>
 											<td class="text-center"><a href="#"  ng-click="qtdDepostito(item,$event)">{{ configuracao.id_produto_debito_anterior_cliente == item.id_produto && ' ' || item.qtd_item }}</a></td>
-											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td align="center">
 												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')">
 													<i class="fa fa-edit"></i>
@@ -1233,7 +1270,7 @@
 											<th >Tamanho</th>
 											<th >Sabor/cor</th>
 											<th>Vlr. Custo</th>
-											<th >qtd</th>
+											<th >Qtd</th>
 											<th ></th>
 										</tr>
 									</thead>
@@ -1247,8 +1284,19 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
-											<td>{{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-											<td  width="50"><input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd" type="text" class="form-control input-xs" /></td>
+											<td>R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+											<td  width="80">
+												<input type="text" class="form-control input-xs" 
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-if="item.flg_unidade_fracao != 1"/>
+
+												<input type="text" class="form-control input-xs" 
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-if="item.flg_unidade_fracao == 1"
+													thousands-formatter precision="3"/>
+											</td>
 											<td width="50" align="center">
 												<button ng-if="!existsInsumo(item.id)" type="button" class="btn btn-xs btn-success" ng-disabled="" ng-click="addInsumo(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
