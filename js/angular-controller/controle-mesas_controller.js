@@ -72,8 +72,10 @@ app.controller('ControleMesasController', function(
 
 		Instascan.Camera.getCameras().then(function (cameras) {
 			if (cameras.length > 0) {
-				if(cameras.length > 1)
-					scanner.start(cameras[1]);
+				if(cameras.length > 1) {
+					var camera = _.findWhere(cameras, function(camera){if(camera.name.indexOf('front') != -1) return camera;})
+					scanner.start(camera);
+				}
 				else
 					scanner.start(cameras[0]);
 			} else {

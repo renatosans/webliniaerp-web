@@ -992,7 +992,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						(ng.out_descontos[0].vlr_desconto * 100) <= (faixa.perc_desconto_max * 100)
 					){
 						$.each(faixa.usuarios, function(i, usuario) {
-							if(usuario.login === ng.autorizador.login && usuario.senha === md5(ng.autorizador.senha)) {
+							if(usuario.login.toLowerCase() === ng.autorizador.login.toLowerCase() && usuario.senha === md5(ng.autorizador.senha)) {
 								ng.autorizador.id = usuario.id_usuario;
 								encontrado = true;
 							}

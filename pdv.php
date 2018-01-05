@@ -1095,7 +1095,7 @@
 									<div class="row">
 									
 										<div class="col-sm-12">
-											<div class="form-group" style="overflow-y: scroll; max-height: 250px;">
+											<div class="form-group">
 												<table id="tbl_carrinho" 
 													class="table table-condensed table-bordered table-hover table-striped">
 													<tr ng-hide="carrinho.length > 0" class="hidden-print">
