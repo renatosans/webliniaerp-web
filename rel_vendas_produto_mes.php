@@ -225,13 +225,13 @@
 								<td class="text-center">{{ venda.qtd_vendida }}</td>
 								<td class="text-right">
 									 <div class="cardBody"><a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus" >
-										R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
+										R$ {{venda.vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.'}}
 									 </a>
 								</td>
-								<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:2:',':'.'}}</td>
-								<td class="text-right">{{ venda.med_margem_lucro * 100 | numberFormat:2:',':'.'}}%</td>
-								<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</td>
-								<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</a></td>
+								<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+								<td class="text-right">{{ venda.med_margem_lucro * 100 | numberFormat:config.qtd_casas_decimais:',':'.'}}%</td>
+								<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+								<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</a></td>
 							</tr>
 							<tr class="warning" id="saldo_{{key}}">
 							<td class="text-right" colspan="8"><strong class="ng-binding">Totais</strong></td>
@@ -240,18 +240,18 @@
 							</td>
 							<td class="text-right">
 								<span class="label label-success ng-binding ng-scope" ng-if="item.saldo_vlr_custo_total >= 0">
-									R$ {{ item.saldo_vlr_custo_total | numberFormat:2:',':'.' }}
+									R$ {{ item.saldo_vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}
 								</span>
 								<span class="label label-danger ng-binding ng-scope" ng-if="item.saldo_vlr_custo_total < 0">
-									R$ {{ item.saldo_vlr_custo_total | numberFormat:2:',':'.' }}
+									R$ {{ item.saldo_vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}
 								</span>
 							</td>
 							<td class="text-right">
 								<span class="label label-success ng-binding ng-scope" ng-if="item.saldo_vlr_vendido >= 0">
-									R$ {{ item.saldo_vlr_vendido | numberFormat:2:',':'.' }}
+									R$ {{ item.saldo_vlr_vendido | numberFormat:config.qtd_casas_decimais:',':'.' }}
 								</span>
 								<span class="label label-danger ng-binding ng-scope" ng-if="item.saldo_vlr_vendido < 0">
-									R$ {{ item.saldo_vlr_vendido | numberFormat:2:',':'.' }}
+									R$ {{ item.saldo_vlr_vendido | numberFormat:config.qtd_casas_decimais:',':'.' }}
 								</span>
 							</td>
 							<td class="text-right">
@@ -259,10 +259,10 @@
 							</td>
 							<td class="text-right">
 								<span class="label label-success ng-binding ng-scope" ng-if="item.saldo_vlr_lucro_bruto >= 0">
-									R$ {{ item.saldo_vlr_lucro_bruto | numberFormat:2:',':'.' }}
+									R$ {{ item.saldo_vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}
 								</span>
 								<span class="label label-danger ng-binding ng-scope" ng-if="item.saldo_vlr_lucro_bruto < 0">
-									R$ {{ item.saldo_vlr_lucro_bruto | numberFormat:2:',':'.' }}
+									R$ {{ item.saldo_vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}
 								</span>
 							</td>
 						 </tr>
@@ -398,9 +398,9 @@
 											<td>{{ item.dta_venda | dateFormat:'dateTime' }}</td>
 											<td>{{ item.nome_usuario }}</td>
 											<td>{{ item.nome_cliente }}</td>
-											<td class="text-right">R${{ item.vlr_custo_total | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R${{ item.vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 											<td class="text-center">{{ item.qtd }}</td>
-											<td class="text-right">R${{ item.valor_real_item | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R${{ item.valor_real_item | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 										</tr>
 									</tbody>
 								</table>

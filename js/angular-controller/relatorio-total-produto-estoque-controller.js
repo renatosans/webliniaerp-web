@@ -1,7 +1,8 @@
-app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, UserService, EmpreendimentoService, TabelaPrecoService) {
+app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, UserService, ConfigService, EmpreendimentoService, TabelaPrecoService) {
 	var ng 				= $scope,
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.config 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.deposito 		= {};

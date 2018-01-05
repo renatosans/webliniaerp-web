@@ -350,7 +350,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 		ng.loadSaldoDevedorFornecedor = function(first_date, last_date) {
 			aj.get(baseUrlApi()+"saldo_devedor_fornecedor/dashboard/"+first_date+'/'+last_date+'?id_empreendimento='+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
-					ng.total.vlrSaldoDevedorFornecedores = numberFormat(data.saldo_devedor_fornecedores, 2, ",", ".");
+					ng.total.vlrSaldoDevedorFornecedores = data.saldo_devedor_fornecedores;
 					$('#suppliersSalesCount').text(ng.total.vlrSaldoDevedorFornecedores);
 				})
 				.error(function(data, status, headers, config) {
@@ -366,7 +366,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 					data.vlr_saldo_devedor
 
 					data.saldo_devedor_clientes = data.vlr_saldo_devedor  * (-1);
-					ng.total.vlrSaldoDevedorClientes = numberFormat(data.vlr_saldo_devedor *(-1), 2, ",", ".");
+					ng.total.vlrSaldoDevedorClientes = (data.vlr_saldo_devedor *(-1));
 					$('#negativeCount').text(ng.total.vlrSaldoDevedorClientes);
 
 				})

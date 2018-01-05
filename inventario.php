@@ -473,7 +473,9 @@
 										<div class="col-sm-3">
 											<div class="form-group" id="item-qtd-add">
 												<label class="control-label">Quantidade</label>
-												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()">
+												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()" ng-if="produto.flg_unidade_fracao != 1">
+												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
+												<pre>{{ produto }}</pre>
 											</div>
 										</div>
 

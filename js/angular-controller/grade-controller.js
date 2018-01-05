@@ -1,10 +1,11 @@
-app.controller('GradeController', function($scope, $http, $window, $dialogs, UserService, TabelaPrecoService){
+app.controller('GradeController', function($scope, $http, $window, $dialogs,ConfigService, UserService, TabelaPrecoService){
 
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.produto 		= {};
     ng.produtos		= [];
     ng.fabricantes	= [];

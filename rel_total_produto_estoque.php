@@ -274,16 +274,16 @@
 									<td class="text-center">{{ item.peso }}</td>
 									<td class="text-center">{{ item.sabor }}</td>
 									
-									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
 
 									<td class="text-center" ng-if="(grupo_busca)">{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
 									<td class="text-center" ng-if="grupo_tabela == 'validade'">{{ item.dta_validade != '2099-12-31' && (item.dta_validade | dateFormat:'date') || ' ' }}</td>
 
 									<td class="text-center">{{ item.qtd_item }}</td>
-									<td class="text-right ">R$ {{ (item.vlr_custo_real * item.qtd_item) | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right ">R$ {{ (item.vlr_custo_real * item.qtd_item) | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
 								</tr>
 							</tbody>
 							
@@ -293,7 +293,7 @@
 									<td class="text-left text-bold">{{ total_produtos_estoque }}</td>
 									<td class="text-right text-bold" colspan="{{ formataColspan() }}">TOTAIS</td>
 									<td class="text-center text-bold">{{ qtd_total_estoque }}</td>
-									<td class="text-right text-bold">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
+									<td class="text-right text-bold">R$ {{ vlr_total_estoque | numberFormat : config.qtd_casas_decimais : ',' : '.'  }}</td>
 								</tr>
 							</tfoot>
 						</table>

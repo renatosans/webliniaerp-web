@@ -289,7 +289,7 @@
 																		<td>{{ item.nome_fabricante }}</td>
 																		<td>{{ item.peso }}</td>
 																		<td>{{ item.sabor }}</td>
-																		<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+																		<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 																		<td  width="50"><input  ng-model="item.qtd" onKeyPress="return SomenteNumero(event);" ng-keyup="calVlrCustoInsumos()" type="text" class="form-control input-xs" /></td>
 																		<td align="center">
 																			<button class="btn btn-xs btn-danger" ng-click="delInsumo($index,item)"><i class="fa fa-trash-o"></i></button>
@@ -890,7 +890,7 @@
 											<td ng-if="item.ex_tipi == 0"></td>
 											<td ng-if="item.ex_tipi > 0">{{ item.ex_tipi  }}</td>
 											<td>{{ item.dsc_ncm | limitTo : 95 : 0 }} <a href="" style="text-decoration: underline;color: #000;" ng-if="item.dsc_ncm.length > 95">...</a></td>
-											<td ng-if="item.num_percentual_ipi !=null">{{ item.num_percentual_ipi | numberFormat:2:',':'.' }}%</td>
+											<td ng-if="item.num_percentual_ipi !=null">{{ item.num_percentual_ipi | numberFormat:config.qtd_casas_decimais:',':'.' }}%</td>
 											<td ng-if="item.num_percentual_ipi ==null">NT</td>
 											<td width="50" align="center">
 												<button type="button" class="btn btn-xs btn-success" ng-click="changeNcm(item)">
@@ -1031,7 +1031,7 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
-											<td>{{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+											<td>{{ item.vlr_custo_real | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 											<td  width="50"><input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd" type="text" class="form-control input-xs" /></td>
 											<td width="50" align="center">
 												<button ng-if="!existsInsumo(item.id)" type="button" class="btn btn-xs btn-success" ng-disabled="" ng-click="addInsumo(item)">

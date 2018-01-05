@@ -470,7 +470,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			ng.produto.validades = [];
 
 		$.each(ng.produto.validades, function(i, item) {
-			qtdTotal += parseInt(item.qtd,10);
+			qtdTotal += parseFloat(item.qtd);
 		});
 
 		ng.produto.qtd = qtdTotal;
@@ -588,7 +588,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			ng.qtd_total_entrada   = 0 ;
 
 			$.each(ng.entradaEstoque, function(i,item){
-				var qtd          = item.qtd      == null || item.qtd      == "" ? 0 : parseInt(item.qtd);
+				var qtd          = item.qtd      == null || item.qtd      == "" ? 0 : parseFloat(item.qtd);
 				var custo        = item.custo    == null || item.custo    == "" ? 0 : parseFloat(item.custo);
 				var por_desconto = item.desconto == null || item.desconto == "" ? 0 : parseFloat(item.desconto);
 				var por_imposto  = item.imposto  == null || item.imposto  == "" ? 0 : parseFloat(item.imposto);
@@ -801,7 +801,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.atualizaTotal = function(){
 		var total =  0 ;
 		$.each(ng.novoPedido,function(i,item){
-			var qtd          = item.qtd == '' ? 1 : parseInt(item.qtd);
+			var qtd          = item.qtd == '' ? 1 : parseFloat(item.qtd);
 			var custo_compra = parseFloat(item.custo_compra);
 			console.log(item);
 			total += qtd * custo_compra ;

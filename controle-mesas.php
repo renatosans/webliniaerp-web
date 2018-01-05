@@ -321,7 +321,7 @@
 									<div class="panel-body text-center">
 										<span class="unlocked text-bold {{ (!mesa.flg_livre) ? 'hide' : '' }}">LIVRE</span>
 										<span class="vlr_total_mesa text-bold {{ (mesa.flg_livre) ? 'hide' : '' }}">
-											R$ {{ mesa.vlr_total_mesa | numberFormat : 2 : ',' : '.' }}
+											R$ {{ mesa.vlr_total_mesa | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}
 										</span>
 										<div class="clearfix"></div>
 										<span class="qtd_comandas">{{ mesa.qtd_comandas_abertas }} Comanda(s)</span>
@@ -414,7 +414,7 @@
 										<td ng-if="comanda.id_cliente == configuracao.id_cliente_movimentacao_caixa" ><b>(Cliente não informado)</b></td>
 
 										<td class="text-center">{{ comanda.qtd_total }}</td>
-										<td class="text-right">R$ {{ comanda.valor_total | numberFormat : 2 : ',' : '.' }}</td>
+										<td class="text-right">R$ {{ comanda.valor_total | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
 									</tr>
 								</tbody>
 							</table>
@@ -431,7 +431,7 @@
 											</tr>
 											<tr>
 												<td>Total da Mesa</td>
-												<td class="text-right">R$ {{ vlrTotalComanda() | numberFormat:2:',':'.' }}</td>
+												<td class="text-right">R$ {{ vlrTotalComanda() | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
 											</tr>
 										</thead>
 									</table>
@@ -628,7 +628,7 @@
 												<td class="text-middle text-center hidden-xs">{{ item.peso }}</td>
 												<td class="text-middle text-center hidden-xs">{{ item.sabor }}</td>
 												<td class="text-middle text-center">{{ item.qtd_total }}</td>
-												<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:2 : ',' : '.' }}</td>
+												<td class="text-middle text-right">R$ {{ item.vlr_venda_varejo | numberFormat:configuracao.qtd_casas_decimais : ',' : '.' }}</td>
 												<td class="text-middle text-right" ng-if="userLogged.flg_dispositivo===1">
 													<button ng-click="selProduto(item,true)" type="button" class="btn btn-sm btn-warning">
 														<i class="fa fa-edit"></i>
@@ -653,15 +653,15 @@
 											</tr>
 											<tr>
 												<td>Total Consumo</td>
-												<td class="text-right">R$ {{ vlrTotalItensComanda() | numberFormat:2:',':'.' }}</td>
+												<td class="text-right">R$ {{ vlrTotalItensComanda() | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
 											</tr>
 											<tr>
 												<td>Taxa de Serviço ({{ configuracao.prc_taxa_servico | numberFormat:2:',':'.'}}%)</td>
-												<td class="text-right">R$ {{ getValorTaxaServico() | numberFormat:2:',':'.' }}</td>
+												<td class="text-right">R$ {{ getValorTaxaServico() | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
 											</tr>
 											<tr>
 												<td>Total Comanda</td>
-												<td class="text-right">R$ {{ vlrTotalItensComanda() + getValorTaxaServico() | numberFormat:2:',':'.' }}</td>
+												<td class="text-right">R$ {{ vlrTotalItensComanda() + getValorTaxaServico() | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
 											</tr>
 										</thead>
 									</table>
@@ -889,7 +889,7 @@
 											<div class="text-center container">
 												<img pre-load-img imgpreload="img/img-preload-app.jpg" notimg="img/sem-imagem-app.png" datasrc="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}"  class="img-responsive">
 												<span class="product-name">{{ produto.nome }} - {{ produto.sabor }}</span>
-												<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:2:',':'.' }}</span>
+												<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</span>
 											</div>
 										</div>
 									</div>
@@ -969,7 +969,7 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
-											<td class="text-right">R$ {{ item.vlr_venda_varejo  | numberFormat : 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_venda_varejo  | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
 											<td><input onKeyPress="return SomenteNumero(event);" ng-keyUp="" ng-model="item.qtd" type="text" class="form-control input-xs" width="50" /></td>
 											<td>
 											<button  ng-click="incluirItemComandaModal(item,$event)" class="btn btn-success btn-xs" type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">

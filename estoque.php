@@ -619,7 +619,15 @@
 												<input type="text" class="form-control input-xs" width="50"
 													onKeyPress="return SomenteNumero(event);" 
 													ng-model="item.qtd"
-													ng-disabled="isProdutoSelected(item)"/>
+													ng-disabled="isProdutoSelected(item)"
+													ng-if="item.flg_unidade_fracao != 1"/>
+
+												<input type="text" class="form-control input-xs" width="50"
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-disabled="isProdutoSelected(item)"
+													ng-if="item.flg_unidade_fracao == 1"
+													thousands-formatter precision="3"/>
 											</td>
 											<td class="text-center">
 												<button type="button"
@@ -680,7 +688,8 @@
 										<div class="col-sm-2">
 											<div class="form-group" id="id_pedido_fornecedor">
 												<label class="control-label">Quantidade</label>
-												<input type="text" class="form-control" maxlength="4" ng-model="itemValidade.qtd">
+												<input type="text" class="form-control" ng-model="itemValidade.qtd" ng-if="produto.flg_unidade_fracao != 1">
+												<input type="text" class="form-control" ng-model="itemValidade.qtd" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
 											</div>
 										</div>
 
@@ -701,7 +710,7 @@
 									<thead>
 										<tr>
 											<th>Validade</th>
-											<th>Data</th>
+											<th>Quantidade</th>
 											<th style="width:80px;">Ações</th>
 										</tr>
 									</thead>
