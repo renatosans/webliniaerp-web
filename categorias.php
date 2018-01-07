@@ -25,6 +25,7 @@
 
 	<!-- Bower Components -->	
 	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+	<link href="bower_components/angular-bootstrap-colorpicker/css/colorpicker.min.css" rel="stylesheet">
 
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -170,28 +171,49 @@
 					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Nova Categoria</div>
 
 					<div class="panel-body">
-						<form class="form-horizontal" role="form">
-							<div id="descricao_categoria" class="form-group">
-								<label for="descricao" class="col-sm-1 control-label">Descrição</label>
-								<div class="col-sm-11">
-									<input type="text" class="form-control" id="descricao" ng-model="categoria.descricao_categoria">
+						<div class="row">
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="control-label">Descrição</label>
+									<input type="text" class="form-control" 
+										ng-model="categoria.descricao_categoria">
 								</div>
 							</div>
 
-
-							<div id="descricao_categoria" class="form-group">
-								<label for="descricao" class="col-sm-1 control-label">Categoria Pai</label>
-								<div class="col-sm-11">
+							<div class="col-lg-4">
+								<div class="form-group">
+									<label class="control-label">Categoria Superior</label>
 									<select chosen 
-								    option="categoriasChosen"
-								    ng-model="categoria.id_pai"
-								    >
-								    <option ng-repeat="campo in categoriasChosen" ng-bind-html="(campo.nivel+campo.descricao_categoria)" value="{{campo.id}}"></option>
+										option="categoriasChosen"
+										ng-model="categoria.id_pai">
+										<option value="{{campo.id}}"
+											ng-repeat="campo in categoriasChosen" 
+											ng-bind-html="(campo.nivel+campo.descricao_categoria)">
+										</option>
 									</select>
 								</div>
 							</div>
+						</div>
 
+						<div class="row">
+							<div class="col-lg-2">
+								<div class="form-group">
+									<label class="control-label">Cor (Box)</label>
+									<input colorpicker type="text" class="form-control" 
+										ng-model="categoria.hex_cor_box" />
+								</div>
+							</div>
+							
+							<div class="col-lg-2">
+								<div class="form-group">
+									<label class="control-label">Cor (Letra)</label>
+									<input colorpicker type="text" class="form-control" 
+										ng-model="categoria.hex_cor_letra" />
+								</div>
+							</div>
+						</div>
 
+						<div class="row">
 							<div class="empreendimentos form-group">
 								<div class="col-sm-12">
 									<table class="table table-bordered table-condensed table-striped table-hover">
@@ -223,7 +245,9 @@
 									</table>
 								</div>
 							</div>
+						</div>
 
+						<form class="form-horizontal" role="form">
 							<div class="form-group">
 								<div class="col-sm-12">
 									<div class="pull-right">
@@ -439,13 +463,14 @@
 	<script src="js/angular-strap.min.js"></script>
 	<script src="js/angular-strap.tpl.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
+    <script src="bower_components/angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.min.js" type="text/javascript"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>
     <script src="js/dialogs.v2.min.js" type="text/javascript"></script>
     <script src="js/auto-complete/ng-sanitize.js"></script>
     <script src="js/angular-chosen.js"></script>
     <script type="text/javascript">
-    	var addParamModule = ['angular.chosen'] ;
+    	var addParamModule = ['angular.chosen', 'colorpicker.module'] ;
     </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>

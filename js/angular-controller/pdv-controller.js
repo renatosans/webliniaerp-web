@@ -134,7 +134,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$("#modal_foto_produto").modal('show');
 	}
 
-	 var isFullscreen = false;
+	var isFullscreen = false;
 	ng.resizeScreen = function() {
 		if(!isFullscreen){
 			$("#map_canvas").css("height", 700);
@@ -1235,8 +1235,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					if((!ng.pagamento_fulso) && (!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1))
 						ng.printTermic(true);
 					else { 
-						ng.showModalPrint();
-						ng.clearCloseWindowBlock();
+						if(!empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1) {
+							ng.clearCloseWindowBlock();
+							window.close();
+						}
+						else {
+							ng.showModalPrint();
+							ng.clearCloseWindowBlock();
+						}
 					}
 
 					if(ng.pagamento_fulso) {
