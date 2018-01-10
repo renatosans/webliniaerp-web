@@ -180,7 +180,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			produto.tipo_vlr_custo = item.tipo_vlr_custo ;
 		}
 	
-		if(ng.enviarNovaTransferencia){
+		if(empty(ng.transferencia.id) && ng.enviarNovaTransferencia){
 			produto.qtd_transferida = produto.qtd_pedida;
 			produto.qtd_pedida = 0;
 		}
