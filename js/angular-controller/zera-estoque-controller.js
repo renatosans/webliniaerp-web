@@ -97,7 +97,7 @@ app.controller('ZeraEstoqueController', function($scope, $http, $window, $dialog
 				});
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -111,7 +111,7 @@ app.controller('ZeraEstoqueController', function($scope, $http, $window, $dialog
 				});
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 

@@ -242,7 +242,7 @@ app.controller('FornecedoresController', function($scope, $http, $window, $dialo
 		aj.get(baseUrlApi()+"cidades/"+ng.fornecedor.cod_estado)
 		.success(function(data, status, headers, config) {
 			ng.fornecedor.cod_cidade = angular.copy(id_cidade);
-			console.log(ng.fornecedor.cod_cidade);
+			
 			ng.chosen_cidade = data;
 			setTimeout(function(){$("select").trigger("chosen:updated");},300);
 			if(nome_cidade != null){

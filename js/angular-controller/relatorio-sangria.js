@@ -65,7 +65,7 @@ app.controller('RelatorioSangrias', function($scope, $http, $window, UserService
 				        ng.planos_contas[nme_plano_conta].total += item.valor_pagamento;
 				    });
 				});
-				console.log(ng.planos_contas);
+				
 
 				ng.pagamentos 			 = data.vendas;
 				ng.paginacao.pagamentos  = data.paginacao;

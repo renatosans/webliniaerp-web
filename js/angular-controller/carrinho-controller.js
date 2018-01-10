@@ -32,7 +32,7 @@ app.controller('CarrinhoController', function($scope, $http, $window, $dialogs, 
 					ng.carrinho.push(value);
 				});			
 				ng.calculaTotais();
-				console.log(ng.carrinho);
+				
 			})
 			.error(function(data, status, headers, config) {
 			});

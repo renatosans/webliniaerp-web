@@ -15,7 +15,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
     ng.movimentacoes 				= null;
     var params      = getUrlVars();
 
-    console.log(params);
+    
 
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
@@ -164,7 +164,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 							ng.totais.total += v.valor_pagamento ;
 						}	
 				});
-				console.log(data);
+				
 				ng.movimentacoes = data;
 			})
 			.error(function(data, status, headers, config) {
@@ -176,7 +176,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 
 	ng.changeDetalhesCC = function(status){
 		ng.ccDetalhes = status ;
-		console.log(ng.ccDetalhes);
+		
 	}
 
 

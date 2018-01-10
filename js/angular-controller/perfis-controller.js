@@ -157,7 +157,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 	}
 	
 	ng.treeviewConstruct = function(data){
-		console.log(data);
+		
 			$checkableTree = $('#treeview-modulos').treeview({
 	          data: data,
 	          showIcon: false,
@@ -195,7 +195,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
             ]
           );
 
-	       console.log(a);
+	       
 	}
 
 	ng.subMenuConstruct = function(arrpai,arr){
@@ -253,7 +253,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 			.success(function(data, status, headers, config) {
 				var menu = ng.menuConstruct(data);
 				ng.treeviewConstruct(menu);
-				//console.log(menu);
+				
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404){
@@ -376,7 +376,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 	}
 
 	ng.delete = function(){
-		console.log(ng.myForm.nome.$valid);
+		
 	}
 
 	ng.showEmpreendimentos = function() {
@@ -442,7 +442,7 @@ app.directive('bsTooltip', function ($timeout) {
         link: function (scope, element, attr) {
             $timeout(function () {
                 	  element.find("[data-toggle=tooltip]").tooltip();
-                	  console.log(element.find("[data-toggle=tooltip]"));
+                	  
             });
         }
     }

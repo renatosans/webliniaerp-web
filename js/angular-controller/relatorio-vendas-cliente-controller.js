@@ -86,7 +86,7 @@ app.controller('RelatorioVendasClienteController', function($scope, $http, $wind
 				ng.depositos = data.depositos;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 

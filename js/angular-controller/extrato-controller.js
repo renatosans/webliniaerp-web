@@ -103,8 +103,8 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 						data.extrato[i].template_popover = ng.templatePopover(item.dta_parcelas);
 					}
 				});
-				console.log('----------------------');
-				console.log(data);
+				
+				
 				ng.dadosExtrato = data;
 				ng.dadosBusca = {
 						cliente   	: ng.cliente,
@@ -142,7 +142,7 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 					+tr
 					+'</tbody>'
 					+'</table>';
-		console.log(template);
+		
 		return template ;
 	}
 
@@ -186,7 +186,7 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 				ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao consultar saldo do cliente');
+				
 			});
 	}
 
@@ -205,7 +205,7 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 
 	ng.popover = function(){
 		if(ctr_popover){
-			console.log('teste');
+			
 			$("a[rel=popover]").popover({
 	            placement: 'top',
 	            html: 'true'

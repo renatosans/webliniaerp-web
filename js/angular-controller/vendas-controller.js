@@ -31,7 +31,7 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 				ng.loadVendas(0,10);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 			});
 	}
 
@@ -122,7 +122,7 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 				ng.detalhes = data;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 			});*/
 	}
 
@@ -183,7 +183,7 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 			ng.delItensEdit.push(item.id);
 		ng.edit.splice(index,1);
 		ng.calTotalVendaEdit();
-		console.log(ng.delItensEdit);
+		
 	}
 
 	ng.calDescVendaEdit = function(item,tipo) {
@@ -332,7 +332,7 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 	ng.loadPopover = true ;
 	ng.getLastVendaProdutoByCliente = function(item){
 		last_venda = { dta_venda:"00-00-00", vlr_custo:0,vlr_produto:0,valor_desconto:0,vlr_real_desconto:0,valor_real_item:0 } ;
-		console.log(ng.venda);
+		
 		aj.get(baseUrlApi()+"venda/lastProduto/"+ng.userLogged.id_empreendimento+"/"+ng.venda.id_cliente+"/"+item.id_produto+"")
 			.success(function(data, status, headers, config) {
 				ng.last_venda = data ;

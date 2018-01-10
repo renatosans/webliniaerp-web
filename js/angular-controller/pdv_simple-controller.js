@@ -379,7 +379,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 	};
 
 	$scope.gravarMovimentacoes = function(){
-			console.log($scope.pagamentos_enviar);
+			
 			var id_venda = $scope.finalizarOrcamento == true ? $scope.id_orcamento : $scope.id_venda;
 			var id_mesa = null; 
 			if(!empty($scope.dadosOrcamento)){
@@ -500,7 +500,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 					$scope.statusConfig = false;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -545,7 +545,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 				$scope.objectModel.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao consultar saldo do cliente');
+				
 			});
 	}
 
@@ -584,7 +584,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 				$scope.paginacao.ordens_servico = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -594,7 +594,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 				$scope.objectModel.produtos = data;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -604,7 +604,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 				$scope.objectModel.servicos = data;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -644,7 +644,7 @@ app.controller('PdvSimpleController', function($scope, $http, $window, $dialogs,
 		.error(function(data, status, headers, config) {
 			$scope.categoriasProduto = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar as categorias');
+			
 		}); 
 	}
 

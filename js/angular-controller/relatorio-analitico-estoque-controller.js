@@ -84,7 +84,7 @@ app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $w
 				ng.depositos = data.depositos;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 	if(!ng.funcioalidadeAuthorized('buscar_por_deposito')){

@@ -185,7 +185,7 @@ app.controller('ControleMesasController', function(
 			ng.changeTela('detMesa');
 		})
 		.error(function(data, status, headers, config) {
-			console.log('Não foi possivel abrir a comanda');
+			
 		}); 
 	}
 
@@ -205,7 +205,7 @@ app.controller('ControleMesasController', function(
 				ng.sendMessageWebSocket(msg);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 		}, undefined);	
 	}
@@ -326,7 +326,7 @@ app.controller('ControleMesasController', function(
 			ng.abrirDetalhesComanda(data.id_venda);
 		})
 		.error(function(data, status, headers, config) {
-			console.log('Não foi possivel abrir a comanda');
+			
 		}); 
 	}
 
@@ -339,7 +339,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.mesaSelecionada.comandas = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar as comandas');
+			
 		}); 
 	}
 
@@ -374,7 +374,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.comandaSelecionada = {} ;
 			if(status != 406)
-			console.log('Não foi possivel buscar a comanda');
+			
 		}); 
 	}
 
@@ -416,7 +416,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.categoriasProduto = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar as categorias');
+			
 		}); 
 	}
 
@@ -429,7 +429,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.fabricantesProduto = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar os fabricantes');
+			
 		}); 
 	}
 
@@ -516,7 +516,7 @@ app.controller('ControleMesasController', function(
 				ng.sendMessageWebSocket(msg);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -1011,7 +1011,7 @@ app.controller('ControleMesasController', function(
 
 		ng.conn = new WebSocket(patch_socket_sat);
 		ng.conn.onopen = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - WebSocket conectado.');
+			
 		};
 
 		ng.conn.onclose = function(e) {
@@ -1019,7 +1019,7 @@ app.controller('ControleMesasController', function(
 		}
 
 		ng.conn.onmessage = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Mensagem Recebida : '+e.data);
+			
 			var data = JSON.parse(e.data);
 			data.message = parseJSON(data.message);
 			switch(data.type){
@@ -1072,13 +1072,13 @@ app.controller('ControleMesasController', function(
 					clearTimeout(timeOutWaitingResponseTestConection);
 					$scope.$apply(function () { ng.status_websocket = 2 ;});
 					ng.id_ws_dsk = data.from;
-					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Conexão com App client extabelecida');
+					
 				break;
 			}			
 		};
 	}
 	ng.sendMessageWebSocket = function(data){
-		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - mensagem Enviada: '+JSON.stringify(data));
+		
 		ng.conn.send(JSON.stringify(data));
 	}
 
@@ -1097,7 +1097,7 @@ app.controller('ControleMesasController', function(
 
 					timeOutWaitingResponseTestConection = setTimeout(function() {
 						$scope.$apply(function () { ng.status_websocket = 1 ;});
-						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+						
 					}, TimeWaitingResponseTestConection);
 				});
 			}
