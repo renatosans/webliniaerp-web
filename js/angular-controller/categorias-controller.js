@@ -218,7 +218,7 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 	}
 
 	ng.integracao = function(){
-		console.log('manda v');
+		
 	}
 
 	ng.load= function() {

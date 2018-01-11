@@ -803,7 +803,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$.each(ng.novoPedido,function(i,item){
 			var qtd          = item.qtd == '' ? 1 : parseFloat(item.qtd);
 			var custo_compra = parseFloat(item.custo_compra);
-			console.log(item);
+			
 			total += qtd * custo_compra ;
 		});
 		ng.total = total;

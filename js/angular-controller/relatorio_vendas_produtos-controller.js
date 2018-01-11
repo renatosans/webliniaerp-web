@@ -66,7 +66,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 
 		 aj.get(baseUrlApi()+"produto/venda/historico-margem-lucro"+ queryString)
 			.success(function(data, status, headers, config) {
-				console.log(data);
+				
 				var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
 					tbl += '<tr>'+'<td class="text-right" width="70">Custo</td>'+'<td class="text-right" width="70">Margem</td>'+'<td class="text-center">QTD</td>'+'</tr>';
 				
@@ -85,7 +85,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);		
+						
 			});
 	}
 

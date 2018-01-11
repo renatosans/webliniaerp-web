@@ -225,7 +225,7 @@ app.controller('relMovimentacaoCaixaController', function($scope, $http, $window
 		aj.get(baseUrlApi()+"caixa/movimentacoes/total/"+params['id'])
 			.success(function(data, status, headers, config) {
 				ng.totais = data;
-				console.log(ng.totais);
+				
 			})
 			.error(function(data, status, headers, config) {
 				ng.totais = [];

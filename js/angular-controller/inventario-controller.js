@@ -599,7 +599,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		ng.inventario.itens.push(item);
 		if(autoAddQtd) {
 	    	ng.itemValidade = { validade: '', qtd: item.qtd, flg_unidade_fracao: item.flg_unidade_fracao};
-			console.log(ng.itemValidade);
+			
 	    	ng.addValidadeItem();
     		ng.atualizaQtdTotal();
     	}

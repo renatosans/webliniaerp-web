@@ -237,7 +237,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 	}
 
 	ng.delInsumo = function(index){
-		console.log(index);
+		
 		ng.insumos.splice(index,1);
 		ng.calVlrCustoInsumos();
 	}
@@ -333,7 +333,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 
 		var produto = angular.copy(ng.produto) ;
 
-		//console.log(produto);
+		
 		//return;
 
 		/*if(produto.preco != undefined){
@@ -554,7 +554,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 	}
 
 	ng.delFornecedor = function(index){
-		console.log(index);
+		
 		ng.produto.fornecedores.splice(index,1);
 	}
 
@@ -654,7 +654,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 						depositos[deposito].qtd_ivn   = total_itens ;
 					});
 					id_deposito_exists = id_deposito_exists.substring(0,(id_deposito_exists.length-1)) ;
-					console.log(depositos);*/
+					
 
 					/*aj.get(baseUrlApi()+"depositos?id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+"&dep->id[exp]= NOT IN ("+id_deposito_exists+")")
 						.success(function(data, status, headers, config) {
@@ -847,10 +847,10 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 					$.each(ng.produto.precos,function(i,x){
 						ng.calcularAllMargens(x);
 					});
-					console.log(ng.produto);
+					
 				})
 				.error(function(dataPrc, statusPrc) {
-					console.log('Erro ao buscar os preços');
+					
 				});
 			})
 			.error(function(data, status, headers, config) {
@@ -999,7 +999,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 				if(v.valor_campo == 1)
 					produto.campo_extra_selected = i ;
 			});
-			console.log(produto);
+			
 		})
 		.error(function(data, status, headers, config) {
 	
@@ -1035,7 +1035,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 		$.each(ng.empreendimentosAssociados,function(i,v){
 			ng.tamanho.empreendimentos.push(v.id_empreendimento);
 		});
-		//console.log(ng.tamanho);return;
+		
 		aj.post(baseUrlApi()+"tamanho",ng.tamanho)
 		.success(function(data, status, headers, config) {
 			btn.button('reset');
@@ -1210,7 +1210,7 @@ app.controller('ProdutosController', function($scope, $http, $window, $dialogs, 
 		$.each(ng.empreendimentosAssociados,function(i,v){
 			ng.cor_produto.empreendimentos.push(v.id_empreendimento);
 		});
-		//console.log(ng.cor_produto);return;
+		
 		aj.post(baseUrlApi()+"cor_produto",ng.cor_produto)
 		.success(function(data, status, headers, config) {
 			btn.button('reset');
