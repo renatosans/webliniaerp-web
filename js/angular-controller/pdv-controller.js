@@ -1234,7 +1234,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 					if((!ng.pagamento_fulso) && (!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1))
 						ng.printTermic(true);
-					else { 
+					else if(!ng.pagamento_fulso){ 
 						if(!empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1) {
 							ng.clearCloseWindowBlock();
 							window.close();
@@ -1244,13 +1244,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							ng.clearCloseWindowBlock();
 						}
 					}
-
-					if(ng.pagamento_fulso) {
-						ng.receber_pagamento = false;
-						ng.pagamento_fulso = false;
+					else {
+						ng.clearCloseWindowBlock();
+						ng.showModalPrint();
 					}
 
 					ng.printPdf();
+
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 				}
 			})
@@ -4324,6 +4324,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		if(ifOrcamento && !empty(params.id_orcamento)){
 			window.location = 'pdv.php';
 			return ;
+		}
+		if(ng.pagamento_fulso) {
+			ng.receber_pagamento = false;
+			ng.pagamento_fulso = false;
 		}
 		ng.orcamento = false;
 		$('.modal').modal('hide');
