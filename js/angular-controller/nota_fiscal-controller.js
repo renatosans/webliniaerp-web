@@ -110,6 +110,18 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 				ng.NF.transportadora 						= copyNF.transportadora;
 				ng.NF.informacoes_adicionais_contribuinte 	= copyNF.informacoes_adicionais_contribuinte;
 
+				$.each(ng.NF.itens,function(i,v){
+					$.each(copyNF.itens,function(x,y){
+						if(v.prod.cProd == y.id_produto){
+							ng.NF.itens[i].id_produto = y.id_produto;
+							ng.NF.itens[i].data = y.data;
+							ng.NF.itens[i].qtd = y.qtd;
+							ng.NF.itens[i].vlr_produto = y.vlr_produto;
+							ng.NF.itens[i].valor_desconto_real = y.valor_desconto_real;
+						}
+					});
+				});
+
 				if(event != null) {
 					$('#modal-operacao').modal('hide');
 					btn.button('reset');
@@ -338,7 +350,9 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 	ng.loadItensVenda = function() {
 		aj.get(baseUrlApi()+"venda/itens/"+ ng.venda.id)
 			.success(function(data, status, headers, config) {
+				ng.copy_itens = angular.copy(data);
 				angular.forEach(data, function(item){
+					item.id_produto = item.id_produto;
 					item.prod = {
 						cEAN: 	item.codigo_barra,
 						xProd: 	item.nome_produto,
@@ -371,6 +385,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 							pCOFINS: 0 
 						}
 					};
+					item.data = angular.copy(item) ;
 				});
 				ng.NF.itens = data;
 			});
@@ -425,6 +440,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 
 	ng.recalcularValorTotal = function(item){
 		item.prod.vProd = parseInt(item.prod.qCom, 10) * parseFloat(item.prod.vUnCom);
+		item.valor_desconto_real = 0 ;
 	}
 
 	ng.showDANFEModal = function(nota){
