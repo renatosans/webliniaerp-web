@@ -419,7 +419,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			post.produtos = ng.formatPostValidades() ;
 		}
 
-		aj.post(baseUrlApi()+"estoque/pedido/transferencia/transferir/",post)
+		aj.post(baseUrlApi()+"estoque/pedido/transferencia/transferir/", { form_data: JSON.stringify(post) })
 		.success(function(data, status, headers, config) {
 			aj.get(baseUrlApi()+"transferencias/estoque/?id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+"&tte->id="+ng.transferencia.id)
 			.success(function(data, status, headers, config) {
