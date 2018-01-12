@@ -1,6 +1,12 @@
 426 : 
 	API:
-		dao/NotaFiscalDao.php
+		modified: dao/NotaFiscalDao.php
+		modified: controller/NfeController.php
+        modified: dao/ItemTransferenciaEstoqueDao.php
+        modified: model/NotaFiscalTO.php
 	WEB:
-		js/angular-services/user-service.js
-
+		modified: js/angular-services/user-service.js
+		modified: js/angular-controller/nota_fiscal-controller.js
+        modified: js/angular-controller/notas_fiscais-controller.js
+        modified: nota-fiscal.php
+        modified: notas-fiscais.php
