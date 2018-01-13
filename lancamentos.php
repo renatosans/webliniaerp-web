@@ -34,6 +34,8 @@
 
 	<!-- Bower Components -->	
 	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+	<link href="bower_components/np-autocomplete/dist/np-autocomplete.min.css" rel="stylesheet">
+
 
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -83,6 +85,10 @@
   		  z-index: 100000;
 		}
 
+		.list-group-item {
+			width: 100% !important;
+			text-align: left;
+		}
 
 	</style>
   </head>
@@ -253,7 +259,7 @@
 								<div class="row">
 									<div class="col-sm-4" id="pagamento_forma_pagamento">
 						    			<label class="control-label">Forma de Pagamento</label>
-										<select ng-model="pagamento.id_forma_pagamento" ng-change="selectChange()" class="form-control">
+										<select ng-model="pagamento.id_forma_pagamento" ng-change="selectChange(pagamento.id_forma_pagamento)" class="form-control">
 											<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
 											<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
 										</select>
@@ -336,8 +342,8 @@
 											</div>
 									</div>-->
 						    		<div class="col-sm-4" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 8">
-						    			<label class="control-label">Valor</label
-	>					    			<div class="form-group ">
+						    			<label class="control-label">Valor</label>
+						    			<div class="form-group ">
 						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
 						    			</div>
 						    		</div>
@@ -357,7 +363,7 @@
 						    	</div>
 
 						    	<div class="row">
-						    		<div class="col-sm-6" ng-show="pagamento.id_forma_pagamento == 6">
+						    		<div class="col-sm-4" ng-show="pagamento.id_forma_pagamento == 6">
 											<div class="form-group cheque_data">
 												<label class="control-label">Data da primeira parcela</label>
 												<div class="input-group">
@@ -366,10 +372,16 @@
 												</div>
 											</div>
 									</div>
-						    		<div class="col-sm-6" id="pagamento_maquineta" ng-if="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0) ">
+						    		<div class="col-sm-4" id="pagamento_maquineta" ng-if="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0) ">
 						    			<label class="control-label">Maquineta</label>
 										<select ng-model="pagamento.id_maquineta" ng-change="selIdMaquineta()" class="form-control">
 											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">#{{ item.id_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+									<div class="col-sm-4" id="bandeiras" ng-if="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0) ">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento.id_bandeira" class="form-control">
+											<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{ item.nome }}</option>
 										</select>
 									</div>
 									<div style="clear: both;" ng-if="pagamento.id_forma_pagamento == 5">&nbsp;</div>
@@ -757,7 +769,7 @@
 											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Conta</th>
 											<th class="text-center" rowspan="2">Cliente/Fornecedor</th>
 											<th class="text-center" rowspan="2">Natureza da Operação</th>
-											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Forma de Pgto.</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.forma_pagamento">Forma de Pgto.</th>
 
 											<th class="text-center" rowspan="2" ng-if="config_table.observacao == true">Observação</th>
 
@@ -824,7 +836,7 @@
 
 											<td class="text-center">
 												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-success"
-													ng-if="item.status_pagamento == 1" ng-click="modalChangeStatusPagamento(item)"
+													ng-if="item.status_pagamento == 1" ng-click="loadVendaByIdLancamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
 													<i class="fa fa-check-circle"></i>
 												</button>
@@ -1634,13 +1646,109 @@
 			<!-- /.modal -->
 			<!-- /Modal modal_change_date_pagamento-->
 				<div class="modal fade" id="modal_change_date_pagamento" style="display:none">
-		  			<div class="modal-dialog error modal-sm">
+		  			<div class="modal-dialog error modal-lg">
 		    			<div class="modal-content">
+		    				<div class="modal-header">
+		    					<h4>Edição Lançamento</h4>
+		    				</div>
 						    <div class="modal-body">
-								<div class="row">
-									<div class="col-lg-12">	
+						    	<div class="alert alert-edit" style="display:none"></div>
+						    	<pre>{{ pagamento_edit | json }}</pre>
+						    	<div class="row">
+									<div class="col-sm-3" ng-if="flg_valid_venda == 0">
 										<div class="form-group">
-											<label class="control-label">Recebido em:</label>
+											<label class="control-label">Tipo de Lançamento</label>
+											<div class="clearfix"></div>
+											<label class="label-radio inline" >
+												<input name="flg_tipo_lancamento" ng-model="pagamento_edit.flg_tipo_lancamento" ng-click="changeIdLancamento('D')" value="D" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-danger">Despesa</span>
+											</label>
+											
+											<label class="label-radio inline">
+												<input name="flg_tipo_lancamento" ng-model="pagamento_edit.flg_tipo_lancamento" ng-click="changeIdLancamento('C')" value="C" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-success">Receita</span>
+											</label>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label class="control-label">Pago?</label><br/>
+											<label class="label-radio inline">
+												<input name="status" ng-model="pagamento_edit.status_pagamento" value="1" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+
+											<label class="label-radio inline">
+												<input name="status" ng-model="pagamento_edit.status_pagamento" value="0" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group" 
+											ng-show="pagamento_edit.flg_tipo_lancamento == 'D'"
+											np-autocomplete="npAutocompleteFornecedorOptions" 
+											ng-model="pagamento_edit.id_clienteORfornecedor">
+											<label class="control-label" style="color: #777 !important;">Fornecedor</label>
+											<input class="form-control" id="txtNomeFornecedor" type="text" style="border-color: #ccc !important; box-shadow: none !important;"/>
+										</div>
+										<div class="form-group" 
+											ng-show="pagamento_edit.flg_tipo_lancamento == 'C'"
+											np-autocomplete="npAutocompleteClienteOptions" 
+											ng-model="pagamento_edit.id_clienteORfornecedor">
+											<label class="control-label" style="color: #777 !important;">Cliente</label>
+											<input class="form-control" id="txtNomeCliente" type="text" style="border-color: #ccc !important; box-shadow: none !important;"/>
+										</div>
+									</div>
+								
+							    	<div class="col-sm-3">
+										<div class="form-group" id="id_conta_bancaria">
+											<label class="control-label">Conta Bancária</label>
+											<select class="form-control" ng-model="pagamento_edit.id_conta_bancaria"
+											    option="plano_contas"
+											    ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas">
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-3">
+										<div class="form-group" id="pagamento_forma_pagamento">
+						    				<label class="control-label">Forma de Pagamento</label>
+											<select class="form-control" ng-model="pagamento_edit.id_forma_pagamento" ng-click="clearFieldsByPaymentMethod(pagamento_edit.id_forma_pagamento)">
+												<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
+												<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
+											</select>
+										</div>
+							    	</div>
+							    </div>
+
+								<div class="row">
+									<div class="col-lg-3">
+										<div class="form-group">
+											<label class="control-label">Data Vencimento</label>
+											<div class="input-group">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_vencimento" class="datepicker form-control text-center">
+												<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+											</div>
+										</div>	
+									</div>
+									<div class="col-lg-3">
+										<div class="form-group">
+											<label class="control-label">Data Competência</label>
+											<div class="input-group">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_competencia" class="datepicker form-control text-center">
+												<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+											</div>
+										</div>	
+									</div>
+									<div class="col-lg-3">
+										<div class="form-group">
+											<label class="control-label">Data Pagamento</label>
 											<div class="input-group">
 												<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_change_pagamento" class="datepicker form-control text-center">
 												<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
@@ -1648,27 +1756,143 @@
 										</div>	
 									</div>
 							    </div>
-							    <div class="row">
-							    	<div class="col-sm-12">
-										<div class="form-group" id="id_conta_bancaria">
-											<label class="control-label">Conta</label>
+							    
+								<div class="row">
+							    	<div class="col-sm-2">
+							    		<div class="form-group">
+							    			<label class="control-label">Valor</label>
+							    			<input class="form-control text-right" type="text" name="" ng-model="pagamento_edit.valor_pagamento" thousands-formatter></input>
+							    		</div>
+							    	</div>
+							    	<div class="col-sm-2">
+							    		<div class="form-group">
+							    			<label class="control-label">Juros</label>
+							    			<input class="form-control text-right" type="text" name="" ng-model="pagamento_edit.vlr_juros" thousands-formatter></input>
+							    		</div>
+							    	</div>
+							    	<div class="col-sm-2">
+							    		<div class="form-group">
+							    			<label class="control-label">Multa</label>
+							    			<input class="form-control text-right" type="text" name="" ng-model="pagamento_edit.vlr_multa" thousands-formatter></input>
+							    		</div>
+							    	</div>
+							    	<div class="col-sm-2">
+							    		<div class="form-group">
+							    			<label class="control-label">Final</label>
+							    			<input class="form-control text-right" type="text"
+							    				value="R$ {{ (pagamento_edit.valor_pagamento + pagamento_edit.vlr_juros + pagamento_edit.vlr_multa) | numberFormat : 2 : ',' : '.' }}"
+							    				disabled="disabled"></input>
+							    		</div>
+							    	</div>
+							    </div>
+							    <div class="alert error-cheque" style="display:none"></div>
+								<div class="row" ng-show="pagamento_edit.id_forma_pagamento == 2" ng-repeat="item in cheques">
+									<div class="col-sm-4">
+										<div class="form-group cheque_banco" >
+											<label class="control-label">Banco</label>
 											<select chosen
-											    option="plano_contas"
-											    ng-model="pagamento_edit.id_conta_bancaria"
-											    ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas">
+											    option="bancos"
+											    ng-model="pagamento_edit.id_banco"
+											    ng-options="banco.id as banco.nome for banco in bancos">
 											</select>
 										</div>
 									</div>
-							    </div>
-						    </div>
-						<div class="modal-footer" style="   margin-top: 0px;">
-						    	<button type="button" data-loading-text=" Aguarde..." ng-click="updateStatusLancamento(pagamento_edit)" id="btn-aplicar-reforco"
-						    		class="btn btn-md btn-block btn-success fechar-modal">
-						    		</i> Salvar
-						    	</button>
-						    	<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal_change_date_pagamento')" id="btn-aplicar-reforco"
-						    		class="btn btn-md btn-block btn-danger fechar-modal">
+
+									<div class="col-sm-2">
+										<div class="form-group cheque_cc">
+											<label class="control-label">Núm. C/C</label>
+											<input ng-model="pagamento_edit.num_conta_corrente" type="text" class="form-control">
+										</div>
+									</div>
+
+									<div class="col-sm-2">
+										<div class="form-group cheque_num">
+											<label class="control-label">Núm. Cheque</label>
+											<input ng-model="pagamento_edit.num_cheque" type="text" class="form-control">
+										</div>
+									</div>
+								</div>
+								<div class="row" ng-show="pagamento_edit.id_forma_pagamento == 4" ng-repeat="item in boletos">
+									<div class="col-sm-4">
+										<div class="form-group boleto_banco" >
+											<label class="control-label">Banco</label>
+											<select chosen
+												    option="bancos"
+												    ng-model="pagamento_edit.id_banco"
+												    ng-options="banco.id as banco.nome for banco in bancos">
+											</select>
+										</div>
+									</div>
+
+									<div class="col-sm-2">
+										<div class="form-group boleto_doc">
+											<label class="control-label">Doc. Boleto</label>
+											<input ng-model="pagamento_edit.doc_boleto" type="text" class="form-control">
+										</div>
+									</div>
+
+									<div class="col-sm-2">
+										<div class="form-group boleto_num">
+											<label class="control-label">Núm. Boleto</label>
+											<input ng-model="pagamento_edit.num_boleto" type="text" class="form-control">
+										</div>
+									</div>
+								</div>
+								<div class="row" id="pagamento_maquineta" ng-if="(pagamento_edit.id_forma_pagamento == 5 || pagamento_edit.id_forma_pagamento == 6) && (flgTipoLancamento == 0) && pagamento_edit.flg_tipo_lancamento == 'C'">
+									<div class="col-sm-3">
+						    			<label class="control-label">Maquineta</label>
+										<select ng-model="pagamento_edit.id_maquineta" ng-change="selIdMaquineta()" class="form-control">
+											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">#{{ item.id_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+									<div class="col-sm-6" id="bandeiras">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento_edit.id_bandeira" class="form-control">
+											<option ng-repeat="item in bandeiras" value="{{ item.id_bandeira }}">{{ item.nome }}</option>
+										</select>
+									</div>
+								</div>
+								<div class="row" ng-if="pagamento_edit.id_forma_pagamento == 8">
+									<div class="col-sm-4" id="pagamento_id_banco" >
+										<div class="form-group" >
+											<label class="control-label">Banco</label>
+											<select chosen
+											    option="bancos"
+											    ng-model="pagamento_edit.id_banco"
+											    ng-options="banco.id as banco.nome for banco in bancos">
+											</select>
+										</div>
+									</div>
+
+									<div class="col-sm-4" id="pagamento_agencia_transferencia">
+						    			<label class="control-label">Agência</label>
+						    			<div class="form-group ">
+						    					<input ng-model="pagamento_edit.agencia_transferencia"  type="text" class="form-control" />
+						    			</div>
+						    		</div>
+
+						    		<div class="col-sm-4" id="pagamento_conta_transferencia" >
+						    			<label class="control-label">Conta</label>
+						    			<div class="form-group ">
+						    					<input ng-model="pagamento_edit.conta_transferencia"  type="text" class="form-control" />
+						    			</div>
+						    		</div>
+								</div>
+				    		</div>
+							<div class="modal-footer" style="   margin-top: 0px;">
+						    	<button type="button" 
+						    			data-loading-text=" Aguarde..." 
+						    			ng-click="cancelarModal('modal_change_date_pagamento')" 
+						    			id="btn-aplicar-reforco"
+						    		class="btn btn-md  btn-danger fechar-modal">
 						    		</i> Cancelar
+						    	</button>
+						    	<button type="button" 
+					    			data-loading-text=" Aguarde..." 
+					    			ng-click="updateStatusLancamento(pagamento_edit)" 
+					    			id="btn-aplicar-reforco"
+					    			class="btn btn-md btn-success fechar-modal">
+						    		</i> Salvar
 						    	</button>
 						    </div>
 					  	</div>
@@ -1784,13 +2008,14 @@
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
+	<script type="text/javascript" src="bower_components/np-autocomplete/src/np-autocomplete.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>
     <script src="js/dialogs.v2.min.js" type="text/javascript"></script>
     <script src="js/auto-complete/ng-sanitize.js"></script>
     <script src="js/angular-chosen.js"></script>
     <script type="text/javascript">
-    	var addParamModule = ['angular.chosen'] ;
+    	var addParamModule = ['angular.chosen', 'ng-pros.directive.autocomplete'] ;
     </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>

@@ -43,38 +43,122 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		flg_considerar_pendente_saldo: false
 	};
 
+	ng.npAutocompleteFornecedorOptions = {
+		url: baseUrlApi()+"fornecedores?(id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")",
+		nameAttr: 'nome_fornecedor',
+		valueAttr: 'id',
+		dataHolder: 'fornecedores',
+		searchParam: 'frn->nome_fornecedor[exp]'
+	};
+
+	ng.npAutocompleteClienteOptions = {
+		url: baseUrlApi()+"usuarios?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")",
+		nameAttr: 'nome',
+		valueAttr: 'id',
+		dataHolder: 'usuarios',
+		searchParam: 'usu->nome[exp]'
+	};
+
     ng.pagamento_edit = {} ;
     ng.modalChangeStatusPagamento = function(item){
     	ng.pagamento_edit = angular.copy(item) ;
+    	ng.pagamento_edit.flg_tipo_lancamento_anterior = ng.pagamento_edit.flg_tipo_lancamento;
+    	ng.flg_tipo_lancamento_anterior = ng.pagamento_edit.flg_tipo_lancamento;
     	ng.pagamento_edit.id_conta_bancaria = Number(ng.pagamento_edit.id_conta_bancaria);
+    	ng.pagamento_edit.valor_pagamento = Number(ng.pagamento_edit.valor_pagamento);
+    	ng.pagamento_edit.vlr_final = ng.pagamento_edit.valor_pagamento;
     	$("#dta_change_pagamento").val(formatDateBR(item.data_pagamento));
+    	if (!empty(item.dta_vencimento)) {
+	    	$("#dta_vencimento").val(formatDateBR(item.dta_vencimento));
+	    }
+	    if (!empty(item.dta_competencia)) {
+	    	$("#dta_competencia").val(formatDateBR(item.dta_competencia));
+	    }
     	$("#modal_change_date_pagamento").modal('show');
+    	setTimeout(function() {
+    		switch(item.flg_tipo_lancamento){
+    			case 'D':
+    				$("#txtNomeFornecedor").val(item.nome_clienteORfornecedor);
+    				break;
+    			case 'C':
+    				$("#txtNomeCliente").val(item.nome_clienteORfornecedor);
+    				break;
+    		}
+    	}, 1);
+    	ng.clique_tipo = 0;
+    	if (ng.pagamento_edit.id_forma_pagamento == 5 || ng.pagamento_edit.id_forma_pagamento == 6) {
+    		ng.loadMaquinetas();
+    		ng.loadBandeiras(ng.pagamento_edit.id_forma_pagamento);	
+    	}
+    }
+
+    ng.flg_valid_venda = 0;
+
+    ng.clearFieldsByPaymentMethod = function(id){
+		ng.pagamento_edit.doc_boleto = null;
+		ng.pagamento_edit.num_boleto = null;
+		ng.pagamento_edit.id_banco = null;
+		ng.pagamento_edit.num_conta_corrente = null;
+		ng.pagamento_edit.num_cheque = null;
+		ng.pagamento_edit.id_maquineta = null;
+		ng.pagamento_edit.id_bandeira = null;
+		ng.pagamento_edit.agencia_transferencia = null;
+		ng.pagamento_edit.conta_transferencia = null;
+		if (ng.pagamento_edit.id_forma_pagamento == 5 ||ng.pagamento_edit.id_forma_pagamento == 6) {
+    		ng.loadBandeiras(id);
+    	}
     }
 
     ng.updateStatusLancamento = function(item) {
-    	var obj = {
-    		idLancamento 	: item.id,
-    		newStatus 		: (item.status_pagamento == 1) ? 0 : 1,
-    		flgTipo 		: item.flg_tipo_lancamento,
-    		id_conta_bancaria : item.id_conta_bancaria,
-    		data_pagamento  : formatDate($("#dta_change_pagamento").val())
-    	};
+    	if(!empty(item.id_clienteORfornecedor)) {
+	    	ng.pagamento_edit.data_pagamento = (!empty($("#dta_change_pagamento").val())) ? formatDate($("#dta_change_pagamento").val()) : null;
+	    	ng.pagamento_edit.dta_vencimento = (!empty($("#dta_vencimento").val())) ? formatDate($("#dta_vencimento").val()) : null;
+	    	ng.pagamento_edit.dta_competencia = (!empty($("#dta_competencia").val())) ? formatDate($("#dta_competencia").val()) : null;
 
-    	$("#modal_change_date_pagamento").modal('hide');
+	    	$("#modal_change_date_pagamento").modal('hide');
 
-    	//console.log(obj);
+	    	//console.log(obj);
 
-    	dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja alterar o status deste lançamento?</strong>');
+	    	dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja alterar o status deste lançamento?</strong>');
 
-		dlg.result.then(function(btn){
-			aj.post(baseUrlApi()+"lancamento/status/update", obj)
-				.success(function(data, status, headers, config) {
-					ng.mensagens('alert-success','<strong>Lançamento atualizado com sucesso</strong>','.alert-delete');
-					ng.reset();
-					ng.load();
-				})
-				.error(defaulErrorHandler);
-		}, undefined);
+			dlg.result.then(function(btn){
+				aj.post(baseUrlApi()+"lancamento/status/update", ng.pagamento_edit)
+					.success(function(data, status, headers, config) {
+						ng.mensagens('alert-success','<strong>Lançamento atualizado com sucesso</strong>','.alert-delete');
+						ng.reset();
+						ng.load();
+					})
+					.error(defaulErrorHandler);
+			}, undefined);
+		}
+		else {
+			ng.mensagens(
+				'alert-danger',
+				'<strong>Você precisa informar o '+ ((item.flg_tipo_lancamento == 'C') ? 'Cliente' : 'Fornecedor') +'</strong>',
+				'.alert-edit'
+			);
+		}
+	}
+
+	ng.changeIdLancamento = function(flg_tipo_lancamento_novo){
+		if(ng.flg_tipo_lancamento_anterior != flg_tipo_lancamento_novo){
+			if(!empty(ng.pagamento_edit.id_ref)){
+				var id_copy = angular.copy(ng.pagamento_edit.id);
+				ng.pagamento_edit.id = angular.copy(ng.pagamento_edit.id_ref);
+				ng.pagamento_edit.id_ref = id_copy;
+			}
+			else {
+				ng.pagamento_edit.id_ref = angular.copy(ng.pagamento_edit.id);
+				ng.pagamento_edit.id = null;
+			}
+
+			ng.flg_tipo_lancamento_anterior = flg_tipo_lancamento_novo;
+		}
+		ng.pagamento_edit.id_clienteORfornecedor = null;
+		ng.pagamento_edit.nome_clienteORfornecedor = null;
+		ng.pagamento_edit.nome = null;
+		$("#txtNomeFornecedor").val('');
+		$("#txtNomeCliente").val('');
 	}
 
 	ng.delete = function(item,tipo){
@@ -250,6 +334,22 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		
 	}
 
+	
+	ng.loadVendaByIdLancamento = function(item){
+		aj.get(baseUrlApi()+"lancamentos/venda_by_lancamento_id/"+item.id)
+			.success(function(data, status, headers, config){
+				ng.flg_valid_venda = 0;
+				if (item.flg_tipo_lancamento == 'C') {
+					ng.flg_valid_venda = 1;
+				}
+				ng.modalChangeStatusPagamento(item);
+			})
+			.error(function(data, status, headers, config) {
+				ng.flg_valid_venda = 0;
+				ng.modalChangeStatusPagamento(item);
+			});
+	}
+
 	ng.loadContas = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 20 : limit;
@@ -391,7 +491,9 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				ng.cliente.vlr_saldo_devedor = Number(data.vlr_saldo_devedor);
 			})
 			.error(function(data, status, headers, config) {
+				if(status == 404) {
 
+				}
 			});
 	}
 
@@ -634,7 +736,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		}
 	}
 
-	ng.selectChange = function(){
+	ng.selectChange = function(id){
 		ng.selIdMaquineta();
 		if(ng.pagamento.id_forma_pagamento == 2){
 			ng.pagamento.valor = 0 ;
@@ -662,6 +764,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		setTimeout(function(){
 			$scope.$apply();
 		}, 10);
+		ng.loadBandeiras(id);
 	}
 
 	ng.delItemCheque = function($index){
@@ -726,6 +829,18 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			});
 	}
 
+	ng.loadBandeiras = function(id) {
+		ng.bandeiras = [];
+
+		aj.get(baseUrlApi()+"bandeiras/"+id)
+			.success(function(data, status, headers, config) {
+				ng.bandeiras = data;
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
 	ng.pg_cheques = [] ;
 	ng.aplicarRecebimento = function(){
 		var error = 0 ;
@@ -784,12 +899,24 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		if((ng.pagamento.id_maquineta ==  undefined || ng.pagamento.id_maquineta ==  '') && (ng.pagamento.id_forma_pagamento == 5 || ng.pagamento.id_forma_pagamento == 6 ) && (ng.flgTipoLancamento == 0) ){
 			error ++ ;
-			$("#pagamento_maquineta").addClass("has-error");
+			$("#bandeira").addClass("has-error");
 
-			var formControl = $("#pagamento_maquineta")
+			var formControl = $("#bandeira")
 				.attr("data-toggle", "tooltip")
 				.attr("data-placement", "bottom")
-				.attr("title", 'O escolha da maquineta é obrigatório')
+				.attr("title", 'O escolha da bandeira é obrigatório')
+				.attr("data-original-title", 'O escolha da bandeira é obrigatório');
+			formControl.tooltip();
+		}
+
+		if((ng.pagamento.id_bandeira ==  undefined || ng.pagamento.id_bandeira ==  '') && (ng.pagamento.id_forma_pagamento == 5 || ng.pagamento.id_forma_pagamento == 6 ) && (ng.flgTipoLancamento == 0) ){
+			error ++ ;
+			$("#pagamento_bandeira").addClass("has-error");
+
+			var formControl = $("#pagamento_bandeira")
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "bottom")
+				.attr("title", 'O escolha da bandeira é obrigatório')
 				.attr("data-original-title", 'O escolha da maquineta é obrigatório');
 			formControl.tooltip();
 		}
@@ -1067,6 +1194,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
+								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca,
 								agencia_transferencia            : ng.pagamento.agencia_transferencia,
@@ -1083,6 +1211,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
+								id_bandeira	   					 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca,
 								status                           : ng.pagamento.status,
@@ -1348,10 +1477,13 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	var ant_cheque 		  = false ;
 	var ant_boleto 		  = false ;
 	var ant_transferencia = false ;
+	var ant_conta_bancaria = false ;
+	var ant_forma_pagamento = false ;
+	var ant_observacao = false ;
 
 	ng.calculaColspan = function(init){
 		
-		var qtd_cheque 			= 3 ;
+		var qtd_cheque 			= 4 ;
 		var qtd_boleto 			= 2 ;
 		var qtd_transferencia 	= 3 ;
 
@@ -1367,13 +1499,30 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		if(ng.config_table.transferencia)
 			init = init+qtd_transferencia ;
-		
 		else if(ant_transferencia)
 			init = init-qtd_transferencia ;
 
-		ant_cheque 			= ng.config_table.cheque ;
-		ant_boleto 			= ng.config_table.boleto ;
-		ant_transferencia	= ng.config_table.transferencia ;
+		if(ng.config_table.conta_bancaria)
+			init = init+1;
+		else if(ant_conta_bancaria)
+			init = init-1;
+
+		if(ng.config_table.forma_pagamento)
+			init = init+1;
+		else if(ant_forma_pagamento)
+			init = init-1;
+
+		if(ng.config_table.observacao)
+			init = init+1;
+		else if(ant_observacao)
+			init = init-1;
+
+		ant_cheque 			= ng.config_table.cheque;
+		ant_boleto 			= ng.config_table.boleto;
+		ant_transferencia 	= ng.config_table.transferencia;
+		ant_conta_bancaria 	= ng.config_table.conta_bancaria;
+		ant_forma_pagamento = ng.config_table.forma_pagamento;
+		ant_observacao 		= ng.config_table.observacao;
 
 		return init
 	}

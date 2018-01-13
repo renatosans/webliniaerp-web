@@ -2298,6 +2298,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			formControl.tooltip();
 		}
 
+		if((ng.pagamento.id_bandeira ==  undefined || ng.pagamento.id_bandeira ==  '') && (ng.pagamento.id_forma_pagamento == 5 || ng.pagamento.id_forma_pagamento == 6 ) ){
+			error ++ ;
+			$("#bandeira").addClass("has-error");
+
+			var formControl = $("#bandeira")
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "bottom")
+				.attr("title", 'O escolha da bandeira é obrigatório')
+				.attr("data-original-title", 'O escolha da bandeira é obrigatório');
+			formControl.tooltip();
+		}
+
 		if((ng.pagamento.id_maquineta !=  undefined || ng.pagamento.id_maquineta !=  '') && ng.pagamento.id_forma_pagamento == 6 ){
 			var taxas = _.findWhere(ng.maquinetas, {id_maquineta: ng.pagamento.id_maquineta}).taxas;
 			var qtdMaxParcelas = 0;
@@ -2580,6 +2592,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
+								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca,
 								agencia_transferencia            : ng.pagamento.agencia_transferencia,
@@ -2593,6 +2606,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
+								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca
 						   };
@@ -2624,6 +2638,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			})
 			.error(function(data, status, headers, config) {
 				ng.paginacao.maquinetas = [] ;
+			});
+	}
+
+	ng.loadBandeiras = function(id) {
+		ng.bandeiras = [];
+
+		aj.get(baseUrlApi()+"bandeiras/"+id)
+			.success(function(data, status, headers, config) {
+				ng.bandeiras = data;
+			})
+			.error(function(data, status, headers, config) {
+
 			});
 	}
 
@@ -3329,6 +3355,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.calTotalBoleto();
 		}	
 
+		ng.loadBandeiras(id);
 		ng.loadDatapicker();
 	}
 

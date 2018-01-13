@@ -368,7 +368,7 @@
 					</div>
 
 					<div class="panel-body" ng-if="receber_pagamento">
-						<div class="alert alert-pagamento" style="display:none"></div>
+						<div class="alert alert-pagamento" style="display: none;"></div>
 				    	<div class="row">
 				    		<div class="col-sm-7">
 					    		<div class="row">
@@ -476,6 +476,12 @@
 						    			<label class="control-label">Maquineta</label>
 										<select ng-model="pagamento.id_maquineta" class="form-control input-sm">
 											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">{{ item.num_serie_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+									<div class="col-sm-6" id="bandeiras" ng-if="pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6 ">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento.id_bandeira" class="form-control input-sm">
+											<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{ item.nome }}</option>
 										</select>
 									</div>
 						    		<div class="col-sm-6" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 6">
