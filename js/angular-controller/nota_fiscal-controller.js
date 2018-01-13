@@ -440,7 +440,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 					item.id_produto = item.id_produto;
 					item.prod = {
 						cEAN: 	item.codigo_barra,
-						xProd: 	item.nome_produto,
+						xProd: 	item.nome,
 						NCM: 	item.cod_ncm,
 						CFOP: 	'',
 						uCom: 	item.dsc_unidade_medida,
