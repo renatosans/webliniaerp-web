@@ -297,7 +297,7 @@
 																			<i class="fa fa-edit"></i> Cartas de Correção
 																		</a>
 																	</li>
-																	<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																	<li ng-show="(nota.status == 'autorizado')" 
 																		ng-click="modalCancelar(nota,$index)">
 																		<a href="">
 																			<i class="fa fa-times-circle"></i> Cancelar Nota
@@ -310,14 +310,14 @@
 														<td class="text-middle">{{ nota.nome_destinatario }}</td>
 														<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
 														<td class="text-right text-middle">
-															R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+															R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
 														</td>
 														<td class="text-center text-middle">
-															{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null) ? 'Produtos' : '') }}
+															{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
 														</td>
 														<td class="text-center text-middle">
 															<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
-																ng-show="(nota.cod_venda != null)"></i>
+																ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
 
 															<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
 																ng-show="(nota.cod_ordem_servico != null)"></i>
