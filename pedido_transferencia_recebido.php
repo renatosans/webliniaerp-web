@@ -808,7 +808,7 @@
 										</button>
 										<a href="nota-fiscal.php?id_transferencia={{ item.id }}" class="btn btn-xs btn-primary" 
 											title="Emitir NF-e" data-toggle="tooltip">
-											<i class="fa fa-tasks"></i>
+											<i class="fa fa-file-o"></i>
 										</a>
 										<button type="button"  ng-click="deletarTransferencia(item)" ng-if="!(item.dta_transferencia)" title="Excluir" class="btn btn-xs btn-danger" data-toggle="tooltip">
 											<i class="fa fa-trash-o"></i>
