@@ -1066,13 +1066,30 @@
 			<div class="modal fade" id="modal-tabela-valores" style="display:none">
 				<div class="modal-dialog modal-md">
 					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Escolha a tabela que deseja usar</h4>
+						</div>
 					    <div class="modal-body">
-					    	<p> Escolha a tabela de valor</p>
-					    	<button class="btn btn-sm btn-primary" data-loading-text="Atacado <i class='fa fa-refresh fa-spin'></i>" ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_atacado',$event);">Atacado</button>
-					    	<button class="btn btn-sm btn-primary" data-loading-text="Varejo <i class='fa fa-refresh fa-spin'></i>"  ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_varejo',$event);">Varejo</button>
-					    	<button class="btn btn-sm btn-primary" data-loading-text="Intermediario <i class='fa fa-refresh fa-spin'></i>"  ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_intermediario',$event);">Intermediario</button>
+					    	<p>Você deve escolher qual tabela de preços deseja usar para o processo de emissão de NF-e de transporte de mercadoria.</p>
 					    </div>
-					    <div class="modal-footer clearfix">
+					    <div class="modal-footer">
+					    	<div class="pull-right">
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Atacado <i class='fa fa-refresh fa-spin'></i>" 
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_atacado',$event);">
+					    			Atacado
+					    		</button>
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Varejo <i class='fa fa-refresh fa-spin'></i>"  
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_varejo',$event);">
+					    			Varejo
+					    		</button>
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Intermediario <i class='fa fa-refresh fa-spin'></i>" 
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_intermediario',$event);">
+					    			Intermediario
+				    			</button>
+					    	</div>
 					    </div>
 				  	</div>
 				  	<!-- /.modal-content -->
