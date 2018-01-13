@@ -449,10 +449,13 @@
 								</div>
 
 								<div class="tab-pane fade in" id="destinatario"  ng-class="{active:isTransferencia()}">
-									<button class="btn btn-xs btn-primary" 
-										ng-click="selUsuario('cliente')">
-										<i class="fa fa-users"></i> Selecionar destinatário
-									</button>
+									<div class="clearfix">
+										<button class="btn btn-primary" 
+											ng-click="selUsuario('cliente')">
+											<i class="fa fa-users"></i>
+											Selecionar Destinatário
+										</button>
+									</div>
 
 									<div class="alert" style="display:none"></div>
 									<div class="row">
