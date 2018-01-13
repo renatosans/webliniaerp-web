@@ -449,7 +449,11 @@
 								</div>
 
 								<div class="tab-pane fade in" id="destinatario"  ng-class="{active:isTransferencia()}">
-									<button ng-click="selUsuario('cliente')" style="float: right;" class="btn btn-xs btn-primary"><i class="fa fa-retweet"></i></button>
+									<button class="btn btn-xs btn-primary" 
+										ng-click="selUsuario('cliente')">
+										<i class="fa fa-users"></i> Selecionar destinatário
+									</button>
+
 									<div class="alert" style="display:none"></div>
 									<div class="row">
 										<div class="col-sm-2">
