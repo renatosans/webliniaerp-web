@@ -1080,15 +1080,15 @@
 					    			Atacado
 					    		</button>
 					    		<button class="btn btn-sm btn-primary" 
-					    			data-loading-text="Varejo <i class='fa fa-refresh fa-spin'></i>"  
-					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_varejo',$event);">
-					    			Varejo
-					    		</button>
-					    		<button class="btn btn-sm btn-primary" 
 					    			data-loading-text="Intermediario <i class='fa fa-refresh fa-spin'></i>" 
 					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_intermediario',$event);">
 					    			Intermediario
 				    			</button>
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Varejo <i class='fa fa-refresh fa-spin'></i>"  
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_varejo',$event);">
+					    			Varejo
+					    		</button>
 					    	</div>
 					    </div>
 				  	</div>
