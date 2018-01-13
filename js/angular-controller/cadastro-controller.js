@@ -176,7 +176,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 				};
 			});
 		}
-		console.log(emails_notificacoes);*/
+		*/
 		var btn = $('#btn-salvar');
    		btn.button('loading');
 		ng.removeError();
@@ -397,7 +397,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 		aj.get(baseUrlApi()+"cidades/"+ng.cliente.id_estado)
 		.success(function(data, status, headers, config) {
 			ng.cliente.id_cidade = angular.copy(id_cidade);
-			console.log(ng.cliente.id_cidade);
+			
 			ng.cidades = data;
 			setTimeout(function(){$("select").trigger("chosen:updated");},300);
 			if(nome_cidade != null){

@@ -3,6 +3,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 		aj = $http;
 
 	var url_params       		= getUrlVars();
+	ng.url_params = url_params ;
 	ng.baseUrl 		 			= baseUrl();
 	ng.userLogged 	 			= UserService.getUserLogado();
 	ng.configuracoes 			= ConfigService.getConfig(ng.userLogged.id_empreendimento);
@@ -10,7 +11,8 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
     ng.disableSendNf 			= false;
     ng.nfeCalculada 			= false;
     ng.lista_modalidade_frete 	= [];
-
+    ng.busca = {usuarios:null};
+    ng.emptyBusca = {} ;
 	if($.isNumeric(url_params.id_venda))
 		ng.nota = NFService.getNota(ng.userLogged.id_empreendimento,url_params.id_venda);
     
@@ -28,6 +30,10 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 			modalidade_frete: 	'' 
 		}
     };
+
+    ng.isTransferencia = function(){
+    	return !empty(url_params.id_transferencia);	
+    }
 
     ng.NF = (empty(ng.nota)) ? angular.copy(nfTO) : ng.nota;
     ng.NF.id_empreendimento 	= ng.userLogged.id_empreendimento;
@@ -73,7 +79,8 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 			transportadora 						: ng.NF.transportadora,
 			volumes 							: ng.NF.volumes,
 			informacoes_adicionais_contribuinte : ng.NF.informacoes_adicionais_contribuinte,
-			produtos							: ng.NF.itens
+			produtos							: ng.NF.itens,
+			venda 								: ng.venda
 		};
 
 		var copy_dados = angular.copy(nfTO);
@@ -109,6 +116,18 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 				ng.NF.volumes 								= copyNF.volumes;
 				ng.NF.transportadora 						= copyNF.transportadora;
 				ng.NF.informacoes_adicionais_contribuinte 	= copyNF.informacoes_adicionais_contribuinte;
+
+				$.each(ng.NF.itens,function(i,v){
+					$.each(copyNF.itens,function(x,y){
+						if(v.prod.cProd == y.id_produto){
+							ng.NF.itens[i].id_produto = y.id_produto;
+							ng.NF.itens[i].data = y.data;
+							ng.NF.itens[i].qtd = y.qtd;
+							ng.NF.itens[i].vlr_produto = y.vlr_produto;
+							ng.NF.itens[i].valor_desconto_real = y.valor_desconto_real;
+						}
+					});
+				});
 
 				if(event != null) {
 					$('#modal-operacao').modal('hide');
@@ -247,6 +266,8 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 		ng.NF.id_empreendimento 				= ng.userLogged.id_empreendimento;
 		ng.NF.dados_emissao.data_emissao  		= data_emissao.format("YYYY/MM/DD HH:mm:ss");
 		ng.NF.dados_emissao.data_entrada_saida  = data_entrada_saida.format("YYYY/MM/DD HH:mm:ss");
+		if(url_params.id_transferencia)
+			ng.NF.dados_emissao.cod_transferencia = url_params.id_transferencia ;
 
 		aj.post(baseUrlApi()+"nfe/send", ng.NF)
 			.success(function(data, status, headers, config) {
@@ -335,10 +356,88 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 			});
 	}
 
+	ng.loadDadosTransferencia = function(id,tipo_tabela,event) {
+		if(event != null) {
+			var btn = $(event.target);
+			if(!(btn.is(':button')))
+				btn = $(btn.parent('button'));
+			btn.button('loading');
+		}
+		ng.venda = {};
+		aj.get(baseUrlApi()+"transferencia/estoque/"+id)
+			.success(function(data, status, headers, config) {
+
+				var _in = '' ;
+				$.each(data.itens,function(i,v){
+					_in += v.id_produto+',';
+				});
+
+				_in = _in.substring(0,_in.length-1);
+
+				aj.get(baseUrlApi()+"produtos/?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&pro->id[exp]= IN("+_in+")")
+					.success(function(data_prod, status, headers, config) {
+						$.each(data_prod.produtos,function(i,v){
+							$.each(data.itens,function(x,y){
+								if(v.id_produto == y.id_produto){
+									data_prod.produtos[i].qtd = y.qtd_transferida
+								}
+							});	
+						});
+
+
+						angular.forEach(data_prod.produtos, function(item){
+						item.id_produto = item.id_produto;
+						var qCom = round(Number(item.qtd),2);
+						var vUnCom = round(Number(item[tipo_tabela]),2);
+						var vProd = round(qCom * vUnCom,2) ;
+						item.prod = {
+							cEAN: 	item.codigo_barra,
+							xProd: 	item.nome_produto,
+							NCM: 	item.cod_ncm,
+							CFOP: 	'',
+							uCom: 	item.dsc_unidade_medida,
+							qCom: 	qCom,
+							vUnCom: vUnCom,
+							vProd: 	vProd
+						};
+
+						item.imposto = {
+							ICMS: {
+								CST: 0,
+								CSOSN: 0,
+								vBC: 0,
+								vICMS: 0,
+								pICMS: 0 
+							},
+							IPI: {
+								vIPI: 0,
+								pIPI: 0 
+							},
+							PIS: {
+								vPIS: 0,
+								pPIS: 0 
+							},
+							COFINS: {
+								vCOFINS: 0,
+								pCOFINS: 0 
+							}
+						};
+						item.data = angular.copy(item) ;
+					});
+					ng.NF.itens = data_prod.produtos;
+					$('#modal-tabela-valores').modal('hide');
+
+					});
+
+			});
+	}
+
 	ng.loadItensVenda = function() {
 		aj.get(baseUrlApi()+"venda/itens/"+ ng.venda.id)
 			.success(function(data, status, headers, config) {
+				ng.copy_itens = angular.copy(data);
 				angular.forEach(data, function(item){
+					item.id_produto = item.id_produto;
 					item.prod = {
 						cEAN: 	item.codigo_barra,
 						xProd: 	item.nome_produto,
@@ -371,6 +470,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 							pCOFINS: 0 
 						}
 					};
+					item.data = angular.copy(item) ;
 				});
 				ng.NF.itens = data;
 			});
@@ -406,6 +506,12 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 	}
 
 	ng.setDadosEmissao = function(){
+		if(ng.isTransferencia() && empty(ng.venda.id_cliente)){
+			$dialogs.notify('Desculpe!','<strong>Primeiro selecione um destinatario.</strong>');
+			ng.NF.dados_emissao.cod_operacao = null ;
+			return ;
+		}
+
 		var operacao = _.findWhere(ng.lista_operacao, {cod_operacao: ng.NF.dados_emissao.cod_operacao});
 
 		ng.NF.dados_emissao.local_destino 		= operacao.num_local_destino;
@@ -425,6 +531,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 
 	ng.recalcularValorTotal = function(item){
 		item.prod.vProd = parseInt(item.prod.qCom, 10) * parseFloat(item.prod.vUnCom);
+		item.valor_desconto_real = 0 ;
 	}
 
 	ng.showDANFEModal = function(nota){
@@ -451,9 +558,93 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 			ng.NF.dados_emissao.cod_operacao = Number(url_params.cod_operacao);
 			ng.calcularNfe(null, url_params.id_venda, url_params.cod_operacao);
 		}
+	}else if(($.isNumeric(url_params.id_transferencia))){
+		$('#modal-tabela-valores').modal('show');
 	}
 	else 
 		$dialogs.notify('Desculpe!','<strong>Não foi possível calcular a NF, os paramentros estão incorretos.</strong>');
+
+
+	ng.loadUsuarios = function(offset,limit,tipo) {
+		offset = offset == null ? 0  : offset;
+    	limit  = limit  == null ? 10 : limit;
+
+		ng.emptyBusca.usuarios = false ;
+		ng.paginacao_usuarios  = [];
+		ng.usuarios = [];
+		ng.busca.tipo_usuario = tipo ;
+		if(tipo == 'vendedor')
+			query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+") AND (usu.flg_tipo='usuario')";
+		else
+			query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
+
+		if(ng.busca.usuarios != ""){
+			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.usuarios+"%' OR usu.apelido LIKE '%"+ng.busca.usuarios+"%')"}});
+		}
+
+		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
+			.success(function(data, status, headers, config) {
+				ng.usuarios = data.usuarios;
+				ng.paginacao_usuarios = data.paginacao;
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404){
+					ng.usuarios = [] ;
+					ng.emptyBusca.usuarios = true ;
+				}else{
+					alert('Ocorreu um erro ao carregar os usuários');
+				}
+			});
+	}
+
+
+	ng.selUsuario = function(tipo){
+		var offset = 0  ;
+    	var limit  =  10 ;;
+		ng.busca.usuarios = "";
+		ng.loadUsuarios(offset,limit,tipo);
+		$("#list_usuarios").modal("show");
+	}
+
+	ng.addUsuario = function(item,event){
+		if(event != null) {
+			var btn = $(event.target);
+			if(!(btn.is(':button')))
+				btn = $(btn.parent('button'));
+			btn.button('loading');
+		}
+		ng.venda.id_cliente = item.id ;
+		ng.venda.tipo_cadastro = item.tipo_cadastro ;
+		aj.get(baseUrlApi()+"usuarios?usu->id="+ item.id)
+			.success(function(data, status, headers, config) {
+				data = data.usuarios[0];
+				ng.NF.destinatario = {
+					CNPJ: 						data.cnpj,
+					CPF: 						data.cpf,
+					IE: 						data.inscricao_estadual,
+					IEST: 						data.inscricao_estadual_st,
+					IM: 						data.num_inscricao_municipal,
+					num_registro_estrangeiro: 	data.num_registro_estrangeiro,
+					xFant: 						data.nome_fantasia,
+					tipo_cadastro : 			data.tipo_cadastro,
+					xNome: 						data.nome,
+					email: 						data.email,
+					CEP: 						data.cep,
+					nme_logradouro: 			data.endereco,
+					num_logradouro: 			data.numero,
+					nme_bairro_logradouro: 		data.bairro,
+					estado: {
+						uf: data.uf
+					},
+					cidade: {
+						nome: data.cidade
+					}
+				};
+				btn.button('reset');
+				$("#list_usuarios").modal("hide");
+			});
+	}
+
 	
 	ng.loadDadosEmitente();
 	ng.loadTransportadoras();

@@ -188,9 +188,10 @@
 
 	    .panel.middle-frame div.container {
 	      min-height: 200px;
-	      line-height: 200px;
+  		  line-height: 200px;	
 	      padding-left: 0px !important;
 	      padding-right: 0px !important;
+	      width: 100% !important;
 	    }
 
 	    .panel.middle-frame div.container img {
@@ -220,6 +221,9 @@
 	      font-size: 1.2em;
 	    }
 
+	    .input-group .form-control.input-lg {
+	    	height: 45px !important;
+	    }
 	</style>
   </head>
 
@@ -239,6 +243,14 @@
 				<span class="icon-bar"></span>
 			</button>
 			<ul class="nav-notification clearfix">
+				<li class="dropdown" 
+					data-toggle="tooltip" 
+					data-placement="bottom" 
+					title="Tela Inteira">
+					<a href="#" ng-click="resizeScreen()">
+						<i class="fa fa-arrows-alt"></i>
+					</a>
+				</li>
 				<?php include("alertas.php"); ?>
 				<li class="profile dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -311,6 +323,12 @@
 				
 				<div class="panel panel-primary"> <!-- SE ESTIVER NA VISUALIZAÇÃO DA MESA OU COMANDA TROCAR POR 'panel-warning' --> 
 					<!-- INICIO - EXIBIR APENAS NA VISUALIZAÇÃO DE TODAS AS MESAS -->
+					<div class="panel-heading" ng-if="(isFullscreen)">
+						<h2 class="panel-title clearfix">
+							<i class="fa fa-table"></i> 
+							Controle de Mesas
+						</h2>
+					</div>
 					<div class="panel-body" ng-show="layout.mesas">
 						<div class="row">
 							<div ng-repeat="(index, mesa) in mesas" class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
@@ -592,11 +610,23 @@
 										<i class="fa fa-user"></i>
 										<span class="hidden-xs">Informar Cliente</span>
 									</button>
-									<button ng-if="userLogged.flg_dispositivo===1" type="button" class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" ng-click="changeTela('escTipoProduto', null, $event)">
+									<button type="button" 
+										class="btn btn-xs btn-info hidden-sm hidden-md hidden-lg" 
+											ng-click="changeTela('escTipoProduto', null, $event)">
 										<i class="fa fa-plus-circle"></i>
 										Add Produto
 									</button>
-									<button ng-if="userLogged.flg_dispositivo===1" type="button" class="btn btn-xs btn-info hidden-xs" ng-click="openModalProdutos()">
+									<button type="button" 
+										class="btn btn-xs btn-info hidden-xs" 
+										ng-click="openModalProdutos()"
+										ng-if="(!configuracao.flg_modo_selecao_produto || configuracao.flg_modo_selecao_produto == 'lista')">
+										<i class="fa fa-plus-circle"></i>
+										Adicionar Produto
+									</button>
+									<button type="button" 
+										class="btn btn-xs btn-info hidden-xs" 
+										ng-click="bucaTipoProduto('categoria')"
+										ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
 										<i class="fa fa-plus-circle"></i>
 										Adicionar Produto
 									</button>
@@ -618,8 +648,8 @@
 											<th class="text-middle text-center hidden-xs">Cor/Sabor</th>
 											<th class="text-middle text-center">Qtd.</th>
 											<th class="text-middle text-center">Valor</th>
-											<th class="text-middle text-right hidden-xs" width="100" ng-if="userLogged.flg_dispositivo===1">Ações</th>
-											<th class="text-middle text-right hidden-sm hidden-lg" ng-if="userLogged.flg_dispositivo===1" width="50">Ações</th>
+											<th class="text-middle text-center hidden-xs" width="100" ng-if="userLogged.flg_dispositivo===1">Ações</th>
+											<th class="text-middle text-center hidden-sm hidden-lg" ng-if="userLogged.flg_dispositivo===1" width="50">Ações</th>
 										</thead>
 										<tbody>
 											<tr ng-repeat="item in comandaSelecionada.comanda.itens">
@@ -709,22 +739,99 @@
 						</div>
 
 						<div class="panel-body">
-							<fieldset>
-								<legend>Informe a quantidade</legend>
+							<div class="row">
+								<div class="col-xs-12 col-sm-1">
+									<img class="img-responsive" ng-if="!produto.img" src="img/sem-imagem-app.png">
+									<img class="img-responsive" ng-if="produto.img" src="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}">
+								</div>
 
-								<div class="row">
-									<div class="col-lg-12">
-										<input ng-disabled="produto.id_ordem_producao!=null" type="number" ng-model="produto.qtd" class="form-control" onKeyPress="return SomenteNumero(event);">
+								<div class="col-xs-12 col-sm-3">
+									<div class="row">
+										<div class="col-xs-12">
+											<div class="form-group">
+												<label class="control-label">Informe a Quantidade</label>
+												<div class="input-group">
+													<span class="input-group-btn">
+														<button class="btn btn-lg btn-primary" type="button"
+															ng-click="diminuirQuantidadeProduto()">
+															<i class="fa fa-minus-square"></i>
+														</button>
+													</span>
+													<input type="number" class="form-control input-lg text-center no-padding"
+														onKeyPress="return SomenteNumero(event);"
+														style="font-size: 18px;" min="0" max="100" 
+														ng-model="produto.qtd" />
+													<span class="input-group-btn">
+														<button class="btn btn-lg btn-primary" type="button"
+															ng-click="aumentarQuantidadeProduto()">
+															<i class="fa fa-plus-square"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label class="control-label">Observações</label>
+												<textarea rows="5" class="form-control" 
+													ng-disabled="produto.id_ordem_producao != null" 
+													ng-model="produto.observacoes"></textarea>
+											</div>
+										</div>
+									</div>
+
+									<div class="row" ng-if="(produto.adicionais.length > 0)">
+										<div class="col-xs-12">
+											<div class="form-group">
+												<label class="control-label">Adicionais selecionados</label>
+												<div class="controls">
+													<table class="table table-bordered table-hover table-condensed">
+														<tbody>
+															<tr ng-repeat="selected in produto.adicionais_selecionados">
+																<td>
+																	{{ selected.nome }}
+																	<small class="clearfix" ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</small>
+																	<small class="clearfix" ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</small>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 
-								<div class="row">
-									<div class="col-lg-12">
-										<label class="control-label">Observações</label>
-										<textarea rows="5" class="form-control" ng-disabled="produto.id_ordem_producao!=null" ng-model="produto.observacoes"></textarea>
+								<div class="col-xs-12 col-sm-8">
+									<label class="control-label">Adicionais</label>
+									<div class="row" ng-if="(produto.adicionais.length == 0)">
+										<div class="col-xs-12">O item não possúi adicionais!</div>
+									</div>
+									<div class="row" ng-if="(produto.adicionais.length > 0)">
+										<div class="col-xs-6 col-sm-3" ng-repeat="(index, adicional) in produto.adicionais track by $index">
+											<div class="panel panel-{{ (isAdicionalSelected(adicional)) ? 'warning' : ((produto.id_ordem_producao == null) ? 'primary' : 'default') }} middle-frame" 
+												ng-click="selAdicional(index, adicional)">
+												<div class="panel-body">
+													<div class="text-center container">
+														<img class="img-responsive" pre-load-img
+															imgpreload="img/img-preload-app.jpg" 
+															notimg="img/sem-imagem-app.png" 
+															datasrc="{{ baseUrl()+'assets/imagens/produtos/'+adicional.img }}">
+														<span class="product-name">
+															{{ adicional.nome }}
+															<small class="clearfix" ng-if="(adicional.nome_tamanho)">{{ adicional.nome_tamanho }}</small>
+															<small class="clearfix" ng-if="(adicional.nome_cor)">{{ adicional.nome_cor }}</small>
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
-							</fieldset>
+							</div>
 						</div>
 
 						<div class="panel-footer">
@@ -732,16 +839,15 @@
 								<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
 									<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
 									<button type="button" class="btn btn-primary btn-block"
-										ng-disabled="produto.id_ordem_producao!=null" 
 										ng-click="editItemComanda($event)" 
-										
+										ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
 										data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 										<i class="fa fa-trash-o"></i> Atualizar Item
 									</button>
 									<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')" -->
 									<button type="button" class="btn btn-danger btn-block" 
 										ng-click="excluirItemComanda($event)" 
-										
+										ng-if="(produto.id_item_venda)"
 										data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 										<i class="fa fa-trash-o"></i> Excluir Item
 									</button>
@@ -757,22 +863,31 @@
 										<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')"-->
 										<button type="button" class="btn btn-danger"
 											ng-click="excluirItemComanda($event)" 
-											
+											ng-if="(produto.id_item_venda)"
 											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 											<i class="fa fa-trash-o"></i>&nbsp;Excluir Item
 										</button>
 
 										<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
 										<button type="button" class="btn btn-primary"
-											ng-disabled="produto.id_ordem_producao!=null" 
 											ng-click="editItemComanda($event)" 
-
+											ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
 											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 											<i class="fa fa-trash-o"></i>&nbsp;Atualizar Item
 										</button>
 
-										<button ng-if="!EditProduto" ng-click="incluirItemComanda($event)" type="button" class="btn btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."><i class="fa fa-trash-o"></i>&nbsp;Incluir no carrinho</button>
-										<button ng-click="cancelarProduto()" type="button" class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;Cancelar</button>
+										<button type="button" class="btn btn-primary" 
+											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+											ng-if="!EditProduto" 
+											ng-click="incluirItemComanda($event)"
+											>
+											<i class="fa fa-trash-o"></i>&nbsp;Incluir no carrinho
+										</button>
+
+										<button type="button" class="btn btn-default"
+											ng-click="cancelarProduto()">
+											<i class="fa fa-ban"></i>&nbsp;Cancelar
+										</button>
 									</div>
 								</div>
 							</div>
@@ -786,8 +901,11 @@
 							<fieldset>
 								<legend style="height: 30px;">
 									Incluir Produto
-									<button  ng-click="changeTela('detComanda', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
-									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar</button>
+									<button type="button" class="btn btn-xs btn-primary pull-right"
+										ng-click="changeTela('detComanda', null, $event)" >
+										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
+										Voltar
+									</button>
 								</legend>
 
 								<div class="row">
@@ -815,18 +933,26 @@
 						<fieldset>
 							<legend style="height: 30px;">
 								Pesquisa por {{ getTipoBuscaProduto() }} 
-								<button ng-click="changeTela('escTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
+								<button type="button" class="btn btn-xs btn-primary pull-right hidden-sm hidden-md hidden-lg"
+									ng-click="changeTela('escTipoProduto', null, $event)">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
+								</button>
+								<button type="button" class="btn btn-xs btn-primary pull-right hidden-xs"
+									ng-click="changeTela('detComanda', null, $event)" >
+									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
+									Voltar
 								</button>
 							</legend>
 
 							<!-- LISTA CATEGORIA -->
 							<div class="row" ng-show="getTipoBuscaProduto()=='categoria'">
-								<div class="col-xs-6" ng-repeat="categoria in categoriasProduto">
-									<div class="panel panel-primary middle-frame" ng-click="setBuscaCategoria(categoria)">
-										<div class="panel-body">
+								<div class="col-xs-6 col-sm-2" ng-repeat="categoria in categoriasProduto">
+									<div class="panel panel-primary middle-frame" 
+										 style="border-color: {{ categoria.hex_cor_box }};" 
+										ng-click="setBuscaCategoria(categoria)">
+										<div class="panel-body" style="background-color: {{  categoria.hex_cor_box }};">
 											<div class="text-center container">
-												<span>{{ categoria.descricao_categoria | uppercase }}</span>
+												<span style="color: {{  categoria.hex_cor_letra }};">{{ categoria.descricao_categoria | uppercase }}</span>
 											</div>
 										</div>
 									</div>
@@ -835,7 +961,7 @@
 
 							<!-- LISTA FABRICANTE -->	
 							<div class="row" ng-show="getTipoBuscaProduto()=='fabricante'">
-								<div class="col-xs-6" ng-repeat="fabricante in fabricantesProduto">
+								<div class="col-xs-6 col-sm-2" ng-repeat="fabricante in fabricantesProduto">
 									<div class="panel panel-primary middle-frame" ng-click="setBuscaFabricante(fabricante)">
 										<div class="panel-body">
 											<div class="text-center container">
@@ -883,7 +1009,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-xs-6" ng-repeat="produto in produtos.itens">
+								<div class="col-xs-6 col-sm-2" ng-repeat="produto in produtos.itens">
 									<div ng-click="selProduto(produto)" class="panel panel-primary middle-frame">
 										<div class="panel-body">
 											<div class="text-center container">

@@ -1101,7 +1101,7 @@
 									<div class="row">
 									
 										<div class="col-sm-12">
-											<div class="form-group" style="overflow-y: scroll; max-height: 250px;">
+											<div class="form-group">
 												<table id="tbl_carrinho" 
 													class="table table-condensed table-bordered table-hover table-striped">
 													<tr ng-hide="carrinho.length > 0" class="hidden-print">
@@ -2178,9 +2178,9 @@
 					    		href="{{ url_pdf }}" target="_blank" 
 					    		ng-show="!emitirNfe"
 					    		ng-click="setvalue('sendEmailPdf',false); emitirNfe = false;">
-					    		<i class="fa fa-file-pdf-o"></i> Visualizar PDF (Comprovante de Venda)
+					    		<i class="fa fa-file-pdf-o"></i> Visualizar PDF (Comprovante de <span ng-if="!pagamento_fulso">Venda</span><span ng-if="pagamento_fulso">Pagamento</span>)
 					    	</a>
-					    	<a ng-show="!emitirNfe" id="printTermic" class="btn btn-md btn-block btn-primary" 
+					    	<a ng-show="!emitirNfe" ng-if="!pagamento_fulso" id="printTermic" class="btn btn-md btn-block btn-primary" 
 					    		data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." 
 					    		ng-click="printTermic(false)" >
 					    		<i class="fa fa-print"></i> Imprimir (via Impressora Térmica)

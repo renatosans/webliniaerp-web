@@ -555,7 +555,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	}
 
 	ng.escolherPlano = function(){
-		//console.log(ng.tipo_plano,ng.currentNode);
+		
 		if(ng.tipo_plano =='movimentacao'){
 			ng.config.nome_plano_movimentacao = ng.currentNode.dsc_plano ;
 			ng.id_plano_movimentacao_caixa    = ng.currentNode.id;
@@ -685,7 +685,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		var r  = false ;
 		aj.get(baseUrlApi()+"planoconta/"+id)
 			.success(function(data, status, headers, config) {
-				//console.log(data);
+				
 				if(tipo == 'movimentacao'){
 					ng.config.nome_plano_movimentacao = data.dsc_plano;
 					ng.id_plano_movimentacao_caixa = data.id;
@@ -1127,7 +1127,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		ng.edit_serie_documento_fiscal = true ;
 		ng.index_edit_serie_documento_fiscal = index ;
 		ng.serie_documento_fiscal = angular.copy(item);
-		console.log(ng.serie_documento_fiscal);
+		
 	}
 
 	var deleteSerieFiscal = [] ;
@@ -1137,7 +1137,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		else
 			ng.lista_serie_documento_fiscal[index].flg_excluido = 1 ;
 
-		console.log(deleteSerieFiscal);
+		
 	}
 
 	ng.salvarConfigFiscal = function(event){
@@ -1416,6 +1416,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_modo_selecao_produto != undefined){
+			var item = {
+							nome 				:'flg_modo_selecao_produto',
+							valor 				:ng.configuracoes.flg_modo_selecao_produto , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		if(ng.configuracoes.flg_modo_controle_mesas != undefined){
 			var item = {
 							nome 				:'flg_modo_controle_mesas',
@@ -1539,14 +1548,14 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				btn.button('reset');
 			});
 
-		console.log(json);
+		
 	}
 
 	ng.loadPerfis = function() {
 		aj.get(baseUrlApi()+"perfis?tpue->id_empreendimento="+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				var aux = typeof parseJSON(ng.cfg.perfis_cadastro_rapido) == 'object' ?  parseJSON(ng.cfg.perfis_cadastro_rapido) : [] ;
-				console.log(aux);
+				
 				$.each(data,function(i,x){
 					index = getIndex('id',data[i].id,data);
 					if($.isNumeric(index) && !empty(aux[i])){

@@ -117,8 +117,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 	    	$("#modal_change_date_pagamento").modal('hide');
 
-	    	//console.log(obj);
-
 	    	dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja alterar o status deste lançamento?</strong>');
 
 			dlg.result.then(function(btn){
@@ -636,7 +634,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.pagamento.nome_plano_conta = ng.currentNode.dsc_plano ;
 		ng.pagamento.id_plano_conta   = ng.currentNode.id;
 
-		console.log(ng.pagamento);
+		
 
 		$('#modal-plano-contas').modal('hide');
 	}
@@ -729,7 +727,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			ng.pagamento.id_conta_bancaria = null ;
 			if (ng.pagamento.id_maquineta != undefined && ng.pagamento.id_maquineta != ''){
 				var maquineta = ng.getDadosMaquineta()
-				console.log(maquineta);
+				
 				ng.pagamento.id_conta_bancaria = maquineta.id_conta_bancaria ;
 				ng.pagamento.taxa_maquineta = ng.pagamento.id_forma_pagamento == 5 ? maquineta.per_margem_debito : maquineta.per_margem_credito ;
 			}
@@ -884,7 +882,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				.attr("data-original-title", 'A escolha da forma de chequ é obrigatória');
 			formControl.tooltip();
 		}
-		//console.log(ng.pagamento);
+		
 		if(ng.pagamento.valor ==  undefined || ng.pagamento.valor ==  ''){
 			error ++ ;
 			$("#pagamento_valor").addClass("has-error");
@@ -1108,7 +1106,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		if(ng.pagamento.id_forma_pagamento != 2 || ng.pagamento.id_forma_pagamento != 4 ){
 			ng.pagamento.data_pagamento   = $(".data-cc").val();
-			console.log(ng.pagamento.data_pagamento);
+			
 		}
 				
 
@@ -1176,7 +1174,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			});
 		}
 
-		console.log(ng.pg_boletos);
+		
 
 		if(ng.pagamento.id_forma_pagamento == 3){
 			$.each(ng.recebidos,function(x,y){
@@ -1233,7 +1231,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.totalPagamento();
 		ng.pagamento = {} ;
 		$('.data-cc').val('');
-		console.log(ng.recebidos);
+		
 	}
 
 	ng.fornecedor = {}
@@ -1329,7 +1327,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 							next_date_mes = next_date_mes+1;
 					}
 					next_date = next_date_dia+"/"+next_date_mes+"/"+next_date_ano ;
-					console.log(next_date);
+					
 
 					itens_prc.push(item);
 				}
@@ -1378,7 +1376,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 						}
 		}
 
-		console.log(dados);
+		
 
 		aj.post(baseUrlApi()+url, dados)
 			.success(function(data, status, headers, config) {
@@ -1470,7 +1468,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				ng.configuracoes = data ;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('Erro ao busca configuraçãoes so sistema');
+				
 			});
 	}
 
@@ -1543,7 +1541,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.vendaPrint.id_controle_pagamento   = item.id_controle_pagamento;
 		ng.vendaPrint.id_parcelamento   	  = item.id_parcelamento == null ? item.id : item.id_parcelamento ;
 		ng.vendaPrint.id_lancamento           = item.id;
-		console.log(item);
+		
 		$("#modal-print").modal("show");
 		if(item.id_forma_pagamento == 6){
 				aj.get(baseUrlApi()+"lancamentos/parcelas/"+ng.vendaPrint.id_parcelamento )
@@ -1557,7 +1555,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 									dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Este pagamento faz parte de um parcelamento em '+parcelas.length+'x. Deseja imprimir todas as parcelas ? </strong>');
 
 									dlg.result.then(function(btn){
-										console.log(parcelas);
+										
 										ng.itensPrint = parcelas;
 										$("#modal-print").modal("show")
 									}, function(){

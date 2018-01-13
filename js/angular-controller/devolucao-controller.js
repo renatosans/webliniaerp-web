@@ -245,7 +245,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 	}
 
 	ng.comparaQtd = function(item,index){
-		//console.log(item,index);
+		
 		var qtd 				= Number(item.qtd);
 		var qtd_devolvida 		= Number(item.qtd_devolvida);
 		var qtd_devolvida_real 	= Number(item.qtd_devolvida_real);
@@ -418,7 +418,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 
 	ng.mensagens = function(classe , msg, alertClass){
 		alertClass = alertClass != null  ?  alertClass:'.alert-sistema' ;
-		console.log($(alertClass));
+		
 		$(alertClass).fadeIn().addClass(classe).html(msg);
 		setTimeout(function(){
 			$(alertClass).fadeOut('slow');

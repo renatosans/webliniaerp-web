@@ -111,7 +111,7 @@ app.controller('GradeController', function($scope, $http, $window, $dialogs,Conf
     		query_string += "&"+$.param({'nome':{exp:"like'%"+ng.busca.produtosModal+"%' OR nome_fabricante like'%"+ng.busca.produtosModal+"%'"}});
     	}
 
-    	console.log(query_string);
+    	
 
 		ng.produtosModal = null;
 		aj.get(baseUrlApi()+"produtos/"+offset+"/"+limit+"/"+query_string)

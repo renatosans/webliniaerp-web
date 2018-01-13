@@ -6,7 +6,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 	ng.userLogged 	= UserService.getUserLogado();
 	ng.configuracao = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.configuracao.flg_controlar_validade_transferencia =  _in(ng.configuracao.flg_controlar_validade_transferencia,[1,0]) ? ng.configuracao.flg_controlar_validade_transferencia : 0 ;
-	console.log(ng.configuracao.flg_controlar_validade_transferencia);
+	
 	ng.busca 		= {empreendimento:'',produto:'',depositos:''} ;
 	ng.paginacao    = {};
     ng.lista_emp    = [];
@@ -33,7 +33,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
     	val = FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
-    	console.log(val);
+    	
 		return val;
 	}
 
@@ -180,7 +180,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			produto.tipo_vlr_custo = item.tipo_vlr_custo ;
 		}
 	
-		if(ng.enviarNovaTransferencia){
+		if(empty(ng.transferencia.id) && ng.enviarNovaTransferencia){
 			produto.qtd_transferida = produto.qtd_pedida;
 			produto.qtd_pedida = 0;
 		}
@@ -194,7 +194,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 				ng.loadtransferencias(0,10);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 			});
 	}
 
@@ -276,7 +276,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			}
 		})
 		.error(function(data, status, headers, config) {
-			console.log('Ocorreu um erro ao buscar os dados');
+			
 		});
 		
 	}
@@ -419,7 +419,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			post.produtos = ng.formatPostValidades() ;
 		}
 
-		aj.post(baseUrlApi()+"estoque/pedido/transferencia/transferir/",post)
+		aj.post(baseUrlApi()+"estoque/pedido/transferencia/transferir/", { form_data: JSON.stringify(post) })
 		.success(function(data, status, headers, config) {
 			aj.get(baseUrlApi()+"transferencias/estoque/?id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+"&tte->id="+ng.transferencia.id)
 			.success(function(data, status, headers, config) {
@@ -769,7 +769,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		aj.get(baseUrlApi()+"estoque/"+ offset +"/"+ limit +"/"+query_string)
 			.success(function(data, status, headers, config) {
 				ng.produtos = GroupBy(data.produtos, "id_produto");
-				console.log(ng.produtos);
+				
 				ng.paginacao.produtos = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {

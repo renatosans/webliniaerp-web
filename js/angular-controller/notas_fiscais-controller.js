@@ -108,7 +108,10 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 
 	ng.notaCancelar = null ;
 	ng.modalCancelar = function(item,index){
-		aj.get(baseUrlApi()+"nota_fiscal/?cod_empreendimento="+ng.userLogged.id_empreendimento+"&cod_venda="+item.cod_venda)
+		var url = baseUrlApi()+"nota_fiscal/?cod_empreendimento="+ng.userLogged.id_empreendimento ;
+		if(item.cod_venda) url += "&cod_venda="+item.cod_venda;
+		if(item.cod_transferencia) url+= "&cod_transferencia="+item.cod_transferencia;
+		aj.get(url)
 			.success(function(data, status, headers, config) {
 				data.dados_emissao.data_emissao = formatDateBR(data.dados_emissao.data_emissao);
 				ng.notaCancelar = data ;

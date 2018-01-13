@@ -262,6 +262,7 @@
 													</div>
 												</div>
 											</div>
+											
 											<br/>
 											<div class="row" ng-if="produto.flg_produto_composto == 1">
 												<div class="col-sm-12">
@@ -272,13 +273,13 @@
 																	<tr>
 																		<td colspan="7"><i class="fa fa fa-th fa-lg"></i> Insumos</td>
 																		<td width="60" align="center">
-																			<button class="btn btn-xs btn-primary" ng-click="showInsumos()"><i class="fa fa-plus-circle"></i></button>
+																			<button class="btn btn-xs btn-primary" ng-click="showInsumos('insumos')"><i class="fa fa-plus-circle"></i></button>
 																		</td>
 																	</tr>
 																</thead>
 																<tbody>
 																	<tr ng-show="(insumos.length == 0)">
-																		<td colspan="8" align="center">Nenhum insumo selecionado</td>
+																		<td colspan="8" align="center">Nenhum insumo selecionado!</td>
 																	</tr>
 																	<tr ng-show="(insumos.length > 0)">
 																		<td>#</td>
@@ -298,13 +299,13 @@
 																		<td>{{ item.sabor }}</td>
 																		<td class="text-right" width="70">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
 																		<td width="80">
-																			<input type="text" class="form-control input-xs"
+																			<input type="text" class="form-control input-xs text-center"
 																				onKeyPress="return SomenteNumero(event);" 
 																				ng-model="item.qtd" 
 																				ng-keyup="calVlrCustoInsumos()" 
 																				ng-if="item.flg_unidade_fracao != 1"/>
 
-																			<input type="text" class="form-control input-xs"
+																			<input type="text" class="form-control input-xs text-center"
 																				thousands-formatter precision="3"
 																				onKeyPress="return SomenteNumero(event);" 
 																				ng-model="item.qtd" 
@@ -321,13 +322,62 @@
 													</div>
 												</div>
 											</div>
+
+											<br/>
+											<div class="row" ng-if="produto.flg_produto_composto == 1">
+												<div class="col-sm-12">
+													<div class="empreendimentos form-group" id="adicionais">
+														
+															<table class="table table-bordered table-condensed table-striped table-hover">
+																<thead>
+																	<tr>
+																		<td colspan="5"><i class="fa fa fa-th fa-lg"></i> Adicionais</td>
+																		<td width="60" align="center">
+																			<button class="btn btn-xs btn-primary" ng-click="showInsumos('adicionais')"><i class="fa fa-plus-circle"></i></button>
+																		</td>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr ng-show="(adicionais.length == 0)">
+																		<td colspan="8" align="center">Nenhum adicional selecionado!</td>
+																	</tr>
+																	<tr ng-show="(adicionais.length > 0)">
+																		<td class="text-center">#</td>
+																		<td class="text-center">Produto</td>
+																		<td class="text-center">Fabricante</td>
+																		<td class="text-center">Tamanho</td>
+																		<td class="text-center">Sabor/Cor</td>
+																		<td class="text-center" align="center"></td>
+																	</tr>
+																	<tr ng-repeat="item in adicionais">
+																		<td class="text-center">{{ item.id }}</td>
+																		<td>{{ item.nome }}</td>
+																		<td>{{ item.nome_fabricante }}</td>
+																		<td>{{ item.peso }}</td>
+																		<td>{{ item.sabor }}</td>
+																		<td align="center">
+																			<button class="btn btn-xs btn-danger" 
+																				ng-click="delAdicional($index,item)">
+																				<i class="fa fa-trash-o"></i>
+																			</button>
+																		</td>
+																	</tr>
+																</tbody>
+															</table>
+												
+													</div>
+												</div>
+											</div>
+
 											<div class="row">
 												<div class="col-sm-12">
 													<div class="pull-right">
 														<button ng-click="showBoxNovo(); reset();" type="submit" class="btn btn-danger btn-sm">
 															<i class="fa fa-times-circle"></i> Cancelar
 														</button>
-														<button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." ng-click="salvar('btn-salvar-informacoes-basicas')"type="submit" id="btn-salvar-informacoes-basicas" class="btn btn-success btn-sm">
+														<button type="submit" class="btn btn-success btn-sm" id="btn-salvar-informacoes-basicas"
+															data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." 
+															ng-click="salvar('btn-salvar-informacoes-basicas')">
 															<i class="fa fa-save"></i> Salvar
 														</button>
 													</div>
@@ -1262,46 +1312,57 @@
 				   		<div class="row">
 				   			<div class="col-sm-12">
 				   				<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(modal_insumos.length != 0)">
+									<thead>
 										<tr>
-											<th >ID</th>
-											<th >Nome</th>
-											<th >Fabricante</th>
-											<th >Tamanho</th>
-											<th >Sabor/cor</th>
-											<th>Vlr. Custo</th>
-											<th >Qtd</th>
-											<th ></th>
+											<th class="text-center">ID</th>
+											<th>Nome</th>
+											<th>Fabricante</th>
+											<th>Tamanho</th>
+											<th>Sabor/Cor</th>
+											<th class="text-center" ng-if="(sublist_name == 'insumos')">R$ Custo</th>
+											<th class="text-center" ng-if="(sublist_name == 'insumos')">Qtd.</th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
+										<tr ng-show="(!modal_insumos)">
+											<td class="text-center" colspan="8">Nenhum produto encontrado!</td>
+										</tr>
 										<tr ng-show="(modal_insumos.length == 0)">
-											<td colspan="4">Nenhum Produto Encontrado</td>
+											<td class="text-center" colspan="8">
+												<i class="fa fa-spin fa-spinner"></i>
+												Aguarde, carregando produtos...
+											</td>
 										</tr>
 										<tr ng-repeat="item in modal_insumos">
-											<td>{{ item.id }}</td>
+											<td class="text-center">{{ item.id }}</td>
 											<td>{{ item.nome }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
-											<td>R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-											<td  width="80">
-												<input type="text" class="form-control input-xs" 
+											<td class="text-right" ng-if="(sublist_name == 'insumos')">
+												R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}
+											</td>
+											<td width="80" ng-if="(sublist_name == 'insumos')">
+												<input type="text" class="form-control input-xs text-center" 
 													onKeyPress="return SomenteNumero(event);" 
 													ng-model="item.qtd"
 													ng-if="item.flg_unidade_fracao != 1"/>
 
-												<input type="text" class="form-control input-xs" 
+												<input type="text" class="form-control input-xs text-center" 
 													onKeyPress="return SomenteNumero(event);" 
 													ng-model="item.qtd"
 													ng-if="item.flg_unidade_fracao == 1"
 													thousands-formatter precision="3"/>
 											</td>
 											<td width="50" align="center">
-												<button ng-if="!existsInsumo(item.id)" type="button" class="btn btn-xs btn-success" ng-disabled="" ng-click="addInsumo(item)">
+												<button type="button" class="btn btn-xs btn-success" 
+													ng-if="!existsInsumo(item.id)"
+													ng-click="addInsumo(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
 												</button>
-												<button ng-if="existsInsumo(item.id)"  ng-disabled="true" class="btn btn-primary btn-xs" type="button">
+												<button type="button" class="btn btn-primary btn-xs" disabled="disabled" 
+													ng-if="existsInsumo(item.id)">
                                                		 <i class="fa fa-check-circle-o"></i> Selecionado
                                            		 </button>
 											</td>

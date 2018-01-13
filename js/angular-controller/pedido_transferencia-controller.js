@@ -309,7 +309,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 			url = 'estoque/pedido/transferencia';
 		}
 
-		aj.post(baseUrlApi()+url,post)
+		aj.post(baseUrlApi()+url, { form_data: JSON.stringify(post) })
 		.success(function(data, status, headers, config) {
 			btn.button('reset'); 
 			ng.transferencia = angular.copy(transferenciaTO);
@@ -640,7 +640,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 				post.produtos = formatPostValidades() ;
 			}
 
-			aj.post(baseUrlApi()+"estoque/pedido/transferencia/receber/",post)
+			aj.post(baseUrlApi()+"estoque/pedido/transferencia/receber/",{ form_data: JSON.stringify(post) })
 			.success(function(data, status, headers, config) {
 				aj.get(baseUrlApi()+"transferencias/estoque/?id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+"&tte->id="+ng.transferencia.id)
 				.success(function(data, status, headers, config) {

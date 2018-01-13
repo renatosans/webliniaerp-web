@@ -30,7 +30,7 @@ app.controller('FaixaDescontoController', function($scope, $http, $window, $dial
 
 	ng.selCor = function(index){
 		ng.faixa.id_cor = ng.cores[index].id;
-		console.log(ng.cor);
+		
 	}
 
 	ng.mensagens = function(classe , msg){

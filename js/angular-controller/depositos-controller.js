@@ -111,7 +111,7 @@ app.controller('DepositosController', function($scope, $http, $window, $dialogs,
 		if(ng.busca.text != "")
 			query_string += "&("+$.param({nme_deposito:{exp:"like '%"+ng.busca.text+"%' OR dep.id = '"+ng.busca.text+"'"}})+")";
 
-		console.log(ng.userLogged.id_empreendimento);
+		
 		aj.get(baseUrlApi()+"depositos/"+offset+"/"+limit+ query_string)
 			.success(function(data, status, headers, config) {
 				ng.depositos = data.depositos;

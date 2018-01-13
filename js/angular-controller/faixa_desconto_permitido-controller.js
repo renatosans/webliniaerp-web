@@ -113,7 +113,7 @@ app.controller('FaixaDescontoPermitidoController', function($scope, $http, $wind
 		}
 
 
-		console.log(itemPost);
+		
 
 		aj.post(baseUrlApi()+url, itemPost)
 			.success(function(data, status, headers, config) {

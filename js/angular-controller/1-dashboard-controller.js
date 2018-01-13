@@ -1,3 +1,4 @@
+
 app.controller('DashboardController', function($scope, $http, $window, UserService) {
 	var ng = $scope,
 		aj = $http;

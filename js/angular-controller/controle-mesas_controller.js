@@ -39,7 +39,33 @@ app.controller('ControleMesasController', function(
 	var timeOutWaitingResponseTestConection = null ;
 	ng.baseUrl = baseUrl;
 
-	$('#sizeToggle').trigger("click");
+	ng.isFullscreen = false;
+	ng.resizeScreen = function() {
+		if(!ng.isFullscreen){
+			$("#map_canvas").css("height", 700);
+			$("footer").addClass("hide");
+			$(".main-header").addClass("hide");
+			$("#wrapper").css("min-height", "0px");
+			$("#main-container").css("min-height", "0px");
+			$("#main-container").css("margin-left", 0).css("padding-top", 45);
+			//$("#top-nav").toggle();
+			$("aside").toggle();
+			$("#breadcrumb").toggle();
+			ng.isFullscreen = !ng.isFullscreen;
+		}
+		else {
+			$("#map_canvas").css("height", 600);
+			$("footer").removeClass("hide");
+			$(".main-header").removeClass("hide");
+			$("#wrapper").css("min-height", "800px");
+			$("#main-container").css("min-height", "800px");
+			$("#main-container").css("margin-left", 194).css("padding-top", 45);
+			//$("#top-nav").toggle();
+			$("aside").toggle();
+			$("#breadcrumb").toggle();
+			ng.isFullscreen = !ng.isFullscreen;
+		}
+	}
 
 	ng.getValorTaxaServico = function(){
 		if(!empty(ng.configuracao.prc_taxa_servico))
@@ -57,6 +83,68 @@ app.controller('ControleMesasController', function(
 		$('[data-toggle="tooltip"]').tooltip();
 	}
 
+	ng.diminuirQuantidadeProduto = function() {
+		if(empty(ng.produto.qtd))
+			ng.produto.qtd = 0;
+		
+		if(parseInt(ng.produto.qtd, 10) > 0)
+			ng.produto.qtd = (parseInt(ng.produto.qtd,10) - 1);
+	}
+
+	ng.aumentarQuantidadeProduto = function() {
+		if(empty(ng.produto.qtd))
+			ng.produto.qtd = 1;
+		else
+			ng.produto.qtd = (parseInt(ng.produto.qtd,10) + 1);
+	}
+
+	ng.loadProdutoAdicionais = function() {
+		ng.produto.adicionais = [];
+		aj.get(baseUrlApi() +"produto/get/adicionais/"+ ng.produto.id)
+			.success(function(data, status, headers, config) {
+				ng.produto.adicionais = data;
+				if(!empty(ng.produto.id_ordem_producao))
+					ng.loadProdutoAdicionaisSelecionados();
+			})
+			.error(function(data, status, headers, config) {
+				ng.produto.adicionais = [];
+			});
+	}
+
+	ng.loadProdutoAdicionaisSelecionados = function() {
+		ng.produto.adicionais_selecionados = [];
+		aj.get(baseUrlApi() +"ordem-producao/"+ ng.produto.id_ordem_producao +"/adicionais/")
+			.success(function(data, status, headers, config) {
+				angular.forEach(data, function(item, i) {
+					ng.produto.adicionais_selecionados.push(_.findWhere(ng.produto.adicionais, {id: parseInt(item.id, 10)}));
+				});
+			})
+			.error(function(data, status, headers, config) {
+				ng.produto.adicionais_selecionados = [];
+			});
+	}
+
+	ng.selAdicional = function(index, adicional) {
+		if(ng.produto.id_item_venda == null || (ng.produto.id_item_venda != null && ng.produto.id_ordem_producao == null)) {
+			if(empty(ng.produto.adicionais_selecionados))
+				ng.produto.adicionais_selecionados = [];
+			
+			if(empty(_.findWhere(ng.produto.adicionais_selecionados, { id: adicional.id })))
+				ng.produto.adicionais_selecionados.push( angular.copy(adicional) );
+			else {
+				angular.forEach(ng.produto.adicionais_selecionados, function(item, i) {
+					if(item.id == adicional.id){
+						ng.produto.adicionais_selecionados = _.without(ng.produto.adicionais_selecionados, item);
+					}
+				});
+			}
+		}
+	}
+
+	ng.isAdicionalSelected = function(adicional){
+		return (!empty(_.findWhere(ng.produto.adicionais_selecionados, { id: adicional.id })));
+	}
+
 	ng.openQRCodeCapture = function(){
 		$('#modalCameraQRCode').modal('show');
 		let scanner = new Instascan.Scanner({ 
@@ -72,8 +160,10 @@ app.controller('ControleMesasController', function(
 
 		Instascan.Camera.getCameras().then(function (cameras) {
 			if (cameras.length > 0) {
-				if(cameras.length > 1)
-					scanner.start(cameras[1]);
+				if(cameras.length > 1) {
+					var camera = _.findWhere(cameras, function(camera){if(camera.name.indexOf('front') != -1) return camera;})
+					scanner.start(camera);
+				}
 				else
 					scanner.start(cameras[0]);
 			} else {
@@ -95,7 +185,7 @@ app.controller('ControleMesasController', function(
 			ng.changeTela('detMesa');
 		})
 		.error(function(data, status, headers, config) {
-			console.log('Não foi possivel abrir a comanda');
+			
 		}); 
 	}
 
@@ -115,7 +205,7 @@ app.controller('ControleMesasController', function(
 				ng.sendMessageWebSocket(msg);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 		}, undefined);	
 	}
@@ -236,7 +326,7 @@ app.controller('ControleMesasController', function(
 			ng.abrirDetalhesComanda(data.id_venda);
 		})
 		.error(function(data, status, headers, config) {
-			console.log('Não foi possivel abrir a comanda');
+			
 		}); 
 	}
 
@@ -249,7 +339,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.mesaSelecionada.comandas = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar as comandas');
+			
 		}); 
 	}
 
@@ -284,7 +374,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.comandaSelecionada = {} ;
 			if(status != 406)
-			console.log('Não foi possivel buscar a comanda');
+			
 		}); 
 	}
 
@@ -326,7 +416,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.categoriasProduto = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar as categorias');
+			
 		}); 
 	}
 
@@ -339,7 +429,7 @@ app.controller('ControleMesasController', function(
 		.error(function(data, status, headers, config) {
 			ng.fabricantesProduto = [] ;
 			if(status != 406)
-			console.log('Não foi possivel buscar os fabricantes');
+			
 		}); 
 	}
 
@@ -426,7 +516,7 @@ app.controller('ControleMesasController', function(
 				ng.sendMessageWebSocket(msg);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -522,7 +612,8 @@ app.controller('ControleMesasController', function(
 			dta_create : moment().format('YYYY-MM-DD HH:mm:ss'),
 			dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
 			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
-			flg_delivery: (flg_delivery) ? 1 : 0
+			flg_delivery: (flg_delivery) ? 1 : 0,
+			adicionais: ng.produto.adicionais_selecionados
 		}
 
 		aj.post(baseUrlApi()+"item_comanda/add",post)
@@ -555,7 +646,8 @@ app.controller('ControleMesasController', function(
 								nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
 								qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
 								nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
-								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0)
+								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
+								adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
 							})
 						}
 
@@ -634,6 +726,7 @@ app.controller('ControleMesasController', function(
 		else
 			ng.produto.qtd = ng.produto.qtd_total ; 
 		ng.changeTela('detItemComanda');
+		ng.loadProdutoAdicionais();
 	}
 
 	ng.getPermission = function(str){
@@ -694,7 +787,8 @@ app.controller('ControleMesasController', function(
 			dta_create : moment().format('YYYY-MM-DD HH:mm:ss'),
 			dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
 			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
-			flg_delivery: (flg_delivery) ? 1 : 0
+			flg_delivery: (flg_delivery) ? 1 : 0,
+			adicionais: ng.produto.adicionais_selecionados
 		}
 
 		aj.post(baseUrlApi()+"item_comanda/add",post)
@@ -729,11 +823,15 @@ app.controller('ControleMesasController', function(
 								dscObservacoes: 		(!empty(ng.produto.observacoes) 						? ng.produto.observacoes 						: ""),
 								qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
 								nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
-								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0)
+								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
+								adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
 							})
 						}
 						ng.sendMessageWebSocket(msg);
 					});
+				}
+				else {
+					$dialogs.notify('Atenção!','<strong>Não foi possível enviar o pedido para impressão, pois não há nenhuma cozinha disponível!</strong>');
 				}
 				
 				var msg = {
@@ -913,7 +1011,7 @@ app.controller('ControleMesasController', function(
 
 		ng.conn = new WebSocket(patch_socket_sat);
 		ng.conn.onopen = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - WebSocket conectado.');
+			
 		};
 
 		ng.conn.onclose = function(e) {
@@ -921,7 +1019,7 @@ app.controller('ControleMesasController', function(
 		}
 
 		ng.conn.onmessage = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Mensagem Recebida : '+e.data);
+			
 			var data = JSON.parse(e.data);
 			data.message = parseJSON(data.message);
 			switch(data.type){
@@ -974,13 +1072,13 @@ app.controller('ControleMesasController', function(
 					clearTimeout(timeOutWaitingResponseTestConection);
 					$scope.$apply(function () { ng.status_websocket = 2 ;});
 					ng.id_ws_dsk = data.from;
-					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Conexão com App client extabelecida');
+					
 				break;
 			}			
 		};
 	}
 	ng.sendMessageWebSocket = function(data){
-		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - mensagem Enviada: '+JSON.stringify(data));
+		
 		ng.conn.send(JSON.stringify(data));
 	}
 
@@ -999,7 +1097,7 @@ app.controller('ControleMesasController', function(
 
 					timeOutWaitingResponseTestConection = setTimeout(function() {
 						$scope.$apply(function () { ng.status_websocket = 1 ;});
-						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+						
 					}, TimeWaitingResponseTestConection);
 				});
 			}
@@ -1007,12 +1105,11 @@ app.controller('ControleMesasController', function(
 			enviaTesteConexao();
 		},60000);
 	}
-
-
-
+	
 	if(!empty(ng.configuracao.patch_socket_sat))
 		ng.newConnWebSocket();
 
+	ng.resizeScreen();
 	ng.loadMesas();
 	ng.loadCategorias();
 	ng.loadFabricantes();

@@ -1,4 +1,3 @@
+.gitignore
 js/constants.js
-util/constants.php
-assets/imagens
-api/
+ultil/constants.php
