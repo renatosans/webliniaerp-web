@@ -68,7 +68,7 @@ app.controller('PagamentoFornecedorController', function($scope, $http, $window,
 	ng.salvar = function() {
 		ng.pagamento.id_empreendimento = ng.userLogged.id_empreendimento;
 		ng.pagamento.data_pagamento    = $("#pagamentoData").val();
-		console.log(ng.pagamento);
+		
 
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$($(".has-error").find("button")).tooltip('destroy');

@@ -156,7 +156,7 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 		ng.cod_produto = item.cod_produto;
 			queryString += "&prd->id=" + ng.cod_produto;
 
-		console.log(item);
+		
 
 		aj.get(baseUrlApi()+"relatorio/vendas/produto/fabricante/periodo/"+queryString)
 			.success(function(data, status, headers, config) {
@@ -172,7 +172,7 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 				
 				tbl += '</table>';
 
-				console.log(tbl);
+				
 
 				 $(event.target).popover('destroy').popover({
 					title: 'Vendas',

@@ -493,7 +493,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.vendasProdutos = [];
 			aj.get(baseUrlApi()+"dashboard/vendas/top10/produto?fd="+first_date+'&ld='+last_date+'&id_empreendimento='+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
-					console.log(data);
+					
 
 					ng.vendasProdutosTable = data;
 

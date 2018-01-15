@@ -205,7 +205,7 @@ app.controller('RelatorioCurvasABC', function($scope, $http, $window, UserServic
 					faixa.prc_faixa = ((faixa.vlr_soma / ng.vrl_soma_valores) * 100);
 				});
 
-				console.log(ng.faixas_curva_abc);
+				
 
 				Highcharts.setOptions({
 					lang: {

@@ -331,7 +331,7 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 	ng.newConnWebSocket = function(){
 		ng.conn = new WebSocket(ng.configuracao.patch_socket_sat);
 		ng.conn.onopen = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - WebSocket conectado.');
+			
 			$scope.$apply(function () { ng.status_websocket = 1 ;});
 		};
 
@@ -340,7 +340,7 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 		}
 
 		ng.conn.onmessage = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Mensagem Recebida : '+e.data);
+			
 			var data = JSON.parse(e.data);
 			data.message = parseJSON(data.message);
 			switch(data.type){
@@ -373,13 +373,13 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 	}
 
 	ng.sendMessageWebSocket = function(data){
-		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - mensagem Enviada: '+JSON.stringify(data));
+		
 		ng.conn.send(JSON.stringify(data));
 	}
 
 	function enviaTesteConexao(){	
 		timeOutSendTestConection = setTimeout(function(){
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Buscando id_ws_dsk ...');
+			
 			aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento+"/id_ws_dsk_op")
 				.success(function(data, status, headers, config) {
 					if(!empty(data.id_ws_dsk_op)){
@@ -393,14 +393,14 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 						ng.sendMessageWebSocket(mg);
 						 timeOutWaitingResponseTestConection = setTimeout(function() {
 						 	$scope.$apply(function () { ng.status_websocket = 1 ;});
-						 	console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+						 	
 						 }, TimeWaitingResponseTestConection);
 					}else
-						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter o id_ws_dsk');
+						
 					enviaTesteConexao();
 				})
 				.error(function(data, status, headers, config) {
-					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter o id_ws_dsk');
+					
 					enviaTesteConexao();
 				});
 		},60000);

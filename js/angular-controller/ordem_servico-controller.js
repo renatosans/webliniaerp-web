@@ -263,7 +263,7 @@ app.controller('OrdemServicoController', function($scope, $http, $window, $dialo
 				$scope.objectModel.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao consultar saldo do cliente');
+				
 			});
 	}
 

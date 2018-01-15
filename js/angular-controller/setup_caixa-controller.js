@@ -22,7 +22,7 @@ app.controller('SetupCaixa', function($scope, $http, $window, $dialogs, UserServ
 	}
 
 	ng.salvar = function() {
-		console.log(ng.currentNode.id);
+		
 	}
 
 

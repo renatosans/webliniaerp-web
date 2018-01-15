@@ -114,8 +114,8 @@ app.controller('PedidoPersonalizadoController', function($scope,$compile, $http,
 							ng.gradeAdulto.push(v);
 					}
 				});
-					console.log(ng.gradeInfantil);
-					console.log(ng.gradeAdulto);
+					
+					
 				$('#modal-bases-tiras').modal('hide');
 			})
 			.error(function(data, status, headers, config) {
@@ -405,11 +405,11 @@ app.controller('PedidoPersonalizadoController', function($scope,$compile, $http,
 			chinelosInfantis[i].perc_margem_aplicada = ((ex * 100)/vlr_custo)/100;
 		});
 		
-		//console.log("---------------- Chinelos Adultos ----------------");
-		//console.log(chinelosAdultos);
+		
+		
 
-		//console.log("---------------- Chinelos Infantis ----------------");
-		//console.log(chinelosInfantis);
+		
+		
 
 		ng.gradesAnteriores[indexGraAnt] = {
 			gradeInfantil 		: angular.copy(ng.gradeInfantil),
@@ -421,16 +421,16 @@ app.controller('PedidoPersonalizadoController', function($scope,$compile, $http,
 			modelo_base			: angular.copy(ng.pedido.modelo_base)
 		}
 
-		//console.log("---------------- Grades Anteriores ----------------");
+		
 		$.each(chinelosAdultos,function(i,x){
 			ng.carrinhoPedido[i] = x;
 		});
 		$.each(chinelosInfantis,function(i,x){
 			ng.carrinhoPedido[i] = x;
 		});
-		//console.log(ng.gradesAnteriores);
-		console.log("---------------- pedido ----------------");
-		console.log(ng.carrinhoPedido);
+		
+		
+		
 
 		ng.pedido.modeloEstampa = {};
 		ng.pedido.coresEstampa = [] ;
@@ -1644,7 +1644,7 @@ app.controller('PedidoPersonalizadoController', function($scope,$compile, $http,
 				ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao consultar saldo do cliente');
+				
 			});
 	}
 
@@ -1893,7 +1893,7 @@ app.controller('PedidoPersonalizadoController', function($scope,$compile, $http,
 				total += v.qtd * ng.carrinhoPedido[i].vlr_init ;
 			});
 			var prc_dsc = (ng.pedido.desconto * 100) / total ;
-			console.log(prc_dsc) ;
+			
 			$.each(ng.carrinhoPedido,function(i,v){
 				ng.carrinhoPedido[i].vlr_init = empty(v.vlr_init) ? Number(v.valor_real_item) : Number(v.vlr_init) ;
 				ng.carrinhoPedido[i].desconto_aplicado = ng.pedido.desconto > 0 ? 1 : 0 ;

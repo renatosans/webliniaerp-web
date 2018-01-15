@@ -75,7 +75,7 @@ app.controller('pdv_estoqueController', function($scope, $http, $window,$dialogs
 		var estoques = item;
 		var index    = null ;
 		$.each(ng.carrinho,function(i,value){
-			console.log(id_produto, value.id_produto);
+			
 			if(parseInt(id_produto) == parseInt(value.id_produto)){
 				saida     = false ;
 				estoques  = value.estoques;
@@ -148,7 +148,7 @@ app.controller('pdv_estoqueController', function($scope, $http, $window,$dialogs
 			ng.mensagens('alert-warning','Informe a quantidade desejada','.alert-validades');
 			return;
 		}
-		console.log(ng.indexItensEstoque);
+		
 		produto.sub_total = produto.qtd_total * produto.vlr_unitario ;
 		if(ng.indexItensEstoque != null){
 			produto.valor_desconto = ng.carrinho[ng.indexItensEstoque].valor_desconto ;
@@ -233,7 +233,7 @@ app.controller('pdv_estoqueController', function($scope, $http, $window,$dialogs
 		});
 		
 
-		//console.log(produtos);
+		
 		/*
 		if(ng.carrinho.length <= 0){
 			$dialogs.notify('Atenção!','Nenhum produto foi selecionado');
@@ -294,7 +294,7 @@ app.controller('pdv_estoqueController', function($scope, $http, $window,$dialogs
 			.error(function(data, status, headers, config) {
 
 			});
-		console.log(venda);
+		
 		*/
 	}
 
