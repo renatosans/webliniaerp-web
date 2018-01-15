@@ -82,7 +82,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 20 : limit;
 
-    	var query_string = "?id_usuario="+ng.userLogged.id+"&emp->id[exp]=<>"+ng.userLogged.id_empreendimento;
+    	var query_string = "?id_usuario="+ng.userLogged.id; // +"&emp->id[exp]=<>"+ng.userLogged.id_empreendimento
     	if(ng.busca.empreendimento != ""){
     		query_string += "&" +$.param({nome_empreendimento:{exp:"like'%"+ng.busca.empreendimento+"%'"}});
     	}

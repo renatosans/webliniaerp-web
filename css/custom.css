@@ -237,6 +237,10 @@ div[data-tree-model] li .selected {
     }
 }
 
+table caption {
+	text-align: left;
+}
+
 .table-sm {
 	font-size: 11px;
 }

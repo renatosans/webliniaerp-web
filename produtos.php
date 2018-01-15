@@ -253,7 +253,7 @@
 												</div>
 												<div class="col-sm-2">
 													<div class="form-group" id="peso">
-															<label class="control-label">Cor/sabor</label> <i ng-click="showModalNovaCor()" style="cursor:pointer;color: #9ad268;" class="fa fa-plus-circle fa-lg"></i>
+															<label class="control-label">Sabor/Cor</label> <i ng-click="showModalNovaCor()" style="cursor:pointer;color: #9ad268;" class="fa fa-plus-circle fa-lg"></i>
 															<select chosen ng-change="ClearChosenSelect('cor');incluirCombinacaoDefault()"
 														    option="cores"
 														    ng-model="produto.id_cor"
@@ -1713,20 +1713,20 @@
 			</div><!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
-		<!-- /Modal novo cor/sabor-->
+		<!-- /Modal novo Sabor/Cor-->
 		<div class="modal fade" id="modal-nova-cor" style="display:none">
   			<div class="modal-dialog modal-sm">
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Nova Cor/Sabor</span></h4>
+						<h4>Nova Sabor/Cor</span></h4>
       				</div>
 				    <div class="modal-body">
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="row">
 						    		<div class="col-sm-12" id="nome_cor">
-						    			<label class="control-label">Cor/Sabor:</label>
+						    			<label class="control-label">Sabor/Cor:</label>
 						    			<div class="form-group ">
 						    					<input ng-model="cor_produto.nome_cor" type="text"  class="form-control input-sm" ng-enter="salvarCorProduto()" >
 						    			</div>
@@ -1820,7 +1820,7 @@
 							</div>
 							<div class="col-sm-4">
 								<div class="form-group" id="peso">
-										<label class="control-label">Cor/sabor</label>
+										<label class="control-label">Sabor/Cor</label>
 										<select chosen ng-change="ClearChosenSelect('cor');addCombinacaoDefault()"
 									    option="cores"
 									    ng-model="combinacao.id_cor"
@@ -1933,7 +1933,7 @@
 										<tr>
 											<th width="50">#</th>
 											<th>Tamanho</th>
-											<th>Cor/Sabor</th>
+											<th>Sabor/Cor</th>
 											<th></th>
 										</tr>
 									</thead>
@@ -2111,7 +2111,6 @@
     </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
-    <script src="js/angular-services/user-service.js"></script>
     <script src="js/angular-services/user-service.js"></script>
 	<script src="js/angular-controller/produtos-controller.js?<?php echo filemtime('js/angular-controller/produtos-controller.js')?>"></script>
 	<script type="text/javascript">

@@ -277,21 +277,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.adicionais.splice(index,1);
 	}
 	
-	ng.loadFabricantes = function(nome_fabricante) {
-		ng.fabricantes = [{id:"",nome_fabricante:"--- Selecione ---"}];
-		aj.get(baseUrlApi()+"fabricantes?tfe->id_empreendimento="+ng.userLogged.id_empreendimento)
-			.success(function(data, status, headers, config) {
-				ng.fabricantes = ng.fabricantes.concat(data.fabricantes);
-				if(nome_fabricante != null)
-					ng.produto.id_fabricante = ng.getFabricanteByName(nome_fabricante);
-			})
-			.error(function(data, status, headers, config) {
-				if(status == 404)
-					ng.fabricantes = [];
-			});
-	}
-
-	
 	ng.loadImportadores = function(nome_importador) {
 		ng.importadores = [{id:"",nome_importador:"--- Selecione ---"}];
 		aj.get(baseUrlApi()+"importadores?tie->id_empreendimento="+ng.userLogged.id_empreendimento)
@@ -303,6 +288,20 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			.error(function(data, status, headers, config) {
 				if(status == 404)
 					ng.importadores = [];
+			});
+	}
+
+	ng.loadFabricantes = function(nome_fabricante) {
+		ng.fabricantes = [{id:"",nome_fabricante:"--- Selecione ---"}];
+		aj.get(baseUrlApi()+"fabricantes?tfe->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.fabricantes = ng.fabricantes.concat(data.fabricantes);
+				if(nome_fabricante != null)
+					ng.produto.id_fabricante = ng.getFabricanteByName(nome_fabricante);
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.fabricantes = [];
 			});
 	}
 
@@ -1930,8 +1929,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.mensagens('alert-danger','<strong>'+ data +'</strong>');
 	}
 	ng.loadDepositos(0,10,true);
-	ng.loadFabricantes();
 	ng.loadImportadores();
+	ng.loadFabricantes();
 	ng.loadCategorias();
 	ng.loadTamanhos();
 	ng.loadCores();

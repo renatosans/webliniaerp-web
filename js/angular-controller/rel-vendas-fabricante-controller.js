@@ -115,9 +115,9 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 					};
 
 					angular.forEach(ng.vendas[fornecedor].items, function(item, index) {
-						ng.vendas[fornecedor].qtd_total_vendida += item.qtd_vendida;
+						ng.vendas[fornecedor].qtd_total_vendida 	+= item.qtd_vendida;
 						ng.vendas[fornecedor].vlr_total_custo_medio += item.med_custo;
-						ng.vendas[fornecedor].vlr_total_vendido += item.vlr_subtotal;
+						ng.vendas[fornecedor].vlr_total_vendido 	+= item.vlr_subtotal;
 					});
 				});
 

@@ -183,6 +183,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		aj.get(baseUrlApi()+"venda/orcamento/"+id_orcamento+'/'+tipo_valor)
 		.success(function(data, status, headers, config) {
 			var orcamento = data.orcamento;
+			
 			ng.id_orcamento = orcamento.id ;
 			if(!empty(ng.configuracoes.id_deposito_padrao) && orcamento.flg_comanda == 1){
 				ng.dadosOrcamento = orcamento ;
@@ -1227,7 +1228,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}else{
 					var btn = $('#btn-fazer-compra');
 						btn.button('reset');
-					ng.loadControleNfe('cfop','lista_operacao');
+					
+					if(!empty(ng.configuracoes.flg_emitir_nfe_pdv) && ng.configuracoes.flg_emitir_nfe_pdv == 1)
+						ng.loadControleNfe('cfop','lista_operacao');
+
 					ng.modalProgressoVenda('hide');
 					ng.vlr_saldo_devedor = data.vlr_saldo_devedor ;
 					ng.id_controle_pagamento = data.id_controle_pagamento ;
@@ -1235,7 +1239,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					if((!ng.pagamento_fulso) && (!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1))
 						ng.printTermic(true);
 					else { 
-						if(!empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1) {
+						if(
+								!empty(ng.dadosOrcamento) // deve ser um orçamento...
+								&& !empty(ng.dadosOrcamento.flg_comanda) // o orçamento deve ser uma comanda...
+								&& ng.dadosOrcamento.flg_comanda == 1 // o orçamento deve ser uma comanda...
+								&& !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) // deve fechar a guia ao finalizar uma comanda...
+								&& ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1 // deve fechar a guia ao finalizar uma comanda...
+						) {
 							ng.clearCloseWindowBlock();
 							window.close();
 						}
