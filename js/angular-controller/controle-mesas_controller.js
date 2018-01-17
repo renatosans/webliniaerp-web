@@ -338,8 +338,6 @@ app.controller('ControleMesasController', function(
 		})
 		.error(function(data, status, headers, config) {
 			ng.mesaSelecionada.comandas = [] ;
-			if(status != 406)
-			
 		}); 
 	}
 
@@ -373,8 +371,6 @@ app.controller('ControleMesasController', function(
 		})
 		.error(function(data, status, headers, config) {
 			ng.comandaSelecionada = {} ;
-			if(status != 406)
-			
 		}); 
 	}
 
@@ -415,8 +411,6 @@ app.controller('ControleMesasController', function(
 		})
 		.error(function(data, status, headers, config) {
 			ng.categoriasProduto = [] ;
-			if(status != 406)
-			
 		}); 
 	}
 
@@ -428,8 +422,6 @@ app.controller('ControleMesasController', function(
 		})
 		.error(function(data, status, headers, config) {
 			ng.fabricantesProduto = [] ;
-			if(status != 406)
-			
 		}); 
 	}
 

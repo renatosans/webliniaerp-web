@@ -944,29 +944,61 @@
 								</button>
 							</legend>
 
-							<!-- LISTA CATEGORIA -->
-							<div class="row" ng-show="getTipoBuscaProduto()=='categoria'">
-								<div class="col-xs-6 col-sm-2" ng-repeat="categoria in categoriasProduto">
-									<div class="panel panel-primary middle-frame" 
-										 style="border-color: {{ categoria.hex_cor_box }};" 
-										ng-click="setBuscaCategoria(categoria)">
-										<div class="panel-body" style="background-color: {{  categoria.hex_cor_box }};">
-											<div class="text-center container">
-												<span style="color: {{  categoria.hex_cor_letra }};">{{ categoria.descricao_categoria | uppercase }}</span>
+							<div class="row">
+								<div class="col-lg-9">
+									<!-- LISTA CATEGORIA -->
+									<div class="row" ng-show="getTipoBuscaProduto()=='categoria'">
+										<div class="col-xs-6 col-sm-3" ng-repeat="categoria in categoriasProduto">
+											<div class="panel panel-primary middle-frame" 
+												 style="border-color: {{ categoria.hex_cor_box }};" 
+												ng-click="setBuscaCategoria(categoria)">
+												<div class="panel-body" style="background-color: {{  categoria.hex_cor_box }};">
+													<div class="text-center container">
+														<span style="color: {{  categoria.hex_cor_letra }};">{{ categoria.descricao_categoria | uppercase }}</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<!-- LISTA FABRICANTE -->	
+									<div class="row" ng-show="getTipoBuscaProduto()=='fabricante'">
+										<div class="col-xs-6 col-sm-2" ng-repeat="fabricante in fabricantesProduto">
+											<div class="panel panel-primary middle-frame" ng-click="setBuscaFabricante(fabricante)">
+												<div class="panel-body">
+													<div class="text-center container">
+														<span>{{ fabricante.nome_fabricante | uppercase }}</span>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
 
-							<!-- LISTA FABRICANTE -->	
-							<div class="row" ng-show="getTipoBuscaProduto()=='fabricante'">
-								<div class="col-xs-6 col-sm-2" ng-repeat="fabricante in fabricantesProduto">
-									<div class="panel panel-primary middle-frame" ng-click="setBuscaFabricante(fabricante)">
-										<div class="panel-body">
-											<div class="text-center container">
-												<span>{{ fabricante.nome_fabricante | uppercase }}</span>
-											</div>
+								<div class="col-lg-3">
+									<div class="row">
+										<div class="col-lg-12">
+											<table class="table table-bordered table-hover table-condensed table-striped">
+												<caption>Itens do Pedido</caption>
+												<thead>
+													<tr>
+														<th>Produto</th>
+														<th>Subtotal</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>COCA COLA (2 un)</td>
+														<td>R$ 19,90</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-12">
+											<h3 class="text-right">Subtotal<small class="clearfix">R$ 192,98</small></h3>
 										</div>
 									</div>
 								</div>

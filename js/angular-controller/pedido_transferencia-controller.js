@@ -591,7 +591,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 						post.flg_controle_validade = 1 ;
 						post.produtos = formatPostValidades() ;
 					}
-					aj.post(baseUrlApi()+"estoque/pedido/transferencia/receber/",post)
+					aj.post(baseUrlApi()+"estoque/pedido/transferencia/receber/",{form_data: JSON.stringify(post)})
 					.success(function(data, status, headers, config) {
 						aj.get(baseUrlApi()+"transferencias/estoque/?id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+"&tte->id="+ng.transferencia.id)
 						.success(function(data, status, headers, config) {
