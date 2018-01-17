@@ -4808,5 +4808,3 @@ app.directive('bsTooltip', function ($timeout) {
 		}
 	}
 });
-
-
