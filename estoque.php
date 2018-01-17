@@ -428,8 +428,9 @@
 											<th class="text-center">Número</th>
 											<th class="text-center">Vencimento</th>
 											<th class="text-right">Valor</th>
-											<th>
-												<button type="button" class="btn btn-xs btn-info">
+											<th class="text-center">Plano de Contas</th>
+											<th class="text-center" width="20px">
+												<button type="button" class="btn btn-xs btn-info" ng-click="showModalDuplicatas()">
 													<i class="fa fa-plus-circle"></i>
 												</button>
 											</th>
@@ -439,11 +440,20 @@
 												<td class="text-center">{{ dup.num_duplicata }}</td>
 												<td class="text-center">{{ dup.dta_vencimento | dateFormat: 'date' }}</td>
 												<td class="text-right">R$ {{ dup.vlr_duplicata | numberFormat : 2 : ',' : '.' }}</td>
+												<td class="text-center" width="300">
+													<select chosen
+														option="plano_contas"
+														ng-model="dup.id_plano_conta"
+														ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+													</select>
+												</td>
 											</tr>
 										</tbody>
 									</table>
 								</div>
 							</div>
+
+							<pre>{{ nota.duplicatas | json }}</pre>
 
 							<div class="row">
 								<div class="col-sm-12">
@@ -1344,6 +1354,43 @@
 		</div>
 		<!-- /.modal -->
 
+		<!-- Modal Duplicatas -->
+		<div class="modal fade" id="list_duplicatas" style="display: none;">
+			<div class="modal-dialog">
+    			<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Nova Duplicata</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-4 form-group">
+								<label class="control-label">Número</label>
+								<input class="form-control input-md" type="text" ng-model="new_duplicata.num_duplicata">
+							</div>
+							<div class="col-sm-4 form-group">
+								<div class="form-group" id="dta_entrada">
+									<label class="control-label">Vencimento</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="vencimentoduplicatas" class="datepicker form-control text-center" ng-model="new_duplicata.dta_vencimento">
+										<span class="input-group-addon" id="cld_vencimento_duplicatas"><i class="fa fa-calendar"></i></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4 form-group">
+								<label class="control-label">Valor</label>
+								<input class="form-control input-md" type="text" ng-model="new_duplicata.vlr_duplicata" thousands-formatter precision="2">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-primary" ng-click="incluirDuplicata(item)">Incluir</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
 		<input ng-model="cod_barra_busca" ng-blur="blurBuscaCodBarra(cod_barra_busca)"  class="form-control input-sm" style="position: absolute;top: -100px" id="focus" ng-enter="buscaCodBarra()"/>
 
 		<!-- Footer
@@ -1448,6 +1495,7 @@
 			$('.datepicker').datepicker();
 			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
 			$("#cld_datarecebimento").on("click", function(){ $("#datarecebimento").trigger("focus"); });
+			$("#cld_vencimento_duplicatas").on("click", function(){ $("#vencimentoduplicatas").trigger("focus"); });
 
 			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
