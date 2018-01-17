@@ -34,6 +34,21 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$(this).parent().find('label').addClass('selected');
 	});
 
+	ng.incluirDuplicata = function(item){
+		ng.new_duplicata.dta_vencimento = (!empty($("#vencimentoduplicatas").val())) ? formatDate($("#vencimentoduplicatas").val()) : null;
+		if(empty(ng.nota.duplicatas))
+			ng.nota.duplicatas = [];
+
+		ng.nota.duplicatas.push(angular.copy(ng.new_duplicata));
+		$("#list_duplicatas").modal("hide");
+	}
+
+	ng.resetModalDuplicada = function(){
+		ng.new_duplicata.num_duplicata = "";
+		ng.new_duplicata.dta_vencimento = "";
+		ng.new_duplicata.vlr_duplicata = 0;
+	}
+
 	ng.reset = function() {
 		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0};
 		ng.valor_total_entrada 	= 0 ;
@@ -108,7 +123,6 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				ng.atualizaQtdValidadeItens();
 
 				ng.nota.duplicatas = data.duplicatas;
-				ng.atualizaValoresDuplicatas();
 
 				setTimeout(function() {
 					$scope.$apply();
@@ -132,6 +146,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		 		}
 		 	}
 		}).submit();
+		ng.loadPlanoContas();
 	}
 
 	ng.atualizaValoresDuplicatas = function(){
@@ -211,9 +226,8 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$(".has-error").removeClass("has-error");
 
 		var postData = angular.copy( ng.nota );
-		postData.vlr_total_imposto 		= parseFloat((postData.vlr_total_imposto != undefined) ? postData.vlr_total_imposto.replace(",", ".") : 0);
-		postData.vlr_total_nota_fiscal 	= parseFloat((postData.vlr_total_nota_fiscal != undefined) ? postData.vlr_total_nota_fiscal.replace(",", ".") : 0);
-		postData.vlr_frete 				= parseFloat((postData.vlr_frete != undefined) ? postData.vlr_frete.replace(",", ".") : 0);
+		postData.vlr_total_imposto 		= parseFloat((!empty(postData.vlr_total_imposto)) ? postData.vlr_total_imposto.replace(",", ".") : 0);
+		postData.vlr_frete 				= parseFloat((!empty(postData.vlr_frete)) ? postData.vlr_frete.replace(",", ".") : 0);
 
 		$.each(ng.nota,function(i,x){
 			ng.nota[i].imposto = $.isNumeric(x.imposto) ? Number(x.imposto)/100 : 0 ;
@@ -869,6 +883,13 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			});
 	}
 
+	/* Modal Duplicatas*/
+
+	ng.showModalDuplicatas = function(){
+		$("#list_duplicatas").modal("show");
+		ng.resetModalDuplicada();
+	}
+
 	/* Modal Produtos */
 
 	// Funções para o modal de produtos
@@ -1072,6 +1093,26 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		if(event.keyCode >= 48 && event.keyCode <= 57 ){
 			valor = valor.substring(0,valor.length-1) ;
 		}
+	}
+
+	ng.loadPlanoContas = function() {
+		ng.plano_contas = [{id:"",dsc_completa:"--- Selecione ---"}];
+		aj.get(baseUrlApi()+"planocontas?tpc->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				$.each(data, function(i, item){
+					data[i].cod_plano 			= (!empty(item.cod_plano)) ? parseInt(item.cod_plano, 10) : null;
+					data[i].cod_plano_pai 		= (!empty(item.cod_plano_pai)) ? parseInt(item.cod_plano_pai, 10) : null;
+					data[i].id 					= (!empty(item.id)) ? parseInt(item.id, 10) : null;
+					data[i].id_empreendimento 	= (!empty(item.id_empreendimento)) ? parseInt(item.id_empreendimento, 10) : null;
+					data[i].id_plano_pai 		= (!empty(item.id_plano_pai)) ? parseInt(item.id_plano_pai, 10) : null;
+				});
+				ng.roleList = data;
+				ng.plano_contas = ng.plano_contas.concat(data);
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.roleList = [];
+			});
 	}
 
 	ng.loadEntradas(0,10);
