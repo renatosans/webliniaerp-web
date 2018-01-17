@@ -38,7 +38,7 @@ app.controller('ControleMesasController', function(
 	var timeOutSendTestConection = null ;
 	var timeOutWaitingResponseTestConection = null ;
 	ng.baseUrl = baseUrl;
-
+	ng.vlr_total_pedido = 0;
 	ng.isFullscreen = false;
 	ng.resizeScreen = function() {
 		if(!ng.isFullscreen){
@@ -221,7 +221,6 @@ app.controller('ControleMesasController', function(
 				$.each(changeValue,function(i,v){
 					ng[i] = v ;
 				});
-
 			}
 
 			if((tela=='SelCliente') && (!empty(ng.configuracao.flg_controlar_comanda_cliente, true)) && (parseInt(ng.configuracao.flg_controlar_comanda_cliente,10) == 0)) {
@@ -562,15 +561,19 @@ app.controller('ControleMesasController', function(
 
 					dlg.result.then(
 						function(btn){
-							incluirItemComandaModalAction(item, true);
+							item.flg_delivery = true;
+							incluirItemComandaModalAction(item);
 						},
 						function(){
-							incluirItemComandaModalAction(item, false);
+							item.flg_delivery = false;
+							incluirItemComandaModalAction(item);
 						}
 					);
 				}
-				else
-					incluirItemComandaModalAction(item, false);
+				else {
+					item.flg_delivery = false;
+					incluirItemComandaModalAction(item);
+				}
 			},
 			function(){
 				
@@ -578,108 +581,268 @@ app.controller('ControleMesasController', function(
 		);
 	}
 
-	function incluirItemComandaModalAction(item, flg_delivery){
+	function incluirItemComandaModalAction(item){
 		var produto = angular.copy(item);
-		produto.qtd = empty(produto.qtd) ? 1 : produto.qtd ; 
+			produto.qtd = empty(produto.qtd) ? 1 : produto.qtd;
+		
+		ng.addItemPedido(produto);
+
+		/*
 		var btn = $(event.target);
-		if(!btn.is(':button')) btn = $(event.target).parent();
+		if(!btn.is(':button'))
+			btn = $(event.target).parent();
 		btn.button('loading');
+
 		var post = {
-			id_venda : ng.comandaSelecionada.comanda.id,
-			id_usuario : ng.userLogged.id_usuario,
-			id_produto : produto.id ,
-			desconto_aplicado : 0 ,
-			valor_desconto : 0 ,
-			qtd : produto.qtd,
-			observacoes: "",
-			valor_real_item : round(produto.vlr_venda_varejo,2) ,
-			vlr_custo : produto.vlr_custo_real,
-			perc_imposto_compra : produto.perc_imposto_compra ,
-			perc_desconto_compra : produto.perc_desconto_compra,
-			perc_margem_aplicada : produto.perc_venda_varejo,
-			id_empreendimento : ng.userLogged.id_empreendimento,
-			id_deposito : ng.configuracao.id_deposito_padrao,
-			flg_produto_composto : produto.flg_produto_composto,
-			id_usuario : ng.userLogged.id,
-			dta_create : moment().format('YYYY-MM-DD HH:mm:ss'),
-			dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
-			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
-			flg_delivery: (flg_delivery) ? 1 : 0,
-			adicionais: ng.produto.adicionais_selecionados
+			id_venda: 				ng.comandaSelecionada.comanda.id,
+			id_usuario: 			ng.userLogged.id_usuario,
+			id_produto: 			produto.id ,
+			desconto_aplicado: 		0 ,
+			valor_desconto: 		0 ,
+			qtd: 					produto.qtd,
+			observacoes: 			"",
+			valor_real_item: 		round(produto.vlr_venda_varejo,2) ,
+			vlr_custo: 				produto.vlr_custo_real,
+			perc_imposto_compra: 	produto.perc_imposto_compra ,
+			perc_desconto_compra: 	produto.perc_desconto_compra,
+			perc_margem_aplicada: 	produto.perc_venda_varejo,
+			id_empreendimento: 		ng.userLogged.id_empreendimento,
+			id_deposito: 			ng.configuracao.id_deposito_padrao,
+			flg_produto_composto: 	produto.flg_produto_composto,
+			id_usuario: 			ng.userLogged.id,
+			dta_create: 			moment().format('YYYY-MM-DD HH:mm:ss'),
+			dta_lancamento: 		moment().format('YYYY-MM-DD HH:mm:ss'),
+			id_mesa: 				ng.mesaSelecionada.mesa.id_mesa,
+			flg_delivery: 			(produto.flg_delivery) ? 1 : 0,
+			adicionais: 			ng.produto.adicionais_selecionados
 		}
 
 		aj.post(baseUrlApi()+"item_comanda/add",post)
-		.success(function(data, status, headers, config) {
-			if(Number(produto.flg_produto_composto) == 1){
-				data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
-				if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
-					$.each(ng.cozinhasDisponiveis, function(i, cozinha){
-						var msg = {
-							from: ng.id_ws_web,
-							to: cozinha.id_ws_dsk,
-							type:'cop_print',
-							message : JSON.stringify({ 
-								numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
-								numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
-								numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
-								nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
-								nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
-								nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
-								nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
-								numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
-								nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
-								nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
-								nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
-								nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
-								nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
-								nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
-								nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
-								codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
-								nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
-								qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
-								nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
-								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
-								adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
-							})
-						}
+			.success(function(data, status, headers, config) {
+				if(Number(produto.flg_produto_composto) == 1){
+					data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
+					if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
+						$.each(ng.cozinhasDisponiveis, function(i, cozinha){
+							var msg = {
+								from: ng.id_ws_web,
+								to: cozinha.id_ws_dsk,
+								type:'cop_print',
+								message : JSON.stringify({ 
+									numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
+									numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
+									numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
+									nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
+									nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
+									nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
+									nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
+									numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
+									nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
+									nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
+									nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
+									nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
+									nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
+									nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
+									nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
+									codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
+									nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
+									qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
+									nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
+									flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
+									adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
+								})
+							}
 
-						ng.sendMessageWebSocket(msg);
-					});
+							ng.sendMessageWebSocket(msg);
+						});
+					}
+
+					var msg = {
+						type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+						message : JSON.stringify(data.ordem_producao)
+					}
+					ng.sendMessageWebSocket(msg);
 				}
 
 				var msg = {
-					type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-					message : JSON.stringify(data.ordem_producao)
-				}
+					type: 'table_change',
+					from: ng.id_ws_web,
+					to_empreendimento: ng.userLogged.id_empreendimento,
+					message : JSON.stringify(
+						{
+							index_mesa: ng.indeMesaSelecionada,
+							mesa: data.mesa,
+							id_comanda: ng.comandaSelecionada.comanda.id
+						}
+					)
+				};
+					
 				ng.sendMessageWebSocket(msg);
-			}
-
-			var msg = {
-				type: 'table_change',
-				from: ng.id_ws_web,
-				to_empreendimento: ng.userLogged.id_empreendimento,
-				message : JSON.stringify(
-					{
-						index_mesa: ng.indeMesaSelecionada,
-						mesa: data.mesa,
-						id_comanda: ng.comandaSelecionada.comanda.id
-					}
-				)
-			};
 				
-			ng.sendMessageWebSocket(msg);
-			
-			item.qtd = null ;
-			btn.button('reset');
-			ng.loadComanda(ng.comandaSelecionada.comanda.id);
-		})
-		.error(function(data, status, headers, config) {
-			btn.button('reset');
-			if(status == 406){
-				$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
-			}else
-				$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
-		});
+				item.qtd = null ;
+				btn.button('reset');
+				ng.loadComanda(ng.comandaSelecionada.comanda.id);
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				if(status == 406){
+					$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
+				}else
+					$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
+			});
+		*/
+	}
+
+	ng.addItemPedido = function(produto) {
+		if(empty(ng.itens_pedido)) {
+			ng.itens_pedido = [];
+		}
+
+		ng.itens_pedido.push(produto);
+
+		ng.vlr_total_pedido += (produto.qtd * produto.vlr_venda_varejo);
+
+		ng.bucaTipoProduto('categoria');
+	}
+
+	ng.limpaPedido = function() {
+		ng.itens_pedido = null;
+		ng.vlr_total_pedido = 0;
+		ng.changeTela('detComanda', null, null);
+	}
+
+	ng.cancelarPedido = function() {
+		if(empty(ng.itens_pedido) || ng.itens_pedido.length === 0)
+			ng.limpaPedido();
+		else {
+			dlg = $dialogs.confirm('Atenção!!!' ,'Confirma o cancelamento do pedido?');
+
+			dlg.result.then(
+				function(btn){
+					ng.limpaPedido();
+				},
+				function(){
+					
+				}
+			);
+		}
+	}
+
+	ng.confirmarPedido = function() {
+		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma o cancelamento do pedido?');
+
+		dlg.result.then(
+			function(btn){
+				/**/
+				var itens = [];
+
+				angular.forEach(ng.itens_pedido, function(produto, i) {
+					itens.push({
+						id_venda: 				ng.comandaSelecionada.comanda.id,
+						id_usuario: 			ng.userLogged.id,
+						id_produto: 			produto.id,
+						observacoes: 			produto.observacoes,
+						desconto_aplicado: 		0,
+						valor_desconto: 		0,
+						qtd: 					produto.qtd,
+						valor_real_item: 		round(produto.vlr_venda_varejo, 2),
+						vlr_custo: 				produto.vlr_custo_real,
+						perc_imposto_compra: 	produto.perc_imposto_compra,
+						perc_desconto_compra: 	produto.perc_desconto_compra,
+						perc_margem_aplicada: 	produto.perc_venda_varejo,
+						id_empreendimento: 		ng.userLogged.id_empreendimento,
+						id_deposito: 			ng.configuracao.id_deposito_padrao,
+						flg_produto_composto: 	produto.flg_produto_composto,
+						dta_create: 			moment().format('YYYY-MM-DD HH:mm:ss'),
+						dta_lancamento: 		moment().format('YYYY-MM-DD HH:mm:ss'),
+						id_mesa: 				ng.mesaSelecionada.mesa.id_mesa,
+						flg_delivery: 			(produto.flg_delivery) ? 1 : 0,
+						adicionais: 			produto.adicionais_selecionados
+					});
+				});
+
+				var categorias = _.groupBy(ng.itens_pedido, 'id_categoria');
+
+				aj.post(baseUrlApi()+"item_comanda/add",{ itens: JSON.stringify(itens), categorias: JSON.stringify(categorias) })
+					.success(function(data, status, headers, config) {
+						console.log(data, status, headers, config);
+					})
+					.error(function(data, status, headers, config) {
+						console.log(data, status, headers, config);
+					});
+
+				/*
+				aj.post(baseUrlApi()+"item_comanda/add",post)
+					.success(function(data, status, headers, config) {
+						if(Number(ng.produto.flg_produto_composto) == 1){
+							data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
+							
+							if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
+								$.each(ng.cozinhasDisponiveis, function(i, cozinha){
+									var msg = {
+										from:ng.id_ws_web,
+										to: cozinha.id_ws_dsk,
+										type:'cop_print',
+										message : JSON.stringify({ 
+											numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
+											numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
+											numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
+											nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
+											nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
+											nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
+											nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
+											numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
+											nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
+											nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
+											nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
+											nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
+											nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
+											nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
+											nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
+											codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
+											nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
+											dscObservacoes: 		(!empty(ng.produto.observacoes) 						? ng.produto.observacoes 						: ""),
+											qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
+											nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
+											flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
+											adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
+										})
+									}
+									ng.sendMessageWebSocket(msg);
+								});
+							}
+							else {
+								$dialogs.notify('Atenção!','<strong>Não foi possível enviar o pedido para impressão, pois não há nenhuma cozinha disponível!</strong>');
+							}
+							
+							var msg = {
+								type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+								message : JSON.stringify(data.ordem_producao)
+							}
+							ng.sendMessageWebSocket(msg);
+
+						}
+						var msg = {
+								type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+								message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
+							}
+						ng.sendMessageWebSocket(msg);
+						btn.button('reset');
+						ng.produto = {} ;
+						ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+					})
+					.error(function(data, status, headers, config) {
+						btn.button('reset');
+						if(status == 406){
+							$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
+						}else
+							$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
+					});
+				*/
+			},
+			function(){
+				
+			}
+		);
 	}
 
 	ng.getNextPage = function(paginacao){
@@ -743,10 +906,12 @@ app.controller('ControleMesasController', function(
 
 				dlg.result.then(
 					function(btn){
-						incluirItemComandaAction(true);
+						ng.produto.flg_delivery = true;
+						incluirItemComandaAction();
 					},
 					function(){
-						incluirItemComandaAction(false);
+						ng.produto.flg_delivery = false;
+						incluirItemComandaAction();
 					}
 				);
 			},
@@ -756,10 +921,18 @@ app.controller('ControleMesasController', function(
 		);
 	}
 
-	function incluirItemComandaAction(flg_delivery) {
+	function incluirItemComandaAction() {
+		var produto = angular.copy(ng.produto);
+			produto.qtd = (empty(produto.qtd)) ? 1 : produto.qtd;
+		
+		ng.addItemPedido(produto);
+
+		/*
 		var btn = $(event.target);
-		if(!btn.is(':button')) btn = $(event.target).parent();
+		if(!btn.is(':button'))
+			btn = $(event.target).parent();
 		btn.button('loading');
+		
 		var post = {
 			id_venda : ng.comandaSelecionada.comanda.id,
 			id_usuario : ng.userLogged.id,
@@ -779,76 +952,77 @@ app.controller('ControleMesasController', function(
 			dta_create : moment().format('YYYY-MM-DD HH:mm:ss'),
 			dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
 			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
-			flg_delivery: (flg_delivery) ? 1 : 0,
+			flg_delivery: (ng.produto.flg_delivery) ? 1 : 0,
 			adicionais: ng.produto.adicionais_selecionados
 		}
 
 		aj.post(baseUrlApi()+"item_comanda/add",post)
-		.success(function(data, status, headers, config) {
-			if(Number(ng.produto.flg_produto_composto) == 1){
-				data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
-				
-				if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
-					$.each(ng.cozinhasDisponiveis, function(i, cozinha){
-						var msg = {
-							from:ng.id_ws_web,
-							to: cozinha.id_ws_dsk,
-							type:'cop_print',
-							message : JSON.stringify({ 
-								numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
-								numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
-								numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
-								nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
-								nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
-								nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
-								nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
-								numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
-								nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
-								nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
-								nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
-								nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
-								nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
-								nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
-								nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
-								codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
-								nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
-								dscObservacoes: 		(!empty(ng.produto.observacoes) 						? ng.produto.observacoes 						: ""),
-								qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
-								nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
-								flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
-								adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
-							})
-						}
-						ng.sendMessageWebSocket(msg);
-					});
-				}
-				else {
-					$dialogs.notify('Atenção!','<strong>Não foi possível enviar o pedido para impressão, pois não há nenhuma cozinha disponível!</strong>');
-				}
-				
-				var msg = {
-					type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-					message : JSON.stringify(data.ordem_producao)
-				}
-				ng.sendMessageWebSocket(msg);
+			.success(function(data, status, headers, config) {
+				if(Number(ng.produto.flg_produto_composto) == 1){
+					data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
+					
+					if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
+						$.each(ng.cozinhasDisponiveis, function(i, cozinha){
+							var msg = {
+								from:ng.id_ws_web,
+								to: cozinha.id_ws_dsk,
+								type:'cop_print',
+								message : JSON.stringify({ 
+									numOrdemProducao: 		(!empty(data.ordem_producao.id_ordem_producao) 			? data.ordem_producao.id_ordem_producao 		: ""),
+									numMesa: 				(!empty(data.ordem_producao.dsc_mesa) 					? data.ordem_producao.dsc_mesa 					: ""),
+									numComanda: 			(!empty(data.ordem_producao.id_venda) 					? data.ordem_producao.id_venda 					: ""),
+									nmeSolicitante: 		(!empty(data.ordem_producao.nome_usuario) 				? data.ordem_producao.nome_usuario 				: ""),
+									nmeCliente: 			(!empty(data.ordem_producao.nome_cliente) 				? data.ordem_producao.nome_cliente 				: ""),
+									nmeEndereco: 			(!empty(data.ordem_producao.nme_endereco) 				? data.ordem_producao.nme_endereco 				: ""),
+									nmeComplementoEndereco: (!empty(data.ordem_producao.nme_complemento_endereco) 	? data.ordem_producao.nme_complemento_endereco 	: ""),
+									numEndereco: 			(!empty(data.ordem_producao.num_endereco) 				? data.ordem_producao.num_endereco 				: ""),
+									nmeBairro: 				(!empty(data.ordem_producao.nme_bairro) 				? data.ordem_producao.nme_bairro 				: ""),
+									nmeUfEstado: 			(!empty(data.ordem_producao.nme_uf_estado) 				? data.ordem_producao.nme_uf_estado 			: ""),
+									nmeMunicipio: 			(!empty(data.ordem_producao.nme_municipio) 				? data.ordem_producao.nme_municipio 			: ""),
+									nmeProduto: 			(!empty(data.ordem_producao.nome_produto) 				? data.ordem_producao.nome_produto 				: ""),
+									nmeCorSabor: 			(!empty(data.ordem_producao.sabor) 						? data.ordem_producao.sabor 					: ""),
+									nmeTamanho: 			(!empty(data.ordem_producao.tamanho) 					? data.ordem_producao.tamanho 					: ""),
+									nmeFabricante: 			(!empty(data.ordem_producao.nome_fabricante) 			? data.ordem_producao.nome_fabricante 			: ""),
+									codCategoria: 			(!empty(data.ordem_producao.cod_categoria) 				? data.ordem_producao.cod_categoria 				: ""),
+									nmeCategoria: 			(!empty(data.ordem_producao.descricao_categoria) 		? data.ordem_producao.descricao_categoria 		: ""),
+									dscObservacoes: 		(!empty(ng.produto.observacoes) 						? ng.produto.observacoes 						: ""),
+									qtdItem: 				(!empty(data.ordem_producao.qtd) 						? data.ordem_producao.qtd 						: ""),
+									nmePrinterModel: 		(!empty(ng.configuracao.printer_model_op) 	    		? ng.configuracao.printer_model_op 				: ""),
+									flgDelivery: 			(!empty(data.ordem_producao.flg_delivery) 	    		? data.ordem_producao.flg_delivery 				: 0),
+									adicionais: 			(!empty(ng.produto.adicionais) 							? ng.produto.adicionais 						: "")
+								})
+							}
+							ng.sendMessageWebSocket(msg);
+						});
+					}
+					else {
+						$dialogs.notify('Atenção!','<strong>Não foi possível enviar o pedido para impressão, pois não há nenhuma cozinha disponível!</strong>');
+					}
+					
+					var msg = {
+						type : 'op_new',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+						message : JSON.stringify(data.ordem_producao)
+					}
+					ng.sendMessageWebSocket(msg);
 
-			}
-			var msg = {
-					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
-					message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
 				}
-			ng.sendMessageWebSocket(msg);
-			btn.button('reset');
-			ng.produto = {} ;
-			ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
-		})
-		.error(function(data, status, headers, config) {
-			btn.button('reset');
-			if(status == 406){
-				$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
-			}else
-				$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
-		});
+				var msg = {
+						type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
+						message : JSON.stringify({index_mesa:ng.indeMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
+					}
+				ng.sendMessageWebSocket(msg);
+				btn.button('reset');
+				ng.produto = {} ;
+				ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				if(status == 406){
+					$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
+				}else
+					$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
+			});
+		*/
 	}
 
 	ng.editItemComanda = function(event){
