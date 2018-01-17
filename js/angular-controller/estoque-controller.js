@@ -1124,4 +1124,3 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.loadControleNfe('origem_mercadoria','origens_mercadoria');
 	ng.loadControleNfe('tipo_tributacao_ipi','tipos_tributacao_ipi');
 });
-
