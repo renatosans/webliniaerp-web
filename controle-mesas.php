@@ -331,7 +331,7 @@
 					</div>
 					<div class="panel-body" ng-show="layout.mesas">
 						<div class="row">
-							<div ng-repeat="(index, mesa) in mesas" class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
+							<div ng-repeat="(index, mesa) in mesas track by index" class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
 								<div class="panel panel-{{ (mesa.flg_livre) ? 'success' : 'warning' }} mesa">
 									<div class="panel-heading text-center">
 										<h3 class="panel-title">{{ mesa.dsc_mesa }}</h3>
@@ -752,154 +752,212 @@
 
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-xs-12 col-sm-1">
-									<img class="img-responsive" ng-if="!produto.img" src="img/sem-imagem-app.png">
-									<img class="img-responsive" ng-if="produto.img" src="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}">
-								</div>
-
-								<div class="col-xs-12 col-sm-3">
+								<div class="col-lg-9">
 									<div class="row">
-										<div class="col-xs-12">
-											<div class="form-group">
-												<label class="control-label">Informe a Quantidade</label>
-												<div class="input-group">
-													<span class="input-group-btn">
-														<button class="btn btn-lg btn-primary" type="button"
-															ng-click="diminuirQuantidadeProduto()">
-															<i class="fa fa-minus-square"></i>
-														</button>
-													</span>
-													<input type="number" class="form-control input-lg text-center no-padding"
-														onKeyPress="return SomenteNumero(event);"
-														style="font-size: 18px;" min="0" max="100" 
-														ng-model="produto.qtd" />
-													<span class="input-group-btn">
-														<button class="btn btn-lg btn-primary" type="button"
-															ng-click="aumentarQuantidadeProduto()">
-															<i class="fa fa-plus-square"></i>
-														</button>
-													</span>
+										<div class="col-xs-12 col-sm-1">
+											<img class="img-responsive" ng-if="!produto.img" src="img/sem-imagem-app.png">
+											<img class="img-responsive" ng-if="produto.img" src="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}">
+										</div>
+
+										<div class="col-xs-12 col-sm-3">
+											<div class="row">
+												<div class="col-xs-12">
+													<div class="form-group">
+														<label class="control-label">Informe a Quantidade</label>
+														<div class="input-group">
+															<span class="input-group-btn">
+																<button class="btn btn-lg btn-primary" type="button"
+																	ng-click="diminuirQuantidadeProduto()">
+																	<i class="fa fa-minus-square"></i>
+																</button>
+															</span>
+															<input type="number" class="form-control input-lg text-center no-padding"
+																onKeyPress="return SomenteNumero(event);"
+																style="font-size: 18px;" min="0" max="100" 
+																ng-model="produto.qtd" />
+															<span class="input-group-btn">
+																<button class="btn btn-lg btn-primary" type="button"
+																	ng-click="aumentarQuantidadeProduto()">
+																	<i class="fa fa-plus-square"></i>
+																</button>
+															</span>
+														</div>
+													</div>
 												</div>
 											</div>
-										</div>
-									</div>
 
-									<div class="row">
-										<div class="col-sm-12">
-											<div class="form-group">
-												<label class="control-label">Observações</label>
-												<textarea rows="5" class="form-control" 
-													ng-disabled="produto.id_ordem_producao != null" 
-													ng-model="produto.observacoes"></textarea>
-											</div>
-										</div>
-									</div>
-
-									<div class="row" ng-if="(produto.adicionais.length > 0)">
-										<div class="col-xs-12">
-											<div class="form-group">
-												<label class="control-label">Adicionais selecionados</label>
-												<div class="controls">
-													<table class="table table-bordered table-hover table-condensed">
-														<tbody>
-															<tr ng-repeat="selected in produto.adicionais_selecionados">
-																<td>
-																	{{ selected.nome }}
-																	<small class="clearfix" ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</small>
-																	<small class="clearfix" ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</small>
-																</td>
-															</tr>
-														</tbody>
-													</table>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label class="control-label">Observações</label>
+														<textarea rows="5" class="form-control" 
+															ng-disabled="produto.id_ordem_producao != null" 
+															ng-model="produto.observacoes"></textarea>
+													</div>
 												</div>
 											</div>
-										</div>
-									</div>
-								</div>
 
-								<div class="col-xs-12 col-sm-8">
-									<label class="control-label">Adicionais</label>
-									<div class="row" ng-if="(produto.adicionais.length == 0)">
-										<div class="col-xs-12">O item não possúi adicionais!</div>
-									</div>
-									<div class="row" ng-if="(produto.adicionais.length > 0)">
-										<div class="col-xs-6 col-sm-3" ng-repeat="(index, adicional) in produto.adicionais track by $index">
-											<div class="panel panel-{{ (isAdicionalSelected(adicional)) ? 'warning' : ((produto.id_ordem_producao == null) ? 'primary' : 'default') }} middle-frame" 
-												ng-click="selAdicional(index, adicional)">
-												<div class="panel-body">
-													<div class="text-center container">
-														<img class="img-responsive" pre-load-img
-															imgpreload="img/img-preload-app.jpg" 
-															notimg="img/sem-imagem-app.png" 
-															datasrc="{{ baseUrl()+'assets/imagens/produtos/'+adicional.img }}">
-														<span class="product-name">
-															{{ adicional.nome }}
-															<small class="clearfix" ng-if="(adicional.nome_tamanho)">{{ adicional.nome_tamanho }}</small>
-															<small class="clearfix" ng-if="(adicional.nome_cor)">{{ adicional.nome_cor }}</small>
-														</span>
+											<div class="row" ng-if="(produto.adicionais.length > 0)">
+												<div class="col-xs-12">
+													<div class="form-group">
+														<label class="control-label">Adicionais selecionados</label>
+														<div class="controls">
+															<table class="table table-bordered table-hover table-condensed">
+																<tbody>
+																	<tr ng-repeat="selected in produto.adicionais_selecionados">
+																		<td>
+																			{{ selected.nome }}
+																			<small class="clearfix" ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</small>
+																			<small class="clearfix" ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</small>
+																		</td>
+																	</tr>
+																</tbody>
+															</table>
+														</div>
 													</div>
 												</div>
 											</div>
 										</div>
+
+										<div class="col-xs-12 col-sm-8">
+											<label class="control-label">Adicionais</label>
+											<div class="row" ng-if="(produto.adicionais.length == 0)">
+												<div class="col-xs-12">O item não possúi adicionais!</div>
+											</div>
+											<div class="row" ng-if="(produto.adicionais.length > 0)">
+												<div class="col-xs-6 col-sm-4" ng-repeat="(index, adicional) in produto.adicionais track by $index">
+													<div class="panel panel-{{ (isAdicionalSelected(adicional)) ? 'warning' : ((produto.id_ordem_producao == null) ? 'primary' : 'default') }} middle-frame" 
+														ng-click="selAdicional(index, adicional)">
+														<div class="panel-body">
+															<div class="text-center container">
+																<img class="img-responsive" pre-load-img
+																	imgpreload="img/img-preload-app.jpg" 
+																	notimg="img/sem-imagem-app.png" 
+																	datasrc="{{ baseUrl()+'assets/imagens/produtos/'+adicional.img }}">
+																<span class="product-name">
+																	{{ adicional.nome }}
+																	<small class="clearfix" ng-if="(adicional.nome_tamanho)">{{ adicional.nome_tamanho }}</small>
+																	<small class="clearfix" ng-if="(adicional.nome_cor)">{{ adicional.nome_cor }}</small>
+																</span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
+											<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg">
+												<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
+												<button type="button" class="btn btn-primary btn-block"
+													ng-click="editItemComanda($event)" 
+													ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
+													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+													<i class="fa fa-trash-o"></i> Atualizar Item
+												</button>
+												<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')" -->
+												<button type="button" class="btn btn-danger btn-block" 
+													ng-click="excluirItemComanda($event)" 
+													ng-if="(produto.id_item_venda)"
+													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+													<i class="fa fa-trash-o"></i> Excluir Item
+												</button>
+
+												<button ng-if="!EditProduto"  ng-click="incluirItemComanda($event)"  type="button" class="btn btn-primary btn-block" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."><i class="fa fa-cart-plus "></i>&nbsp;Incluir no carrinho</button>
+												<button  ng-click="cancelarProduto()"  type="button" class="btn btn-default btn-block"><i class="fa fa-ban"></i>&nbsp;Cancelar</button>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
+												<div class="pull-right">
+													<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')"-->
+													<button type="button" class="btn btn-danger"
+														ng-click="excluirItemComanda($event)" 
+														ng-if="(produto.id_item_venda)"
+														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+														<i class="fa fa-trash-o"></i>&nbsp;Excluir Item
+													</button>
+
+													<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
+													<button type="button" class="btn btn-primary"
+														ng-click="editItemComanda($event)" 
+														ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
+														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+														<i class="fa fa-trash-o"></i>&nbsp;Atualizar Item
+													</button>
+
+													<button type="button" class="btn btn-primary" 
+														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+														ng-if="!EditProduto" 
+														ng-click="incluirItemComanda($event)"
+														>
+														<i class="fa fa-trash-o"></i>&nbsp;Incluir no carrinho
+													</button>
+
+													<button type="button" class="btn btn-default"
+														ng-click="cancelarProduto()">
+														<i class="fa fa-ban"></i>&nbsp;Cancelar
+													</button>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
 
-						<div class="panel-footer">
-							<div class="row">
-								<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
-									<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
-									<button type="button" class="btn btn-primary btn-block"
-										ng-click="editItemComanda($event)" 
-										ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
-										data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-										<i class="fa fa-trash-o"></i> Atualizar Item
-									</button>
-									<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')" -->
-									<button type="button" class="btn btn-danger btn-block" 
-										ng-click="excluirItemComanda($event)" 
-										ng-if="(produto.id_item_venda)"
-										data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-										<i class="fa fa-trash-o"></i> Excluir Item
-									</button>
+								<div class="col-lg-3">
+									<div class="row">
+										<div class="col-lg-12">
+											<table class="table table-bordered table-hover table-condensed table-striped">
+												<caption>Itens do Pedido</caption>
+												<thead>
+													<tr>
+														<th>Produto</th>
+														<th width="100">Subtotal</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="item in itens_pedido">
+														<td>
+															<strong>{{ item.nome }} <span ng-if="(item.sabor)">- {{ item.sabor }}</span></strong>
+															<small>({{ item.qtd }} un)</small>
+															<small class="clearfix" ng-repeat="selected in item.adicionais_selecionados">
+																>>
+																{{ selected.nome }}
+																<span ng-if="(selected.sabor)">({{ selected.sabor }})</span>
+																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
+																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
+															</small>
+															<div class="clearfix"></div>
+															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
+														</td>
+														<td class="text-middle text-right">
+															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
 
-									<button ng-if="!EditProduto"  ng-click="incluirItemComanda($event)"  type="button" class="btn btn-primary btn-block" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."><i class="fa fa-cart-plus "></i>&nbsp;Incluir no carrinho</button>
-									<button  ng-click="cancelarProduto()"  type="button" class="btn btn-default btn-block"><i class="fa fa-ban"></i>&nbsp;Cancelar</button>
-								</div>
-							</div>
+									<div class="row">
+										<div class="col-lg-12">
+											<h3 class="text-right">R$ {{ vlr_total_pedido | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}<small class="clearfix">Subtotal</small></h3>
+										</div>
+									</div>
 
-							<div class="row">
-								<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
-									<div class="pull-right">
-										<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')"-->
-										<button type="button" class="btn btn-danger"
-											ng-click="excluirItemComanda($event)" 
-											ng-if="(produto.id_item_venda)"
-											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-											<i class="fa fa-trash-o"></i>&nbsp;Excluir Item
-										</button>
-
-										<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
-										<button type="button" class="btn btn-primary"
-											ng-click="editItemComanda($event)" 
-											ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
-											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-											<i class="fa fa-trash-o"></i>&nbsp;Atualizar Item
-										</button>
-
-										<button type="button" class="btn btn-primary" 
-											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
-											ng-if="!EditProduto" 
-											ng-click="incluirItemComanda($event)"
-											>
-											<i class="fa fa-trash-o"></i>&nbsp;Incluir no carrinho
-										</button>
-
-										<button type="button" class="btn btn-default"
-											ng-click="cancelarProduto()">
-											<i class="fa fa-ban"></i>&nbsp;Cancelar
-										</button>
+									<div class="row">
+										<div class="col-lg-12">
+											<button type="button" class="btn btn-block btn-danger"
+												ng-click="cancelarPedido()">
+												Cancelar pedido
+											</button>
+											<button type="button" class="btn btn-block btn-info"
+												ng-click="confirmarPedido()">
+												Confirmar pedido
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -995,13 +1053,27 @@
 												<thead>
 													<tr>
 														<th>Produto</th>
-														<th>Subtotal</th>
+														<th width="100">Subtotal</th>
 													</tr>
 												</thead>
 												<tbody>
-													<tr>
-														<td>COCA COLA (2 un)</td>
-														<td>R$ 19,90</td>
+													<tr ng-repeat="item in itens_pedido">
+														<td>
+															<strong>{{ item.nome }} <span ng-if="(item.sabor)">- {{ item.sabor }}</span></strong>
+															<small>({{ item.qtd }} un)</small>
+															<small class="clearfix" ng-repeat="selected in item.adicionais_selecionados">
+																>>
+																{{ selected.nome }}
+																<span ng-if="(selected.sabor)">({{ selected.sabor }})</span>
+																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
+																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
+															</small>
+															<div class="clearfix"></div>
+															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
+														</td>
+														<td class="text-middle text-right">
+															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
+														</td>
 													</tr>
 												</tbody>
 											</table>
@@ -1010,7 +1082,20 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<h3 class="text-right">Subtotal<small class="clearfix">R$ 192,98</small></h3>
+											<h3 class="text-right">R$ {{ vlr_total_pedido | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}<small class="clearfix">Subtotal</small></h3>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-12">
+											<button type="button" class="btn btn-block btn-danger"
+												ng-click="cancelarPedido()">
+												Cancelar pedido
+											</button>
+											<button type="button" class="btn btn-block btn-info"
+												ng-click="confirmarPedido()">
+												Confirmar pedido
+											</button>
 										</div>
 									</div>
 								</div>
@@ -1030,49 +1115,108 @@
 								<button ng-if="getTipoBuscaProduto()==null" ng-click="changeTela('escTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
-
-								
 							</legend>
 							
-
 							<div class="row">
-								<div class="col-lg-12">
-									<div class="form-group">
-										<input type="text" ng-keyup="autoCompleteProdutos(busca.produtos)" ng-model="busca.produtos" class="form-control" placeholder="Pesquisar">
+								<div class="col-lg-9">
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group">
+												<input type="text" ng-keyup="autoCompleteProdutos(busca.produtos)" ng-model="busca.produtos" class="form-control" placeholder="Pesquisar">
+											</div>
+										</div>
+									</div>
+
+									<div class="row" ng-if="produtos.itens.length==0">
+										<div  class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg text-center">
+											Nenhum produto encontrato
+										</div>
+									</div>
+
+									<div class="row" ng-if="produtos.itens == null">
+										<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg text-center">
+											<i class='fa fa-refresh fa-spin'></i> Carregando...
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-xs-6 col-sm-3" ng-repeat="produto in produtos.itens">
+											<div ng-click="selProduto(produto)" class="panel panel-primary middle-frame">
+												<div class="panel-body">
+													<div class="text-center container">
+														<img pre-load-img imgpreload="img/img-preload-app.jpg" notimg="img/sem-imagem-app.png" datasrc="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}"  class="img-responsive">
+														<span class="product-name">{{ produto.nome }} <span ng-if="(produto.sabor)">- {{ produto.sabor }}</span></span>
+														<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:configuracao.qtd_casas_decimais : ',' : '.' }}</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row" ng-if="loadingMoreProdutos">
+										<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
+											<button type="button" class="btn btn-default btn-block">
+												<i class='fa fa-refresh fa-spin'></i> Carregando...
+											</button>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="row" ng-if="produtos.itens.length==0">
-								<div  class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg text-center">
-									Nenhum produto encontrato
-								</div>
-							</div>
-							<div class="row" ng-if="produtos.itens == null">
-								<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg text-center">
-									<i class='fa fa-refresh fa-spin'></i> Carregando...
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-xs-6 col-sm-2" ng-repeat="produto in produtos.itens">
-									<div ng-click="selProduto(produto)" class="panel panel-primary middle-frame">
-										<div class="panel-body">
-											<div class="text-center container">
-												<img pre-load-img imgpreload="img/img-preload-app.jpg" notimg="img/sem-imagem-app.png" datasrc="{{ baseUrl()+'assets/imagens/produtos/'+produto.img }}"  class="img-responsive">
-												<span class="product-name">{{ produto.nome }} - {{ produto.sabor }}</span>
-												<span class="product-price">R$ {{ produto.vlr_venda_varejo | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</span>
-											</div>
+
+								<div class="col-lg-3">
+									<div class="row">
+										<div class="col-lg-12">
+											<table class="table table-bordered table-hover table-condensed table-striped">
+												<caption>Itens do Pedido</caption>
+												<thead>
+													<tr>
+														<th>Produto</th>
+														<th width="100">Subtotal</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr ng-repeat="item in itens_pedido">
+														<td>
+															<strong>{{ item.nome }} <span ng-if="(item.sabor)">- {{ item.sabor }}</span></strong>
+															<small>({{ item.qtd }} un)</small>
+															<small class="clearfix" ng-repeat="selected in item.adicionais_selecionados">
+																>>
+																{{ selected.nome }}
+																<span ng-if="(selected.sabor)">({{ selected.sabor }})</span>
+																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
+																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
+															</small>
+															<div class="clearfix"></div>
+															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
+														</td>
+														<td class="text-middle text-right">
+															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-12">
+											<h3 class="text-right">R$ {{ vlr_total_pedido | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}<small class="clearfix">Subtotal</small></h3>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-12">
+											<button type="button" class="btn btn-block btn-danger"
+												ng-click="cancelarPedido()">
+												Cancelar pedido
+											</button>
+											<button type="button" class="btn btn-block btn-info"
+												ng-click="confirmarPedido()">
+												Confirmar pedido
+											</button>
 										</div>
 									</div>
 								</div>
 							</div>
-							<div class="row" ng-if="loadingMoreProdutos">
-								<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
-									<button type="button" class="btn btn-default btn-block">
-										<i class='fa fa-refresh fa-spin'></i> Carregando...
-									</button>
-								</div>
-							</div>
-
 						</fieldset>
 					</div>
 					<!-- FIM - EXIBIR APENAS QUANDO ESTIVER VISUALIZANDO A TELA DE PESQUISA DE PRODUTO -->
@@ -1233,7 +1377,7 @@
 										<th width="90"></th>
 									</thead>
 									<tbody>
-										<tr ng-repeat="mesa in mesas">
+										<tr ng-repeat="(index, mesa) in mesas track by index">
 											<td class="text-middle">{{ mesa.dsc_mesa }}</td>
 											<td class="text-middle text-center">
 												<button type="button" class="btn btn-sm btn-primary"
