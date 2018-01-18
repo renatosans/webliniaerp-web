@@ -2217,6 +2217,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			);
 			dlg.result.then(
 				function(btn){
+					ng.flg_incluir_cpf_sat_cfe = true;
+					
 					if(!empty(ng.cliente.id) && !((!empty(ng.cliente.cpf) && isCPF(ng.cliente.cpf)) || (!empty(ng.cliente.cnpj) && isCnpj(ng.cliente.cnpj)))) {
 						$("#modal-cpf-venda").modal('show');
 						ng.validaDocumentoCliente();
