@@ -917,6 +917,8 @@
 																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
 																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
 															</small>
+															<div class="clearfix"></div>
+															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
 														</td>
 														<td class="text-middle text-right">
 															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
@@ -1054,6 +1056,8 @@
 																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
 																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
 															</small>
+															<div class="clearfix"></div>
+															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
 														</td>
 														<td class="text-middle text-right">
 															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
@@ -1169,6 +1173,8 @@
 																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
 																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
 															</small>
+															<div class="clearfix"></div>
+															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
 														</td>
 														<td class="text-middle text-right">
 															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
