@@ -766,6 +766,8 @@ app.controller('ControleMesasController', function(
 						item.id_usuario 		= ng.userLogged.id;
 						item.id_empreendimento 	= ng.userLogged.id_empreendimento;
 						item.id_deposito 		= ng.configuracao.id_deposito_padrao;
+						item.id_venda 			= ng.comandaSelecionada.comanda.id;
+						item.id_mesa 			= ng.comandaSelecionada.comanda.id_mesa;
 					});
 				});
 
