@@ -393,10 +393,9 @@
 										<label class="control-label">Localizar comanda</label>
 										<div class="contorls">
 											<div class="input-group">
-												<input class="form-control" type="text" 
-													id="txt_numero_comanda"
+												<input id="txt_numero_comanda" class="form-control" type="text" 
 													placeholder="comece a digitar..." 
-													ng-model="busca.numero_comanda">
+													ng-enter="enterComanda()" ng-model="busca.numero_comanda">
 												<span class="input-group-btn">
 													<button class="btn btn-block btn-default"
 														ng-click="openQRCodeCapture()">
