@@ -412,7 +412,8 @@
 							<table class="table table-bordered table-hover mesa">
 								<caption class="text-left text-bold mesa-caption">Comandas abertas</caption>
 								<thead ng-show="mesaSelecionada.comandas.length > 0">
-									<th width="70" class="text-middle text-center">Nº Comanda</th>
+									<th width="100" class="text-middle text-center">Nº Comanda</th>
+									<th width="100" class="text-middle text-center">Nº Cartão</th>
 									<th class="text-middle">Cliente</th>
 									<th class="text-middle text-center">Itens</th>
 									<th class="text-middle text-center">Subtotal</th>
@@ -428,6 +429,7 @@
 										ng-click="abrirDetalhesComanda(comanda.id_comanda)"
 										ng-repeat="comanda in mesaSelecionada.comandas | filter : busca.numero_comanda">
 										<td class="text-center">#{{ comanda.id_comanda }}</td>
+										<td class="text-center">{{ comanda.num_cartao_fisico }}</td>
 										<td ng-if="comanda.id_cliente != configuracao.id_cliente_movimentacao_caixa" >{{ comanda.nome_cliente }}</td>
 										<td ng-if="comanda.id_cliente == configuracao.id_cliente_movimentacao_caixa" ><b>(Cliente não informado)</b></td>
 
@@ -600,11 +602,21 @@
 					<div ng-show="layout.detComanda">
 						<div class="panel-heading">
 							<h3 class="panel-title clearfix">
-								Comanda <small>#{{ comandaSelecionada.comanda.id }}</small>
+								Comanda
+								<small>
+									#{{ comandaSelecionada.comanda.id }}
+									<span ng-if="(comandaSelecionada.comanda.num_cartao_fisico)">
+										<i class="fa fa-credit-card" aria-hidden="true"></i> {{ comandaSelecionada.comanda.num_cartao_fisico }}
+									</span>
+								</small>
 								<div class="pull-right">
 									<button ng-click="changeTela('detMesa', null, $event)" type="button" class="btn btn-xs btn-primary">
 										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
 										<span class="hidden-xs">Voltar</span>
+									</button>
+									<button ng-click="openModalVincularCartao()" type="button" class="btn btn-xs btn-default" ng-if="(comandaSelecionada.comanda.num_cartao_fisico == null)">
+										<i class="fa fa-credit-card" aria-hidden="true"></i>
+										<span class="hidden-xs">Vincular Cartão</span>
 									</button>
 									<button ng-if="userLogged.flg_dispositivo===1"  type="button" class="btn btn-xs btn-default" ng-click="goChangeCliente()">
 										<i class="fa fa-user"></i>
@@ -1262,6 +1274,45 @@
 								Fechar
 							</button>
 						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal Vincular Cartão -->
+		<div class="modal fade" id="modalVincularCartao" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4>Insira o número do cartão</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<div class="alert alert-danger" ng-if="(msg_erro_cartao)">
+										{{ msg_erro_cartao }}
+									</div>
+									<input id="buscaCartao" class="form-control" type="text" 
+										ng-model="num_cartao_fisico" 
+										ng-enter="loadCartoes()">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-md btn-default" 
+							data-loading-text="Aguarde..."
+							data-dismiss="modal">
+							<i class="fa fa-times-circle"></i>
+							Cancelar
+						</button>
+						<button class="btn btn-md btn-success" 
+							data-loading-text="Aguarde..."
+							ng-click="loadCartoes()">
+							<i class="fa fa-chain"></i>
+							Vincular Cartão
+						</button>
 					</div>
 				</div>
 			</div>

@@ -489,6 +489,45 @@ app.controller('ControleMesasController', function(
 			});
 	}
 
+	ng.openModalVincularCartao = function(){
+		$('#modalVincularCartao').modal('show');
+		ng.msg_erro_cartao = 0;
+		ng.num_cartao_fisico = '';
+		$('#modalVincularCartao').on('shown.bs.modal', function(){
+			setTimeout(function(){
+				$("#modalVincularCartao #buscaCartao").focus();
+			}, 1);
+		});
+	}
+
+	ng.loadCartoes = function(){
+		if(!empty(ng.num_cartao_fisico)){
+			$('#modalVincularCartao button').button('loading');
+			
+			var query_string = "?id_empreendimento=" + ng.userLogged.id_empreendimento + "&num_comanda=" + ng.num_cartao_fisico;
+			aj.get(baseUrlApi()+"cartoes-fisicos"+query_string)
+				.success(function(data, status, headers, config) {
+					aj.post(baseUrlApi()+"comanda/"+ ng.comandaSelecionada.comanda.id +"/vincular-cartao-fisico", {id_venda: ng.comandaSelecionada.comanda.id, id_cartao_fisico: data[0].id})
+						.success(function(data, status, headers, config) {
+							$('#modalVincularCartao button').button('reset');
+							$('#modalVincularCartao').modal('hide');
+							ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+						})
+						.error(function(data, status, headers, config) {
+							ng.msg_erro_cartao = data;
+							$('#modalVincularCartao button').button('reset');
+						});
+				})
+				.error(function(data, status, headers, config) {
+					ng.msg_erro_cartao = data;
+					$('#modalVincularCartao button').button('reset');
+				});
+		}
+		else {
+
+		}
+	}
+
 	ng.openModalMesasTrocar = function(comanda) {
 		ng.comanda_troca = comanda;
 		$('#changeComandaMesa').modal('show');
