@@ -499,6 +499,18 @@ app.controller('ControleMesasController', function(
 		});
 	}
 
+	ng.enterComanda = function() {
+		var comanda = _.findWhere(ng.mesaSelecionada.comandas, {id_comanda: parseInt(ng.busca.numero_comanda, 10)});
+
+		if(!empty(comanda))
+			ng.abrirDetalhesComanda(comanda.id_comanda);
+		else {
+			comanda = _.findWhere(ng.mesaSelecionada.comandas, {num_cartao_fisico: ng.busca.numero_comanda});
+			if(!empty(comanda))
+				ng.abrirDetalhesComanda(comanda.id_comanda);
+		}
+	}
+
 	ng.loadCartoes = function(){
 		if(!empty(ng.num_cartao_fisico)){
 			$('#modalVincularCartao button').button('loading');
