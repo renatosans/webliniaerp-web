@@ -6,8 +6,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.baseUrl 						= baseUrl();
 	ng.userLogged 					= UserService.getUserLogado();
 	ng.configuracao 				= ConfigService.getConfig(ng.userLogged.id_empreendimento);
-	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0 };
-	ng.entradaEstoque 				= [];
+	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [] };
 	ng.ultimasEntradas 				= [];
 	ng.editing 						= false;
 	ng.paginacao 					= {};
@@ -35,6 +34,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	});
 
 	ng.incluirDuplicata = function(item){
+		ng.new_duplicata.xml = false;
 		ng.new_duplicata.dta_vencimento = (!empty($("#vencimentoduplicatas").val())) ? formatDate($("#vencimentoduplicatas").val()) : null;
 		if(empty(ng.nota.duplicatas))
 			ng.nota.duplicatas = [];
@@ -58,8 +58,8 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.addItemNF = function(itemNF) {
-		ng.entradaEstoque.push(angular.copy({
-			id_pedido: 				(ng.entradaEstoque.length > 0) ? ng.entradaEstoque[0].id_pedido : 0,
+		ng.nota.itens.push(angular.copy({
+			id_pedido: 				(ng.nota.itens.length > 0) ? ng.nota.itens[0].id_pedido : 0,
 			id_produto: 			itemNF.id_produto,
 			margem_atacado: 		itemNF.margem_atacado,
 			margem_intermediario: 	itemNF.margem_intermediario,
@@ -77,7 +77,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.loadDataFromXML = function() {
-		ng.entradaEstoque = [] ; 
+		ng.nota.itens = [] ; 
 		$('#form-xml').ajaxForm({
 		 	url: baseUrlApi()+"estoque/importar/nfe?id_empreendimento="+ng.userLogged.id_empreendimento,
 		 	type: 'POST',
@@ -99,8 +99,8 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				}
 
 				$.each(data.itensBD, function(i, itemNF){
-					if(ng.entradaEstoque.length > 0 && itemNF.flg_localizado) {
-						var newObj 				= _.findWhere(ng.entradaEstoque, {id_produto: itemNF.id_produto.toString()});
+					if(ng.nota.itens.length > 0 && itemNF.flg_localizado) {
+						var newObj 				= _.findWhere(ng.nota.itens, {id_produto: itemNF.id_produto.toString()});
 						
 						if(newObj != undefined) {
 							newObj.validades 		= [{ qtd: itemNF.qtd }];
@@ -109,7 +109,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 							newObj.custo 			= itemNF.custo;
 							newObj.imposto 			= itemNF.imposto;
 
-							ng.entradaEstoque[0] = angular.copy(newObj);
+							ng.nota.itens[0] = angular.copy(newObj);
 						}
 						else
 							ng.addItemNF(itemNF);
@@ -121,6 +121,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				ng.atualizaValores();
 				ng.atualizaValorTotal();
 				ng.atualizaQtdValidadeItens();
+
+				angular.forEach(data.duplicatas, function(duplicata){
+					duplicata.xml = true;
+				});
 
 				ng.nota.duplicatas = data.duplicatas;
 
@@ -157,14 +161,19 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.salvar = function(){
+		$($(".has-error").find(".form-control")).tooltip('destroy');
+		$($(".has-error").find("button")).tooltip('destroy');
+		$(".has-error").removeClass("has-error");
+
 		var btn = $('#btn-salvar-entrada');
-		btn.button('loading');
-		if(!ng.entradaEstoque.length > 0){
-			$dialogs.notify('Atenção!','Nenhum pedido foi adicionado para dar entrada');
+			btn.button('loading');
+
+		if(!ng.nota.itens.length > 0){
+			$dialogs.notify('Atenção!', 'Nenhum item foi adicionado para dar entrada');
 			return false;
 		}
 
-		$.each(ng.entradaEstoque, function(i, item) {
+		$.each(ng.nota.itens, function(i, item) {
 			if(!empty(ng.nota.xml_nfe) && !item.flg_localizado) {
 				$dialogs.notify('Atenção!','Alguns produtos não foram localizados!<br/>Não será possível realizar a entrada da NF.');
 				return false;
@@ -178,7 +187,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 		var validar_validade = true ;
 		var postPrestaShop = {produtos:[]};
-		$.each(ng.entradaEstoque,function(i,item){
+		$.each(ng.nota.itens,function(i,item){
 			if(item.validades == undefined){
 				validar_validade = false;
 				return;
@@ -192,16 +201,18 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			return;
 		}
 
-		var entradaEstoque = [] ;
-		$.each(ng.entradaEstoque,function(i,item){
-			$.each(item.validades,function(x,validade){
-				var item_atual = {} ;
-				$.each(item,function(a,val){
+		var itens = [];
+		$.each(ng.nota.itens, function(i, item){
+			$.each(item.validades, function(x, validade){
+				var item_atual = {};
+				
+				$.each(item, function(a, val){
 					if(a != '$$hashKey' && a != 'validades')
 						item_atual[a] = val;
 				});
-				item_atual.desconto = item_atual.desconto / 100 ;
-				item_atual.imposto = item_atual.imposto / 100 ;
+
+				item_atual.desconto = (item_atual.desconto / 100);
+				item_atual.imposto 	= (item_atual.imposto / 100);
 
 				if(empty(validade.validade))
 					validade.validade = "122099";
@@ -210,30 +221,28 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				var mes       = parseInt(validade.validade.substring(0,2)) -1;
 				var objDate   = new Date(ano, mes , 1);
 
-				item_atual.dta_validade = ano+'-'+(mes+1)+'-'+ultimoDiaDoMes(objDate);
-				item_atual.qtd          = validade.qtd;
-				entradaEstoque.push(item_atual);
+				item_atual.dta_validade = ano +'-'+ (mes+1) +'-'+ ultimoDiaDoMes(objDate);
+				item_atual.qtd = validade.qtd;
+				itens.push(item_atual);
 			});
 		});
 
 		ng.nota.id_empreendimento = ng.userLogged.id_empreendimento;
-		ng.nota.itens             = entradaEstoque;
+		ng.nota.itens             = itens;
 		ng.nota.dta_entrada       = formatDate($("#pagamentoData").val());
-		ng.nota.id_usuario		  = ng.userLogged.id ; 
+		ng.nota.id_usuario		  = ng.userLogged.id;
 
-		$($(".has-error").find(".form-control")).tooltip('destroy');
-		$($(".has-error").find("button")).tooltip('destroy');
-		$(".has-error").removeClass("has-error");
-
-		var postData = angular.copy( ng.nota );
-		postData.vlr_total_imposto 		= parseFloat((!empty(postData.vlr_total_imposto)) ? postData.vlr_total_imposto.replace(",", ".") : 0);
-		postData.vlr_frete 				= parseFloat((!empty(postData.vlr_frete)) ? postData.vlr_frete.replace(",", ".") : 0);
+		ng.nota.vlr_total_imposto 	= parseFloat((!empty(ng.nota.vlr_total_imposto)) ? ng.nota.vlr_total_imposto.replace(",", ".") : 0);
+		ng.nota.vlr_frete 			= parseFloat((!empty(ng.nota.vlr_frete)) ? ng.nota.vlr_frete.replace(",", ".") : 0);
 
 		$.each(ng.nota,function(i,x){
-			ng.nota[i].imposto = $.isNumeric(x.imposto) ? Number(x.imposto)/100 : 0 ;
+			ng.nota[i].imposto = ($.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
 		});	
 
-		$http.post(baseUrlApi()+'estoque/entrada',ng.nota)
+		console.log( JSON.stringify(ng.nota) );
+
+		/*
+		$http.post(baseUrlApi()+'estoque/entrada', ng.nota)
 			.success(function(data, status, headers, config) {
 				btn.button('reset');
 				ng.reset();
@@ -266,12 +275,13 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			});
 
 			ng.precoProduto = [];
+		*/
 	}
 
 	ng.showModalPrecos = function(){
 		ng.precoProduto = [];
 
-			$.each(ng.entradaEstoque, function(x, itemEntrada) {
+			$.each(ng.nota.itens, function(x, itemEntrada) {
 				itemEntrada.margem_intermediario = parseFloat(itemEntrada.margem_intermediario) * 100;
 				itemEntrada.margem_atacado       = parseFloat(itemEntrada.margem_atacado) * 100;
 				itemEntrada.margem_varejo        = parseFloat(itemEntrada.margem_varejo) * 100;
@@ -553,8 +563,8 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.loadItensPedido = function(id_pedido) {
-		if(ng.entradaEstoque == null || ng.entradaEstoque == "undefined")
-			ng.entradaEstoque = [];
+		if(ng.nota.itens == null || ng.nota.itens == "undefined")
+			ng.nota.itens = [];
 
 		aj.get(baseUrlApi()+"pedido_itens/"+id_pedido)
 			.success(function(data, status, headers, config) {
@@ -565,18 +575,18 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 					item.desconto = null;
 					item.total    = 0;
 
-					if(ng.entradaEstoque.length > 0){
-						var objNF = _.findWhere(ng.entradaEstoque, {id_produto: parseInt(item.id_produto, 10)});
+					if(ng.nota.itens.length > 0){
+						var objNF = _.findWhere(ng.nota.itens, {id_produto: parseInt(item.id_produto, 10)});
 						if(objNF == undefined)
-							ng.entradaEstoque.push(item);
+							ng.nota.itens.push(item);
 					}else
-						ng.entradaEstoque.push(item);
+						ng.nota.itens.push(item);
 				});
 
 				ng.atualizaValores();
 			})
 			.error(function(data, status, headers, config) {
-				ng.entradaEstoque = [];
+				ng.nota.itens = [];
 			});
 	}
 
@@ -625,16 +635,16 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 	ng.deleteItem = function(item){
 		if(item == null)
-			ng.entradaEstoque = [];
+			ng.nota.itens = [];
 
-		ng.entradaEstoque = _.without(ng.entradaEstoque, item);
+		ng.nota.itens = _.without(ng.nota.itens, item);
 
-		/*$.each(ng.entradaEstoque, function(x, currentItem){
+		/*$.each(ng.nota.itens, function(x, currentItem){
 			if(currentItem.id === item.id && currentItem.validade === item.validade)
-				ng.entradaEstoque.splice(x,1);
+				ng.nota.itens.splice(x,1);
 		});*/
 
-		if(!ng.entradaEstoque.length > 0)
+		if(!ng.nota.itens.length > 0)
 			ng.nota.id_pedido_fornecedor= "";
 		ng.atualizaValores();
 	}
@@ -654,7 +664,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		ng.valor_total_entrada = 0 ;
 		ng.qtd_total_entrada   = 0 ;
 
-		$.each(ng.entradaEstoque, function(i,item){
+		$.each(ng.nota.itens, function(i,item){
 			var qtd          = item.qtd      == null || item.qtd      == "" ? 0 : parseFloat(item.qtd);
 			var custo        = item.custo    == null || item.custo    == "" ? 0 : parseFloat(item.custo);
 			var por_desconto = item.desconto == null || item.desconto == "" ? 0 : parseFloat(item.desconto);
@@ -669,7 +679,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			ng.nota.vlr_total_imposto += vl_imposto;
 			ng.valor_total_entrada    += vl_total;
 			ng.qtd_total_entrada      += qtd ;
-			ng.entradaEstoque[i].total = vl_total ;
+			ng.nota.itens[i].total = vl_total ;
 
 			ng.atualizaValorTotal();
 		});
@@ -679,7 +689,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 	ng.validarCusto = function(){
 		var validade = true;
-		$.each(ng.entradaEstoque,function(i,item){
+		$.each(ng.nota.itens,function(i,item){
 			if(item.custo == null || item.custo == ""){
 				validade = false;
 			}
@@ -918,7 +928,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				item.qtd = 1;
 
 			ng.produto = item;
-			ng.entradaEstoque.push(item);
+			ng.nota.itens.push(item);
 
 			if(autoAddQtd) {
 				ng.itemValidade = { validade: '', qtd: item.qtd };
@@ -1019,7 +1029,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.isProdutoSelected = function(produto) {
-		return (!empty(_.findWhere(ng.entradaEstoque, {id_produto: produto.id_produto})));
+		return (!empty(_.findWhere(ng.nota.itens, {id_produto: produto.id_produto})));
 	}
 
 	ng.changeQtd = function(){
@@ -1042,7 +1052,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	/* inicio - funções gerais */
 
 	ng.clearForm = function(){
-		ng.entradaEstoque = [] ;
+		ng.nota.itens = [] ;
 		$('#pagamentoData').val('');
 		$.each(ng.nota,function(i,item){
 				ng.nota[i] = "";

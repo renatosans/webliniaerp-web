@@ -323,6 +323,17 @@
 									<div class="form-group">
 										<label class="control-label"><br></label>
 										<label class="label-checkbox">
+											<input ng-model="nota.flg_especificar_natureza_itens" type="checkbox" id="toggleLine" ng-true-value="1" ng-false-value="0">
+											<span class="custom-checkbox"></span>
+											Especificar natureza dos itens
+										</label>
+									</div>
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label class="control-label"><br></label>
+										<label class="label-checkbox">
 											<input ng-model="nota.flg_alterar_valor_custo" type="checkbox" id="toggleLine" ng-true-value="1" ng-false-value="0">
 											<span class="custom-checkbox"></span>
 											Alterar valor de custo
@@ -340,6 +351,10 @@
 										<thead>
 											<tr>
 												<th>Produto</th>
+												<th class="text-center"
+													ng-if="(nota.flg_especificar_natureza_itens == 1)">
+													Natureza
+												</th>
 												<th>Fabricante</th>
 												<th>Tamanho</th>
 												<th>Cor/Sabor</th>
@@ -360,15 +375,14 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-hide="entradaEstoque.length > 0">
+											<tr ng-hide="nota.itens.length > 0">
 												<td colspan="10">
 													Nenhum item adicionado
 												</td>
 											</tr>
 											<tr ng-class="{'danger': (item.flg_localizado == false)}"
-												ng-repeat="($index, item) in entradaEstoque | orderBy: 'nome_produto' : false track by $index">
-												<td style="line-height: 1.5; vertical-align: middle;"
-													class="clearfix">
+												ng-repeat="($index, item) in nota.itens | orderBy: 'nome_produto' : false track by $index">
+												<td class="text-middle clearfix">
 													<span class="pull-left">#{{ item.nome_produto }} - {{ item.nome_produto }}</span>
 													<span class="pull-right">
 														<button type="button" 
@@ -378,18 +392,26 @@
 														</button>
 													</span>
 												</td>
-												<td>{{ item.nome_fabricante }}</td>
-												<td>{{ item.peso }}</td>
-												<td>{{ item.sabor }}</td>
-												<td style="text-align: center;">{{ item.qtd }}</td>
-												<td style="width: 32px;">
+												<td class="text-center text-middle" width="200"
+													ng-if="(nota.flg_especificar_natureza_itens == 1)">
+													<select chosen
+														option="plano_contas"
+														ng-model="item.id_natureza"
+														ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+													</select>
+												</td>
+												<td class="text-middle">{{ item.nome_fabricante }}</td>
+												<td class="text-middle">{{ item.peso }}</td>
+												<td class="text-middle">{{ item.sabor }}</td>
+												<td class="text-center text-middle">{{ item.qtd }}</td>
+												<td class="text-middle" style="width: 32px;">
 													<button type="button" 
 														class="btn btn-xs btn-primary" 
 														ng-click="showValidades(item)">
 														<i class="fa fa-calendar"></i>
 													</button>
 												</td>
-												<td ng-show="nota.flg_alterar_valor_custo == 1">
+												<td class="text-middle" ng-show="nota.flg_alterar_valor_custo == 1">
 													<input type="text" class="form-control input-xs text-right"
 														thousands-formatter 
 														precision='{{ configuracao.qtd_casas_decimais }}' 
@@ -397,16 +419,16 @@
 														ng-keyup="atualizaValores();" 
 														ng-blur="atualizaValorTotal();">
 												</td>
-												<td style="text-align: right; line-height: 1.5; vertical-align: middle;"
+												<td class="text-middle text-right" 
 													ng-show="nota.flg_alterar_valor_custo == 1">
 													R$ {{ item.total | numberFormat : 2 : ',' : '.' }}
 												</td>
-												<td class="text-center">
+												<td class="text-middle text-center">
 													<button ng-click="deleteItem(item)" type="button" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i> Remover Item</button>
 												</td>
 											</tr>
-											<tr style="font-weight: bold;" ng-show="entradaEstoque.length > 0">
-												<td colspan="4" style="text-align: right;">TOTAIS</td>
+											<tr style="font-weight: bold;" ng-show="nota.itens.length > 0">
+												<td colspan="5" style="text-align: right;">TOTAIS</td>
 												<td style="text-align: center;">{{ qtd_total_entrada }}</td>
 												<td colspan="2" ng-show="nota.flg_alterar_valor_custo == 1"></td>
 												<td style="text-align: right;"
@@ -421,16 +443,16 @@
 							</div>
 
 							<div class="row">
-								<div class="col-sm-12">
+								<div class="col-sm-5">
 									<table class="table table-bordered table-condensed table-striped table-hover">
 										<caption>Duplicatas</caption>
 										<thead>
 											<th class="text-center">Número</th>
 											<th class="text-center">Vencimento</th>
 											<th class="text-right">Valor</th>
-											<th class="text-center">Plano de Contas</th>
-											<th class="text-center" width="20px">
-												<button type="button" class="btn btn-xs btn-info" ng-click="showModalDuplicatas()">
+											<th class="text-center" width="30">
+												<button type="button" class="btn btn-xs btn-info" 
+													ng-click="showModalDuplicatas()">
 													<i class="fa fa-plus-circle"></i>
 												</button>
 											</th>
@@ -440,12 +462,12 @@
 												<td class="text-center">{{ dup.num_duplicata }}</td>
 												<td class="text-center">{{ dup.dta_vencimento | dateFormat: 'date' }}</td>
 												<td class="text-right">R$ {{ dup.vlr_duplicata | numberFormat : 2 : ',' : '.' }}</td>
-												<td class="text-center" width="300">
-													<select chosen
-														option="plano_contas"
-														ng-model="dup.id_plano_conta"
-														ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
-													</select>
+												<td class="text-center">
+													<button type="button" class="btn btn-xs btn-danger"
+														tooltip="Excluir duplicata" data-toggle="tooltip"
+														ng-if="(!dup.xml)">
+														<i class="fa fa-trash-o"></i>
+													</button>
 												</td>
 											</tr>
 										</tbody>
@@ -453,15 +475,15 @@
 								</div>
 							</div>
 
-							<pre>{{ nota.duplicatas | json }}</pre>
-
 							<div class="row">
 								<div class="col-sm-12">
 									<div class="pull-right">
 										<button ng-click="showBoxNovo(); reset();" id="btn-limpa-form" type="submit" class="btn btn-default btn-sm">
 											<i class="fa fa-times-circle"></i> Cancelar
 										</button>
-										<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." id="btn-salvar-entrada" ng-click="salvar()" type="submit" class="btn btn-success btn-sm">
+										<button id="btn-salvar-entrada" type="submit" class="btn btn-success btn-sm"
+											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." 
+											ng-click="salvar()">
 											<i class="fa fa-save"></i> Salvar
 										</button>
 									</div>
@@ -1384,8 +1406,14 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-						<button type="button" class="btn btn-primary" ng-click="incluirDuplicata(item)">Incluir</button>
+						<button type="button" class="btn btn-default" 
+							data-dismiss="modal">
+							Cancelar
+						</button>
+						<button type="button" class="btn btn-primary" 
+							ng-click="incluirDuplicata(item)">
+							Incluir
+						</button>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
