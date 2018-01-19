@@ -445,7 +445,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 						CFOP: 	'',
 						uCom: 	item.dsc_unidade_medida,
 						qCom: 	item.qtd,
-						vUnCom: item.valor_real_item,
+						vUnCom: item.vlr_produto,
 						vProd: 	item.sub_total
 					};
 
