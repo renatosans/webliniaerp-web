@@ -779,7 +779,7 @@ app.controller('ControleMesasController', function(
 	}
 
 	ng.confirmarPedido = function() {
-		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma o cancelamento do pedido?');
+		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma o pedido?');
 
 		dlg.result.then(
 			function(btn){

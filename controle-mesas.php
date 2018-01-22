@@ -393,7 +393,8 @@
 										<label class="control-label">Localizar comanda</label>
 										<div class="contorls">
 											<div class="input-group">
-												<input id="txt_numero_comanda" class="form-control" type="text" 
+												<input id="txt_numero_comanda" 
+													class="form-control" type="number" 
 													placeholder="comece a digitar..." 
 													ng-enter="enterComanda()" ng-model="busca.numero_comanda">
 												<span class="input-group-btn">
@@ -412,7 +413,7 @@
 								<caption class="text-left text-bold mesa-caption">Comandas abertas</caption>
 								<thead ng-show="mesaSelecionada.comandas.length > 0">
 									<th width="100" class="text-middle text-center">Nº Comanda</th>
-									<th width="100" class="text-middle text-center">Nº Cartão</th>
+									<th width="100" class="text-middle text-center" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">Nº Cartão</th>
 									<th class="text-middle">Cliente</th>
 									<th class="text-middle text-center">Itens</th>
 									<th class="text-middle text-center">Subtotal</th>
@@ -428,7 +429,7 @@
 										ng-click="abrirDetalhesComanda(comanda.id_comanda)"
 										ng-repeat="comanda in mesaSelecionada.comandas | filter : busca.numero_comanda">
 										<td class="text-center">#{{ comanda.id_comanda }}</td>
-										<td class="text-center">{{ comanda.num_cartao_fisico }}</td>
+										<td class="text-center" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">{{ comanda.num_cartao_fisico }}</td>
 										<td ng-if="comanda.id_cliente != configuracao.id_cliente_movimentacao_caixa" >{{ comanda.nome_cliente }}</td>
 										<td ng-if="comanda.id_cliente == configuracao.id_cliente_movimentacao_caixa" ><b>(Cliente não informado)</b></td>
 
@@ -613,7 +614,9 @@
 										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
 										<span class="hidden-xs">Voltar</span>
 									</button>
-									<button ng-click="openModalVincularCartao()" type="button" class="btn btn-xs btn-default" ng-if="(comandaSelecionada.comanda.num_cartao_fisico == null)">
+									<button type="button" class="btn btn-xs btn-default" 
+										ng-if="((configuracao.flg_usa_cartao_magnetico == 1) && (comandaSelecionada.comanda.num_cartao_fisico == null))"
+										ng-click="openModalVincularCartao()">
 										<i class="fa fa-credit-card" aria-hidden="true"></i>
 										<span class="hidden-xs">Vincular Cartão</span>
 									</button>
@@ -751,7 +754,7 @@
 
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-lg-9">
+								<div class="col-lg-{{ (configuracao.flg_modo_selecao_produto == 'grade') ? '9' : '12' }}">
 									<div class="row">
 										<div class="col-xs-12 col-sm-1">
 											<img class="img-responsive" ng-if="!produto.img" src="img/sem-imagem-app.png">
@@ -844,68 +847,68 @@
 												</div>
 											</div>
 										</div>
+									</div>
 
-										<div class="row">
-											<!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
-											<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg">
-												<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
-												<button type="button" class="btn btn-primary btn-block"
-													ng-click="editItemComanda($event)" 
-													ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
-													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-													<i class="fa fa-trash-o"></i> Atualizar Item
-												</button>
-												<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')" -->
-												<button type="button" class="btn btn-danger btn-block" 
+									<div class="row">
+										<!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
+										<div class="col-sm-12 col-md-12 col-lg-12 hidden-sm hidden-md hidden-lg">
+											<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
+											<button type="button" class="btn btn-primary btn-block"
+												ng-click="editItemComanda($event)" 
+												ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
+												data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+												<i class="fa fa-trash-o"></i> Atualizar Item
+											</button>
+											<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')" -->
+											<button type="button" class="btn btn-danger btn-block" 
+												ng-click="excluirItemComanda($event)" 
+												ng-if="(produto.id_item_venda)"
+												data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+												<i class="fa fa-trash-o"></i> Excluir Item
+											</button>
+
+											<button ng-if="!EditProduto"  ng-click="incluirItemComanda($event)"  type="button" class="btn btn-primary btn-block" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."><i class="fa fa-cart-plus "></i>&nbsp;Incluir no carrinho</button>
+											<button  ng-click="cancelarProduto()"  type="button" class="btn btn-default btn-block"><i class="fa fa-ban"></i>&nbsp;Cancelar</button>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
+											<div class="pull-right">
+												<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')"-->
+												<button type="button" class="btn btn-danger"
 													ng-click="excluirItemComanda($event)" 
 													ng-if="(produto.id_item_venda)"
 													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-													<i class="fa fa-trash-o"></i> Excluir Item
+													<i class="fa fa-trash-o"></i>&nbsp;Excluir Item
 												</button>
 
-												<button ng-if="!EditProduto"  ng-click="incluirItemComanda($event)"  type="button" class="btn btn-primary btn-block" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."><i class="fa fa-cart-plus "></i>&nbsp;Incluir no carrinho</button>
-												<button  ng-click="cancelarProduto()"  type="button" class="btn btn-default btn-block"><i class="fa fa-ban"></i>&nbsp;Cancelar</button>
-											</div>
-										</div>
+												<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
+												<button type="button" class="btn btn-primary"
+													ng-click="editItemComanda($event)" 
+													ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
+													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+													<i class="fa fa-trash-o"></i>&nbsp;Atualizar Item
+												</button>
 
-										<div class="row">
-											<div class="col-sm-12 col-md-12 col-lg-12 hidden-xs clearfix"> <!-- EXIBIR APENAS AO PERFIL DE CAIXA -->
-												<div class="pull-right">
-													<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')"-->
-													<button type="button" class="btn btn-danger"
-														ng-click="excluirItemComanda($event)" 
-														ng-if="(produto.id_item_venda)"
-														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-														<i class="fa fa-trash-o"></i>&nbsp;Excluir Item
-													</button>
+												<button type="button" class="btn btn-primary" 
+													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+													ng-if="!EditProduto" 
+													ng-click="incluirItemComanda($event)"
+													>
+													<i class="fa fa-trash-o"></i>&nbsp;Incluir no carrinho
+												</button>
 
-													<!--ng-if="EditProduto && funcioalidadeAuthorized('editar_item_comanda')"-->
-													<button type="button" class="btn btn-primary"
-														ng-click="editItemComanda($event)" 
-														ng-if="(produto.id_item_venda != null && produto.id_ordem_producao == null)"
-														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-														<i class="fa fa-trash-o"></i>&nbsp;Atualizar Item
-													</button>
-
-													<button type="button" class="btn btn-primary" 
-														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
-														ng-if="!EditProduto" 
-														ng-click="incluirItemComanda($event)"
-														>
-														<i class="fa fa-trash-o"></i>&nbsp;Incluir no carrinho
-													</button>
-
-													<button type="button" class="btn btn-default"
-														ng-click="cancelarProduto()">
-														<i class="fa fa-ban"></i>&nbsp;Cancelar
-													</button>
-												</div>
+												<button type="button" class="btn btn-default"
+													ng-click="cancelarProduto()">
+													<i class="fa fa-ban"></i>&nbsp;Cancelar
+												</button>
 											</div>
 										</div>
 									</div>
 								</div>
 
-								<div class="col-lg-3">
+								<div class="col-lg-3" ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
 									<div class="row">
 										<div class="col-lg-12">
 											<table class="table table-bordered table-hover table-condensed table-striped">
@@ -1014,7 +1017,7 @@
 							</legend>
 
 							<div class="row">
-								<div class="col-lg-9">
+								<div class="col-lg-{{ (configuracao.flg_modo_selecao_produto == 'grade') ? '9' : '12' }}">
 									<!-- LISTA CATEGORIA -->
 									<div class="row" ng-show="getTipoBuscaProduto()=='categoria'">
 										<div class="col-xs-6 col-sm-3" ng-repeat="categoria in categoriasProduto">
@@ -1044,7 +1047,7 @@
 									</div>
 								</div>
 
-								<div class="col-lg-3">
+								<div class="col-lg-3" ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
 									<div class="row">
 										<div class="col-lg-12">
 											<table class="table table-bordered table-hover table-condensed table-striped">
@@ -1117,7 +1120,7 @@
 							</legend>
 							
 							<div class="row">
-								<div class="col-lg-9">
+								<div class="col-lg-{{ (configuracao.flg_modo_selecao_produto == 'grade') ? '9' : '12' }}">
 									<div class="row">
 										<div class="col-lg-12">
 											<div class="form-group">
@@ -1161,7 +1164,7 @@
 									</div>
 								</div>
 
-								<div class="col-lg-3">
+								<div class="col-lg-3" ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
 									<div class="row">
 										<div class="col-lg-12">
 											<table class="table table-bordered table-hover table-condensed table-striped">

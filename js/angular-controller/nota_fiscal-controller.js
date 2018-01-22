@@ -269,7 +269,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 		if(url_params.id_transferencia)
 			ng.NF.dados_emissao.cod_transferencia = url_params.id_transferencia ;
 
-		aj.post(baseUrlApi()+"nfe/send", ng.NF)
+		aj.post(baseUrlApi()+"nfe/send", {nota: JSON.stringify(ng.NF)})
 			.success(function(data, status, headers, config) {
 				btn.button('reset');
 				if(status == 202){
