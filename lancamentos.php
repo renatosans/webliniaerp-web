@@ -1655,7 +1655,6 @@
     				</div>
 				    <div class="modal-body">
 				    	<div class="alert alert-edit" style="display:none"></div>
-				    	<pre>{{ pagamento_edit | json }}</pre>
 				    	<div class="row">
 							<div class="col-sm-3" ng-if="flg_valid_venda == 0">
 								<div class="form-group">
