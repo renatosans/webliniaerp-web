@@ -9,3 +9,10 @@ modified:   js/constants.js
 modified:   pdv.php
 modified:   produtos.php
 modified:   util/constants.php
+
+
+ modified:   controller/ProdutoController.php
+ modified:   controller/VendaController.php
+ modified:   dao/EstoqueDao.php
+ modified:   dao/ProdutoDao.php
+    modified:   model/ProdutoTO.php
