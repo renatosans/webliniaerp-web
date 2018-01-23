@@ -1755,13 +1755,14 @@
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
         					<i class="fa fa-times-circle-o"></i> Fechar Janela
         				</button>
-						<h4 ng-if="cdb_busca.status==false">Pesquisa de Produtos</span></h4>
-						<h4 ng-if="cdb_busca.status==true" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
-						<span ng-if="cdb_busca.status==true" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
+        				<h4 ng-if="mostrar_validades">Selecione a validade desejada</span></h4>
+						<h4 ng-if="cdb_busca.status==false && mostrar_validades == false">Pesquisa de Produtos</span></h4>
+						<h4 ng-if="cdb_busca.status==true && mostrar_validades == false" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
+						<span ng-if="cdb_busca.status==true && mostrar_validades == false" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
       				</div>
 
 				    <div class="modal-body">
-						<div class="row">
+						<div class="row" ng-if="mostrar_validades == false">
 							<div class="col-md-12">
 								<div class="input-group">
 						            <input ng-model="busca.produtos" id="foco" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" 
@@ -1783,7 +1784,7 @@
 							<div class="col-md-12 table-responsive">
 								<div class="alert alert-produtos" style="display:none"></div>
 
-								<div class="table-responsive">
+								<div class="table-responsive" ng-if="mostrar_validades == false">
 							   		<table class="table table-bordered table-striped table-hover">
 										<thead ng-show="(produtos.length != 0)">
 											<tr>
@@ -1976,7 +1977,7 @@
 													R$ {{ item.vlr_unitario | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}
 												</td>
 												<td class="text-center text-middle">
-													<button type="button" 
+													<button type="button" ng-if="(item.flg_controlar_validade != 1)"
 														ng-click="addProduto(item, index)"
 														class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}}"
 														data-loading-text="Aguarde...">
@@ -1988,6 +1989,15 @@
 														</span>
 														<span ng-if="((add_index === index) && (loading_add_produto))">
 															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+													</button>
+													<button
+														class="btn"
+														type="button" ng-if="(item.flg_controlar_validade == 1)"
+														ng-click="mostrarValidades(item, index)"
+													>
+														
+															<i class="fa fa-calendar"></i>
 														</span>
 													</button>
 												</td>
@@ -2005,7 +2015,7 @@
 			    				Fechar Janela
 			    			</button>
 			    		</div>
-			    		<div class="pull-right">
+			    		<div class="pull-right" ng-if="mostrar_validades == false">
 							<div class="input-group">
 					             <ul class="pagination m-top-none" ng-show="paginacao.produtos.length > 1">
 									<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">

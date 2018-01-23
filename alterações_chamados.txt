@@ -1,12 +1,11 @@
-426 : 
-	API:
-		modified: dao/NotaFiscalDao.php
-		modified: controller/NfeController.php
-        modified: dao/ItemTransferenciaEstoqueDao.php
-        modified: model/NotaFiscalTO.php
-	WEB:
-		modified: js/angular-services/user-service.js
-		modified: js/angular-controller/nota_fiscal-controller.js
-        modified: js/angular-controller/notas_fiscais-controller.js
-        modified: nota-fiscal.php
-        modified: notas-fiscais.php
+ALTER TABLE `tbl_produtos`
+	ADD COLUMN `flg_controlar_validade` INT(1) NULL DEFAULT '0' AFTER `flg_controlar_lote`;
+
+
+modified:   "altera\303\247\303\265es_chamados.txt"
+modified:   js/angular-controller/pdv-controller.js
+modified:   js/angular-controller/produtos-controller.js
+modified:   js/constants.js
+modified:   pdv.php
+modified:   produtos.php
+modified:   util/constants.php
