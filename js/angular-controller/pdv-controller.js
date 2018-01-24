@@ -1,6 +1,7 @@
 app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService) {
 	var ng = $scope,
 		aj = $http;
+	ng.mostrar_validades 	= false ;
 	ng.userLogged 	 		= UserService.getUserLogado();
 	ng.pth_local            = $.cookie('pth_local');
 	ng.caixa_open           = CaixaService.getCaixaAberto(ng.userLogged.id_empreendimento,ng.pth_local,ng.userLogged.id);
@@ -4774,6 +4775,31 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.clearCloseWindowBlock = function() {
 		window.onbeforeunload = undefined;
+	}
+
+	ng.mostrarValidades = function(item,index){
+		ng.produto_selecionar_validade = angular.copy(item);
+		ng.lista_produto_selecionar_validade = [] ;
+		ng.mostrar_validades = true ;
+		var _in = ''; 
+		$.each(ng.caixa.depositos,function(i,v){
+			_in += v+',';
+		});
+		_in = _in.substring(0,_in.length-1)
+
+		aj.get(baseUrlApi()+"estoque/deposito/"+ng.userLogged.id_empreendimento+"?pro->id="+item.id_produto+"&est->id_deposito[exp]=IN("+_in+")")
+			.success(function(data, status, headers, config) {
+				$.each(data,function(i,v){
+					var aux = angular.copy(item);
+					aux.dta_validade = v.dta_validade ;
+					aux.qtd_item = v.qtd_item ;
+					ng.lista_produto_selecionar_validade.push(aux);
+				});
+			})
+			.error(function(data, status, headers, config) {
+					
+			});
+
 	}
 
 	ng.selectMargemAplicadaInicial();	

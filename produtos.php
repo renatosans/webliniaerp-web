@@ -484,6 +484,23 @@
 												</div>
 												<div class="col-sm-3">
 													<div class="form-group">
+														<label for="" class="control-label">Estoque controlado por validade?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_controlar_validade"  name="controlar_validade" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_controlar_validade"  name="controlar_validade" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
 														<label for="" class="control-label">Unidade de Medida</label>
 														<div class="form-group">
 															<label class="label-radio inline">
