@@ -57,27 +57,27 @@ app.controller('RelatorioSangrias', function($scope, $http, $window, UserService
 					ng.vlr_total_sangrias += item.valor_pagamento;
 				});
 
-				ng.planos_contas = _.groupBy(ng.pagamentos, 'dsc_plano');
-				$.each(ng.planos_contas, function(nme_plano_conta, itens){
-				    ng.planos_contas[nme_plano_conta].itens = itens;
-				    ng.planos_contas[nme_plano_conta].total = 0;
-				    $.each(ng.planos_contas[nme_plano_conta].itens, function(i, item){
-				        ng.planos_contas[nme_plano_conta].total += item.valor_pagamento;
-				    });
-				});
-				
-
 				ng.pagamentos 			 = data.vendas;
-				ng.paginacao.pagamentos  = data.paginacao;
 				$("#modal-aguarde").modal('hide');
+				ng.loadTotaPlanoContas();
 			})
 			.error(function(data, status, headers, config) {
 				ng.pagamentos = null;
 				ng.status = status;
 				ng.msg_error = data;
-				ng.paginacao.pagamentos = [];
 				$("#modal-aguarde").modal('hide');
 			});
+	}
+
+	ng.loadTotaPlanoContas = function(){
+		ng.planos_contas = _.groupBy(ng.pagamentos, 'dsc_plano');
+		$.each(ng.planos_contas, function(nme_plano_conta, itens){
+		    ng.planos_contas[nme_plano_conta].itens = itens;
+		    ng.planos_contas[nme_plano_conta].total = 0;
+		    $.each(ng.planos_contas[nme_plano_conta].itens, function(i, item){
+		        ng.planos_contas[nme_plano_conta].total += item.valor_pagamento;
+		    });
+		});
 	}
 
 	ng.reset();
