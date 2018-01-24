@@ -4143,6 +4143,40 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		});
 	}
 
+	ng.modalCancelarCupomSat = function(){
+		$('#modal-cancelar-cupom-sat').modal('show');
+		ng.loadVendasCancelarSat();
+	}
+
+	ng.loadVendasCancelarSat = function(){
+		var dta_inicio = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+		var dta_fim = moment().format('YYYY-MM-DD HH:mm:ss');
+		var query_string = "?cod_empreendimento=" + ng.userLogged.id_empreendimento + "&dta_inicial=" + dta_inicio + "&dta_final=" + dta_fim;
+
+		ng.vendas_cancelar_sat = [];
+		aj.get(baseUrlApi()+"nota_fiscal/sat"+query_string)
+			.success(function(data, status, headers, config) {
+				ng.vendas_cancelar_sat = data;
+			})
+			.error(function(data, status, headers, config) {
+				ng.vendas_cancelar_sat = [];
+			});
+	}
+
+	ng.cancelarSat = function(item){
+		var post = {
+				cod_venda : item.cod_venda
+			};
+
+		aj.post(baseUrlApi()+"nota_fiscal/cancelarSat",post)
+			.success(function(data, status, headers, config) {
+				$('#modal-cancelar-cupom-sat').modal('hide');
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
 	ng.showModalReimpressaoCNF = function(){
 		ng.process_reimprimir_cnf = false ;
 		ng.cod_nota_fiscal_reimprimir_cnf = null ;
