@@ -3485,6 +3485,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('#modal_cadastro_rapido_cliente').on('shown.bs.modal', function (e) {
 			$('#modal_cadastro_rapido_cliente input#nome').focus();
 		});
+		ng.loadComoEncontrou();
+	}
+
+	ng.loadComoEncontrou = function () {
+		ng.comoencontrou = [];
+
+		aj.get(baseUrlApi()+"comoencontrou")
+		.success(function(data, status, headers, config) {
+			data.push({id:"outros",nome:"Outros"});
+			ng.comoencontrou = data;
+		})
+		.error(function(data, status, headers, config) {
+
+		});
 	}
 
 	ng.getIdentificadorCliente = function(){

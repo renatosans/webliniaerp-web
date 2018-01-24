@@ -2384,6 +2384,18 @@
 													</select>
 												</div>
 											</div>
+											<div class="col-sm-2">
+												<div id="id_como_encontrou" class="form-group">
+													<label class="control-label">Como Encontrou?</label>
+													<select class="form-control input-sm" ng-model="new_cliente.id_como_encontrou" ng-options="a.id as a.nome for a in comoencontrou"><option value=""></option></select>
+												</div>
+											</div>
+											<div class="col-sm-4" ng-show="new_cliente.id_como_encontrou == 'outros' ">
+											<div id="como_entrou_outros" class="form-group">
+												<label class="control-label">Descreva</label>
+												<input type="text" class="form-control input-sm" ng-model="cliente.como_entrou_outros">
+											</div>
+										</div>
 										</div>
 										<div class="row">
 										<div class="col-sm-2">
