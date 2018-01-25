@@ -387,6 +387,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.ajustaDescontoProdutoCarrinho(produto);
 		}
 		else {
+			produto.validade = produto.dta_validade ;
 			ng.carrinho.push(produto);
 			
 			if(ng.exibeColunaPesquisaProduto('desconto') || ng.is_venda_bonificada)
@@ -402,7 +403,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var index = false ;
 		$.each(ng.carrinho,function(i,v){
 			if(!empty(produto.id_produto)){
-				if(v.id_produto == produto.id_produto){
+				if(
+					( (v.id_produto == produto.id_produto) && (produto.flg_controlar_validade == 0) )
+					||
+					( (v.id_produto == produto.id_produto) && (produto.flg_controlar_validade == 1) && (produto.dta_validade == v.dta_validade) )
+				){
 					index = i ;
 					return ;
 				}
@@ -776,6 +781,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			}); 
 	}
 
+	ng.getIdprodutoCarrinho = function(item){
+		if(item.flg_controlar_validade == 1) return item.id_produto+"_"+item.dta_validade ;
+		else return item.id_produto;
+	}
+
 	ng.clearOutProdutos = function(){
 		$('#tbl_carrinho tr td').css({background:""});
 	}
@@ -853,9 +863,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.receber_pagamento = false;
 					if(data.out_estoque.length > 0){
 						$.each(data.out_estoque,function(i, value){
+							
+							if(!empty(value.validade)) var IdTrProduto = value.id_produto+"_"+value.validade;
+							else var IdTrProduto = value.id_produto ;
+
 							ng.out_produtos.push(value);
 							setTimeout(function(){
-								$("#"+value+" td").css({background:"#FF9191"});
+								$("#"+IdTrProduto+" td").css({background:"#FF9191"});
 							}, 300);
 							ng.recebidos = [];
 							ng.totalPagamento();
@@ -980,12 +994,28 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.verificaOutEstoque = function(item){
 		exists = false ;
 		$.each(ng.out_produtos,function(i,v){
-			if(Number(v[0]) == Number(item.id_produto)){
+
+			if( (Number(v.id_produto) == Number(item.id_produto)) && item.flg_controlar_validade !=1 ){
+				exists = true ;
+				return ;
+			}else if( (Number(v.id_produto) == Number(item.id_produto)) && (item.validade == v.validade) ){
 				exists = true ;
 				return ;
 			}
 		});
 		return exists ;
+	}
+
+	ng.existeProdutoValidade = function(){
+		var x = false ;
+		$.each(ng.carrinho,function(i,v){
+			if(v.flg_controlar_validade == 1){
+				x = true ;
+				return 
+			}
+		});
+
+		return x ;
 	}
 
 	ng.autorizarDesconto = function(){
@@ -1548,10 +1578,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.produtos = data.produtos;
 				ng.paginacao.produtos = data.paginacao;
 
-				angular.forEach(ng.carrinho, function(prd_car){
-					angular.forEach(ng.produtos, function(prd_modal, idx_modal){
+				angular.forEach(ng.produtos, function(prd_modal, idx_modal){
+					angular.forEach(ng.carrinho, function(prd_car){
+						
 						if(prd_modal.id_produto === prd_car.id_produto) {
-							prd_modal.qtd_total 			= prd_car.qtd_total;
+							if(empty(prd_modal.qtd_total))  prd_modal.qtd_total = 0 ;
+							prd_modal.qtd_total 			+= prd_car.qtd_total;
 							prd_modal.flg_desconto 			= prd_car.flg_desconto;
 							prd_modal.tipo_desconto 		= prd_car.tipo_desconto;
 							prd_modal.valor_desconto 		= prd_car.valor_desconto;
@@ -1570,7 +1602,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.isProdutoSelecionado = function(produto) {
-		return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
+		if(produto.flg_controlar_validade == 1)
+			return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto,dta_validade:produto.dta_validade}));
+		else
+			return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
 	}
 
 	ng.getProdutoTaxaServico = function() {
@@ -1603,6 +1638,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.findProductByBarCode = function(offset,limit) {
+		ng.mostrar_validades = false ;
 		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 10 : limit;
 		var depositos = ng.caixa.depositos ;
@@ -1625,8 +1661,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.busca.ok = !ng.busca.ok;
 			
 			//$http.get(baseUrlApi()+"estoque/?group&(prd->codigo_barra[exp]=="+codigo+"%20OR%20prd.id="+codigo+")&emp->id_empreendimento="+ng.userLogged.id_empreendimento+"&prd->flg_excluido=0")
-
 			//var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&tp->codigo_barra="+ codigo;
+			
 			var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0";
 				query_string += "&("+$.param({'tp->id':{exp:"='"+codigo+"%' OR tp.codigo_barra like '%"+codigo+"%'"}})+")";
 
@@ -1690,6 +1726,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		if(item.flg_controlar_lote != 1){
 			ng.add_index = index;
+			ng.add_validade = item.dta_validade ;
 			ng.loading_add_produto = true;
 
 			item.vlr_venda_atacado = item.vlr_venda_atacado;
@@ -4743,6 +4780,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		window.onbeforeunload = undefined;
 	}
 
+	ng.voltarListaProdutos = function(){
+		ng.mostrar_validades = false ;
+	}
+
 	ng.mostrarValidades = function(item,index){
 		ng.produto_selecionar_validade = angular.copy(item);
 		ng.lista_produto_selecionar_validade = [] ;
@@ -4759,6 +4800,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					var aux = angular.copy(item);
 					aux.dta_validade = v.dta_validade ;
 					aux.qtd_item = v.qtd_item ;
+					var index = ng.getIndexProdutoCarrinho(aux);
+					if(index !== false){
+						aux.qtd_total = ng.carrinho[index].qtd_total  ;
+						aux.flg_desconto = ng.carrinho[index].flg_desconto ;
+						aux.tipo_desconto = ng.carrinho[index].tipo_desconto ;
+						aux.valor_desconto = ng.carrinho[index].valor_desconto ;
+						aux.valor_desconto_real =  ng.carrinho[index].valor_desconto_real ;
+					}else{
+						aux.qtd_total = null ;
+					}
 					ng.lista_produto_selecionar_validade.push(aux);
 				});
 			})

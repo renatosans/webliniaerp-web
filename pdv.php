@@ -1115,6 +1115,7 @@
 															<th ng-show="show_aditional_columns">Fabricante</th>
 															<th ng-show="show_aditional_columns">Tamanho</th>
 															<th ng-show="show_aditional_columns">Sabor/Cor</th>
+															<th class="text-center" style="width: 100px;" ng-if="existeProdutoValidade()" >Validade</th>
 															<th class="text-center" style="width: 80px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
@@ -1127,13 +1128,14 @@
 														</tr>
 													</thead>
 													<tbody>
-														<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}" 
+														<tr ng-repeat="item in carrinho" id="{{ getIdprodutoCarrinho(item) }}" 
 															ng-class="{'error-estoque': verificaOutEstoque(item) }"
 															ng-click="showFotoProduto(item)">
 															<td>{{ item.nome_produto }}</td>
 															<td ng-show="show_aditional_columns">{{ item.nome_fabricante }}</td>
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
+															<td class="text-center"  ng-if="existeProdutoValidade()" >{{ item.flg_controlar_validade == 1 && (item.validade | dateFormat:'date') || '' }}</td>
 															<td class="text-center" width="80">
 																<input type="text" 
 																	class="form-control text-center input-xs"
@@ -1755,7 +1757,7 @@
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
         					<i class="fa fa-times-circle-o"></i> Fechar Janela
         				</button>
-        				<h4 ng-if="mostrar_validades">Selecione a validade desejada</span></h4>
+        				<h4 ng-if="mostrar_validades">Selecione a validade</span></h4>
 						<h4 ng-if="cdb_busca.status==false && mostrar_validades == false">Pesquisa de Produtos</span></h4>
 						<h4 ng-if="cdb_busca.status==true && mostrar_validades == false" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
 						<span ng-if="cdb_busca.status==true && mostrar_validades == false" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
@@ -1779,6 +1781,58 @@
 						</div>
 
 						<br>
+
+						<div class="row" ng-if="mostrar_validades">
+							<div class="col-md-12 table-responsive">
+								<div class="alert alert-produtos" style="display:none"></div>
+									<table style="width: auto !important;margin: 0 auto;" class="table table-bordered table-striped table-hover">
+										<thead>
+											<tr>
+												<td colspan="4" style="text-align: center">
+													{{ produto_selecionar_validade.nome_produto }}	
+												</td>
+											</tr>
+											<tr>
+												<td style="text-align: center;width: 150px">
+													Validade
+												</td>
+												<td style="text-align: center;width: 150px">
+													Estoque
+												</td>
+
+												<td style="text-align: center;width: 100px">
+													Qtd
+												</td>
+												<td style="text-align: center;width: 50px">
+													
+												</td>
+											</tr>
+											<tr ng-repeat="item in lista_produto_selecionar_validade">
+												<td style="text-align: center">{{ item.dta_validade | dateFormat:'date' }}</td>
+												<td style="text-align: center">{{ item.qtd_item }}</td>
+												<td >
+													<input type="text" class="form-control text-center no-padding" ng-model="item.qtd_total" style="font-size: 10px;" />
+												</td>
+												<td>
+													<button type="button" class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}} data-loading-text="Aguarde..." ng-click="addProduto(item, index)">
+														<span>
+																<span ng-if="!(isProdutoSelecionado(item)) && !((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-check-square-o"></i>
+														</span>
+														<span ng-if="(isProdutoSelecionado(item)) && !((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-refresh"></i>
+														</span>
+														<span ng-if="((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+														</span>
+													</button>
+												</td>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							</div>
 
 						<div class="row">
 							<div class="col-md-12 table-responsive">
@@ -1949,11 +2003,13 @@
 												<td style="min-width: {{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px;">
 													<input type="text" class="form-control text-center"
 														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && !(item.flg_unidade_fracao == 1)"
-														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
+														ng-disabled="item.flg_controlar_validade == 1"/>
 													<input type="text" class="form-control text-center"
 														thousands-formatter precision="3"
 														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && (item.flg_unidade_fracao == 1)"
-														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
+														ng-disabled="item.flg_controlar_validade == 1"/>
 
 													<div class="input-group" ng-if="(configuracoes.flg_botoes_quantidade_pesquisa_produto)">
 														<span class="input-group-btn">
@@ -2014,6 +2070,11 @@
 			    			<button class="btn btn-default" data-dismiss="modal">
 			    				Fechar Janela
 			    			</button>
+
+			    			<button ng-if="mostrar_validades" ng-click="voltarListaProdutos()" class="btn btn-info">
+			    				Voltar a lista
+			    			</button>
+
 			    		</div>
 			    		<div class="pull-right" ng-if="mostrar_validades == false">
 							<div class="input-group">
