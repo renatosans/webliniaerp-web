@@ -194,173 +194,233 @@
 					<div class="panel-body">
 						<div class="panel-body">
 							<div class="alert alert-pagamento" style="display:none"></div>
-							<div class="row">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input name="tipoLancamento" ng-model="flgTipoLancamento" value="1" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-danger">Despesa</span>
+											</label>
 
-										<div class="col-sm-12">
-											<div class="form-group">
-												<label class="label-radio inline">
-													<input name="tipoLancamento" ng-model="flgTipoLancamento" value="1" type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span class="text-danger">Despesa</span>
-												</label>
+											<label class="label-radio inline">
+												<input name="tipoLancamento" ng-model="flgTipoLancamento" value="0" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-success">Receita</span>
+											</label>
 
-												<label class="label-radio inline">
-													<input name="tipoLancamento" ng-model="flgTipoLancamento" value="0" type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span class="text-success">Receita</span>
-												</label>
-											</div>
+											<label class="label-radio inline">
+												<input name="tipoLancamento" ng-model="flgTipoLancamento" value="2" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-bold">Transferência</span>
+											</label>
 										</div>
+									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12" ng-if="flgTipoLancamento == 0" id="id_cliente">
-					    				<div class="form-group">
-												<label class="control-label">Cliente</label>
-												<div class="input-group">
-													<input ng-click="selCliente(0,10)"  type="text" class="form-control" ng-model="cliente.nome" readonly="readonly" style="cursor: pointer;" />
-													<span class="input-group-btn">
-														<button ng-click="selCliente(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
-													</span>
-												</div>
+										<div class="form-group">
+											<label class="control-label">Cliente</label>
+											<div class="input-group">
+												<input ng-click="selCliente(0,10)"  type="text" class="form-control" ng-model="cliente.nome" readonly="readonly" style="cursor: pointer;" />
+												<span class="input-group-btn">
+													<button ng-click="selCliente(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
+												</span>
+											</div>
 										</div>
-					    			</div>
-					    			<div class="col-sm-12" ng-if="flgTipoLancamento == 1"  id="id_fornecedor">
-					    				<div class="form-group">
-												<label class="control-label">Fornecedores</label>
-												<div class="input-group">
-													<input ng-click="selFornecedor(0,10)"  type="text" class="form-control" ng-model="fornecedor.nome_fornecedor" readonly="readonly" style="cursor: pointer;" />
-													<span class="input-group-btn">
-														<button ng-click="selFornecedor(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
-													</span>
-												</div>
+									</div>
+									<div class="col-sm-12" ng-if="flgTipoLancamento == 1"  id="id_fornecedor">
+										<div class="form-group">
+											<label class="control-label">Fornecedores</label>
+											<div class="input-group">
+												<input ng-click="selFornecedor(0,10)"  type="text" class="form-control" ng-model="fornecedor.nome_fornecedor" readonly="readonly" style="cursor: pointer;" />
+												<span class="input-group-btn">
+													<button ng-click="selFornecedor(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
+												</span>
+											</div>
 										</div>
-					    			</div>
+									</div>
 								</div>
 								<div class="row" ng-if="flgTipoLancamento == 0 && cliente.vlr_saldo_devedor < 0">
 									<div class="col-sm-12">
-									<span style="font-weight:bold;color:#777">Saldo: </span>
-									<span style="font-weight:bold;color:#E62C2C">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
+										<span style="font-weight:bold;color:#777">Saldo: </span>
+										<span style="font-weight:bold;color:#E62C2C">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
 									</div>
 								</div>
 								<div class="row" ng-if="flgTipoLancamento == 0 && cliente.vlr_saldo_devedor >= 0">
 									<div class="col-sm-12">
-									<span style="font-weight:bold;color:#777">Saldo: </span>
-									<span style="font-weight:bold;color:#1A7204">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
+										<span style="font-weight:bold;color:#777">Saldo: </span>
+										<span style="font-weight:bold;color:#1A7204">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
+									</div>
+								</div>
+								<div ng-show="flgTipoLancamento == 2">
+									<div class="row">
+										<div class="col-sm-2">
+											<div class="form-group">
+												<label class="control-label">Data Transferência</label>
+												<div class="input-group">
+													<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_transferencia" class="datepicker form-control text-center" ng-model="dta_pagamento">
+													<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+												</div>
+											</div>	
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group" id="id_conta_bancaria_origem">
+												<label class="control-label">Conta de origem</label>
+												<select ng-model="transferencia.id_conta_bancaria_origem" class="form-control">
+													<option ></option>
+													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group" id="id_conta_bancaria_destino">
+												<label class="control-label">Conta de destino</label>
+												<select ng-model="transferencia.id_conta_bancaria_destino" class="form-control">
+													<option ></option>
+													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<div class="form-group">
+												<label class="control-label">Valor</label>
+												<input class="form-control text-right" type="text" name="valor" ng-model="transferencia.vlr_transferencia" thousands-formatter>
+											</div>
+										</div>
+										
+									</div>
+									<div class="row">
+										<div class="col-sm-8">
+											<div class="form-group">
+												<label class="control-label">Observação</label>
+												<textarea class="form-control" ng-model="transferencia.obs_transferencia" rows="5"></textarea>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12">
-									<hr>
+										<hr>
 									</div>
 								</div>
-
-					    	<div class="row">
-					    		<div class="col-sm-9">
-								<div class="row">
-									<div class="col-sm-4" id="pagamento_forma_pagamento">
-						    			<label class="control-label">Forma de Pagamento</label>
-										<select ng-model="pagamento.id_forma_pagamento" ng-change="selectChange(pagamento.id_forma_pagamento)" class="form-control">
-											<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
-											<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
-										</select>
-									</div>
-					    			<div class="col-sm-8">
-										<div class="form-group" id="regimeTributario">
-											<label class="ccontrol-label">Plano de conta </label> 
-											<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
-										    option="plano_contas"
-										    ng-model="pagamento.id_plano_conta"
-										    ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
-											</select>
+								<div class="row" ng-if="flgTipoLancamento == 2">
+									<div class="col-sm-12">
+										<div class="pull-right">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." type="submit" class="btn btn-success" ng-click="salvarTransferencia()">
+												<i class="fa fa-save"></i> Salvar
+											</button>
 										</div>
 									</div>
-					    			<div class="col-sm-4" id="pagamento_id_banco" ng-if="pagamento.id_forma_pagamento == 8">
-										<div class="form-group" >
-											<label class="control-label">Banco</label>
-											<select chosen
-											    option="bancos"
-											    ng-model="pagamento.id_banco"
-											    ng-options="banco.id as banco.nome for banco in bancos">
+								</div>
+								<div class="row" ng-show="flgTipoLancamento == 0 || flgTipoLancamento == 1">
+									<div class="col-sm-9">
+										<div class="row">
+											<div class="col-sm-4" id="pagamento_forma_pagamento">
+												<label class="control-label">Forma de Pagamento</label>
+												<select ng-model="pagamento.id_forma_pagamento" ng-change="selectChange(pagamento.id_forma_pagamento)" class="form-control">
+													<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
+													<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
+												</select>
+											</div>
+											<div class="col-sm-8">
+												<div class="form-group" id="regimeTributario">
+													<label class="ccontrol-label">Plano de conta </label> 
+													<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
+													option="plano_contas"
+													ng-model="pagamento.id_plano_conta"
+													ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-4" id="pagamento_id_banco" ng-if="pagamento.id_forma_pagamento == 8">
+											<div class="form-group" >
+												<label class="control-label">Banco</label>
+												<select chosen
+												option="bancos"
+												ng-model="pagamento.id_banco"
+												ng-options="banco.id as banco.nome for banco in bancos">
 											</select>
 										</div>
 									</div>
 
 									<div class="col-sm-4" id="pagamento_agencia_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
-						    			<label class="control-label">Agência</label>
-						    			<div class="form-group ">
-						    					<input ng-model="pagamento.agencia_transferencia"  type="text" class="form-control" />
-						    			</div>
-						    		</div>
+										<label class="control-label">Agência</label>
+										<div class="form-group ">
+											<input ng-model="pagamento.agencia_transferencia"  type="text" class="form-control" />
+										</div>
+									</div>
 
-						    		<div class="col-sm-4" id="pagamento_conta_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
-						    			<label class="control-label">Conta</label>
-						    			<div class="form-group ">
-						    					<input ng-model="pagamento.conta_transferencia"  type="text" class="form-control" />
-						    			</div>
-						    		</div>
+									<div class="col-sm-4" id="pagamento_conta_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
+										<label class="control-label">Conta</label>
+										<div class="form-group ">
+											<input ng-model="pagamento.conta_transferencia"  type="text" class="form-control" />
+										</div>
+									</div>
+								</div>
 
-
-					    		</div>
-						    	<div class="row">
-						    		<div class="col-sm-4" ng-if="pagamento.id_forma_pagamento != 8 ">
-											<div class="form-group" id="id_conta_bancaria">
-												<label class="control-label">Conta</label>
-												<select ng-model="pagamento.id_conta_bancaria" class="form-control" ng-disabled="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0)">
-													<option ></option>
-													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
-												</select>
-											</div>
+								<div class="row">
+									<div class="col-sm-4" ng-if="pagamento.id_forma_pagamento != 8 ">
+										<div class="form-group" id="id_conta_bancaria">
+											<label class="control-label">Conta</label>
+											<select ng-model="pagamento.id_conta_bancaria" class="form-control" ng-disabled="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0)">
+												<option ></option>
+												<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+											</select>
+										</div>
 									</div>
 									<div class="col-sm-3" id="proprietario_conta_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
-						    			<label class="control-label">Proprietário</label>
-						    			<div class="form-group ">
-						    					<input ng-model="pagamento.proprietario_conta_transferencia" type="text" class="form-control" />
-						    			</div>
-						    		</div>
+										<label class="control-label">Proprietário</label>
+										<div class="form-group ">
+											<input ng-model="pagamento.proprietario_conta_transferencia" type="text" class="form-control" />
+										</div>
+									</div>
 									<div  ng-class="{'col-sm-3':pagamento.id_forma_pagamento == 8,'col-sm-4':pagamento.id_forma_pagamento != 8}" ng-show="pagamento.id_forma_pagamento != 6 && pagamento.id_forma_pagamento != 2 && pagamento.id_forma_pagamento != 4">
-											<div class="form-group cheque_data">
-												<label class="control-label">Data do pagamento</label>
-												<div class="input-group">
-													<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control data-cc">
-													<span class="input-group-addon" class="cld_pagameto"><i class="fa fa-calendar"></i></span>
-												</div>
+										<div class="form-group cheque_data">
+											<label class="control-label">Data do pagamento</label>
+											<div class="input-group">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control data-cc">
+												<span class="input-group-addon" class="cld_pagameto"><i class="fa fa-calendar"></i></span>
 											</div>
+										</div>
 									</div>
 									<div class="col-sm-3" id="pagamento_id_conta_transferencia_destino" ng-if="pagamento.id_forma_pagamento == 8 ">
-						    			<label class="control-label">Conta de Destino</label>
+										<label class="control-label">Conta de Destino</label>
 										<select ng-model="pagamento.id_conta_transferencia_destino" class="form-control input-sm">
 											<option ng-repeat="item in contas" value="{{ item.id }}">#{{ item.id }} - {{ item.dsc_conta_bancaria }}</option>
 										</select>
 									</div>
 									<!--<div class="col-sm-3" ng-show="pagamento.id_forma_pagamento == 8">
-											<div class="form-group cheque_data">
-												<label class="control-label">Data do pagamento</label>
-												<div class="input-group">
-													<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control data-cc">
-													<span class="input-group-addon" class="cld_pagameto"><i class="fa fa-calendar"></i></span>
-												</div>
+										<div class="form-group cheque_data">
+											<label class="control-label">Data do pagamento</label>
+											<div class="input-group">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control data-cc">
+												<span class="input-group-addon" class="cld_pagameto"><i class="fa fa-calendar"></i></span>
 											</div>
+										</div>
 									</div>-->
-						    		<div class="col-sm-4" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 8">
-						    			<label class="control-label">Valor</label>
-						    			<div class="form-group ">
-						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
-						    			</div>
-						    		</div>
-						    		<div class="col-sm-3" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 8">
-						    			<label class="control-label">Valor</label>
-						    			<div class="form-group ">
-						    					<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
-						    			</div>
-						    		</div>
-						    		<div class="col-sm-4" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 6 || pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4">
-						    			<label class="control-label">parcelas</label>
-						    			<div class="form-group ">
-						    					<input ng-blur="pushCheques()" ng-focus="qtdCheque()" ng-model="pagamento.parcelas" type="text" class="form-control" >
-						    			</div>
-						    		</div>
+									<div class="col-sm-4" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 8">
+										<label class="control-label">Valor</label>
+										<div class="form-group ">
+											<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
+										</div>
+									</div>
+									<div class="col-sm-3" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 8">
+										<label class="control-label">Valor</label>
+										<div class="form-group ">
+											<input ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 " ng-model="pagamento.valor" thousands-formatter type="text" class="form-control" />
+										</div>
+									</div>
+									<div class="col-sm-4" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 6 || pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4">
+										<label class="control-label">parcelas</label>
+										<div class="form-group ">
+											<input ng-blur="pushCheques()" ng-focus="qtdCheque()" ng-model="pagamento.parcelas" type="text" class="form-control" >
+										</div>
+									</div>
 
-						    	</div>
+								</div>
 
 						    	<div class="row">
 						    		<div class="col-sm-4" ng-show="pagamento.id_forma_pagamento == 6">
@@ -798,6 +858,25 @@
 
 										</tr>
 									</thead>
+									<tr>
+										<td class="text-right text-bold" colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}">Saldo Anterior</td>
+										<td class="text-right text-bold text-success">R$ {{ saldo_anterior_receita.vlr_total_despesa | numberFormat : 2 : ',' : '.' }}</td>
+										<td class="text-right text-bold text-danger"> R$ {{ saldo_anterior_despesa.vlr_total_despesa | numberFormat : 2 : ',' : '.' }}</td>
+										<td class="text-right">
+											<span class="text-bold text-danger" ng-if="(saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) < 0">
+												R$ {{ (saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) | numberFormat: '2' : ',' : '.' }}
+											</span>
+
+											<span class="text-bold text-primary" ng-if="(saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) = 0">
+												R$ {{ (saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) | numberFormat: '2' : ',' : '.' }}
+											</span>
+
+											<span class="text-bold text-success" ng-if="(saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) > 0">
+												R$ {{ (saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) | numberFormat: '2' : ',' : '.' }}
+											</span>
+										</td>
+										<td></td>
+									</tr>
 									<tr  ng-if="dataGroups.length <= 0 && dataGroups != null">
 											<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(7) : calculaColspan(8) }} " style="text-align:center">
 												<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...

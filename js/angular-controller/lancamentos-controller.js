@@ -1,10 +1,11 @@
-app.controller('LancamentosController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('LancamentosController', function($scope, $http, $window, $dialogs, UserService, ConfigService){
 
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 					= baseUrl();
 	ng.userLogged 				= UserService.getUserLogado();
+	ng.configuracoes	 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.empreendimento 			= {};
     ng.empreendimentos 			= [];
     ng.bancos           		= [];
@@ -58,6 +59,52 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		dataHolder: 'usuarios',
 		searchParam: 'usu->nome[exp]'
 	};
+
+	ng.transferencia = {};
+	ng.transferencia.dta_transferencia = "";
+	ng.transferencia.id_fornecedor = ng.configuracoes.id_fornecedor_movimentacao_caixa;
+	ng.transferencia.id_cliente = ng.configuracoes.id_cliente_movimentacao_caixa;
+	ng.transferencia.id_empreendimento = ng.userLogged.id_empreendimento;
+	ng.salvarTransferencia = function(){
+		ng.transferencia.dta_transferencia = (!empty($("#dta_transferencia").val())) ? formatDate($("#dta_transferencia").val()) : "";
+		if (empty(ng.transferencia.dta_transferencia)) {
+			ng.mensagens('alert-warning','<strong>Selecione uma data</strong>','.alert-pagamento');
+			return false;
+		}
+		if (empty(ng.transferencia.id_conta_bancaria_origem)) {
+			ng.mensagens('alert-warning','<strong>Selecione uma conta de origem</strong>','.alert-pagamento');
+			return false;
+		}
+		if (empty(ng.transferencia.id_conta_bancaria_destino)) {
+			ng.mensagens('alert-warning','<strong>Selecione uma conta de destino</strong>','.alert-pagamento');
+			return false;
+		}
+		if (ng.transferencia.id_conta_bancaria_destino == ng.transferencia.id_conta_bancaria_origem) {
+			ng.mensagens('alert-warning','<strong>Não é possível fazer uma transferência para a mesma conta</strong>','.alert-pagamento');
+			return false;
+		}
+		if (empty(ng.transferencia.vlr_transferencia)) {
+			ng.mensagens('alert-warning','<strong>Preencha o campo Valor</strong>','.alert-pagamento');
+			return false;
+		}
+		aj.post(baseUrlApi()+"lancamento/transferencia", ng.transferencia)
+			.success(function(data, status, headers, config) {
+				ng.mensagens('alert-success','<strong>Lançamento atualizado com sucesso</strong>','.alert-pagamento');
+
+				ng.transferencia.dta_transferencia = "";
+				ng.dta_pagamento = "";
+				ng.transferencia.id_conta_bancaria_origem = "";
+				ng.transferencia.id_conta_bancaria_destino = "";
+				ng.transferencia.vlr_transferencia = "";
+				ng.transferencia.obs_transferencia = "";
+				ng.transferencia.id_fornecedor = ng.configuracoes.id_fornecedor_movimentacao_caixa;
+				ng.transferencia.id_cliente = ng.configuracoes.id_cliente_movimentacao_caixa;
+				ng.transferencia.id_empreendimento = ng.userLogged.id_empreendimento;
+			})
+			.error(function(data, status, headers, config){
+				ng.msg_error = "Erro ao lançar transferência";	
+			});
+	}
 
     ng.pagamento_edit = {} ;
     ng.modalChangeStatusPagamento = function(item){
@@ -168,10 +215,14 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			var url = 'cliente/pagamento/delete/'
 		}
 
+		if (!empty(item.id_ref)) {
+			var id_ref = item.id_ref;
+		}
+
 		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja excluir este lançamento?</strong>');
 
 		dlg.result.then(function(btn){
-			aj.get(baseUrlApi()+url+item.id)
+			aj.get(baseUrlApi()+url+item.id+"/"+ id_ref)
 				.success(function(data, status, headers, config) {
 					ng.mensagens('alert-success','<strong>Lançamento excluido com sucesso</strong>','.alert-delete');
 					ng.reset();
@@ -180,6 +231,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				.error(defaulErrorHandler);
 		}, undefined);
 	}
+
 
     ng.showBoxNovo = function(onlyShow){
     	//ng.editing = !ng.editing;
@@ -278,6 +330,9 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		}
 		ng.dataGroups  = [] ;
+
+		ng.loadSaldoAnterior(dataInicial);
+
 		aj.get(baseUrlApi()+"lancamentos/financeiros"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.pagamentos           = data.pagamentos;
@@ -332,6 +387,23 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					ng.dataGroups = null;
 			});
 		
+	}
+	ng.loadSaldoAnterior = function(dataInicial){
+		
+		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_despesa/"+ng.userLogged.id_empreendimento+"/"+dataInicial)
+			.success(function(data, status, headers, config){
+				ng.saldo_anterior_despesa = data;
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_receita/"+ng.userLogged.id_empreendimento+"/"+dataInicial)
+			.success(function(data, status, headers, config){
+				ng.saldo_anterior_receita = data;
+			})
+			.error(function(data, status, headers, config) {
+
+			});
 	}
 
 	
