@@ -175,6 +175,42 @@
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label for="" class="control-label">Exibir apenas produto de venda obrigatória?</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input ng-model="flg_venda_obrigatoria" value="1" name="venda_obrigatoria" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+											<label class="label-radio inline">
+												<input ng-model="flg_venda_obrigatoria" value="0" name="venda_obrigatoria" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label for="" class="control-label">Exibir apenas produto de cozinha?</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input ng-model="flg_cozinha" value="1" name="flg_cozinha" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+											<label class="label-radio inline">
+												<input ng-model="flg_cozinha" value="0" name="flg_cozinha" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
 						</form>
 					</div>
 
@@ -207,6 +243,7 @@
 							<th class="text-right" width="100">Total Vendido</th>
 							<th class="text-right">Margem Lucro</th>
 							<th class="text-right" width="100">Lucro Bruto</th>
+							<th class="text-right">Perc.</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -237,10 +274,21 @@
 									{{ venda.med_margem_lucro * 100 | numberFormat:config.qtd_casas_decimais:',':'.'}}%
 							 	</a>
 							</td>
-							<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
-							<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</a></td>
+							<td class="text-right"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</a></td>
+							<td class="text-right">{{ venda.vlr_percentual | numberFormat:config.qtd_casas_decimais:',':'.'}}%</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td class="text-right text-bold" colspan="5">Totais</td>
+							<td class="text-center text-bold">{{ qtd_total_vendida }}</td>
+							<td class="text-right text-bold">R$ {{ vlr_total_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+							<td class="text-right text-bold">R$ {{ vlr_total_vendido | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				<!--<div class="pull-right">

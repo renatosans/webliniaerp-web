@@ -353,6 +353,7 @@
 								<li><a ng-if="modo_venda == 'pdv'" href="#" ng-click="abrirVenda('est')"><i class="fa fa-desktop"></i> Nova Venda (Modo Depósito)</a></li>
 								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalListaReenviarSat()"><i class="fa fa-file-text-o"></i> Reprocessar Cupom SAT</a></li>
 								<li ng-show="caixa_aberto"><a href="#" ng-click="showModalReimpressaoCNF()"><i class="fa fa-file-text-o"></i> Re-imprimir Cupom Não Fiscal</a></li>
+								<li ng-show="caixa_aberto"><a href="#" ng-click="modalCancelarCupomSat()"><i class="fa fa-file-text-o"></i> Cancelar Cupom SAT</a></li>
 								<li ng-show="finalizarOrcamento == false"><a href="#" ng-click="pagamentoFulso()"><i class="fa fa-money"></i> Pagamento</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="resizeScreen()"><i class="fa fa-arrows-alt"></i>Tela Inteira</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="selVendedor()"><i class="fa fa-retweet fa-lg"></i>  Trocar Vendedor</a></li>
@@ -1115,6 +1116,7 @@
 															<th ng-show="show_aditional_columns">Fabricante</th>
 															<th ng-show="show_aditional_columns">Tamanho</th>
 															<th ng-show="show_aditional_columns">Sabor/Cor</th>
+															<th class="text-center" style="width: 100px;" ng-if="existeProdutoValidade()" >Validade</th>
 															<th class="text-center" style="width: 80px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
@@ -1127,13 +1129,14 @@
 														</tr>
 													</thead>
 													<tbody>
-														<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}" 
+														<tr ng-repeat="item in carrinho" id="{{ getIdprodutoCarrinho(item) }}" 
 															ng-class="{'error-estoque': verificaOutEstoque(item) }"
 															ng-click="showFotoProduto(item)">
 															<td>{{ item.nome_produto }}</td>
 															<td ng-show="show_aditional_columns">{{ item.nome_fabricante }}</td>
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
+															<td class="text-center"  ng-if="existeProdutoValidade()" >{{ item.flg_controlar_validade == 1 && (item.validade | dateFormat:'date') || '' }}</td>
 															<td class="text-center" width="80">
 																<input type="text" 
 																	class="form-control text-center input-xs"
@@ -1755,13 +1758,14 @@
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
         					<i class="fa fa-times-circle-o"></i> Fechar Janela
         				</button>
-						<h4 ng-if="cdb_busca.status==false">Pesquisa de Produtos</span></h4>
-						<h4 ng-if="cdb_busca.status==true" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
-						<span ng-if="cdb_busca.status==true" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
+        				<h4 ng-if="mostrar_validades">Selecione a validade</span></h4>
+						<h4 ng-if="cdb_busca.status==false && mostrar_validades == false">Pesquisa de Produtos</span></h4>
+						<h4 ng-if="cdb_busca.status==true && mostrar_validades == false" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
+						<span ng-if="cdb_busca.status==true && mostrar_validades == false" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
       				</div>
 
 				    <div class="modal-body">
-						<div class="row">
+						<div class="row" ng-if="mostrar_validades == false">
 							<div class="col-md-12">
 								<div class="input-group">
 						            <input ng-model="busca.produtos" id="foco" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" 
@@ -1779,11 +1783,63 @@
 
 						<br>
 
+						<div class="row" ng-if="mostrar_validades">
+							<div class="col-md-12 table-responsive">
+								<div class="alert alert-produtos" style="display:none"></div>
+									<table style="width: auto !important;margin: 0 auto;" class="table table-bordered table-striped table-hover">
+										<thead>
+											<tr>
+												<td colspan="4" style="text-align: center">
+													{{ produto_selecionar_validade.nome_produto }}	
+												</td>
+											</tr>
+											<tr>
+												<td style="text-align: center;width: 150px">
+													Validade
+												</td>
+												<td style="text-align: center;width: 150px">
+													Estoque
+												</td>
+
+												<td style="text-align: center;width: 100px">
+													Qtd
+												</td>
+												<td style="text-align: center;width: 50px">
+													
+												</td>
+											</tr>
+											<tr ng-repeat="item in lista_produto_selecionar_validade">
+												<td style="text-align: center">{{ item.dta_validade | dateFormat:'date' }}</td>
+												<td style="text-align: center">{{ item.qtd_item }}</td>
+												<td >
+													<input type="text" class="form-control text-center no-padding" ng-model="item.qtd_total" style="font-size: 10px;" />
+												</td>
+												<td>
+													<button type="button" class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}} data-loading-text="Aguarde..." ng-click="addProduto(item, index)">
+														<span>
+																<span ng-if="!(isProdutoSelecionado(item)) && !((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-check-square-o"></i>
+														</span>
+														<span ng-if="(isProdutoSelecionado(item)) && !((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-refresh"></i>
+														</span>
+														<span ng-if="((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+														</span>
+													</button>
+												</td>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							</div>
+
 						<div class="row">
 							<div class="col-md-12 table-responsive">
 								<div class="alert alert-produtos" style="display:none"></div>
 
-								<div class="table-responsive">
+								<div class="table-responsive" ng-if="mostrar_validades == false">
 							   		<table class="table table-bordered table-striped table-hover">
 										<thead ng-show="(produtos.length != 0)">
 											<tr>
@@ -1948,11 +2004,13 @@
 												<td style="min-width: {{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px;">
 													<input type="text" class="form-control text-center"
 														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && !(item.flg_unidade_fracao == 1)"
-														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
+														ng-disabled="item.flg_controlar_validade == 1"/>
 													<input type="text" class="form-control text-center"
 														thousands-formatter precision="3"
 														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && (item.flg_unidade_fracao == 1)"
-														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
+														ng-disabled="item.flg_controlar_validade == 1"/>
 
 													<div class="input-group" ng-if="(configuracoes.flg_botoes_quantidade_pesquisa_produto)">
 														<span class="input-group-btn">
@@ -1976,7 +2034,7 @@
 													R$ {{ item.vlr_unitario | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}
 												</td>
 												<td class="text-center text-middle">
-													<button type="button" 
+													<button type="button" ng-if="(item.flg_controlar_validade != 1)"
 														ng-click="addProduto(item, index)"
 														class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}}"
 														data-loading-text="Aguarde...">
@@ -1988,6 +2046,15 @@
 														</span>
 														<span ng-if="((add_index === index) && (loading_add_produto))">
 															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+													</button>
+													<button
+														class="btn"
+														type="button" ng-if="(item.flg_controlar_validade == 1)"
+														ng-click="mostrarValidades(item, index)"
+													>
+														
+															<i class="fa fa-calendar"></i>
 														</span>
 													</button>
 												</td>
@@ -2004,8 +2071,13 @@
 			    			<button class="btn btn-default" data-dismiss="modal">
 			    				Fechar Janela
 			    			</button>
+
+			    			<button ng-if="mostrar_validades" ng-click="voltarListaProdutos()" class="btn btn-info">
+			    				Voltar a lista
+			    			</button>
+
 			    		</div>
-			    		<div class="pull-right">
+			    		<div class="pull-right" ng-if="mostrar_validades == false">
 							<div class="input-group">
 					             <ul class="pagination m-top-none" ng-show="paginacao.produtos.length > 1">
 									<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
@@ -2373,6 +2445,18 @@
 													</select>
 												</div>
 											</div>
+											<div class="col-sm-2">
+												<div id="id_como_encontrou" class="form-group">
+													<label class="control-label">Como Encontrou?</label>
+													<select class="form-control input-sm" ng-model="new_cliente.id_como_encontrou" ng-options="a.id as a.nome for a in comoencontrou"><option value=""></option></select>
+												</div>
+											</div>
+											<div class="col-sm-4" ng-show="new_cliente.id_como_encontrou == 'outros' ">
+											<div id="como_entrou_outros" class="form-group">
+												<label class="control-label">Descreva</label>
+												<input type="text" class="form-control input-sm" ng-model="cliente.como_entrou_outros">
+											</div>
+										</div>
 										</div>
 										<div class="row">
 										<div class="col-sm-2">
@@ -2817,7 +2901,7 @@
 											<th class="text-center" colspan="9" style="text-align:center"><i class="fa fa-refresh fa-spin"></i> <strong>Carregando</strong></th>
 										</tr>
 										<tr ng-show="(vendas_caixa_aberto.length == 0)">
-											<td colspan="3">Nenhum venda encontrada</td>
+											<td colspan="3">Nenhuma venda encontrada</td>
 										</tr>
 										<tr ng-repeat="item in vendas_caixa_aberto" bs-tooltip >
 											<td>{{ item.id }}</td>
@@ -2836,6 +2920,66 @@
 							</div>
 						</div>
 
+					    <div class="row">
+					    	<div class="col-md-12">
+								<div class="input-group pull-right">
+						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.vendas_caixa_aberto.length > 1">
+										<li ng-repeat="item in paginacao.vendas_caixa_aberto" ng-class="{'active': item.current}">
+											<a href="" ng-click="loadVendasCaixaAberto(item.offset,item.limit)">{{ item.index }}</a>
+										</li>
+									</ul>
+						        </div> <!-- /input-group -->
+							</div><!-- /.col -->
+						</div>
+					</div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- Modal Cancelamento SAT -->
+		<div class="modal fade" id="modal-cancelar-cupom-sat" style="display:none">
+  			<div class="modal-dialog modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Cancelamento de Cupom SAT</h4>
+      				</div>
+				    <div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="alert alert-produtos" style="display:none"></div>
+						   		<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead ng-show="(vendas_reenviar_sat.length != 0)">
+										<tr>
+											<th>#</th>
+											<th>Data</th>
+											<th>Vendedor</th>
+											<th>Cliente</th>
+											<th>Valor</th>
+											<th width="40"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-show="(vendas_cancelar_sat.length == 0)">
+											<td class="text-center" colspan="6">Nenhuma venda encontrada</td>
+										</tr>
+										<tr ng-repeat="item in vendas_cancelar_sat" bs-tooltip >
+											<td>{{ item.cod_venda }}</td>
+											<td>{{ item.dta_venda}}</td>
+											<td>{{ item.nme_vendedor }}</td>
+											<td>{{ item.nme_cliente }}</td>
+											<td>R$ {{ item.vlr_total_venda | numberFormat:2:',':'.' }}</td>
+											<td>
+												<button data-toggle="tooltip" title="Cancelar SAT" data-loading-text='<i class="fa fa-refresh fa-spin"></i>' ng-click="cancelarSat(item)" class="btn btn-danger btn-xs" type="button">
+													<i class="fa fa-times-circle"></i>
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 					    <div class="row">
 					    	<div class="col-md-12">
 								<div class="input-group pull-right">

@@ -192,26 +192,24 @@
 						</tr>
 					</tfoot>
 				</table>
-				<table class="table table-bordered table-hover table-striped table-condensed">
+				<table class="table table-bordered table-hover table-striped table-condensed" ng-if="(pagamentos != null)">
+					<thead>
+						<tr>
+							<th>Plano de Contas</th>
+							<th class="text-center" width="100">Qtde.</th>
+							<th class="text-center" width="120">SubTotal</th>
+						</tr>
+					</thead>
 					<tbody>
-						<tr ng-repeat="(index, item) in plano_contas">
+						<tr ng-repeat="(index, item) in planos_contas">
 							<td>{{ index }}</td>
-							<td>{{ item.length }}</td>
-							<td>{{ item.total }}</td>
+							<td class="text-center">{{ item.length }}</td>
+							<td class="text-right">R$ {{ item.total  | numberFormat : 2 : ',' : '.' }}</td>
 						</tr>
 					</tbody>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
-				<div class="row hidden-print">
-		    		<div class="col-sm-12">
-		    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.pagamentos.length > 1">
-							<li ng-repeat="item in paginacao.pagamentos" ng-class="{'active': item.current}">
-								<a href="" ng-click="loadPagamentos(item.offset,item.limit)">{{ item.index }}</a>
-							</li>
-						</ul>
-		    		</div>
-				 </div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->
