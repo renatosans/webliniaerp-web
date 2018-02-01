@@ -1,4 +1,4 @@
-app.controller('ControleMesasController', function(
+app.controller('PedidoMesaClienteController', function(
 	$scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService, CozinhaService
 ) {
 	var ng = $scope,
@@ -8,15 +8,16 @@ app.controller('ControleMesasController', function(
 	ng.cozinhasDisponiveis = CozinhaService.getCozinhasAtivas(ng.userLogged.id_empreendimento);
 	ng.configuracao  = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.layout = { 
-		mesas:true,
-		detMesa:false,
-		SelCliente:false,
-		cadCliente:false,
-		detComanda:false,
-		detItemComanda:false,
-		escTipoProduto:false,
-		selTipoProduto:false,
-		escProduto:false
+		cliente: true,
+		mesas: false,
+		detMesa: false,
+		SelCliente: false,
+		cadCliente: false,
+		detComanda: false,
+		detItemComanda: false,
+		escTipoProduto: false,
+		selTipoProduto: false,
+		escProduto: false
 	} ;
 	ng.userLogged.flg_dispositivo = 1;
 	ng.telaAnterior = null ;
@@ -40,6 +41,9 @@ app.controller('ControleMesasController', function(
 	ng.baseUrl = baseUrl;
 	ng.vlr_total_pedido = 0;
 	ng.isFullscreen = false;
+
+	ng.screenHeight = (screen.height - 15);
+
 	ng.resizeScreen = function() {
 		if(!ng.isFullscreen){
 			$("#map_canvas").css("height", 700);
@@ -47,8 +51,8 @@ app.controller('ControleMesasController', function(
 			$(".main-header").addClass("hide");
 			$("#wrapper").css("min-height", "0px");
 			$("#main-container").css("min-height", "0px");
-			$("#main-container").css("margin-left", 0).css("padding-top", 45);
-			//$("#top-nav").toggle();
+			$("#main-container").css("margin-left", 0).css("padding-top", 0);
+			$("#top-nav").toggle();
 			$("aside").toggle();
 			$("#breadcrumb").toggle();
 			ng.isFullscreen = !ng.isFullscreen;
@@ -60,7 +64,7 @@ app.controller('ControleMesasController', function(
 			$("#wrapper").css("min-height", "800px");
 			$("#main-container").css("min-height", "800px");
 			$("#main-container").css("margin-left", 194).css("padding-top", 45);
-			//$("#top-nav").toggle();
+			$("#top-nav").toggle();
 			$("aside").toggle();
 			$("#breadcrumb").toggle();
 			ng.isFullscreen = !ng.isFullscreen;
@@ -359,17 +363,6 @@ app.controller('ControleMesasController', function(
 		return valor_total ;
 	}
 
-	ng.loadComanda = function(id_comanda){
-		ng.comandaSelecionada = null ;
-		aj.get(baseUrlApi()+'comanda/'+id_comanda)
-		.success(function(data, status, headers, config) {
-			ng.comandaSelecionada = data ;
-		})
-		.error(function(data, status, headers, config) {
-			ng.comandaSelecionada = {} ;
-		}); 
-	}
-
 	ng.abrirDetalhesComanda = function(id_comanda){
 		ng.changeTela('detComanda');
 		ng.loadComanda(id_comanda);
@@ -534,29 +527,6 @@ app.controller('ControleMesasController', function(
 		else {
 
 		}
-	}
-
-	ng.openModalMesasTrocar = function(comanda) {
-		ng.comanda_troca = comanda;
-		$('#changeComandaMesa').modal('show');
-	}
-
-	ng.trocarComandaMesa = function(mesa) {
-		aj.post(baseUrlApi() + "comandas/"+ ng.comanda_troca.id +"/trocar/mesa/"+ mesa.id_mesa)
-			.success(function(data, status, headers, config) {
-				ng.changeTela('mesas');
-				$('#changeComandaMesa').modal('hide');
-				var msg = {
-					type 				: 'table_change',
-					from 				: ng.id_ws_web,
-					to_empreendimento 	: ng.userLogged.id_empreendimento,
-					message 			: ""
-				};
-				ng.sendMessageWebSocket(msg);
-			})
-			.error(function(data, status, headers, config) {
-				
-			});
 	}
 
 	ng.openModalProdutos = function(){
@@ -899,6 +869,63 @@ app.controller('ControleMesasController', function(
 			ng.changeTela('detComanda');
 		else
 			ng.changeTela('escProduto');
+	}
+
+	ng.num_comanda = "";
+	ng.inputValue = function(value){
+		ng.num_comanda += value;
+	}
+
+	ng.deleteValue = function(){
+		ng.num_comanda = "";
+	}
+
+	ng.cancelarPedidoCliente = function(){
+		ng.num_comanda = "";
+		ng.comandaSelecionada = null;
+		ng.comanda_troca = null;
+		$('#changeComandaMesa').modal('hide');
+		ng.changeTela('cliente');
+	}
+
+	ng.iniciarPedidoCliente = function() {
+		ng.loadComanda(ng.num_comanda);
+	}
+
+	ng.loadComanda = function(id_comanda){
+		ng.comandaSelecionada = null;
+		aj.get(baseUrlApi()+'comanda/'+id_comanda)
+			.success(function(data, status, headers, config) {
+				ng.comandaSelecionada = data;
+				ng.openModalMesasTrocar(ng.comandaSelecionada.comanda);
+			})
+			.error(function(data, status, headers, config) {
+				ng.comandaSelecionada = {} ;
+			}); 
+	}
+
+	ng.openModalMesasTrocar = function(comanda) {
+		ng.comanda_troca = comanda;
+		$('#changeComandaMesa').modal('show');
+	}
+
+	ng.trocarComandaMesa = function(mesa) {
+		aj.post(baseUrlApi() + "comandas/"+ ng.comanda_troca.id +"/trocar/mesa/"+ mesa.id_mesa)
+			.success(function(data, status, headers, config) {
+				// ng.changeTela('mesas');
+				ng.bucaTipoProduto('categoria');
+				$('#changeComandaMesa').modal('hide');
+				var msg = {
+					type 				: 'table_change',
+					from 				: ng.id_ws_web,
+					to_empreendimento 	: ng.userLogged.id_empreendimento,
+					message 			: ""
+				};
+				ng.sendMessageWebSocket(msg);
+			})
+			.error(function(data, status, headers, config) {
+				
+			});
 	}
 
 	ng.incluirItemComanda = function(event){

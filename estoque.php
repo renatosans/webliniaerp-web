@@ -473,6 +473,34 @@
 										</tbody>
 									</table>
 								</div>
+
+								<div class="col-sm-4" ng-if="(nota.duplicatas)">
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group" id="id_conta_bancaria_duplicatas">
+												<label class="control-label">Conta Bancária p/ Lançamento das Duplicatas</label>
+												<select chosen
+													option="contas_bancarias"
+													ng-model="nota.id_conta_bancaria_duplicatas"
+													ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas_bancarias">
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group" id="id_plano_contas_duplicatas">
+												<label class="control-label">Plano de Contas p/ Lançamento das Duplicatas</label>
+												<select chosen
+													option="plano_contas"
+													ng-model="nota.id_plano_contas_duplicatas"
+													ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 
 							<div class="row">

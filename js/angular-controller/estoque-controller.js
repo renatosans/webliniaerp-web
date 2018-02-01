@@ -201,8 +201,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			return;
 		}
 
+		var post_data = angular.copy(ng.nota);
+
 		var itens = [];
-		$.each(ng.nota.itens, function(i, item){
+		$.each(post_data.itens, function(i, item){
 			$.each(item.validades, function(x, validade){
 				var item_atual = {};
 				
@@ -227,22 +229,19 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			});
 		});
 
-		ng.nota.id_empreendimento = ng.userLogged.id_empreendimento;
-		ng.nota.itens             = itens;
-		ng.nota.dta_entrada       = formatDate($("#pagamentoData").val());
-		ng.nota.id_usuario		  = ng.userLogged.id;
+		post_data.id_empreendimento = ng.userLogged.id_empreendimento;
+		post_data.itens             = itens;
+		post_data.dta_entrada       = formatDate($("#pagamentoData").val());
+		post_data.id_usuario		  = ng.userLogged.id;
 
-		ng.nota.vlr_total_imposto 	= parseFloat((!empty(ng.nota.vlr_total_imposto)) ? ng.nota.vlr_total_imposto.replace(",", ".") : 0);
-		ng.nota.vlr_frete 			= parseFloat((!empty(ng.nota.vlr_frete)) ? ng.nota.vlr_frete.replace(",", ".") : 0);
+		post_data.vlr_total_imposto 	= parseFloat((!empty(post_data.vlr_total_imposto)) ? post_data.vlr_total_imposto.replace(",", ".") : 0);
+		post_data.vlr_frete 			= parseFloat((!empty(post_data.vlr_frete)) ? post_data.vlr_frete.replace(",", ".") : 0);
 
-		$.each(ng.nota,function(i,x){
-			ng.nota[i].imposto = ($.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
+		$.each(post_data,function(i,x){
+			post_data[i].imposto = ($.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
 		});	
 
-		console.log( JSON.stringify(ng.nota) );
-
-		/*
-		$http.post(baseUrlApi()+'estoque/entrada', ng.nota)
+		$http.post(baseUrlApi()+'estoque/entrada', {nota: JSON.stringify(post_data)})
 			.success(function(data, status, headers, config) {
 				btn.button('reset');
 				ng.reset();
@@ -275,7 +274,6 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			});
 
 			ng.precoProduto = [];
-		*/
 	}
 
 	ng.showModalPrecos = function(){
@@ -1125,11 +1123,23 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			});
 	}
 
+	ng.loadContasBancarias = function() {
+		ng.contas_bancarias = [];
+		aj.get(baseUrlApi()+"contas_bancarias?id_empreendimento="+ng.userLogged.id_empreendimento+"&id_tipo_conta[exp]=<>5")
+			.success(function(data, status, headers, config) {
+				ng.contas_bancarias = data.contas;
+			})
+			.error(function(data, status, headers, config) {
+				ng.contas_bancarias = null;
+			});
+	}
+
 	ng.loadEntradas(0,10);
 	ng.loadCores();
 	ng.loadTamanhos();
 	ng.loadFabricantes();
 	ng.loadCategorias();
+	ng.loadContasBancarias();
 	ng.loadControleNfe('forma_aquisicao','formas_aquisicao');
 	ng.loadControleNfe('origem_mercadoria','origens_mercadoria');
 	ng.loadControleNfe('tipo_tributacao_ipi','tipos_tributacao_ipi');
