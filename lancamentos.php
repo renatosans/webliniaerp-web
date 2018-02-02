@@ -660,7 +660,7 @@
 						</div>
 					</div>
 					</div>
-			</div><!-- /panel -->
+				</div><!-- /panel -->
 
 				<div class="panel panel-default hidden-print">
 					<div class="panel-heading">
@@ -826,10 +826,11 @@
 									<thead>
 										<tr>
 											<th ng-show="!config_table.groupPerDay" rowspan="2">Data</td>
-											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Conta</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Conta Bancária</th>
 											<th class="text-center" rowspan="2">Cliente/Fornecedor</th>
 											<th class="text-center" rowspan="2">Natureza da Operação</th>
 											<th class="text-center" rowspan="2" ng-if="config_table.forma_pagamento">Forma de Pgto.</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.bandeira">Bandeira</th>
 
 											<th class="text-center" rowspan="2" ng-if="config_table.observacao == true">Observação</th>
 
@@ -897,6 +898,7 @@
 											<td>{{ item.nome | uppercase }}</td>
 											<td>{{ item.cod_plano }} - {{ item.dsc_natureza_operacao | uppercase}}</td>
 											<td ng-if="config_table.forma_pagamento">{{ item.descricao_forma_pagamento }}</td>
+											<td ng-if="config_table.bandeira">{{ item.nme_bandeira }}</td>
 
 											<td ng-if="config_table.observacao == true" control-size-string content="{{ item.obs_pagamento }}" size="16"></td>
 
@@ -1045,7 +1047,7 @@
 										</tr>
 									</tbody>
 									<tr ng-hide="dataGroups.length <= 0 || dataGroups == null">
-										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Totais do Período</td>
+										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Saldo do Período</td>
 										<td class="text-right">
 											<span class="text-success">
 												R$ {{ vlr_total_credito | numberFormat: '2' : ',' : '.' }}
@@ -1059,6 +1061,21 @@
 										<td class="text-right">
 											<span class="text-{{ (vlr_total_periodo > 0) ? 'success' : ((vlr_total_periodo < 0) ? 'danger' : 'primary') }}">
 												R$ {{ vlr_total_periodo | numberFormat: '2' : ',' : '.' }}
+											</span>
+										</td>
+										<td></td>
+									</tr>
+									<tr ng-hide="dataGroups.length <= 0 || dataGroups == null">
+										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Saldo Final</td>
+										<td class="text-right">
+											
+										</td>
+										<td class="text-right">
+											
+										</td>
+										<td class="text-right">
+											<span class="text-{{ (((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) > 0) ? 'success' : ((((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) < 0) ? 'danger' : 'primary') }}">
+												R$ {{ ((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) | numberFormat: '2' : ',' : '.' }}
 											</span>
 										</td>
 										<td></td>
@@ -1659,6 +1676,11 @@
 									<input type="checkbox" ng-model="config_table.forma_pagamento">
 									<span class="custom-checkbox"></span>
 									Forma de Pagamento
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.bandeira">
+									<span class="custom-checkbox"></span>
+									Bandeira
 								</label>
 								<label class="label-checkbox">
 									<input type="checkbox" ng-model="config_table.cheque">

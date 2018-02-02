@@ -1210,7 +1210,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.sendMessageWebSocket(msg);
 				}
 				if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
-
+					console.log('data.flg_incluir_cpf_sat_cfe: '+ ng.flg_incluir_cpf_sat_cfe);
+					
 					if(empty(ng.caixa_open.id_ws_dsk)){
 						$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
 					}else{
@@ -1240,6 +1241,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								num_cnpj_sw : ng.configuracoes.num_cnpj_sw
 							};
 							data.flg_incluir_cpf_sat_cfe = ng.flg_incluir_cpf_sat_cfe;
+							
+							console.log('data.flg_incluir_cpf_sat_cfe: '+ data.flg_incluir_cpf_sat_cfe);
 
 							var dadosWebSocket = {
 								from 		: ng.caixa_open.id_ws_web ,

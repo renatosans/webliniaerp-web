@@ -243,7 +243,7 @@
 							<th class="text-right" width="100">Total Vendido</th>
 							<th class="text-right">Margem Lucro</th>
 							<th class="text-right" width="100">Lucro Bruto</th>
-							<th class="text-right">Perc.</th>
+							<th class="text-right">% Faturamento</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -262,7 +262,7 @@
 							<td class="text-right">
 								 <div class="cardBody">
 							 		<a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
-										R$ {{venda.vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.'}}
+										R$ {{venda.vlr_custo_total | numberFormat : config.qtd_casas_decimais : ',' : '.'}}
 								 	</a>
 							 	</div>
 							</td>
@@ -271,7 +271,7 @@
 						 		<a id="pop{{venda.nme_produto }}" href="#" 
 						 			style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" 
 						 			ng-click="showPopoverMargemLucro(venda, index, $event)">
-									{{ venda.med_margem_lucro * 100 | numberFormat:config.qtd_casas_decimais:',':'.'}}%
+									{{ venda.med_margem_lucro * 100 | numberFormat : config.qtd_casas_decimais : ',' : '.'}}%
 							 	</a>
 							</td>
 							<td class="text-right"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</a></td>

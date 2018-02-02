@@ -228,8 +228,10 @@
 			$info 	 = curl_getinfo($ch);
 			curl_close ($ch);
 
-			if($info['http_code'] == 200) $saida['menu'] = json_decode($menu,true);
-			else $saida['menu'] = array();
+			if($info['http_code'] == 200)
+				$saida['menu'] = json_decode($menu,true);
+			else
+				$saida['menu'] = array();
 		}
 
 		if(isset($_SESSION['dispositivo']))
