@@ -198,7 +198,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
 
 		if(ng.busca.clientes != ""){
-			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR tpf.cpf LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
+			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR tpf.cpf LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR tpj.cnpj LIKE '%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
 		}
 
 		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
