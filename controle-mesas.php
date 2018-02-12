@@ -6,7 +6,7 @@
 <html lang="en" ng-app="HageERP">
   <head>
     <meta charset="utf-8">
-    <title>WebliniaERP</title>
+    <title>Mesas | WebliniaERP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -330,6 +330,19 @@
 						</h2>
 					</div>
 					<div class="panel-body" ng-show="layout.mesas">
+						<div class="row">
+							<div class="col-xs-12 col-sm-4">
+								<div class="form-group">
+									<label class="control-label">Localizar comanda</label>
+									<div class="contorls">
+										<input id="txt_numero_comanda" 
+											class="form-control" type="number" 
+											placeholder="digite o número da comanda e pressione ENTER" 
+											ng-enter="loadComandaById()" ng-model="busca.numero_comanda">
+									</div>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div ng-repeat="(index, mesa) in mesas track by index" class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
 								<div class="panel panel-{{ (mesa.flg_livre) ? 'success' : 'warning' }} mesa">

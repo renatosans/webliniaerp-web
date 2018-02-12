@@ -6,7 +6,7 @@
 <html lang="en" ng-app="HageERP">
   <head>
     <meta charset="utf-8">
-    <title>WebliniaERP</title>
+    <title>PDV | WebliniaERP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -2790,20 +2790,21 @@
 						<h4 ng-if="cdb_busca.status==false">Vendas</span></h4>
       				</div>
 				    <div class="modal-body">
-						<!-- <div class="row">
+						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" class="form-control input-sm">
+						            <input type="text" class="form-control input-sm"
+						            	ng-model="busca.vendas_sat" ng-enter="loadVendasReenviarSat(0,10)">
 
 						            <div class="input-group-btn">
 						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)">
+						            		ng-click="loadVendasReenviarSat(0,10)">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
 						            </div> 
 						        </div>
 							</div>
-						</div><br> -->
+						</div><br>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="alert alert-produtos" style="display:none"></div>
@@ -3177,6 +3178,12 @@
 													tooltip title="Fechar Comanda">
 													<i class="fa fa-dollar"></i>
 												</a>
+												<button type="button" class="btn btn-xs btn-primary" 
+													tooltip title="Juntar à Comanda"
+													ng-click="juntarComanda(item.id_comanda)"
+													ng-if="(flg_comanda)">
+													<i class="fa fa-link"></i>
+												</button>
 												<button type="button" class="btn btn-xs btn-info" 
 													tooltip title="Imprimir Comanda"
 													ng-click="printComanda(item.id_comanda)">

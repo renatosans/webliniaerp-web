@@ -180,60 +180,81 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			item.qtd_total = (parseInt(item.qtd_total,10) + 1);
 	}
 
-	ng.loadOrcamento = function(tipo_valor){
-		aj.get(baseUrlApi()+"venda/orcamento/"+id_orcamento+'/'+tipo_valor)
-		.success(function(data, status, headers, config) {
-			var orcamento = data.orcamento;
-			
-			ng.id_orcamento = orcamento.id ;
-			if(!empty(ng.configuracoes.id_deposito_padrao) && orcamento.flg_comanda == 1){
-				ng.dadosOrcamento = orcamento ;
-				ng.caixa.depositos = [ng.configuracoes.id_deposito_padrao] ;
-			}
-			if(Number(data.cliente.id) != Number(ng.configuracoes.id_cliente_movimentacao_caixa))
-				ng.cliente = data.cliente;
+	ng.juntarComanda = function(id_comanda) {
+		ng.ids_comandas_juntas = [id_comanda];
+		ng.loadOrcamento(id_comanda, 'old', true);
+	}
 
-			$.each(orcamento.itens,function(i,v){
-				v.valor_desconto_real = Number(v.valor_desconto)/100;
-				v.flg_desconto        = Number(v.desconto_aplicado);
-				v.nome_produto        = v.nome ;
-				ng.incluirCarrinho(v);
-			});
+	ng.loadOrcamento = function(id_orcamento, tipo_valor, is_juntar){
+		aj.get(baseUrlApi() + 'venda/orcamento/' + id_orcamento + '/' + tipo_valor)
+			.success(function(data, status, headers, config) {
+				if(empty(is_juntar))
+					is_juntar = false;
 
-			$.each(ng.carrinho,function(i,item){
-				ng.aplicarDesconto(i,null,false,false);
-			});
+				var orcamento = data.orcamento;
+				
+				ng.id_comanda = orcamento.id;
+				ng.flg_comanda = (orcamento.flg_comanda == 1);
+				ng.id_orcamento = orcamento.id ;
 
-			ng.calcTotalCompra();
-
-			if(orcamento.flg_comanda == 1 && !empty(ng.configuracoes.id_produto_taxa_servico)) {
-				ng.getProdutoTaxaServico();
-				if(!empty(ng.produto_taxa_servico)) {
-					ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-					ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-					ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-					ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-
-					var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
-					ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
-					ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
-					ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
-
-					ng.produto_taxa_servico.valor_desconto_real = 0;
-					ng.produto_taxa_servico.flg_desconto        = 0;
-					ng.incluirCarrinho(ng.produto_taxa_servico);
+				if((!is_juntar) && (!empty(ng.configuracoes.id_deposito_padrao)) && (orcamento.flg_comanda == 1)){
+					ng.dadosOrcamento = orcamento ;
+					ng.caixa.depositos = [ng.configuracoes.id_deposito_padrao] ;
 				}
-			}
 
-			ng.calcTotalCompra();
-			ng.totalPagamento();
-			ng.calculaTroco();
-			
-		})
-		.error(function(data, status, headers, config) {
-			alert('O ID do orçamento é invalido');
-			//window.location = "pdv.php";
-		});
+				if((!is_juntar) && (Number(data.cliente.id) != Number(ng.configuracoes.id_cliente_movimentacao_caixa)))
+					ng.cliente = data.cliente;
+
+				$.each(orcamento.itens,function(i,v){
+					v.valor_desconto_real = Number(v.valor_desconto)/100;
+					v.flg_desconto        = Number(v.desconto_aplicado);
+					v.nome_produto        = v.nome;
+					ng.incluirCarrinho(v);
+				});
+
+				$.each(ng.carrinho,function(i,item){
+					ng.aplicarDesconto(i,null,false,false);
+				});
+
+				ng.calcTotalCompra();
+
+				if((orcamento.flg_comanda == 1) && (!empty(ng.configuracoes.id_produto_taxa_servico))) {
+					ng.getProdutoTaxaServico();
+
+					if(is_juntar){
+						var idx_prd_txa_srv = ng.getIndexProdutoCarrinho(ng.produto_taxa_servico);
+						if(idx_prd_txa_srv){
+							ng.carrinho = _.without(ng.carrinho, _.findWhere(ng.carrinho, {id_produto: ng.produto_taxa_servico.id_produto}));
+						}
+					}
+
+					if(!empty(ng.produto_taxa_servico)) {
+						ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+
+						var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
+						ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+						ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+						ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+
+						ng.produto_taxa_servico.valor_desconto_real = 0;
+						ng.produto_taxa_servico.flg_desconto        = 0;
+						ng.incluirCarrinho(ng.produto_taxa_servico);
+					}
+				}
+
+				ng.calcTotalCompra();
+				ng.totalPagamento();
+				ng.calculaTroco();
+
+				if(is_juntar)
+					$('#list_comandas').modal('hide');
+			})
+			.error(function(data, status, headers, config) {
+				alert('O ID do orçamento é invalido');
+			});
 	}
 
 	ng.total_itens = 0 ;
@@ -400,8 +421,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.getIndexProdutoCarrinho = function(produto){
-		var index = false ;
-		$.each(ng.carrinho,function(i,v){
+		var index = false;
+
+		if(produto.flg_controlar_validade == 1)
+			index = _.indexOf(ng.carrinho, _.findWhere(ng.carrinho, {id_produto: produto.id_produto, dta_validade: produto.dta_validade}));
+		else
+			index = _.indexOf(ng.carrinho, _.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
+
+		/*$.each(ng.carrinho,function(i,v){
 			if(!empty(produto.id_produto)){
 				if(
 					( (v.id_produto == produto.id_produto) && (produto.flg_controlar_validade == 0) )
@@ -412,7 +439,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					return ;
 				}
 			}
-		});
+		});*/
+
+		if(index == -1)
+			index = false;
+
 		return index;
 	}
 
@@ -1069,7 +1100,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.venda.is_venda_bonificada = ng.is_venda_bonificada;
 
 		aj.post(baseUrlApi()+"venda/gravarVenda",{
-			venda: ng.venda
+			venda: ng.venda,
+			ids_comandas_juntas: ng.ids_comandas_juntas
 		}).success(function(data, status, headers, config) {
 			$('#text_status_venda').text('Salvando Itens');
 			if($.isNumeric(data.id_cliente)){
@@ -3236,7 +3268,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					};
 					ng.sendMessageWebSocket(msg);
 
-					if(!empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
+					if(!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1 && !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
 						window.close();
 					else
 						ng.resetPdv('venda',true);
@@ -4108,14 +4140,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.loadVendasReenviarSat = function(offset,limit){
 		ng.paginacao.vendas_reenviar_sat = [];
 		ng.vendas_reenviar_sat = null;
+		
 		query = 'SELECT GROUP_CONCAT(id_venda) AS in_venda FROM'+
 				'('+
 					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
 					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
 					'INNER JOIN tbl_abertura_caixa AS tac ON tac.id = tmc.id_abertura_caixa '+
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL '+
-					'GROUP BY tmc.id_venda '+
+					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
+		   query += (!empty(ng.busca.vendas_sat)) ? ' AND tmc.id_venda = ' + ng.busca.vendas_sat + ' ' : '';
+		   query += 'GROUP BY tmc.id_venda '+
 					'ORDER BY tmc.id_venda DESC '+
 				') AS tb ';
 		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
@@ -4416,11 +4450,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.loadComandas = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 20 : limit;
+		
 		var query_string = "?te->id="+ng.userLogged.id_empreendimento+"&tv->venda_confirmada=0";
-		if(!empty(ng.busca.id_mesa_comanda)) query_string += "&tm->id_mesa="+ng.busca.id_mesa_comanda;
+		
+		if(!empty(ng.busca.id_mesa_comanda))
+			query_string += "&tm->id_mesa="+ng.busca.id_mesa_comanda;
+		
+		if(!empty(ng.flg_comanda) && ng.flg_comanda)
+			query_string += "&tv->id[exp]=<>"+ ng.id_comanda;
 		
 		if(!empty(ng.busca.comandas)){	
-				query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
+			query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
 		}
 
 		ng.comandas =  {dados:null,paginacao:[]};
@@ -4913,13 +4953,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			if(ng.configuracoes.flg_questionar_manutencao_precos_orcamento === 1) {
 				dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Deseja trabalhar com os valores de venda dos itens do momento do orçamento?</strong>');
 				dlg.result.then(function(btn){
-					ng.loadOrcamento('old');
+					ng.loadOrcamento(id_orcamento, 'old');
 				}, function(){
-					ng.loadOrcamento('new');
+					ng.loadOrcamento(id_orcamento, 'new');
 				});
 			}
 			else {
-				ng.loadOrcamento('old');
+				ng.loadOrcamento(id_orcamento, 'old');
 			}
 		}else{
 			ng.finalizarOrcamento = false ;

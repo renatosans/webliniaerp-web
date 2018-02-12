@@ -502,10 +502,22 @@ app.controller('ControleMesasController', function(
 		if(!empty(comanda))
 			ng.abrirDetalhesComanda(comanda.id_comanda);
 		else {
-			comanda = _.findWhere(ng.mesaSelecionada.comandas, {num_cartao_fisico: ng.busca.numero_comanda});
-			if(!empty(comanda))
+			comanda = _.findWhere(ng.mesaSelecionada.comandas, {num_cartao_fisico: ng.busca.numero_comanda.toString()});
+			if(!empty(comanda)) 
 				ng.abrirDetalhesComanda(comanda.id_comanda);
 		}
+		ng.busca.numero_comanda = "";
+	}
+
+	ng.loadComandaById = function(){
+		ng.comandaSelecionada = null;
+		aj.get(baseUrlApi()+'comanda/' + ng.busca.numero_comanda)
+			.success(function(data, status, headers, config) {
+				ng.abrirDetalhesComanda(data.comanda.id);
+			})
+			.error(function(data, status, headers, config) {
+				$dialogs.notify('Desculpe!','<strong>Não foi possível localizar uma comanda com o código informado!</strong>');			
+			}); 
 	}
 
 	ng.loadCartoes = function(){

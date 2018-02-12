@@ -7,7 +7,7 @@
 <html lang="en" ng-app="HageERP">
   <head>
     <meta charset="utf-8">
-    <title>WebliniaERP</title>
+    <title>Produtos | WebliniaERP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">

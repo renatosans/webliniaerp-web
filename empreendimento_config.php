@@ -1629,6 +1629,27 @@
 											<input ng-model="configuracoes.id_produto_taxa_servico" name="id_produto_taxa_servico" class="form-control input-sm">
 										</div>
 									</div>
+									
+									<div class="col-sm-1">
+									</div>
+
+									<div class="col-lg-3">
+										<div class="form-group">
+											<label for="" class="control-label">Trabalha c/ Delivery?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_trabalha_delivery" value="1" name="flg_trabalha_delivery"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_trabalha_delivery" value="0" name="flg_trabalha_delivery"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
 								</div>
 								
 								<div class="row">

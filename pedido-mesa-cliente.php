@@ -111,6 +111,12 @@
 			}
 		}
 
+		@media (min-width: 768px) {
+			.modal-lg {
+				width: 100%;
+			}
+		}
+
 		@media (min-width: 769px){
 			.mesa-container {
 				padding: 15px !important;
@@ -210,12 +216,12 @@
 
 		.product-name, 
 		.product-price {
+			font-size: 1.5em;
 			display: block !important;
 		}
 
 		.product-price {
 			font-weight: bold;
-			font-size: 1.2em;
 		}
 
 		.input-group .form-control.input-lg {
@@ -321,10 +327,11 @@
 					<div>
 						<div class="panel-body" ng-show="layout.cliente" style="height: {{ screenHeight }}px;">
 							<div class="row">
-								<div class="col-xs-offset-1 col-xs-6" style="padding-top: 50px;">
-									<div class="row" style="margin-top: 20px;">
+								<div class="col-xs-6 action-buttons" style="padding-top: 30px;">
+									<div class="row">
 										<div class="col-xs-offset-4 col-xs-4">
-											<img class="img-responsive" src="assets/imagens/logos/{{ userLogged.nme_logo }}">
+											<img class="img-responsive" src="assets/imagens/logos/{{ userLogged.nme_logo }}"
+												ng-click="showFullScreen()">
 										</div>
 									</div>
 
@@ -344,54 +351,68 @@
 									</div>
 
 									<div class="row">
-										<div class="col-xs-offset-3 col-xs-6">
-											<button class="btn btn-block btn-lg btn-warning" ng-click="iniciarPedidoCliente()">
+										<div class="col-xs-offset-2 col-xs-8">
+											<button id="btn-init-request" 
+												data-loading-text='<i class="fa fa-spin fa-spinner"></i> Aguarde...'
+												class="btn btn-block btn-lg btn-warning" 
+												ng-click="iniciarPedidoCliente()">
 												Iniciar Pedido
+											</button>
+										</div>
+									</div>
+									<br>
+									<div class="row">
+										<div class="col-xs-offset-2 col-xs-8">
+											<button id="btn-show-itens" 
+												class="btn btn-block btn-lg btn-info" 
+												data-loading-text='<i class="fa fa-spin fa-spinner"></i> Aguarde...'
+												ng-click="openComandaDetailsModal()">
+												Ver Minha Comanda
 											</button>
 										</div>
 									</div>
 								</div>
 
-								<div class="col-xs-4" style="padding-top: 80px;">
+								<div class="col-xs-5 keyboard-buttons" style="padding-top: 30px;">
 									<div class="row" style="margin-bottom: 10px;">
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('1')" style="min-height: 50px;">1</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('1')" style="min-height: 80px; font-size: 1.5em;">1</button>
 										</div>
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('2')" style="min-height: 50px;">2</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('2')" style="min-height: 80px; font-size: 1.5em;">2</button>
 										</div>
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('3')" style="min-height: 50px;">3</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('3')" style="min-height: 80px; font-size: 1.5em;">3</button>
 										</div>
 									</div>
 									<div class="row" style="margin-bottom: 10px;">
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('4')" style="min-height: 50px;">4</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('4')" style="min-height: 80px; font-size: 1.5em;">4</button>
 										</div>
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('5')" style="min-height: 50px;">5</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('5')" style="min-height: 80px; font-size: 1.5em;">5</button>
 										</div>
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('6')" style="min-height: 50px;">6</button>
-										</div>
-									</div>
-									<div class="row" style="margin-bottom: 10px;">
-										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('7')" style="min-height: 50px;">7</button>
-										</div>
-										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('8')" style="min-height: 50px;">8</button>
-										</div>
-										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('9')" style="min-height: 50px;">9</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('6')" style="min-height: 80px; font-size: 1.5em;">6</button>
 										</div>
 									</div>
 									<div class="row" style="margin-bottom: 10px;">
 										<div class="col-xs-4">
-											<button class="btn btn-block btn-default" ng-click="inputValue('0')" style="min-height: 50px;">0</button>
+											<button class="btn btn-block btn-primary" ng-click="inputValue('7')" style="min-height: 80px; font-size: 1.5em;">7</button>
+										</div>
+										<div class="col-xs-4">
+											<button class="btn btn-block btn-primary" ng-click="inputValue('8')" style="min-height: 80px; font-size: 1.5em;">8</button>
+										</div>
+										<div class="col-xs-4">
+											<button class="btn btn-block btn-primary" ng-click="inputValue('9')" style="min-height: 80px; font-size: 1.5em;">9</button>
+										</div>
+									</div>
+									<div class="row" style="margin-bottom: 10px;">
+										<div class="col-xs-4">
+											<button class="btn btn-block btn-primary" ng-click="inputValue('0')" style="min-height: 80px; font-size: 1.5em;">0</button>
 										</div>
 										<div class="col-xs-8">
-											<button class="btn btn-block btn-default" ng-click="deleteValue()" style="min-height: 50px;">Apagar</button>
+											<button class="btn btn-block btn-primary" ng-click="deleteValue()" style="min-height: 80px; font-size: 1.5em;">Apagar</button>
 										</div>
 									</div>
 								</div>
@@ -703,15 +724,7 @@
 									</button>
 									<button type="button" 
 										class="btn btn-xs btn-info hidden-xs" 
-										ng-click="openModalProdutos()"
-										ng-if="(!configuracao.flg_modo_selecao_produto || configuracao.flg_modo_selecao_produto == 'lista')">
-										<i class="fa fa-plus-circle"></i>
-										Adicionar Produto
-									</button>
-									<button type="button" 
-										class="btn btn-xs btn-info hidden-xs" 
-										ng-click="bucaTipoProduto('categoria')"
-										ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
+										ng-click="openModalProdutos()">
 										<i class="fa fa-plus-circle"></i>
 										Adicionar Produto
 									</button>
@@ -851,13 +864,13 @@
 					<!-- INICIO - EXIBIR APENAS QUANDO ESTIVER VISUALIZANDO A TELA DE PESQUISA POR ALGUM TIPO -->
 					<div class="panel-body" ng-show="layout.selTipoProduto">
 						<fieldset>
-							<legend style="height: 30px;">
+							<legend style="height: 40px;">
 								Pesquisa por {{ getTipoBuscaProduto() }} 
 								<button type="button" class="btn btn-xs btn-primary pull-right hidden-sm hidden-md hidden-lg"
 									ng-click="changeTela('escTipoProduto', null, $event)">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
-								<button type="button" class="btn btn-xs btn-primary pull-right hidden-xs"
+								<button type="button" class="btn btn-sm btn-primary pull-right hidden-xs"
 									ng-click="cancelarPedidoCliente()">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
 									Voltar
@@ -865,7 +878,7 @@
 							</legend>
 
 							<div class="row">
-								<div class="col-lg-{{ (configuracao.flg_modo_selecao_produto == 'grade') ? '9' : '12' }}">
+								<div class="col-lg-12">
 									<!-- LISTA CATEGORIA -->
 									<div class="row" ng-show="getTipoBuscaProduto()=='categoria'">
 										<div class="col-xs-6 col-sm-3" ng-repeat="categoria in categoriasProduto">
@@ -894,61 +907,6 @@
 										</div>
 									</div>
 								</div>
-
-								<div class="col-lg-3" ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
-									<div class="row">
-										<div class="col-lg-12">
-											<table class="table table-bordered table-hover table-condensed table-striped">
-												<caption>Itens do Pedido</caption>
-												<thead>
-													<tr>
-														<th>Produto</th>
-														<th width="100">Subtotal</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr ng-repeat="item in itens_pedido">
-														<td>
-															<strong>{{ item.nome }} <span ng-if="(item.sabor)">- {{ item.sabor }}</span></strong>
-															<small>({{ item.qtd }} un)</small>
-															<small class="clearfix" ng-repeat="selected in item.adicionais_selecionados">
-																>>
-																{{ selected.nome }}
-																<span ng-if="(selected.sabor)">({{ selected.sabor }})</span>
-																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
-																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
-															</small>
-															<div class="clearfix"></div>
-															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
-														</td>
-														<td class="text-middle text-right">
-															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<h3 class="text-right">R$ {{ vlr_total_pedido | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}<small class="clearfix">Subtotal</small></h3>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
-												ng-click="cancelarPedido()">
-												Cancelar pedido
-											</button>
-											<button type="button" class="btn btn-block btn-info"
-												ng-click="confirmarPedido()">
-												Confirmar pedido
-											</button>
-										</div>
-									</div>
-								</div>
 							</div>
 						</fieldset>
 					</div>
@@ -957,18 +915,18 @@
 					<!-- INICIO - EXIBIR APENAS QUANDO ESTIVER VISUALIZANDO A TELA DE PESQUISA DE PRODUTO -->
 					<div class="panel-body" ng-show="layout.escProduto">
 						<fieldset>
-							<legend style="height: 30px;">
+							<legend style="height: 40px;">
 								{{ ( getTipoBuscaProduto()==null && 'PRODUTOS' || ( getTipoBuscaProduto()=='categoria' && buscaTipoProduto.categoria.descricao_categoria || buscaTipoProduto.fabricante.nome_fabricante ) ) }}
-								<button ng-if="getTipoBuscaProduto() != null" ng-click="changeTela('selTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
+								<button ng-if="getTipoBuscaProduto() != null" ng-click="changeTela('selTipoProduto', null, $event)" type="button" class="btn btn-sm btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
-								<button ng-if="getTipoBuscaProduto()==null" ng-click="changeTela('escTipoProduto', null, $event)" type="button" class="btn btn-xs btn-primary pull-right">
+								<button ng-if="getTipoBuscaProduto()==null" ng-click="changeTela('escTipoProduto', null, $event)" type="button" class="btn btn-sm btn-primary pull-right">
 									<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i> Voltar
 								</button>
 							</legend>
 							
 							<div class="row">
-								<div class="col-lg-{{ (configuracao.flg_modo_selecao_produto == 'grade') ? '9' : '12' }}">
+								<div class="col-lg-12">
 									<div class="row">
 										<div class="col-lg-12">
 											<div class="form-group">
@@ -1011,61 +969,6 @@
 										</div>
 									</div>
 								</div>
-
-								<div class="col-lg-3" ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
-									<div class="row">
-										<div class="col-lg-12">
-											<table class="table table-bordered table-hover table-condensed table-striped">
-												<caption>Itens do Pedido</caption>
-												<thead>
-													<tr>
-														<th>Produto</th>
-														<th width="100">Subtotal</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr ng-repeat="item in itens_pedido">
-														<td>
-															<strong>{{ item.nome }} <span ng-if="(item.sabor)">- {{ item.sabor }}</span></strong>
-															<small>({{ item.qtd }} un)</small>
-															<small class="clearfix" ng-repeat="selected in item.adicionais_selecionados">
-																>>
-																{{ selected.nome }}
-																<span ng-if="(selected.sabor)">({{ selected.sabor }})</span>
-																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
-																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
-															</small>
-															<div class="clearfix"></div>
-															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
-														</td>
-														<td class="text-middle text-right">
-															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<h3 class="text-right">R$ {{ vlr_total_pedido | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}<small class="clearfix">Subtotal</small></h3>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
-												ng-click="cancelarPedido()">
-												Cancelar pedido
-											</button>
-											<button type="button" class="btn btn-block btn-info"
-												ng-click="confirmarPedido()">
-												Confirmar pedido
-											</button>
-										</div>
-									</div>
-								</div>
 							</div>
 						</fieldset>
 					</div>
@@ -1079,7 +982,7 @@
 
 						<div class="panel-body">
 							<div class="row">
-								<div class="col-lg-{{ (configuracao.flg_modo_selecao_produto == 'grade') ? '9' : '12' }}">
+								<div class="col-lg-12">
 									<div class="row">
 										<div class="col-xs-12 col-sm-1">
 											<img class="img-responsive" ng-if="!produto.img" src="img/sem-imagem-app.png">
@@ -1246,61 +1149,6 @@
 										</div>
 									</div>
 								</div>
-
-								<div class="col-lg-3" ng-if="(configuracao.flg_modo_selecao_produto == 'grade')">
-									<div class="row">
-										<div class="col-lg-12">
-											<table class="table table-bordered table-hover table-condensed table-striped">
-												<caption>Itens do Pedido</caption>
-												<thead>
-													<tr>
-														<th>Produto</th>
-														<th width="100">Subtotal</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr ng-repeat="item in itens_pedido">
-														<td>
-															<strong>{{ item.nome }} <span ng-if="(item.sabor)">- {{ item.sabor }}</span></strong>
-															<small>({{ item.qtd }} un)</small>
-															<small class="clearfix" ng-repeat="selected in item.adicionais_selecionados">
-																>>
-																{{ selected.nome }}
-																<span ng-if="(selected.sabor)">({{ selected.sabor }})</span>
-																<span ng-if="(selected.nome_tamanho)">({{ selected.nome_tamanho }})</span>
-																<span ng-if="(selected.nome_cor)">({{ selected.nome_cor }})</span>
-															</small>
-															<div class="clearfix"></div>
-															<span class="label label-warning" ng-if="(item.flg_delivery)">delivery</span>
-														</td>
-														<td class="text-middle text-right">
-															<strong>R$ {{ item.qtd * item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</strong>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<h3 class="text-right">R$ {{ vlr_total_pedido | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}<small class="clearfix">Subtotal</small></h3>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
-												ng-click="cancelarPedido()">
-												Cancelar pedido
-											</button>
-											<button type="button" class="btn btn-block btn-info"
-												ng-click="confirmarPedido()">
-												Confirmar pedido
-											</button>
-										</div>
-									</div>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -1450,14 +1298,14 @@
 			<div class="modal-dialog modal-md">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancelarPedidoCliente()">&times;</button>
 						<h4>Informe a mesa que você está</h4>
 					</div>
 					<div class="modal-body" style="padding-bottom: 0px;">
 						<div class="row">
 							<div class="col-xs-3" ng-repeat="(index, mesa) in mesas track by index">
 								<div class="panel panel-primary" ng-click="trocarComandaMesa(mesa)">
-									<div class="panel-body text-center" style="min-height: 50px;">
+									<div class="panel-body text-center" style="min-height: 80px; line-height: 50px; font-size: 1.5em;">
 										{{ mesa.dsc_mesa }}
 									</div>
 								</div>
@@ -1466,8 +1314,56 @@
 					</div>
 					<div class="modal-footer clearfix" style="margin-top: 0px;">
 						<div class="pull-right">
-							<button class="btn btn-default btn-sm" ng-click="cancelarPedidoCliente()">
+							<button class="btn btn-default btn-lg" ng-click="cancelarPedidoCliente()">
 								Cancelar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="detalhesComandaModal" style="display: none;">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancelarPedidoCliente()">&times;</button>
+						<h4>Itens da sua comanda</h4>
+					</div>
+					<table class="table table-striped" style="margin-bottom: 0px; font-size: 1.3em;">
+						<thead>
+							<th>Nome do Produto</th>
+							<th width="80" class="text-center">Qtd</th>
+							<th width="150" class="text-right">R$ Unitário</th>
+							<th width="150" class="text-right">R$ Subtotal</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="item in comandaSelecionada.comanda.itens">
+								<td>{{ item.nome }}</td>
+								<td class="text-center">{{ item.qtd_total }}</td>
+								<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+								<td class="text-right">R$ {{ (item.qtd_total * item.vlr_venda_varejo) | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr class="info" ng-if="(configuracao.prc_taxa_servico)">
+								<td class="text-bold">Taxa de Serviço</td>
+								<td></td>
+								<td class="text-bold text-right">{{ configuracao.prc_taxa_servico | numberFormat:2:',':'.'}}%</td>
+								<td class="text-bold text-right">R$ {{ getValorTaxaServico() | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+							</tr>
+							<tr class="warning">
+								<td class="text-bold">Totais</td>
+								<td class="text-bold text-center">{{ totalItensComanda()  }}</td>
+								<td class="text-bold text-right">R$ {{ vlrTotalItensComanda() | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+								<td class="text-bold text-right">R$ {{ vlrTotalItensComanda() + getValorTaxaServico() | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+							</tr>
+						</tfoot>
+					</table>
+					<div class="modal-footer clearfix" style="margin-top: 0px;">
+						<div class="pull-right">
+							<button class="btn btn-default btn-lg" ng-click="cancelarPedidoCliente()">
+								Fechar
 							</button>
 						</div>
 					</div>

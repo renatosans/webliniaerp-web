@@ -1434,6 +1434,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_trabalha_delivery != undefined){
+			var item = {
+							nome 				:'flg_trabalha_delivery',
+							valor 				:ng.configuracoes.flg_trabalha_delivery , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		if(ng.configuracoes.flg_usa_cartao_magnetico != undefined){
 			var item = {
 							nome 				:'flg_usa_cartao_magnetico',
