@@ -426,6 +426,13 @@
 												<!--<select class="form-control input-sm" ng-model="cliente.id_finalidade" ng-options="a.id as a.nome for a in finalidades"></select>-->
 											</div>
 										</div>
+
+										<div class="col-sm-2">
+											<div id="id_finalidade" class="form-group">
+												<label class="control-label">ID Externo</label>
+												<input type="text" class="form-control input-sm" ng-model="cliente.id_externo">
+											</div>
+										</div>
 									</div>
 									<div class="row">
 										<div class="col-sm-2">

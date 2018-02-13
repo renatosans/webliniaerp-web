@@ -184,6 +184,13 @@
 										<input type="number" min="1" max="5" step="1" ng-model="conta.qtd_vias_impressao" class="form-control"/>
 									</div>
 								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group" id="pth_local">
+										<label class="control-label">ID Externo</label>
+										<input type="text" ng-model="conta.id_externo" class="form-control"/>
+									</div>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-sm-12">

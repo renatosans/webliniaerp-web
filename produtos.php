@@ -699,7 +699,7 @@
 															</select>
 													</div>													
 												</div>
-												<div class="col-sm-3">
+												<div class="col-sm-2">
 													<div class="form-group">
 														<label for="" class="control-label">Venda Obrigatória?</label>
 														<div class="form-group">
@@ -714,6 +714,12 @@
 																<span>Não</span>
 															</label>
 														</div>
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group" id="id_referencia_externo">
+														<label class="control-label">ID Externo</label>
+														<input ng-model="produto.id_referencia_externo" type="text" class="form-control input-sm">
 													</div>
 												</div>
 											</div>

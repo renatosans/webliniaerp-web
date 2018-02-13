@@ -169,7 +169,7 @@
 										<input value="#{{ maquineta.id_maquineta }}" ng-disabled="true" class="form-control"/>
 									</div>
 								</div>
-								<div class="col-sm-4">
+								<div class="col-sm-3">
 									<div class="form-group" id="num_serie_maquineta">
 										<label class="control-label">Número de série</label>
 										<input ng-model="maquineta.num_serie_maquineta" class="form-control"/>
@@ -183,10 +183,16 @@
 										</select>
 									</div>
 								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-2">
 									<div class="form-group" id="per_margem_debito">
 										<label class="control-label">Margem débito</label>
 										<input thousands-formatter  ng-model="maquineta.per_margem_debito" class="form-control"/>
+									</div>
+								</div>
+								<div class="col-sm-2">
+									<div class="form-group" id="id_externo">
+										<label class="control-label">ID Externo</label>
+										<input type="text" ng-model="maquineta.id_externo" class="form-control"/>
 									</div>
 								</div>
 							</div>
