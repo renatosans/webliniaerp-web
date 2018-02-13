@@ -66,7 +66,7 @@ app.controller('LoginController', function($scope, $http, $window,$dialogs,UserS
 		ng.reset();
 		var btn = $('#btn-logar');
 		$('#alert-acesso-negado').hide();
-		aj.get(baseUrlApi() + "empreendimentos?flg_ativo=1&id_usuario="+id_usuario)
+		aj.get(baseUrlApi() + "empreendimentos?id_usuario="+id_usuario)
 			.success(function(data, status, headers, config) {
 				if(data.length == 1){
 					ng.addEmp(data[0]);

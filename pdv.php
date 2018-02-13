@@ -352,8 +352,8 @@
 								<li><a ng-if="modo_venda == 'est'" href="#" ng-click="abrirVenda('pdv')"><i class="fa fa-desktop"></i> Nova Venda (Modo Loja)</a></li>
 								<li><a ng-if="modo_venda == 'pdv'" href="#" ng-click="abrirVenda('est')"><i class="fa fa-desktop"></i> Nova Venda (Modo Depósito)</a></li>
 								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalListaReenviarSat()"><i class="fa fa-file-text-o"></i> Reprocessar Cupom SAT</a></li>
+								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalCancelarCupomSat()"><i class="fa fa-times-circle"></i> Cancelar Cupom SAT</a></li>
 								<li ng-show="caixa_aberto"><a href="#" ng-click="showModalReimpressaoCNF()"><i class="fa fa-file-text-o"></i> Re-imprimir Cupom Não Fiscal</a></li>
-								<li ng-show="caixa_aberto"><a href="#" ng-click="modalCancelarCupomSat()"><i class="fa fa-file-text-o"></i> Cancelar Cupom SAT</a></li>
 								<li ng-show="finalizarOrcamento == false"><a href="#" ng-click="pagamentoFulso()"><i class="fa fa-money"></i> Pagamento</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="resizeScreen()"><i class="fa fa-arrows-alt"></i>Tela Inteira</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="selVendedor()"><i class="fa fa-retweet fa-lg"></i>  Trocar Vendedor</a></li>
@@ -2656,15 +2656,7 @@
       				</div>
 
 				    <div class="modal-body">
-				    	<div class="alert alert-reforco" style="display:none"></div>
-
-				    	<div class="row">
-				    		<div class="col-sm-6" id="valor_pagamento">
-				    		<p>
-				    			<strong id="text_status_sat_cfe">Imprimindo Cupom Fiscal</strong><img src="assets/imagens/progresso_venda.gif">
-				    		</p>
-							</div>
-				    	</div>
+				    	<p><i class="fa fa-spin fa-spinner"></i> {{ mensagem_sat_modal }}</p>
 				    </div>
 			  	</div>
 			  	<!-- /.modal-content -->
@@ -2702,7 +2694,7 @@
   			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
       				<div class="modal-header">
-      					<h4>Ocorreu um erro ao processar o SAT</h4>
+      					<h4>Ocorreu um erro ao processar o CF-e SAT</h4>
       				</div>
 				    <div class="modal-body">
 				    	<div class="row">
@@ -2940,11 +2932,11 @@
 
 		<!-- Modal Cancelamento SAT -->
 		<div class="modal fade" id="modal-cancelar-cupom-sat" style="display:none">
-  			<div class="modal-dialog modal-md">
+  			<div class="modal-dialog modal-lg">
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Cancelamento de Cupom SAT</h4>
+						<h4>Cancelamento de CF-e SAT</h4>
       				</div>
 				    <div class="modal-body">
 						<div class="row">
@@ -2953,27 +2945,29 @@
 						   		<table class="table table-bordered table-condensed table-striped table-hover">
 									<thead ng-show="(vendas_reenviar_sat.length != 0)">
 										<tr>
-											<th>#</th>
-											<th>Data</th>
+											<th width="70">#</th>
+											<th width="150">Data</th>
 											<th>Vendedor</th>
 											<th>Cliente</th>
-											<th>Valor</th>
+											<th class="text-center" width="90">Valor</th>
 											<th width="40"></th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr ng-show="(vendas_cancelar_sat.length == 0)">
+										<tr ng-show="(vendas_cancelar_sat.notas.length == 0)">
 											<td class="text-center" colspan="6">Nenhuma venda encontrada</td>
 										</tr>
-										<tr ng-repeat="item in vendas_cancelar_sat" bs-tooltip >
+										<tr ng-repeat="item in vendas_cancelar_sat.notas" bs-tooltip >
 											<td>{{ item.cod_venda }}</td>
-											<td>{{ item.dta_venda}}</td>
+											<td>{{ item.dta_venda | dateFormat: 'dateTime' }}</td>
 											<td>{{ item.nme_vendedor }}</td>
 											<td>{{ item.nme_cliente }}</td>
-											<td>R$ {{ item.vlr_total_venda | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_venda | numberFormat:2:',':'.' }}</td>
 											<td>
-												<button data-toggle="tooltip" title="Cancelar SAT" data-loading-text='<i class="fa fa-refresh fa-spin"></i>' ng-click="cancelarSat(item)" class="btn btn-danger btn-xs" type="button">
-													<i class="fa fa-times-circle"></i>
+												<button type="button" class="btn btn-danger btn-xs"
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i>' 
+													ng-click="cancelarSat(item)" >
+													<i class="fa fa-times-circle"></i> Cancelar SAT
 												</button>
 											</td>
 										</tr>
@@ -2984,9 +2978,9 @@
 					    <div class="row">
 					    	<div class="col-md-12">
 								<div class="input-group pull-right">
-						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.vendas_caixa_aberto.length > 1">
-										<li ng-repeat="item in paginacao.vendas_caixa_aberto" ng-class="{'active': item.current}">
-											<a href="" ng-click="loadVendasCaixaAberto(item.offset,item.limit)">{{ item.index }}</a>
+						             <ul class="pagination pagination-xs m-top-none" ng-show="vendas_cancelar_sat.paginacao.length > 1">
+										<li ng-repeat="item in vendas_cancelar_sat.paginacao" ng-class="{'active': item.current}">
+											<a href="" ng-click="loadVendasCancelarSat(item.offset,item.limit)">{{ item.index }}</a>
 										</li>
 									</ul>
 						        </div> <!-- /input-group -->

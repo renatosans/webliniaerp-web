@@ -1248,7 +1248,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
 					}else{
 						$('#modal_progresso_venda').modal('hide');
-						ng.showModalSatCfe();
+						ng.showModalSatCfe('Aguarde, imprimindo CF-e SAT...');
 						var post = { 
 							id_empreendimento : ng.userLogged.id_empreendimento,
 							id_venda          : ng.id_venda,
@@ -3160,11 +3160,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('.modal-backdrop.in').css({opacity:1,'background-color':'#C7C7C7'});
 	}
 
-	ng.showModalSatCfe = function(){
+	ng.showModalSatCfe = function(message){
 		$('#modal-sat-cfe').modal({
 		  backdrop: 'static',
 		  keyboard: false
 		});
+		ng.mensagem_sat_modal = message;
 	}
 
 	ng.showModalCNF = function(type){
@@ -3945,7 +3946,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 
 		ng.conn.onmessage = function(e) {
-			
 			var data = JSON.parse(e.data);
 			data.message = parseJSON(data.message);
 			switch(data.type){
@@ -4039,6 +4039,31 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					.error(function(data, status, headers, config) {
 						
 					});
+					break;
+				case 'satcfe_cancel_success':
+					var post_data = {
+						chave_cancelamento: data.message.chave, 
+						cod_nota_fiscal: ng.dados_sat_cancelamento_in_progress.cod_nota_fiscal, 
+						data_cancelamento: data.message.dataProcessado,
+						xml_cancelamento: data.message.xmlProcessado
+					};
+					aj.post(baseUrlApi()+"nota_fiscal/cancelar/sat", post_data)
+						.success(function(data, status, headers, config) {
+							ng.resetPdv('venda',true);
+						})
+						.error(function(data, status, headers, config) {
+							ng.resetPdv('venda',true);
+						});
+					break;
+				case 'satcfe_cancel_error':
+					$('#modal-sat-cfe').modal('hide');
+					$('#modal-erro-sat').modal({ backdrop: 'static',keyboard: false});
+					$scope.$apply(function(){
+						ng.erro_sat = {
+							codigoErro: 'WebliniaERP-x0000-95829',
+							msgErro: data.message
+						};
+					},1);
 					break;
 				case 'connection_search_response':
 					$scope.$apply(function () {
@@ -4234,16 +4259,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.modalCancelarCupomSat = function(){
 		$('#modal-cancelar-cupom-sat').modal('show');
-		ng.loadVendasCancelarSat();
+		ng.loadVendasCancelarSat(0,10);
 	}
 
-	ng.loadVendasCancelarSat = function(){
-		var dta_inicio = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-		var dta_fim = moment().format('YYYY-MM-DD HH:mm:ss');
-		var query_string = "?cod_empreendimento=" + ng.userLogged.id_empreendimento + "&dta_inicial=" + dta_inicio + "&dta_final=" + dta_fim;
+	ng.loadVendasCancelarSat = function(offset, limit){
+		var dta_inicial = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+		var dta_final = moment().format('YYYY-MM-DD HH:mm:ss');
+
+		var query_string  = "?tnf->cod_empreendimento="+ ng.userLogged.id_empreendimento;
+			query_string += "&tnf->status=autorizado";
+			query_string += "&tnf->flg_sat=1";
+			// query_string += "&tnf->data_processado_sat[exp]=BETWEEN '"+ dta_inicial +"' AND '"+ dta_final +"'";
 
 		ng.vendas_cancelar_sat = [];
-		aj.get(baseUrlApi()+"nota_fiscal/sat"+query_string)
+		aj.get(baseUrlApi()+"nota_fiscal/sat/"+ offset +"/"+limit +"/"+ query_string)
 			.success(function(data, status, headers, config) {
 				ng.vendas_cancelar_sat = data;
 			})
@@ -4253,17 +4282,23 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.cancelarSat = function(item){
-		var post = {
-				cod_venda : item.cod_venda
-			};
-
-		aj.post(baseUrlApi()+"nota_fiscal/cancelarSat",post)
-			.success(function(data, status, headers, config) {
-				$('#modal-cancelar-cupom-sat').modal('hide');
+		var dadosWebSocket = {
+			from 	: ng.caixa_open.id_ws_web,
+			to  	: ng.caixa_open.id_ws_dsk,
+			type 	: 'satcfe_cancel',
+			message : JSON.stringify({
+				ide: {
+					CNPJ: ng.empreendimento.num_cnpj,
+					signAC: ng.configuracoes.txt_sign_ac
+				},
+				chCanc: item.chave_sat
 			})
-			.error(function(data, status, headers, config) {
+		};
+		ng.dados_sat_cancelamento_in_progress = angular.copy(item);
+		ng.sendMessageWebSocket(dadosWebSocket);
 
-			});
+		$('#modal-cancelar-cupom-sat').modal('hide');
+		ng.showModalSatCfe('Aguarde, processando cancelamento do CF-e SAT...');
 	}
 
 	ng.showModalReimpressaoCNF = function(){
@@ -4529,6 +4564,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.busca.cliente_outo_complete = "" ;
 		ng.setMargemAplicada();
 		ng.nome_ultimo_produto = null ;
+		ng.dados_sat_cancelamento_in_progress = null;
 		$('button').button('reset');
 	}
 
