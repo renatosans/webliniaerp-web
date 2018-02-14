@@ -787,7 +787,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today){
+				ng.efetivarCompra();
+
+				/*if(data.open_today){
 					ng.efetivarCompra();
 				}else{
 					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
@@ -801,7 +803,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 					);
 					return;
-				}
+				}*/
 			})
 			.error(function(data, status, headers, config) {
 				if(status === 404)
@@ -1929,7 +1931,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		btn_reforco.button('loading');
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today){
+				ng.efetivarReforco();
+				
+				/*if(data.open_today){
 					ng.efetivarReforco() ;
 				}else{
 					btn_reforco.button('reset');
@@ -1945,7 +1949,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 					);
 					return;
-				}
+				}*/
 			})
 			.error(function(data, status, headers, config) {
 				if(status === 404)
@@ -2115,8 +2119,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today){
-					ng.efetivarSangria() ;
+				ng.efetivarSangria();
+
+				/*if(data.open_today){
+					ng.efetivarSangria();
 				}else{
 					btn_sangria.button('reset');
 					$("#modal-sangria").modal('hide');
@@ -2131,7 +2137,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 					);
 					return;
-				}
+				}*/
 			})
 			.error(function(data, status, headers, config) {
 				if(status === 404)
@@ -2192,7 +2198,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.caixa_aberto = data;
 				ng.vendedor.id_vendedor   = data.id_operador;
 				ng.vendedor.nome_vendedor = data.nome_operador;
-				if(!data.open_today){	
+				/*if(!data.open_today){	
 					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
 					dialog.result.then(
 						function(btn){
@@ -2203,8 +2209,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							// Do nothing
 						}
 					);
-				}
-				
+				}*/
 			})
 			.error(function(data, status, headers, config) {
 				if (status == 406) {
@@ -2813,14 +2818,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today)
+				var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"";
+				
+				/*if(data.open_today)
 					var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"";
 				else{
 					dta_fechamento = data.dta_abertura ;
 					dta_fechamento = dta_fechamento.split(' ');
 					dta_fechamento = dta_fechamento[0]+' 23:59:59';
 					var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"/"+dta_fechamento;
-				}
+				}*/
 
 				aj.get(url)
 					.success(function(data, status, headers, config) {
