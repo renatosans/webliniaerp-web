@@ -292,7 +292,7 @@
 
 				<div class="row">
 					<div class="col-lg-3 col-sm-6 col-md-6" ng-if="userLogged.id_empreendimento != 75">
-						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
+						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTotalFaturamento | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Faturamento</h6>
 							(no período)
@@ -343,6 +343,42 @@
 					</div><!-- /.col -->
 
 					<div class="col-lg-3 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTicketMedio | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
+							<h6>Ticket Médio de Vendas</h6>
+							(no período)
+							<div class="stat-icon">
+								<i class="fa fa-balance-scale fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>-->
+							<div class="loading-overlay" ng-class="{'active':total.vlrTicketMedio == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div><!-- /.col -->
+
+					<div class="col-lg-3 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
+							<h2 class="m-top-none"><span id="clientsSalesCount">{{ total.med_itens_venda | numberFormat:config.qtd_casas_decimais:',':'.' }} UN.</span></h2>
+							<h6>Qtde. Média Un. Prod. Vendidos</h6>
+							(no período)
+							<div class="stat-icon">
+								<i class="fa fa-balance-scale fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>-->
+							<div class="loading-overlay" ng-class="{'active':total.med_itens_venda == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div><!-- /.col -->
+				</div>
+
+				<div class="row">
+					<div class="col-lg-3 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_taxa_maquineta | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Taxa Maquineta</h6>
@@ -375,95 +411,8 @@
 							</div> 
 						</div>
 					</div><!-- /.col -->
-					
-				</div>
 
-				<div class="row">
-					<div class="col-lg-3 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-success fadeInDown animation-delay6">
-							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{(total.vlrTotalFaturamento  - (total.vlr_custo_produto + total.vlr_taxa_maquineta + total.vlr_pagamento_fornecedor)) | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
-							<h6>Lucro Previsto</h6>
-							(no período)
-							<div class="stat-icon">
-								<i class="fa fa-money fa-3x"></i>
-							</div>
-							<!-- <div class="refresh-button">
-								<i class="fa fa-refresh"></i>
-							</div>-->
-							<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamento == 'loading' && total.vlr_custo_produto == 'loading' && total.vlr_taxa_maquineta == 'loading' && total.vlr_pagamento_fornecedor == 'loading'}">
-								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
-							</div> 
-						</div>
-					</div><!-- /.col -->
-					<div class="col-lg-3 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-success fadeInDown animation-delay6">
-							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{ total.vlrTotalPagamentosConfirmados | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
-							<h6>Pagamentos Confirmados</h6>
-							(no período)
-							<div class="stat-icon">
-								<i class="fa fa-check-square-o fa-3x"></i>
-							</div>
-							<!-- <div class="refresh-button">
-								<i class="fa fa-refresh"></i>
-							</div>-->
-							<div class="loading-overlay" ng-class="{'active':total.vlrTotalPagamentosConfirmados == 'loading'}">
-								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
-							</div> 
-						</div>
-					</div><!-- /.col -->
-					<div class="col-lg-3 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlrTicketMedio | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
-							<h6>Ticket Médio de Vendas</h6>
-							(no período)
-							<div class="stat-icon">
-								<i class="fa fa-balance-scale fa-3x"></i>
-							</div>
-							<!-- <div class="refresh-button">
-								<i class="fa fa-refresh"></i>
-							</div>-->
-							<div class="loading-overlay" ng-class="{'active':total.vlrTicketMedio == 'loading'}">
-								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
-							</div> 
-						</div>
-					</div><!-- /.col -->
-					<div class="col-lg-3 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-success fadeInDown animation-delay6" style="min-height: 125px;">
-							<h2 class="m-top-none"><span id="clientsSalesCount">{{ total.med_itens_venda | numberFormat:config.qtd_casas_decimais:',':'.' }} UN.</span></h2>
-							<h6>Qtde. Média Un. Prod. Vendidos</h6>
-							(no período)
-							<div class="stat-icon">
-								<i class="fa fa-balance-scale fa-3x"></i>
-							</div>
-							<!-- <div class="refresh-button">
-								<i class="fa fa-refresh"></i>
-							</div>-->
-							<div class="loading-overlay" ng-class="{'active':total.med_itens_venda == 'loading'}">
-								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
-							</div> 
-						</div>
-					</div><!-- /.col -->										
-					
-				</div>
-
-				<div class="row">
-					<div class="col-lg-3 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-warning fadeInDown animation-delay5">
-							<h2 class="m-top-none">R$ <span >{{ total.vlrSaldoDevedorFornecedores | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
-							<h6>Pagamentos Agendados</h6>
-							(a fornecedores)
-							<div class="stat-icon">
-								<i class="fa fa-truck fa-3x"></i>
-							</div>
-							<!-- <div class="refresh-button">
-								<i class="fa fa-refresh"></i>
-							</div>
-							<div class="loading-overlay">
-								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
-							</div> -->
-						</div>
-					</div><!-- /.col -->
-					<div class="col-lg-3 col-sm-6 col-md-6">
+					<div class="col-lg-3 col-sm-6 col-md-6 hide">
 						<div class="panel-stat3 bg-warning fadeInDown animation-delay5">
 							<h2 class="m-top-none">R$ <span id="clientsNonOkPaymentsChequeCount">{{ total.vlrTotalPagamentosNaoConfirmados.cheque | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Cheques a Compensar</h6>
@@ -514,14 +463,15 @@
 						</div>
 					</div><!-- /.col -->
 				</div>
+
 				<div class="row">
-					<div class="col-lg-6 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-info fadeInDown animation-delay3">
-							<h2 class="m-top-none"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
-							<h6>Custo Total</h6>
-							(Produtos em Estoque)
+					<div class="col-lg-3 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-warning fadeInDown animation-delay5">
+							<h2 class="m-top-none">R$ <span >{{ total.vlrSaldoDevedorFornecedores | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
+							<h6>Pagamentos Agendados</h6>
+							(a fornecedores)
 							<div class="stat-icon">
-								<i class="fa fa-sitemap fa-3x"></i>
+								<i class="fa fa-truck fa-3x"></i>
 							</div>
 							<!-- <div class="refresh-button">
 								<i class="fa fa-refresh"></i>
@@ -531,6 +481,25 @@
 							</div> -->
 						</div>
 					</div><!-- /.col -->
+					
+					<div class="col-lg-3 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-warning fadeInDown animation-delay6" style="min-height: 125px;"
+							ng-click="redirectToSubReport('rel_total_vendas_vendedor')">
+							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ vlr_total_comissao_vendedores | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</span></h2>
+							<h6>Total Comissõs Vendedores</h6>
+							(no período)
+							<div class="stat-icon">
+								<i class="fa fa-truck fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>-->
+							<div class="loading-overlay" ng-class="{'active':total.vlr_pagamento_fornecedor == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div><!-- /.col -->
+
 					<div class="col-lg-6 col-sm-6 col-md-6">
 						<div class="panel-stat3 bg-danger fadeInDown animation-delay4">
 							<h2 class="m-top-none">R$ <span>{{ total.vlrSaldoDevedorClientes | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
@@ -538,6 +507,59 @@
 							(de clientes)
 							<div class="stat-icon">
 								<i class="fa fa-usd fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>
+							<div class="loading-overlay">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> -->
+						</div>
+					</div><!-- /.col -->
+				</div>
+				
+				<div class="row">
+					<div class="col-lg-3 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-{{ (getLucroPrevisto() > 0) ? 'success' : 'danger' }} fadeInDown animation-delay6">
+							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{ getLucroPrevisto() | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
+							<h6>Lucro Previsto</h6>
+							(no período)
+							<div class="stat-icon">
+								<i class="fa fa-money fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>-->
+							<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamento == 'loading' && total.vlr_custo_produto == 'loading' && total.vlr_taxa_maquineta == 'loading' && total.vlr_pagamento_fornecedor == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div><!-- /.col -->
+					
+					<div class="col-lg-3 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-success fadeInDown animation-delay6">
+							<h2 class="m-top-none">R$ <span id="clientsOkPaymentsCount">{{ total.vlrTotalPagamentosConfirmados | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
+							<h6>Pagamentos Confirmados</h6>
+							(no período)
+							<div class="stat-icon">
+								<i class="fa fa-check-square-o fa-3x"></i>
+							</div>
+							<!-- <div class="refresh-button">
+								<i class="fa fa-refresh"></i>
+							</div>-->
+							<div class="loading-overlay" ng-class="{'active':total.vlrTotalPagamentosConfirmados == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div><!-- /.col -->
+
+					<div class="col-lg-6 col-sm-6 col-md-6">
+						<div class="panel-stat3 bg-info fadeInDown animation-delay3">
+							<h2 class="m-top-none"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
+							<h6>Custo Total</h6>
+							(Produtos em Estoque)
+							<div class="stat-icon">
+								<i class="fa fa-sitemap fa-3x"></i>
 							</div>
 							<!-- <div class="refresh-button">
 								<i class="fa fa-refresh"></i>
