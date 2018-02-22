@@ -245,6 +245,7 @@
 												<th>Produto</th>
 												<th>Fabricante</th>
 												<th>Tamanho</th>
+												<th>Cor/Sabor</th>
 												<th style="width: 100px; text-align: center;" colspan="2">Quantidade</th>
 												<td style="width: 200px; text-align: center;">
 													<button class="btn btn-xs btn-primary" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i> Adicionar Item</button>
@@ -267,6 +268,7 @@
 												<td style="line-height: 1.5; vertical-align: middle;">{{ item.nome }}</td>
 												<td>{{ item.nome_fabricante }}</td>
 												<td>{{ item.peso }}</td>
+												<td>{{ item.sabor }}</td>
 												<td width="32">
 													<button type="button" class="btn btn-xs btn-primary" ng-click="showValidades(item)">
 														<i class="fa fa-calendar"></i>
@@ -552,6 +554,7 @@
 											<th>#</th>
 											<th>Nome</th>
 											<th>Tamanho</th>
+											<th>Cor/Sabor</th>
 											<th>Fabricante</th>
 											<th width="80"></th>
 										</tr>
@@ -564,6 +567,7 @@
 											<td>{{ item.id }}</td>
 											<td>{{ item.nome }}</td>
 											<td>{{ item.peso }}</td>
+											<td>{{ item.sabor }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>
 											<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">

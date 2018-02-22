@@ -556,7 +556,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		$('a',$('#tab-cliente .tab-bar li').eq(0)).tab('show');
 		ng.load_empreendimentos = true ;
 		ng.cliente = angular.copy(item);
-		ng.cliente.id_como_encontrou = String(ng.cliente.id_como_encontrou);
+		ng.cliente.id_como_encontrou = (!empty(ng.cliente.id_como_encontrou)) ? String(ng.cliente.id_como_encontrou) : null;
 
 		if(ng.cliente.flg_tipo=='cliente' && ng.cliente.tipo_cadastro=='pf') ng.cliente.cliente_tipo_cadastro = 'cliente_pf';
 		else if(ng.cliente.flg_tipo=='cliente' && ng.cliente.tipo_cadastro=='pj') ng.cliente.cliente_tipo_cadastro = 'cliente_pj';
