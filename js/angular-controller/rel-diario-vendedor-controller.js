@@ -72,19 +72,14 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 		ng.msg_error = null;
 	}
 
-	ng.loadVendas = function(offset,limit) {
-		if(empty(ng.busca.dta_inicial)){
-			alert('Você deve preencher a data inicial');
-			return;
-		}
-
-		if(empty(ng.busca.dta_final)){
-			alert('Você deve preencher a data final');
+	ng.loadVendas = function() {
+		if(empty(ng.busca.dta)){
+			alert('Você deve preencher o campo Data');
 			return;
 		}
 
 		var queryString = "?a->id_empreendimento="+ng.userLogged.id_empreendimento;
-			queryString += "&"+$.param({'a->dta_venda':{exp:"BETWEEN '"+ moment(ng.busca.dta_inicial, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 00:00:00' AND '"+ moment(ng.busca.dta_final, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 23:59:59'"}});
+			queryString += "&"+$.param({'a->dta_venda':{exp:"like "+"'%"+ moment(ng.busca.dta, 'DD/MM/YYYY').format('YYYY-MM-DD')+"%'"}});
 
 		if(!empty(ng.busca.vendedor))
 			queryString += "&a->id_usuario=" + ng.busca.vendedor.id;
@@ -123,10 +118,9 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 
 		ng.vendas = [];
 
-		aj.get(baseUrlApi()+"relatorio/vendas/diario/vendedor/"+offset+'/'+limit+queryString)
+		aj.get(baseUrlApi()+"relatorio/vendas/diario/vendedor/"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data.vendas;
-				ng.paginacao.vendas = data.paginacao ;
 				$("#modal-aguarde").modal('hide');
 				ng.vlr_custo_total = 0;
 				ng.vlr_real_item_total = 0;
@@ -147,7 +141,6 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 				ng.vendas = null;
 				ng.status = status;
 				ng.msg_error = data;
-				ng.paginacao.vendas = null;
 			});
 	}
 
@@ -191,7 +184,7 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 	ng.reset();
 
 	$('#dtaInicial').on('change',function(event){
-		ng.busca.dta_inicial = $(this).val();
+		ng.busca.dta = $(this).val();
 	});
 	$('#dtaFinal').on('change',function(event){
 		ng.busca.dta_final = $(this).val();

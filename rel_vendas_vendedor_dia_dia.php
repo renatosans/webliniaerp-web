@@ -169,20 +169,10 @@
 							<div class="row">
 								<div class="col-sm-2">
 									<div class="form-group">
-										<label class="control-label">Inicial</label>
+										<label class="control-label">Data</label>
 										<div class="input-group">
 											<input readonly="readonly" ng-model="busca.dta_inicial" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
-											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-sm-2">
-									<div class="form-group">
-										<label class="control-label">Final</label>
-										<div class="input-group">
-											<input readonly="readonly" ng-model="busca.dta_final" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
-											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
+											<span class="input-group-addon" id="cld_data"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
 								</div>
@@ -310,14 +300,6 @@
 					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
-
-				<div class="pull-right hidden-print">
-					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
-						<li ng-repeat="item in paginacao.vendas" ng-class="{'active': item.current}">
-							<a href="" h ng-click="loadVendas(item.offset,item.limit)">{{ item.index }}</a>
-						</li>
-					</ul>
-				</div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->
@@ -541,7 +523,7 @@
 		$(document).ready(function() {
 			$('.datepicker').datepicker();
 			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
-			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
+			$("#cld_data").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
 
 			$('.datepicker').on('changeDate', function(ev){
