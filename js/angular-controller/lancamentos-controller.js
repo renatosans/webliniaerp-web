@@ -449,6 +449,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.total_pg 	= 0;
 		ng.pagamento 	= null;
 		ng.cheques	 	= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
+		ng.boletos	 	= [{id_banco:null,num_conta_corrente:null,doc_boleto:null,num_boleto:null}];
 		
 		ng.loadPlanoContas();
 		
@@ -655,6 +656,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 	ng.fornecedor = {} ;
 	ng.addFornecedor = function(item){
+    	$("#list_fornecedores").modal("hide");
     	ng.fornecedor 				= item;
     	ng.pagamento.id_fornecedor  = item.id;
     	ng.pagamento.id_banco = ""+angular.copy(item.id_banco);
@@ -662,7 +664,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
     	ng.pagamento.conta_transferencia = angular.copy(item.num_conta);
     	ng.pagamento.proprietario_conta_transferencia = angular.copy(item.nme_fantasia);
     	ng.pagamento.id_plano_conta = angular.copy(item.id_plano_contas_padrao);
-    	$("#list_fornecedores").modal("hide");
 	}
 
 	ng.loadFornecedor = function(offset,limit) {
