@@ -460,8 +460,7 @@
 											<div class="row">
 												<div class="col-sm-6">
 													<div class="form-group">
-														<label for="" class="control-label">Baixa automática em pagamento de <br> cheque e cartão de crédito?</label>
-														<div class="form-group">
+														<label for="" class="control-label">Baixa automática em pagamento de <br> cheque e cartão de crédito?</label> <div class="form-group">
 															<label class="label-radio inline">
 																<input ng-model="configuracoes.flg_baixa_automatica_pagamento_cartao_credito" value="1" name="flg_baixa_automatica_pagamento_cartao_credito"   type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
@@ -672,6 +671,23 @@
 															</label>
 														</div>
 													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="" class="control-label">Forçar fechamento de caixa as 00h?</label>
+												<div class="form-group">
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="1" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Sim</span>
+													</label>
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="0" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Não</span>
+													</label>
 												</div>
 											</div>
 										</div>

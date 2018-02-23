@@ -746,6 +746,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item3);
 		}
+		
+		if(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas != undefined){
+			var item3 = {
+							nome 				:'flg_forcar_fechamento_caixa_zero_horas',
+							valor 				:ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
 
 		if(ng.configuracoes.id_plano_conta_pagamento_profissional != undefined){
 			var item4 = {
