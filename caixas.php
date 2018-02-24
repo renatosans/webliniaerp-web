@@ -23,6 +23,9 @@
 	<!-- Chosen -->
 	<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -179,6 +182,13 @@
 									<div class="form-group" id="pth_local">
 										<label class="control-label">Qtd. Vias Impressão</label>
 										<input type="number" min="1" max="5" step="1" ng-model="conta.qtd_vias_impressao" class="form-control"/>
+									</div>
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group" id="pth_local">
+										<label class="control-label">ID Externo</label>
+										<input type="text" ng-model="conta.id_externo" class="form-control"/>
 									</div>
 								</div>
 							</div>
@@ -486,6 +496,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

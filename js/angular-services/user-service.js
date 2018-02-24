@@ -177,7 +177,7 @@ app.service('NFService', function($http) {
 	this.getNota = function(id_empreendimento,id_venda) {
 		var nota  = false ;;
 		 $.ajax({
-		 	url: baseUrlApi()+"nota_fiscal?cod_empreendimento="+id_empreendimento+"&cod_venda="+id_venda,
+		 	url: baseUrlApi()+"nota_fiscal?cod_empreendimento="+id_empreendimento+"&cod_venda="+id_venda+"&status[exp]=<>'cancelado'",
 		 	async: false,
 		 	success: function(dados) {
 		 		nota = dados ;

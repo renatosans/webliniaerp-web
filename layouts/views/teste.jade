@@ -1,0 +1,201 @@
+doctype
+html(lang="pt-br")
+	include partials/header_head
+
+	body.overflow-hidden
+		
+		// #overlay.transparent
+
+		#wrapper.preload
+			// top-nav
+			#top-nav.fixed.skin-1
+				// brand
+				a.brand(href="#")
+					span WebliniaERP
+					span.text-google  Admin
+
+				// mobile menu icon
+				button#sidebarToggle.navbar-toggle.pull-left(type="button")
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+
+				ul.nav-notification.clearfix
+					include partials/alertas
+
+					li.profile.dropdown
+						a.dropdown-toggle(data-toggle="dropdown", href="#")
+							strong userLogged.nme_usuario
+							span
+								i.fa.fa-chevron-down
+						ul.dropdown-menu
+							li
+								a.clearfix(href="#")
+									img(src="img/hage.png", alt="User Avatar")
+									.detail
+										strong userLogged.nme_usuario
+										p.grey(style="font-size: 7px;") userLogged.end_email
+							li
+								a.main-link(tabindex="-1", href="#")
+									i.fa.fa-inbox.fa-lg
+									|  userLogged.nome_empreendimento
+							li
+								a.main-link(tabindex="-1", href="#")
+									i.fa.fa-list-alt.fa-lg
+									|  Meus Pedidos
+							li.divider
+							li
+								a.main-link.logoutConfirm_open(tabindex="-1", href="#logoutConfirm")
+									i.fa.fa-lock.fa-lg
+									|  Log Out
+
+			// aside-bar
+			aside.fixed.skin-1
+				.sidebar-inner.scrollable-sidebar
+					.size-toggle
+						a#sizeToggle.btn.btn-sm
+							span.icon-bar
+							span.icon-bar
+							span.icon-bar
+						include partials/menu-bar-buttons
+					.user-block.clearfix
+						img(src="img/hage.png", alt="User Avatar")
+						.detail
+							strong {{ userLogged.nme-usuario}}
+							ul.list-inline
+								li
+									a(href=""){{ userLogged.nome_empreendimento }}
+					include partials/menu-modulos
+
+			// Container
+			#main-container
+				.padding-md
+					.clearfix
+						.pull-left
+							span.img-demo
+								img(src="assets/imagens/logos/{{ userLogged.nme_logo }}")
+							.pull-left.m-left-sm
+								h3.m-bottom-xs.m-top-xs Conferência de Caixa
+								small Teste
+						.pull-right.text-right
+							h6 {{ dados_empreendimento.num_cnpj }} - {{ dados_empreendimento.nome_empreendimento }}
+							h6 {{ dados_empreendimento.nme_logradouro }}, {{ dados_empreendimento.num_logradouro }}
+							h6 CEP: {{ dados_empreendimento.num_cep }} - {{ dados_empreendimento.nme_cidade }} - {{ dados_empreendimento.uf }}
+							h6 Telefone: {{ dados_empreendimento.num_telefone }}
+					hr
+					.panel.panel-default.hidden-print(style="margin-top: 50px;")
+						.panel-heading
+							i.fa.fa-calendar
+							|  Entradas
+						.panel-body
+							form(role="form")
+								.row
+									.col-sm-12.table-responsive
+										table.table.table-bordered.table-condensed.table-striped.table-hover
+											thead
+												tr
+													th.text-center Forma de Pagamento
+													th.text-center Valor
+											tbody
+												// tr
+													td.text-center(colspan="2")
+														i.fa.fa-refresh.fa-spin
+														|  asdasd
+												// tr
+													td.text-center(colspan="2")
+														i.fa.fa-refresh.fa-spin
+														|  asdasd
+												// tr(ng-repeat="item in itens")
+												tr
+													td.text-left Dinheiro
+													td.text-right R$ 310,00
+												tr
+													td.text-left Cartão de Débito
+													td.text-right R$ 150,00
+												tr
+													td.text-left Cartão de Crédito
+													td.text-right R$ 200,00
+								hr
+								h4.text-bold Débito
+								hr
+								.row
+									.col-sm-4
+										.form-group
+											label.control-label Maquinetas
+											select.form-control
+												option -- Selecione uma Maquineta --
+												option Getnet
+												option Rede
+												option Cielo
+											label.control-label
+												br
+											select.form-control
+												option -- Selecione uma Maquineta --
+												option Getnet
+												option Rede
+												option Cielo
+									.col-sm-4
+										.form-group
+											label.control-label Bandeiras
+											select.form-control
+												option -- Selecione uma Bandeira --
+												option Visa
+												option MasterCard
+											label.control-label
+												br
+											select.form-control
+												option -- Selecione uma Bandeira --
+												option Visa
+												option MasterCard
+									.col-sm-2
+										.form-group
+											label.control-label Valor:
+											input.form-control
+											label.control-label
+											input.form-control
+
+									.col-md-offset-1.col-sm-1
+										buttom.btn.btn-xs.btn-primary
+											i.fa.fa-plus-circle
+								hr
+								h4.text-bold Crédito
+								hr
+								.row
+									.col-sm-4
+										.form-group
+											label.control-label Maquinetas
+											select.form-control
+												option -- Selecione uma Maquineta --
+												option Getnet
+												option Rede
+												option Cielo
+											label.control-label
+												br
+											select.form-control
+												option -- Selecione uma Maquineta --
+												option Getnet
+												option Rede
+												option Cielo
+									.col-sm-4
+										.form-group
+											label.control-label Bandeiras
+											select.form-control
+												option -- Selecione uma Bandeira --
+												option Visa
+												option MasterCard
+											label.control-label
+												br
+											select.form-control
+												option -- Selecione uma Bandeira --
+												option Visa
+												option MasterCard
+									.col-sm-2
+										.form-group
+											label.control-label Valor:
+											input.form-control
+											label.control-label
+											input.form-control
+
+									.col-md-offset-1.col-sm-1
+										buttom.btn.btn-xs.btn-primary
+											i.fa.fa-plus-circle

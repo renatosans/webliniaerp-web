@@ -20,6 +20,9 @@
 	<!-- Pace -->
 	<link href="css/pace.css" rel="stylesheet">
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -229,7 +232,8 @@
 														<td>{{ item.peso }}</td>
 														<td>{{ item.sabor }}</td>
 														<td  width="80">
-															<input style="text-align: center" onKeyPress="return SomenteNumero(event);" ng-model="item.qtd_saida" ng-keyup="" type="text" class="form-control input-xs" />
+															<input style="text-align: center" onKeyPress="return SomenteNumero(event);" ng-if="item.flg_unidade_fracao != 1" ng-model="item.qtd_saida" ng-keyup="" type="text" class="form-control input-xs" />
+															<input style="text-align: center" onKeyPress="return SomenteNumero(event);" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3" ng-model="item.qtd_saida" ng-keyup="" type="text" class="form-control input-xs" />
 														</td>
 														<td align="center">
 															<button class="btn btn-xs btn-danger" ng-click="delProduto($index)"><i class="fa fa-trash-o"></i></button>
@@ -497,7 +501,10 @@
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
 											<td>{{ item.qtd_real_estoque }}</td>
-											<td  width="80"><input onKeyPress="return SomenteNumero(event);"  ng-model="item.qtd_saida" type="text" class="form-control input-xs" /></td>
+											<td  width="80">
+												<input onKeyPress="return SomenteNumero(event);" ng-if="item.flg_unidade_fracao != 1" ng-model="item.qtd_saida" type="text" class="form-control input-xs" />
+												<input onKeyPress="return SomenteNumero(event);" thousands-formatter precision="3" ng-if="item.flg_unidade_fracao == 1" ng-model="item.qtd_saida" type="text" class="form-control input-xs" />
+											</td>
 											<td width="50" align="center">
 												<button  ng-show="!produtoSelected(item.id_produto)" type="button" class="btn btn-xs btn-success" ng-disabled="" ng-click="addProduto(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
@@ -648,6 +655,10 @@
 
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

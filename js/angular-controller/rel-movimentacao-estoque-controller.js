@@ -97,12 +97,12 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 						});
 					}
 					ng.produtos = aux ;
-					console.log(aux);
+					
 				}else{
 					ng.grupo_tabela = ng.grupo_busca ;
 					ng.busca_deposito = empty(ng.busca.id_deposito) ? false : true ;
 					ng.produtos = data.produtos;
-					console.log(data.produtos);
+					
 				}
 				ng.paginacao.produtos = data.paginacao ;
 				$("#modal-aguarde").modal('hide');
@@ -248,7 +248,7 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 				data.movimentacoes[i].total = saldo_anterior;
 				ng.saldo_produto = saldo_anterior;
 			});	
-			console.log(inventarios);
+			
 			ng.movimentacoes =  _.groupBy(data.movimentacoes, "dia_movimentacao"); 
 			
 			$("#modal-aguarde").modal('hide');

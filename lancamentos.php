@@ -32,6 +32,11 @@
 	<!-- Chosen -->
 	<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+	<link href="bower_components/np-autocomplete/dist/np-autocomplete.min.css" rel="stylesheet">
+
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -80,6 +85,10 @@
   		  z-index: 100000;
 		}
 
+		.list-group-item {
+			width: 100% !important;
+			text-align: left;
+		}
 
 	</style>
   </head>
@@ -185,122 +194,182 @@
 					<div class="panel-body">
 						<div class="panel-body">
 							<div class="alert alert-pagamento" style="display:none"></div>
-							<div class="row">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input name="tipoLancamento" ng-model="flgTipoLancamento" value="1" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-danger">Despesa</span>
+											</label>
 
-										<div class="col-sm-12">
-											<div class="form-group">
-												<label class="label-radio inline">
-													<input name="tipoLancamento" ng-model="flgTipoLancamento" value="1" type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span class="text-danger">Despesa</span>
-												</label>
+											<label class="label-radio inline">
+												<input name="tipoLancamento" ng-model="flgTipoLancamento" value="0" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-success">Receita</span>
+											</label>
 
-												<label class="label-radio inline">
-													<input name="tipoLancamento" ng-model="flgTipoLancamento" value="0" type="radio" class="inline-radio">
-													<span class="custom-radio"></span>
-													<span class="text-success">Receita</span>
-												</label>
-											</div>
+											<label class="label-radio inline">
+												<input name="tipoLancamento" ng-model="flgTipoLancamento" value="2" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span class="text-bold">Transferência</span>
+											</label>
 										</div>
+									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12" ng-if="flgTipoLancamento == 0" id="id_cliente">
-					    				<div class="form-group">
-												<label class="control-label">Cliente</label>
-												<div class="input-group">
-													<input ng-click="selCliente(0,10)"  type="text" class="form-control" ng-model="cliente.nome" readonly="readonly" style="cursor: pointer;" />
-													<span class="input-group-btn">
-														<button ng-click="selCliente(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
-													</span>
-												</div>
+										<div class="form-group">
+											<label class="control-label">Cliente</label>
+											<div class="input-group">
+												<input ng-click="selCliente(0,10)"  type="text" class="form-control" ng-model="cliente.nome" readonly="readonly" style="cursor: pointer;" />
+												<span class="input-group-btn">
+													<button ng-click="selCliente(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
+												</span>
+											</div>
 										</div>
-					    			</div>
-					    			<div class="col-sm-12" ng-if="flgTipoLancamento == 1"  id="id_fornecedor">
-					    				<div class="form-group">
-												<label class="control-label">Fornecedores</label>
-												<div class="input-group">
-													<input ng-click="selFornecedor(0,10)"  type="text" class="form-control" ng-model="fornecedor.nome_fornecedor" readonly="readonly" style="cursor: pointer;" />
-													<span class="input-group-btn">
-														<button ng-click="selFornecedor(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
-													</span>
-												</div>
+									</div>
+									<div class="col-sm-12" ng-if="flgTipoLancamento == 1"  id="id_fornecedor">
+										<div class="form-group">
+											<label class="control-label">Fornecedores</label>
+											<div class="input-group">
+												<input ng-click="selFornecedor(0,10)"  type="text" class="form-control" ng-model="fornecedor.nome_fornecedor" readonly="readonly" style="cursor: pointer;" />
+												<span class="input-group-btn">
+													<button ng-click="selFornecedor(0,10)" type="button" class="btn btn-info"><i class="fa fa-users"></i></button>
+												</span>
+											</div>
 										</div>
-					    			</div>
+									</div>
 								</div>
 								<div class="row" ng-if="flgTipoLancamento == 0 && cliente.vlr_saldo_devedor < 0">
 									<div class="col-sm-12">
-									<span style="font-weight:bold;color:#777">Saldo: </span>
-									<span style="font-weight:bold;color:#E62C2C">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
+										<span style="font-weight:bold;color:#777">Saldo: </span>
+										<span style="font-weight:bold;color:#E62C2C">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
 									</div>
 								</div>
 								<div class="row" ng-if="flgTipoLancamento == 0 && cliente.vlr_saldo_devedor >= 0">
 									<div class="col-sm-12">
-									<span style="font-weight:bold;color:#777">Saldo: </span>
-									<span style="font-weight:bold;color:#1A7204">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
+										<span style="font-weight:bold;color:#777">Saldo: </span>
+										<span style="font-weight:bold;color:#1A7204">{{cliente.vlr_saldo_devedor | numberFormat:2:',':'.'}}</span>
+									</div>
+								</div>
+								<div ng-show="flgTipoLancamento == 2">
+									<div class="row">
+										<div class="col-sm-2">
+											<div class="form-group">
+												<label class="control-label">Data Transferência</label>
+												<div class="input-group">
+													<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_transferencia" class="datepicker form-control text-center" ng-model="dta_pagamento">
+													<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group" id="id_conta_bancaria_origem">
+												<label class="control-label">Conta de origem</label>
+												<select ng-model="transferencia.id_conta_bancaria_origem" class="form-control">
+													<option ></option>
+													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group" id="id_conta_bancaria_destino">
+												<label class="control-label">Conta de destino</label>
+												<select ng-model="transferencia.id_conta_bancaria_destino" class="form-control">
+													<option ></option>
+													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<div class="form-group">
+												<label class="control-label">Valor</label>
+												<input class="form-control text-right" type="text" name="valor" ng-model="transferencia.vlr_transferencia" thousands-formatter>
+											</div>
+										</div>
+
+									</div>
+									<div class="row">
+										<div class="col-sm-8">
+											<div class="form-group">
+												<label class="control-label">Observação</label>
+												<textarea class="form-control" ng-model="transferencia.obs_transferencia" rows="5"></textarea>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12">
-									<hr>
+										<hr>
 									</div>
 								</div>
-
-					    	<div class="row">
-					    		<div class="col-sm-9">
-								<div class="row">
-									<div class="col-sm-4" id="pagamento_forma_pagamento">
-						    			<label class="control-label">Forma de Pagamento</label>
-										<select ng-model="pagamento.id_forma_pagamento" ng-change="selectChange()" class="form-control">
-											<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
-											<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
-										</select>
-									</div>
-					    			<div class="col-sm-8">
-										<div class="form-group" id="regimeTributario">
-											<label class="ccontrol-label">Plano de conta </label> 
-											<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
-										    option="plano_contas"
-										    ng-model="pagamento.id_plano_conta"
-										    ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
-											</select>
+								<div class="row" ng-if="flgTipoLancamento == 2">
+									<div class="col-sm-12">
+										<div class="pull-right">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." type="submit" class="btn btn-success" ng-click="salvarTransferencia()">
+												<i class="fa fa-save"></i> Salvar
+											</button>
 										</div>
 									</div>
-					    			<div class="col-sm-4" id="pagamento_id_banco" ng-if="pagamento.id_forma_pagamento == 8">
-										<div class="form-group" >
-											<label class="control-label">Banco</label>
-											<select chosen
-											    option="bancos"
-											    ng-model="pagamento.id_banco"
-											    ng-options="banco.id as banco.nome for banco in bancos">
+								</div>
+								<div class="row" ng-show="flgTipoLancamento == 0 || flgTipoLancamento == 1">
+									<div class="col-sm-9">
+										<div class="row">
+											<div class="col-sm-4" id="pagamento_forma_pagamento">
+												<label class="control-label">Forma de Pagamento</label>
+												<select ng-model="pagamento.id_forma_pagamento" ng-change="selectChange(pagamento.id_forma_pagamento)" class="form-control">
+													<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
+													<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
+												</select>
+											</div>
+											<div class="col-sm-8">
+												<div class="form-group" id="regimeTributario">
+													<label class="ccontrol-label">Plano de conta </label>
+													<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
+													option="plano_contas"
+													ng-model="pagamento.id_plano_conta"
+													ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-4" id="pagamento_id_banco" ng-if="pagamento.id_forma_pagamento == 8">
+											<div class="form-group" >
+												<label class="control-label">Banco</label>
+												<select chosen
+												option="bancos"
+												ng-model="pagamento.id_banco"
+												ng-options="banco.id as banco.nome for banco in bancos">
 											</select>
 										</div>
 									</div>
 
 									<div class="col-sm-4" id="pagamento_agencia_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
-						    			<label class="control-label">Agência</label>
-						    			<div class="form-group ">
-						    					<input ng-model="pagamento.agencia_transferencia"  type="text" class="form-control" />
-						    			</div>
-						    		</div>
+										<label class="control-label">Agência</label>
+										<div class="form-group ">
+											<input ng-model="pagamento.agencia_transferencia"  type="text" class="form-control" />
+										</div>
+									</div>
 
-						    		<div class="col-sm-4" id="pagamento_conta_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
-						    			<label class="control-label">Conta</label>
-						    			<div class="form-group ">
-						    					<input ng-model="pagamento.conta_transferencia"  type="text" class="form-control" />
-						    			</div>
-						    		</div>
+									<div class="col-sm-4" id="pagamento_conta_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
+										<label class="control-label">Conta</label>
+										<div class="form-group ">
+											<input ng-model="pagamento.conta_transferencia"  type="text" class="form-control" />
+										</div>
+									</div>
+								</div>
 
-
-					    		</div>
-						    	<div class="row">
-						    		<div class="col-sm-4" ng-if="pagamento.id_forma_pagamento != 8 ">
-											<div class="form-group" id="id_conta_bancaria">
-												<label class="control-label">Conta</label>
-												<select ng-model="pagamento.id_conta_bancaria" class="form-control" ng-disabled="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0)">
-													<option ></option>
-													<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
-												</select>
-											</div>
+								<div class="row">
+									<div class="col-sm-4" ng-if="pagamento.id_forma_pagamento != 8 ">
+										<div class="form-group" id="id_conta_bancaria">
+											<label class="control-label">Conta</label>
+											<select ng-model="pagamento.id_conta_bancaria" class="form-control" ng-disabled="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0)">
+												<option ></option>
+												<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+											</select>
+										</div>
 									</div>
 									<div class="col-sm-3" id="proprietario_conta_transferencia" ng-if="pagamento.id_forma_pagamento == 8">
 						    			<label class="control-label">Proprietário</label>
@@ -318,19 +387,19 @@
 											</div>
 									</div>
 									<div class="col-sm-3" id="pagamento_id_conta_transferencia_destino" ng-if="pagamento.id_forma_pagamento == 8 ">
-						    			<label class="control-label">Conta de Destino</label>
+										<label class="control-label">Conta de Destino</label>
 										<select ng-model="pagamento.id_conta_transferencia_destino" class="form-control input-sm">
 											<option ng-repeat="item in contas" value="{{ item.id }}">#{{ item.id }} - {{ item.dsc_conta_bancaria }}</option>
 										</select>
 									</div>
 									<!--<div class="col-sm-3" ng-show="pagamento.id_forma_pagamento == 8">
-											<div class="form-group cheque_data">
-												<label class="control-label">Data do pagamento</label>
-												<div class="input-group">
-													<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control data-cc">
-													<span class="input-group-addon" class="cld_pagameto"><i class="fa fa-calendar"></i></span>
-												</div>
+										<div class="form-group cheque_data">
+											<label class="control-label">Data do pagamento</label>
+											<div class="input-group">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control data-cc">
+												<span class="input-group-addon" class="cld_pagameto"><i class="fa fa-calendar"></i></span>
 											</div>
+										</div>
 									</div>-->
 						    		<div class="col-sm-4" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 8">
 						    			<label class="control-label">Valor</label
@@ -351,10 +420,10 @@
 						    			</div>
 						    		</div>
 
-						    	</div>
+								</div>
 
 						    	<div class="row">
-						    		<div class="col-sm-6" ng-show="pagamento.id_forma_pagamento == 6">
+						    		<div class="col-sm-4" ng-show="pagamento.id_forma_pagamento == 6">
 											<div class="form-group cheque_data">
 												<label class="control-label">Data da primeira parcela</label>
 												<div class="input-group">
@@ -363,10 +432,16 @@
 												</div>
 											</div>
 									</div>
-						    		<div class="col-sm-6" id="pagamento_maquineta" ng-if="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0) ">
+						    		<div class="col-sm-4" id="pagamento_maquineta" ng-if="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0) ">
 						    			<label class="control-label">Maquineta</label>
 										<select ng-model="pagamento.id_maquineta" ng-change="selIdMaquineta()" class="form-control">
 											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">#{{ item.id_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+									<div class="col-sm-4" id="bandeiras" ng-if="(pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6) && (flgTipoLancamento == 0) ">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento.id_bandeira" class="form-control">
+											<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{ item.nome }}</option>
 										</select>
 									</div>
 									<div style="clear: both;" ng-if="pagamento.id_forma_pagamento == 5">&nbsp;</div>
@@ -586,7 +661,7 @@
 						</div>
 					</div>
 					</div>
-			</div><!-- /panel -->
+				</div><!-- /panel -->
 
 				<div class="panel panel-default hidden-print">
 					<div class="panel-heading">
@@ -752,10 +827,11 @@
 									<thead>
 										<tr>
 											<th ng-show="!config_table.groupPerDay" rowspan="2">Data</td>
-											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Conta</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Conta Bancária</th>
 											<th class="text-center" rowspan="2">Cliente/Fornecedor</th>
 											<th class="text-center" rowspan="2">Natureza da Operação</th>
-											<th class="text-center" rowspan="2" ng-if="config_table.conta_bancaria">Forma de Pgto.</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.forma_pagamento">Forma de Pgto.</th>
+											<th class="text-center" rowspan="2" ng-if="config_table.bandeira">Bandeira</th>
 
 											<th class="text-center" rowspan="2" ng-if="config_table.observacao == true">Observação</th>
 
@@ -784,6 +860,25 @@
 
 										</tr>
 									</thead>
+									<tr>
+										<td class="text-right text-bold" colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}">Saldo Anterior</td>
+										<td class="text-right text-bold text-success">R$ {{ saldo_anterior_receita.vlr_total_despesa | numberFormat : 2 : ',' : '.' }}</td>
+										<td class="text-right text-bold text-danger"> R$ {{ saldo_anterior_despesa.vlr_total_despesa | numberFormat : 2 : ',' : '.' }}</td>
+										<td class="text-right">
+											<span class="text-bold text-danger" ng-if="(saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) < 0">
+												R$ {{ (saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) | numberFormat: '2' : ',' : '.' }}
+											</span>
+
+											<span class="text-bold text-primary" ng-if="(saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) = 0">
+												R$ {{ (saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) | numberFormat: '2' : ',' : '.' }}
+											</span>
+
+											<span class="text-bold text-success" ng-if="(saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) > 0">
+												R$ {{ (saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) | numberFormat: '2' : ',' : '.' }}
+											</span>
+										</td>
+										<td></td>
+									</tr>
 									<tr  ng-if="dataGroups.length <= 0 && dataGroups != null">
 											<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(7) : calculaColspan(8) }} " style="text-align:center">
 												<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
@@ -804,6 +899,7 @@
 											<td>{{ item.nome | uppercase }}</td>
 											<td>{{ item.cod_plano }} - {{ item.dsc_natureza_operacao | uppercase}}</td>
 											<td ng-if="config_table.forma_pagamento">{{ item.descricao_forma_pagamento }}</td>
+											<td ng-if="config_table.bandeira">{{ item.nme_bandeira }}</td>
 
 											<td ng-if="config_table.observacao == true" control-size-string content="{{ item.obs_pagamento }}" size="16"></td>
 
@@ -822,7 +918,7 @@
 
 											<td class="text-center">
 												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-success"
-													ng-if="item.status_pagamento == 1" ng-click="modalChangeStatusPagamento(item)"
+													ng-if="item.status_pagamento == 1" ng-click="loadVendaByIdLancamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
 													<i class="fa fa-check-circle"></i>
 												</button>
@@ -955,7 +1051,7 @@
 										</tr>
 									</tbody>
 									<tr ng-hide="dataGroups.length <= 0 || dataGroups == null">
-										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Totais do Período</td>
+										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Saldo do Período</td>
 										<td class="text-right">
 											<span class="text-success">
 												R$ {{ vlr_total_credito | numberFormat: '2' : ',' : '.' }}
@@ -969,6 +1065,21 @@
 										<td class="text-right">
 											<span class="text-{{ (vlr_total_periodo > 0) ? 'success' : ((vlr_total_periodo < 0) ? 'danger' : 'primary') }}">
 												R$ {{ vlr_total_periodo | numberFormat: '2' : ',' : '.' }}
+											</span>
+										</td>
+										<td></td>
+									</tr>
+									<tr ng-hide="dataGroups.length <= 0 || dataGroups == null">
+										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Saldo Final</td>
+										<td class="text-right">
+
+										</td>
+										<td class="text-right">
+
+										</td>
+										<td class="text-right">
+											<span class="text-{{ (((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) > 0) ? 'success' : ((((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) < 0) ? 'danger' : 'primary') }}">
+												R$ {{ ((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) | numberFormat: '2' : ',' : '.' }}
 											</span>
 										</td>
 										<td></td>
@@ -1335,350 +1446,567 @@
 		<!-- /.modal -->
 
 		<!-- /Modal Processando Pagamento-->
-				<div class="modal fade" id="modal_progresso_pagamento" style="display:none">
-		  			<div class="modal-dialog error modal-md">
-		    			<div class="modal-content">
-		      				<div class="modal-header">
-								<h4>Processando Pagamento</h4>
-		      				</div>
+		<div class="modal fade" id="modal_progresso_pagamento" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+						<h4>Processando Pagamento</h4>
+      				</div>
 
-						    <div class="modal-body">
-						    	<div class="alert alert-reforco" style="display:none"></div>
+				    <div class="modal-body">
+				    	<div class="alert alert-reforco" style="display:none"></div>
 
-						    	<div class="row">
-						    		<div class="col-sm-6" id="valor_pagamento">
-						    		<p>
-						    			<strong id="text_status_venda">Salvando pagamento</strong><img src="assets/imagens/progresso_venda.gif">
-						    		</p>
-									</div>
-						    	</div>
+				    	<div class="row">
+				    		<div class="col-sm-6" id="valor_pagamento">
+				    		<p>
+				    			<strong id="text_status_venda">Salvando pagamento</strong><img src="assets/imagens/progresso_venda.gif">
+				    		</p>
+							</div>
+				    	</div>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<div class="modal fade" id="modal-print" style="display:none"  data-keyboard="false">
+  			<div class="modal-dialog error modal-lg">
+    			<div class="modal-content">
+      				<div class="modal-header" id="topo_print">
+						<div class="clearfix">
+							<div class="pull-left">
+								<span class="img-demo">
+									<img src="assets/imagens/logos/{{ userLogged.nme_logo }}" height="40" width="40">
+								</span>
+
+								<div class="pull-left m-left-sm">
+									<h3 class="m-bottom-xs m-top-xs" >Comprovante de Pagamento</h3>
+									<span class="text-muted">{{ userLogged.nome_empreendimento }}</span>
+								</div>
+							</div>
+
+							<div class="pull-right text-right">
+								<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+							</div>
+						</div>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-12">
+
+				    		</div>
+				    	</div>
+				    	<div class="row" id="tbl_print" ng-if="itensPrint.length > 0">
+				    		<div class="col-sm-12" id="valor_pagamento">
+				    			<strong style="font-size:14px;margin-bottom:5px">Cliente    : {{ vendaPrint.nome_cliente }}</strong>
+				    			<br>
+				    			<strong style="font-size:14px;margin-bottom:5px">ID         : {{ vendaPrint.id_cliente  }}</strong>
+				    			<br>
+				    			<strong style="font-size:14px;margin-bottom:5px;color:#2C800C" ng-if="vendaPrint.vlr_saldo_devedor >= 0 && ( vendaPrint.id_cliente != configuracao.id_cliente_movimentacao_caixa) ">Saldo : R${{ vendaPrint.vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
+				    			<strong style="font-size:14px;margin-bottom:5px;color:#D82121" ng-if="vendaPrint.vlr_saldo_devedor < 0  && (vendaPrint.id_cliente != configuracao.id_cliente_movimentacao_caixa)">Saldo : R$ {{ vendaPrint.vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
+				    			<br>
+				    			<br>
+				    		</div>
+				    	</div>
+
+				    		<div class="row" id="tbl_print_pg">
+					    		<div class="col-sm-12" id="valor_pagamento">
+					    			<table class="table table-bordered table-condensed table-striped table-hover">
+					    				<thead ng-show="itensPrint.length  > 0">
+											<tr>
+												<th>Forma de pagamento</th>
+												<th>Status</th>
+												<th ng-if="itensPrint[0].id_forma_pagamento == 4">Doc. Boleto</th>
+												<th ng-if="itensPrint[0].id_forma_pagamento == 4">Num. Boleto</th>
+												<th class="hidden-print">Conta bancaria</th>
+												<th ng-if="itensPrint[0].id_forma_pagamento == 2">N° Conta Corrente</th>
+												<th ng-if="itensPrint[0].id_forma_pagamento == 2">N° do cheque</th>
+												<th ng-if="itensPrint[0].id_forma_pagamento == 2">Predatado</th>
+												<th>Data do pagamento</th>
+												<th>Valor</th>
+											<tr>
+										</thead>
+										<tbody>
+											<tr  ng-if="itensPrint.length <= 0">
+												<td colspan="4" style="text-align:center">
+													<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+												</td>
+											</tr>
+											<tr ng-repeat="item in itensPrint">
+												<td ng-if="item.id_forma_pagamento != 6">{{ item.descricao_forma_pagamento  }} </td>
+												<td ng-if="item.id_forma_pagamento == 6">{{ item.descricao_forma_pagamento  }}  {{item.current_parcela}}/{{item.total_parcelas}} </td>
+												<td ng-if="item.status_pagamento == 0">Pendente</td>
+												<td ng-if="item.status_pagamento == 1">Pago</td>
+												<td ng-if="item.id_forma_pagamento == 4">{{ item.doc_boleto }}</td>
+												<td ng-if="item.id_forma_pagamento == 4">{{ item.num_boleto }}</td>
+												<td class="hidden-print"> {{ item.dsc_conta_bancaria }}</td>
+												<td ng-if="item.id_forma_pagamento == 2">{{ item.num_conta_corrente  }} </td>
+												<td ng-if="item.id_forma_pagamento == 2">{{ item.num_cheque }} </td>
+												<td ng-if="item.id_forma_pagamento == 2 && item.flg_cheque_predatado == 0"> Não </td>
+												<td ng-if="item.id_forma_pagamento == 2 && item.flg_cheque_predatado == 1"> Sim </td>
+												<td >{{ item.data_pagamento | dateFormat:'date' }}</td>
+												<td ng-if="item.id_forma_pagamento != 6">R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</td>
+												<td ng-if="item.id_forma_pagamento == 6">R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</td>
+											</tr>
+										</tbody>
+									</table>
+					    		</div>
+				    		</div>
+
+				    </div>
+
+				    <div class="modal-footer" ng-show="itensPrint.length  > 0">
+				    	<button type="button" data-loading-text=" Aguarde..." id="btn-imprimir"
+				    		class="btn btn-md btn-block btn-success" ng-click="printDiv('modal-print')">
+				    		<i class="fa fa-print"></i> Imprimir
+				    	</button>
+				    	<a ng-click="cancelar()" class="btn btn-md btn-block btn-default">
+				    		<i class="fa fa-reply"></i> Cancelar
+				    	</a>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+		<!-- /Modal Print-->
+		<div class="modal fade" id="modal-print-lancamento" style="display:none"  data-keyboard="false">
+  			<div class="modal-dialog error modal-lg">
+    			<div class="modal-content">
+      				<div class="modal-header" id="topo_print">
+						<div class="clearfix">
+							<div class="pull-left">
+								<span class="img-demo">
+									<img src="assets/imagens/logos/{{ userLogged.nme_logo }}" height="40" width="40">
+								</span>
+
+								<div class="pull-left m-left-sm">
+									<h3 class="m-bottom-xs m-top-xs">Comprovante de Pagamento</h3>
+									<span class="text-muted">{{ userLogged.nome_empreendimento }}</span>
+								</div>
+							</div>
+
+							<div class="pull-right text-right">
+								<h5><strong>#{{ id_controle_pagamento }}</strong></h5>
+								<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+							</div>
+						</div>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-12">
+
+				    		</div>
+				    	</div>
+				    	<div class="row" id="tbl_print">
+				    		<div class="col-sm-12" id="valor_pagamento">
+				    			<strong style="font-size:14px;margin-bottom:5px">Atendente : {{ userLogged.nme_usuario }}</strong>
+				    			<br>
+				    			<strong style="font-size:14px" ng-if="(cliente.id    != undefined && cliente.id != '') && (flgTipoLancamento == 0)">Cliente : {{ cliente.nome }}</strong>
+				    			<strong style="font-size:14px" ng-if="(fornecedor.id != undefined && fornecedor.id != '') && (flgTipoLancamento == 1)">Fornecedor : {{ fornecedor.nome_fornecedor }}</strong>
+				    			<br>
+				    			<strong style="font-size:14px;margin-bottom:5px;color:#2C800C" ng-if="vlr_saldo_devedor >= 0 && (cliente.id != undefined && cliente.id != '')">Saldo : R${{ vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
+				    			<strong style="font-size:14px;margin-bottom:5px;color:#D82121" ng-if="vlr_saldo_devedor < 0 && (cliente.id != undefined && cliente.id != '')">Saldo : R$ {{ vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
+				    			<br>
+				    			<br>
+				    		</div>
+				    	</div>
+
+				    		<div class="row" id="tbl_print_pg">
+					    		<div class="col-sm-12" id="valor_pagamento">
+					    			<table class="table table-bordered table-condensed table-striped table-hover">
+										<tbody>
+											<tr ng-if="(recebidos.length == 0)">
+												<td colspan="1">Não foi recebido nenhum pagamento</td>
+											</tr>
+											<tr ng-repeat="item in recebidos">
+												<td ng-if="item.id_forma_pagamento != 6 &&  item.id_forma_pagamento != 2">{{ item.forma_pagamento  }} <strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
+												<td ng-if="item.id_forma_pagamento == 6">{{ item.forma_pagamento  }} em {{item.parcelas}}x <strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
+												<td ng-if="item.id_forma_pagamento == 2">{{ item.forma_pagamento  }} em {{ cheques.length }}x<strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
+											</tr>
+										</tbody>
+									</table>
+					    		</div>
+				    		</div>
+
+				    </div>
+
+				    <div class="modal-footer">
+				    	<button type="button" data-loading-text=" Aguarde..." id="btn-imprimir"
+				    		class="btn btn-md btn-block btn-success" ng-click="printDiv('modal-print')">
+				    		<i class="fa fa-plus-circle"></i> Imprimir
+				    	</button>
+				    	<a ng-click="refresh()" class="btn btn-md btn-block btn-default">
+				    		<i class="fa fa-times-circle"></i> Voltar
+				    	</a>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal Configutração Tabela-->
+		<div class="modal fade" id="modal_config_table" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+						<h4>Opções de Exibição</h4>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-6">
+				    			<b>Colunas extras:</b>
+							</div>
+							<div class="col-sm-6">
+				    			<b>Linhas extras:</b>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-lg-6">
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.conta_bancaria">
+									<span class="custom-checkbox"></span>
+									Conta Bancária
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.forma_pagamento">
+									<span class="custom-checkbox"></span>
+									Forma de Pagamento
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.bandeira">
+									<span class="custom-checkbox"></span>
+									Bandeira
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.cheque">
+									<span class="custom-checkbox"></span>
+									Cheque
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.boleto">
+									<span class="custom-checkbox"></span>
+									Boleto
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.transferencia">
+									<span class="custom-checkbox"></span>
+									Tranferência
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.observacao">
+									<span class="custom-checkbox"></span>
+									Observação
+								</label>
+							</div>
+
+							<div class="col-lg-6">
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.groupPerDay">
+									<span class="custom-checkbox"></span>
+									Agrupamento por dia
+								</label>
+								<label class="label-checkbox">
+									<input type="checkbox" ng-model="config_table.overviewOfDay">
+									<span class="custom-checkbox"></span>
+									Totais por dia
+								</label>
+							</div>
+				    	</div>
+				    	<div class="row">
+				    		<div class="col-sm-6">
+				    			<b>Configurações Gerais:</b>
+							</div>
+				    	</div>
+				    	<div class="row">
+							<div class="col-lg-12">
+								<div class="form-group">
+									<label class="label-checkbox">
+										<input type="checkbox" ng-model="config_table.flg_considerar_pendente_saldo">
+										<span class="custom-checkbox"></span>
+										Considerar lançamento pendente na coluna de saldo
+									</label>
+								</div>
 						    </div>
-					  	</div>
-					  	<!-- /.modal-content -->
+					    </div>
 					</div>
-					<!-- /.modal-dialog -->
+					<div class="modal-footer">
+				    	<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal_config_table')" id="btn-aplicar-reforco"
+				    		class="btn btn-md btn-block btn-success fechar-modal">
+				    		<i class="fa fa-reply fa-lg"></i> Voltar
+				    	</button>
+				  	</div>
+				  	<!-- /.modal-content -->
 				</div>
-			<!-- /.modal -->
+				<!-- /.modal-dialog -->
+			</div>
+		</div>
+		<!-- /.modal -->
 
-			<div class="modal fade" id="modal-print" style="display:none"  data-keyboard="false">
-		  			<div class="modal-dialog error modal-lg">
-		    			<div class="modal-content">
-		      				<div class="modal-header" id="topo_print">
-								<div class="clearfix">
-									<div class="pull-left">
-										<span class="img-demo">
-											<img src="assets/imagens/logos/{{ userLogged.nme_logo }}" height="40" width="40">
-										</span>
+		<!-- /Modal modal_change_date_pagamento-->
+		<div class="modal fade" id="modal_change_date_pagamento" style="display:none">
+  			<div class="modal-dialog error modal-lg">
+    			<div class="modal-content">
+    				<div class="modal-header">
+    					<h4>Edição Lançamento</h4>
+    				</div>
+				    <div class="modal-body">
+				    	<div class="alert alert-edit" style="display:none"></div>
+				    	<div class="row">
+							<div class="col-sm-3" ng-if="flg_valid_venda == 0">
+								<div class="form-group">
+									<label class="control-label">Tipo de Lançamento</label>
+									<div class="clearfix"></div>
+									<label class="label-radio inline" >
+										<input name="flg_tipo_lancamento" ng-model="pagamento_edit.flg_tipo_lancamento" ng-click="changeIdLancamento('D')" value="D" type="radio" class="inline-radio">
+										<span class="custom-radio"></span>
+										<span class="text-danger">Despesa</span>
+									</label>
 
-										<div class="pull-left m-left-sm">
-											<h3 class="m-bottom-xs m-top-xs" >Comprovante de Pagamento</h3>
-											<span class="text-muted">{{ userLogged.nome_empreendimento }}</span>
-										</div>
-									</div>
+									<label class="label-radio inline">
+										<input name="flg_tipo_lancamento" ng-model="pagamento_edit.flg_tipo_lancamento" ng-click="changeIdLancamento('C')" value="C" type="radio" class="inline-radio">
+										<span class="custom-radio"></span>
+										<span class="text-success">Receita</span>
+									</label>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">Pago?</label><br/>
+									<label class="label-radio inline">
+										<input name="status" ng-model="pagamento_edit.status_pagamento" value="1" type="radio" class="inline-radio">
+										<span class="custom-radio"></span>
+										<span>Sim</span>
+									</label>
 
-									<div class="pull-right text-right">
-										<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+									<label class="label-radio inline">
+										<input name="status" ng-model="pagamento_edit.status_pagamento" value="0" type="radio" class="inline-radio">
+										<span class="custom-radio"></span>
+										<span>Não</span>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group"
+									ng-show="pagamento_edit.flg_tipo_lancamento == 'D'"
+									np-autocomplete="npAutocompleteFornecedorOptions"
+									ng-model="pagamento_edit.id_clienteORfornecedor">
+									<label class="control-label" style="color: #777 !important;">Fornecedor</label>
+									<input class="form-control" id="txtNomeFornecedor" type="text" style="border-color: #ccc !important; box-shadow: none !important;"/>
+								</div>
+								<div class="form-group"
+									ng-show="pagamento_edit.flg_tipo_lancamento == 'C'"
+									np-autocomplete="npAutocompleteClienteOptions"
+									ng-model="pagamento_edit.id_clienteORfornecedor">
+									<label class="control-label" style="color: #777 !important;">Cliente</label>
+									<input class="form-control" id="txtNomeCliente" type="text" style="border-color: #ccc !important; box-shadow: none !important;"/>
+								</div>
+							</div>
+
+					    	<div class="col-sm-3">
+								<div class="form-group" id="id_conta_bancaria">
+									<label class="control-label">Conta Bancária</label>
+									<select class="form-control" ng-model="pagamento_edit.id_conta_bancaria"
+									    option="plano_contas"
+									    ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas">
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group" id="pagamento_forma_pagamento">
+				    				<label class="control-label">Forma de Pagamento</label>
+									<select class="form-control" ng-model="pagamento_edit.id_forma_pagamento" ng-click="clearFieldsByPaymentMethod(pagamento_edit.id_forma_pagamento)">
+										<option ng-if="pagamento.id_forma_pagamento != null" value=""></option>
+										<option ng-repeat="item in formas_pagamento"  value="{{ item.id }}">{{ item.nome }}</option>
+									</select>
+								</div>
+					    	</div>
+					    </div>
+
+						<div class="row">
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label class="control-label">Data Vencimento</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_vencimento" class="datepicker form-control text-center">
+										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
 								</div>
-		      				</div>
-
-						    <div class="modal-body">
-						    	<div class="row">
-						    		<div class="col-sm-12">
-
-						    		</div>
-						    	</div>
-						    	<div class="row" id="tbl_print" ng-if="itensPrint.length > 0">
-						    		<div class="col-sm-12" id="valor_pagamento">
-						    			<strong style="font-size:14px;margin-bottom:5px">Cliente    : {{ vendaPrint.nome_cliente }}</strong>
-						    			<br>
-						    			<strong style="font-size:14px;margin-bottom:5px">ID         : {{ vendaPrint.id_cliente  }}</strong>
-						    			<br>
-						    			<strong style="font-size:14px;margin-bottom:5px;color:#2C800C" ng-if="vendaPrint.vlr_saldo_devedor >= 0 && ( vendaPrint.id_cliente != configuracao.id_cliente_movimentacao_caixa) ">Saldo : R${{ vendaPrint.vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-						    			<strong style="font-size:14px;margin-bottom:5px;color:#D82121" ng-if="vendaPrint.vlr_saldo_devedor < 0  && (vendaPrint.id_cliente != configuracao.id_cliente_movimentacao_caixa)">Saldo : R$ {{ vendaPrint.vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-						    			<br>
-						    			<br>
-						    		</div>
-						    	</div>
-
-						    		<div class="row" id="tbl_print_pg">
-							    		<div class="col-sm-12" id="valor_pagamento">
-							    			<table class="table table-bordered table-condensed table-striped table-hover">
-							    				<thead ng-show="itensPrint.length  > 0">
-													<tr>
-														<th>Forma de pagamento</th>
-														<th>Status</th>
-														<th ng-if="itensPrint[0].id_forma_pagamento == 4">Doc. Boleto</th>
-														<th ng-if="itensPrint[0].id_forma_pagamento == 4">Num. Boleto</th>
-														<th class="hidden-print">Conta bancaria</th>
-														<th ng-if="itensPrint[0].id_forma_pagamento == 2">N° Conta Corrente</th>
-														<th ng-if="itensPrint[0].id_forma_pagamento == 2">N° do cheque</th>
-														<th ng-if="itensPrint[0].id_forma_pagamento == 2">Predatado</th>
-														<th>Data do pagamento</th>
-														<th>Valor</th>
-													<tr>
-												</thead>
-												<tbody>
-													<tr  ng-if="itensPrint.length <= 0">
-														<td colspan="4" style="text-align:center">
-															<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-														</td>
-													</tr>
-													<tr ng-repeat="item in itensPrint">
-														<td ng-if="item.id_forma_pagamento != 6">{{ item.descricao_forma_pagamento  }} </td>
-														<td ng-if="item.id_forma_pagamento == 6">{{ item.descricao_forma_pagamento  }}  {{item.current_parcela}}/{{item.total_parcelas}} </td>
-														<td ng-if="item.status_pagamento == 0">Pendente</td>
-														<td ng-if="item.status_pagamento == 1">Pago</td>
-														<td ng-if="item.id_forma_pagamento == 4">{{ item.doc_boleto }}</td>
-														<td ng-if="item.id_forma_pagamento == 4">{{ item.num_boleto }}</td>
-														<td class="hidden-print"> {{ item.dsc_conta_bancaria }}</td>
-														<td ng-if="item.id_forma_pagamento == 2">{{ item.num_conta_corrente  }} </td>
-														<td ng-if="item.id_forma_pagamento == 2">{{ item.num_cheque }} </td>
-														<td ng-if="item.id_forma_pagamento == 2 && item.flg_cheque_predatado == 0"> Não </td>
-														<td ng-if="item.id_forma_pagamento == 2 && item.flg_cheque_predatado == 1"> Sim </td>
-														<td >{{ item.data_pagamento | dateFormat:'date' }}</td>
-														<td ng-if="item.id_forma_pagamento != 6">R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</td>
-														<td ng-if="item.id_forma_pagamento == 6">R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</td>
-													</tr>
-												</tbody>
-											</table>
-							    		</div>
-						    		</div>
-
-						    </div>
-
-						    <div class="modal-footer" ng-show="itensPrint.length  > 0">
-						    	<button type="button" data-loading-text=" Aguarde..." id="btn-imprimir"
-						    		class="btn btn-md btn-block btn-success" ng-click="printDiv('modal-print')">
-						    		<i class="fa fa-print"></i> Imprimir
-						    	</button>
-						    	<a ng-click="cancelar()" class="btn btn-md btn-block btn-default">
-						    		<i class="fa fa-reply"></i> Cancelar
-						    	</a>
-						    </div>
-					  	</div>
-					  	<!-- /.modal-content -->
-					</div>
-					<!-- /.modal-dialog -->
-				</div>
-				<!-- /Modal Print-->
-				<div class="modal fade" id="modal-print-lancamento" style="display:none"  data-keyboard="false">
-		  			<div class="modal-dialog error modal-lg">
-		    			<div class="modal-content">
-		      				<div class="modal-header" id="topo_print">
-								<div class="clearfix">
-									<div class="pull-left">
-										<span class="img-demo">
-											<img src="assets/imagens/logos/{{ userLogged.nme_logo }}" height="40" width="40">
-										</span>
-
-										<div class="pull-left m-left-sm">
-											<h3 class="m-bottom-xs m-top-xs">Comprovante de Pagamento</h3>
-											<span class="text-muted">{{ userLogged.nome_empreendimento }}</span>
-										</div>
-									</div>
-
-									<div class="pull-right text-right">
-										<h5><strong>#{{ id_controle_pagamento }}</strong></h5>
-										<strong><?php echo date("d/m/Y H:i:s"); ?></strong>
+							</div>
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label class="control-label">Data Competência</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_competencia" class="datepicker form-control text-center">
+										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
 								</div>
-		      				</div>
-
-						    <div class="modal-body">
-						    	<div class="row">
-						    		<div class="col-sm-12">
-
-						    		</div>
-						    	</div>
-						    	<div class="row" id="tbl_print">
-						    		<div class="col-sm-12" id="valor_pagamento">
-						    			<strong style="font-size:14px;margin-bottom:5px">Atendente : {{ userLogged.nme_usuario }}</strong>
-						    			<br>
-						    			<strong style="font-size:14px" ng-if="(cliente.id    != undefined && cliente.id != '') && (flgTipoLancamento == 0)">Cliente : {{ cliente.nome }}</strong>
-						    			<strong style="font-size:14px" ng-if="(fornecedor.id != undefined && fornecedor.id != '') && (flgTipoLancamento == 1)">Fornecedor : {{ fornecedor.nome_fornecedor }}</strong>
-						    			<br>
-						    			<strong style="font-size:14px;margin-bottom:5px;color:#2C800C" ng-if="vlr_saldo_devedor >= 0 && (cliente.id != undefined && cliente.id != '')">Saldo : R${{ vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-						    			<strong style="font-size:14px;margin-bottom:5px;color:#D82121" ng-if="vlr_saldo_devedor < 0 && (cliente.id != undefined && cliente.id != '')">Saldo : R$ {{ vlr_saldo_devedor | numberFormat : 2 : ',' : '.' }} </strong>
-						    			<br>
-						    			<br>
-						    		</div>
-						    	</div>
-
-						    		<div class="row" id="tbl_print_pg">
-							    		<div class="col-sm-12" id="valor_pagamento">
-							    			<table class="table table-bordered table-condensed table-striped table-hover">
-												<tbody>
-													<tr ng-if="(recebidos.length == 0)">
-														<td colspan="1">Não foi recebido nenhum pagamento</td>
-													</tr>
-													<tr ng-repeat="item in recebidos">
-														<td ng-if="item.id_forma_pagamento != 6 &&  item.id_forma_pagamento != 2">{{ item.forma_pagamento  }} <strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
-														<td ng-if="item.id_forma_pagamento == 6">{{ item.forma_pagamento  }} em {{item.parcelas}}x <strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
-														<td ng-if="item.id_forma_pagamento == 2">{{ item.forma_pagamento  }} em {{ cheques.length }}x<strong class="pull-right">R$ {{ item.valor | numberFormat:2:',':'.' }}</strong></td>
-													</tr>
-												</tbody>
-											</table>
-							    		</div>
-						    		</div>
-
-						    </div>
-
-						    <div class="modal-footer">
-						    	<button type="button" data-loading-text=" Aguarde..." id="btn-imprimir"
-						    		class="btn btn-md btn-block btn-success" ng-click="printDiv('modal-print')">
-						    		<i class="fa fa-plus-circle"></i> Imprimir
-						    	</button>
-						    	<a ng-click="refresh()" class="btn btn-md btn-block btn-default">
-						    		<i class="fa fa-times-circle"></i> Voltar
-						    	</a>
-						    </div>
-					  	</div>
-					  	<!-- /.modal-content -->
-					</div>
-					<!-- /.modal-dialog -->
-				</div>
-				<!-- /.modal -->
-
-			<!-- /Modal Configutração Tabela-->
-				<div class="modal fade" id="modal_config_table" style="display:none">
-		  			<div class="modal-dialog error modal-md">
-		    			<div class="modal-content">
-		      				<div class="modal-header">
-								<h4>Opções de Exibição</h4>
-		      				</div>
-
-						    <div class="modal-body">
-						    	<div class="row">
-						    		<div class="col-sm-6">
-						    			<b>Colunas extras:</b>
-									</div>
-									<div class="col-sm-6">
-						    			<b>Linhas extras:</b>
+							</div>
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label class="control-label">Data Pagamento</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_change_pagamento" class="datepicker form-control text-center">
+										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
 								</div>
-								<div class="row">
-									<div class="col-lg-6">
-										<label class="label-checkbox">
-											<input type="checkbox" ng-model="config_table.conta_bancaria">
-											<span class="custom-checkbox"></span>
-											Conta Bancária
-										</label>
-										<label class="label-checkbox">
-											<input type="checkbox" ng-model="config_table.forma_pagamento">
-											<span class="custom-checkbox"></span>
-											Forma de Pagamento
-										</label>
-										<label class="label-checkbox">
-											<input type="checkbox" ng-model="config_table.cheque">
-											<span class="custom-checkbox"></span>
-											Cheque
-										</label>
-										<label class="label-checkbox">
-											<input type="checkbox" ng-model="config_table.boleto">
-											<span class="custom-checkbox"></span>
-											Boleto	
-										</label>
-										<label class="label-checkbox"> 
-											<input type="checkbox" ng-model="config_table.transferencia">
-											<span class="custom-checkbox"></span>
-											Tranferência 	
-										</label>
-										<label class="label-checkbox"> 
-											<input type="checkbox" ng-model="config_table.observacao">
-											<span class="custom-checkbox"></span>
-											Observação 	
-										</label>
-									</div>
+							</div>
+					    </div>
 
-									<div class="col-lg-6">
-										<label class="label-checkbox">
-											<input type="checkbox" ng-model="config_table.groupPerDay">
-											<span class="custom-checkbox"></span>
-											Agrupamento por dia
-										</label>
-										<label class="label-checkbox">
-											<input type="checkbox" ng-model="config_table.overviewOfDay">
-											<span class="custom-checkbox"></span>
-											Totais por dia
-										</label>
-									</div>
-						    	</div>
-						    	<div class="row">
-						    		<div class="col-sm-6">
-						    			<b>Configurações Gerais:</b>
-									</div>
-						    	</div>
-						    	<div class="row">
-									<div class="col-lg-12">
-										<div class="form-group">
-											<label class="label-checkbox">
-												<input type="checkbox" ng-model="config_table.flg_considerar_pendente_saldo">
-												<span class="custom-checkbox"></span>
-												Considerar lançamento pendente na coluna de saldo
-											</label>
-										</div>
-									</div>
+						<div class="row">
+					    	<div class="col-sm-2">
+					    		<div class="form-group">
+					    			<label class="control-label">Valor</label>
+					    			<input class="form-control text-right" type="text" name="" ng-model="pagamento_edit.valor_pagamento" thousands-formatter></input>
+					    		</div>
+					    	</div>
+					    	<div class="col-sm-2">
+					    		<div class="form-group">
+					    			<label class="control-label">Juros</label>
+					    			<input class="form-control text-right" type="text" name="" ng-model="pagamento_edit.vlr_juros" thousands-formatter></input>
+					    		</div>
+					    	</div>
+					    	<div class="col-sm-2">
+					    		<div class="form-group">
+					    			<label class="control-label">Multa</label>
+					    			<input class="form-control text-right" type="text" name="" ng-model="pagamento_edit.vlr_multa" thousands-formatter></input>
+					    		</div>
+					    	</div>
+					    	<div class="col-sm-2">
+					    		<div class="form-group">
+					    			<label class="control-label">Final</label>
+					    			<input class="form-control text-right" type="text"
+					    				value="R$ {{ (pagamento_edit.valor_pagamento + pagamento_edit.vlr_juros + pagamento_edit.vlr_multa) | numberFormat : 2 : ',' : '.' }}"
+					    				disabled="disabled"></input>
+					    		</div>
+					    	</div>
+					    </div>
+					    <div class="alert error-cheque" style="display:none"></div>
+						<div class="row" ng-show="pagamento_edit.id_forma_pagamento == 2" ng-repeat="item in cheques">
+							<div class="col-sm-4">
+								<div class="form-group cheque_banco" >
+									<label class="control-label">Banco</label>
+									<select chosen
+									    option="bancos"
+									    ng-model="pagamento_edit.id_banco"
+									    ng-options="banco.id as banco.nome for banco in bancos">
+									</select>
 								</div>
-						    </div>
-						<div class="modal-footer">
-						    	<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal_config_table')" id="btn-aplicar-reforco"
-						    		class="btn btn-md btn-block btn-success fechar-modal">
-						    		<i class="fa fa-reply fa-lg"></i> Voltar
-						    	</button>
-						    </div>
-					  	</div>
-					  	<!-- /.modal-content -->
-					</div>
-					<!-- /.modal-dialog -->
-				</div>
-			<!-- /.modal -->
-			<!-- /Modal modal_change_date_pagamento-->
-				<div class="modal fade" id="modal_change_date_pagamento" style="display:none">
-		  			<div class="modal-dialog error modal-sm">
-		    			<div class="modal-content">
-						    <div class="modal-body">
-								<div class="row">
-									<div class="col-lg-12">	
-										<div class="form-group">
-											<label class="control-label">Recebido em:</label>
-											<div class="input-group">
-												<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_change_pagamento" class="datepicker form-control text-center">
-												<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
-											</div>
-										</div>	
-									</div>
-							    </div>
-							    <div class="row">
-							    	<div class="col-sm-12">
-										<div class="form-group" id="id_conta_bancaria">
-											<label class="control-label">Conta</label>
-											<select chosen
-											    option="plano_contas"
-											    ng-model="pagamento_edit.id_conta_bancaria"
-											    ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas">
-											</select>
-										</div>
-									</div>
-							    </div>
-						    </div>
-						<div class="modal-footer" style="   margin-top: 0px;">
-						    	<button type="button" data-loading-text=" Aguarde..." ng-click="updateStatusLancamento(pagamento_edit)" id="btn-aplicar-reforco"
-						    		class="btn btn-md btn-block btn-success fechar-modal">
-						    		</i> Salvar
-						    	</button>
-						    	<button type="button" data-loading-text=" Aguarde..." ng-click="cancelarModal('modal_change_date_pagamento')" id="btn-aplicar-reforco"
-						    		class="btn btn-md btn-block btn-danger fechar-modal">
-						    		</i> Cancelar
-						    	</button>
-						    </div>
-					  	</div>
-					  	<!-- /.modal-content -->
-					</div>
-					<!-- /.modal-dialog -->
-				</div>
-			<!-- /.modal -->
+							</div>
 
+							<div class="col-sm-2">
+								<div class="form-group cheque_cc">
+									<label class="control-label">Núm. C/C</label>
+									<input ng-model="pagamento_edit.num_conta_corrente" type="text" class="form-control">
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group cheque_num">
+									<label class="control-label">Núm. Cheque</label>
+									<input ng-model="pagamento_edit.num_cheque" type="text" class="form-control">
+								</div>
+							</div>
+						</div>
+						<div class="row" ng-show="pagamento_edit.id_forma_pagamento == 4" ng-repeat="item in boletos">
+							<div class="col-sm-4">
+								<div class="form-group boleto_banco" >
+									<label class="control-label">Banco</label>
+									<select chosen
+										    option="bancos"
+										    ng-model="pagamento_edit.id_banco"
+										    ng-options="banco.id as banco.nome for banco in bancos">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group boleto_doc">
+									<label class="control-label">Doc. Boleto</label>
+									<input ng-model="pagamento_edit.doc_boleto" type="text" class="form-control">
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group boleto_num">
+									<label class="control-label">Núm. Boleto</label>
+									<input ng-model="pagamento_edit.num_boleto" type="text" class="form-control">
+								</div>
+							</div>
+						</div>
+						<div class="row" id="pagamento_maquineta" ng-if="(pagamento_edit.id_forma_pagamento == 5 || pagamento_edit.id_forma_pagamento == 6) && (flgTipoLancamento == 0) && pagamento_edit.flg_tipo_lancamento == 'C'">
+							<div class="col-sm-3">
+				    			<label class="control-label">Maquineta</label>
+								<select ng-model="pagamento_edit.id_maquineta" ng-change="selIdMaquineta()" class="form-control">
+									<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">#{{ item.id_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+								</select>
+							</div>
+							<div class="col-sm-6" id="bandeiras">
+				    			<label class="control-label">Bandeira</label>
+								<select ng-model="pagamento_edit.id_bandeira" class="form-control">
+									<option ng-repeat="item in bandeiras" value="{{ item.id_bandeira }}">{{ item.nome }}</option>
+								</select>
+							</div>
+						</div>
+						<div class="row" ng-if="pagamento_edit.id_forma_pagamento == 8">
+							<div class="col-sm-4" id="pagamento_id_banco" >
+								<div class="form-group" >
+									<label class="control-label">Banco</label>
+									<select chosen
+									    option="bancos"
+									    ng-model="pagamento_edit.id_banco"
+									    ng-options="banco.id as banco.nome for banco in bancos">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-4" id="pagamento_agencia_transferencia">
+				    			<label class="control-label">Agência</label>
+				    			<div class="form-group ">
+				    					<input ng-model="pagamento_edit.agencia_transferencia"  type="text" class="form-control" />
+				    			</div>
+				    		</div>
+
+				    		<div class="col-sm-4" id="pagamento_conta_transferencia" >
+				    			<label class="control-label">Conta</label>
+				    			<div class="form-group ">
+				    					<input ng-model="pagamento_edit.conta_transferencia"  type="text" class="form-control" />
+				    			</div>
+				    		</div>
+						</div>
+		    		</div>
+					<div class="modal-footer" style="   margin-top: 0px;">
+				    	<button type="button"
+				    			data-loading-text=" Aguarde..."
+				    			ng-click="cancelarModal('modal_change_date_pagamento')"
+				    			id="btn-aplicar-reforco"
+				    		class="btn btn-md  btn-danger fechar-modal">
+				    		</i> Cancelar
+				    	</button>
+				    	<button type="button"
+			    			data-loading-text=" Aguarde..."
+			    			ng-click="updateStatusLancamento(pagamento_edit)"
+			    			id="btn-aplicar-reforco"
+			    			class="btn btn-md btn-success fechar-modal">
+				    		</i> Salvar
+				    	</button>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
 
 		<!-- Footer
 		================================================== -->
@@ -1763,6 +2091,10 @@
 	<script src="js/endless/endless_form.js"></script>
 	<script src="js/endless/endless.js"></script>
 
+	<!-- Bower Components -->
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
@@ -1782,13 +2114,14 @@
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script type="text/javascript" src="bower_components/angular-ui-utils/mask.min.js"></script>
+	<script type="text/javascript" src="bower_components/np-autocomplete/src/np-autocomplete.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>
     <script src="js/dialogs.v2.min.js" type="text/javascript"></script>
     <script src="js/auto-complete/ng-sanitize.js"></script>
     <script src="js/angular-chosen.js"></script>
     <script type="text/javascript">
-    	var addParamModule = ['angular.chosen'] ;
+    	var addParamModule = ['angular.chosen', 'ng-pros.directive.autocomplete'] ;
     </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>

@@ -6,7 +6,6 @@ function baseUrl(){
 
 	if(location.hostname == 'localhost' || window.location.hostname.indexOf("192.168.") != -1 || window.location.hostname.indexOf("120.1.") != -1)
 		pasta = "/~filipecoelho/webliniaerp-web-pagare";
-
 	return location.protocol+'//'+location.hostname+pasta+'/';
 }
 

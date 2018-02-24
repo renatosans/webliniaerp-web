@@ -180,7 +180,7 @@ app.controller('SepararVendaController', function($scope, $http, $window, $dialo
 				});	
 			});	
 		});
-		//console.log(itens_saida);return;
+		
 
 		
 		$http.post(baseUrlApi()+'estoque/baixa',{

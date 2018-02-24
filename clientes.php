@@ -26,6 +26,9 @@
 	<!-- Chosen -->
 	<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -421,6 +424,13 @@
 												<label class="control-label">Finalidade</label>
 												<input type="text" class="form-control input-sm" ng-model="cliente.dsc_finalidade">
 												<!--<select class="form-control input-sm" ng-model="cliente.id_finalidade" ng-options="a.id as a.nome for a in finalidades"></select>-->
+											</div>
+										</div>
+
+										<div class="col-sm-2">
+											<div id="id_finalidade" class="form-group">
+												<label class="control-label">ID Externo</label>
+												<input type="text" class="form-control input-sm" ng-model="cliente.id_externo">
 											</div>
 										</div>
 									</div>
@@ -1247,6 +1257,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

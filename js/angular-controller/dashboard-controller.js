@@ -14,6 +14,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			vlrCustoTotalEstoque 				: 0,
 			vlrTicketMedio						: 0,
 			med_itens_venda						: 0,
+			vlrTotalFaturamentoClinicas 		: 0,
 			vlrTotalPagamentosConfirmados 		: 0,
 			vlrTotalPagamentosNaoConfirmados 	: {
 				cheque 	: 0,
@@ -214,6 +215,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.totalCustoProdutosVendidos(date_first, date_last);
 			ng.totalTaxaMaquinetas(date_first, date_last);
 			ng.totalPagamentosFornecedores(date_first, date_last);
+			ng.loadTotalFaturamentoClinicas(date_first, date_last);
 			ng.loadVendas(date_first, date_last);
 
 			ng.loadTotalPagamentosConfirmados(date_first, date_last);
@@ -229,6 +231,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.loadVendasTop10Fabricantes(date_first, date_last);
 			ng.loadVendasTop10Produtos(date_first, date_last);
 			ng.loadSaldoDevedorCliente();
+			ng.loadVendasVendedores(date_first, date_last);
 		}
 
 		ng.limparFiltros = function() {
@@ -290,6 +293,18 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 				});
 		}
 
+		ng.loadTotalFaturamentoClinicas = function(first_date, last_date) {
+			ng.total.vlrTotalFaturamentoClinicas = 'loading';
+			aj.get(baseUrlApi()+"dashboard/total/pagamentos/confirmados/"+first_date+'/'+last_date+'?tv->id_empreendimento='+ng.userLogged.id_empreendimento)
+				.success(function(data, status, headers, config) {
+					ng.total.vlrTotalFaturamentoClinicas = data.total_faturamento_clinicas;
+					//$('#clientsOkPaymentsCount').text(ng.total.vlrTotalFaturamentoClinicas);
+				})
+				.error(function(data, status, headers, config) {
+					ng.total.vlrTotalFaturamentoClinicas = 0 ;
+				});
+		}		
+
 		ng.loadTotalPagamentosConfirmados = function(first_date, last_date) {
 			ng.total.vlrTotalPagamentosConfirmados = 'loading';
 			aj.get(baseUrlApi()+"dashboard/total/pagamentos/confirmados/sim/"+first_date+'/'+last_date+'?tv->id_empreendimento='+ng.userLogged.id_empreendimento)
@@ -336,7 +351,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 		ng.loadSaldoDevedorFornecedor = function(first_date, last_date) {
 			aj.get(baseUrlApi()+"saldo_devedor_fornecedor/dashboard/"+first_date+'/'+last_date+'?id_empreendimento='+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
-					ng.total.vlrSaldoDevedorFornecedores = numberFormat(data.saldo_devedor_fornecedores, 2, ",", ".");
+					ng.total.vlrSaldoDevedorFornecedores = data.saldo_devedor_fornecedores;
 					$('#suppliersSalesCount').text(ng.total.vlrSaldoDevedorFornecedores);
 				})
 				.error(function(data, status, headers, config) {
@@ -352,7 +367,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 					data.vlr_saldo_devedor
 
 					data.saldo_devedor_clientes = data.vlr_saldo_devedor  * (-1);
-					ng.total.vlrSaldoDevedorClientes = numberFormat(data.vlr_saldo_devedor *(-1), 2, ",", ".");
+					ng.total.vlrSaldoDevedorClientes = (data.vlr_saldo_devedor *(-1));
 					$('#negativeCount').text(ng.total.vlrSaldoDevedorClientes);
 
 				})
@@ -479,7 +494,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.vendasProdutos = [];
 			aj.get(baseUrlApi()+"dashboard/vendas/top10/produto?fd="+first_date+'&ld='+last_date+'&id_empreendimento='+ng.userLogged.id_empreendimento)
 				.success(function(data, status, headers, config) {
-					console.log(data);
+					
 
 					ng.vendasProdutosTable = data;
 
@@ -655,6 +670,35 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.total.vlrTicketMedio = ng.total.vlrTotalFaturamento / ng.count.vendas;
 		}
 
+		ng.loadVendasVendedores = function(dta_inicial, dta_final) {
+			var req_url  = baseUrlApi() + "relatorio/vendas/consolidado/vendedor/";
+				req_url += "?ven->id_empreendimento="+ng.userLogged.id_empreendimento;
+				req_url += "&"+$.param({dta_venda:{exp:"BETWEEN '"+ dta_inicial +" 00:00:00' AND '"+ dta_final +" 23:59:59'"}});
+
+			ng.vlr_total_comissao_vendedores = 0;
+			ng.vlr_total_vendas_vendedores = 0;
+			aj.get(req_url)
+				.success(function(data, status, headers, config) {
+					ng.vendas_vendedores = data.vendas;
+					angular.forEach(ng.vendas_vendedores, function(vendedor) {
+						ng.vlr_total_comissao_vendedores += vendedor.vlr_total_comissao;
+						ng.vlr_total_vendas_vendedores += vendedor.vlr_total_vendas;
+					});
+				})
+				.error(function(data, status, headers, config) {
+					ng.vendas = null;
+				});
+		}
+
+		ng.getLucroPrevisto = function() {
+			return (ng.total.vlrTotalFaturamento  - (ng.total.vlr_custo_produto + ng.total.vlr_taxa_maquineta + ng.total.vlr_pagamento_fornecedor + ng.vlr_total_comissao_vendedores));
+		}
+
+		ng.redirectToSubReport = function(report_name) {
+			var dta_inicial = $("#dtaInicial").val();
+			var dta_final = $("#dtaFinal").val();
+			window.location.href = report_name + '.php?dtaInicial='+ dta_inicial +'&dtaFinal='+ dta_final;
+		}
 
 		$("#dtaInicial").val(getFirstDateOfMonthString());
 		$("#dtaFinal").val(getLastDateOfMonthString());

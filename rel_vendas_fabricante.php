@@ -27,6 +27,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -215,10 +218,7 @@
 					<thead>
 						<tr>
 							<th width="100" class="text-center">#</th>
-							<th width="100" class="text-center">Data Venda</th>
-							<th width="100" class="text-center">Cod. Barras</th>
-							<th width="200">Produto</th>
-							<th width="100" class="text-center">Fabricante</th>
+							<th width="250">Produto</th>
 							<th width="100" class="text-center">Categoria</th>
 							<th width="100" class="text-center">Tamanho</th>
 							<th width="100" class="text-center">Cor/Sabor</th>
@@ -227,30 +227,29 @@
 							<th width="100" class="text-center">Media Desc. R$</th>
 							<th width="100" class="text-center">Media Desc. %</th>
 							<th width="100" class="text-center">Vlr. C/ Desc.</th>
-							<th width="100" class="text-center">R$ Subtotal</th>
+							<th width="120" class="text-center">R$ Subtotal</th>
 						</tr>
 					</thead>
-					<tbody>
-						<tr ng-if="vendas.length == 0">
-							<td class="text-center" colspan="6">
-								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
+					<tbody ng-repeat="(fabricante, item_data) in vendas">
+						<tr>
+							<td class="info text-bold" colspan="5">{{ fabricante }}</td>
+							<td class="info text-bold text-center">{{ item_data.qtd_total_vendida }}</td>
+							<td class="info text-bold text-center">R$ {{ item_data.vlr_total_custo_medio | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+							<td class="info text-bold text-center" colspan="3"></td>
+							<td class="info text-bold text-center">R$ {{ item_data.vlr_total_vendido | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
 						</tr>
-						<tr ng-repeat="item in vendas">
+						<tr ng-repeat="(index, item) in item_data.items">
 							<td class="text-center">{{ item.cod_produto }}</td>
-							<td class="text-center">{{ item.dta_venda }}</td>
-							<td class="text-center">{{ item.cod_barras }}</td>
 							<td>{{ item.nme_produto }}</td>
-							<td class="text-center">{{ item.nme_fabricante }}</td>
 							<td class="text-center">{{ item.dsc_categoria }}</td>
 							<td class="text-center">{{ item.nme_tamanho }}</td>
 							<td class="text-center">{{ item.nme_cor_sabor }}</td>
-							<td class="text-center">{{ item.qtd_vendida }}</td>
-							<td class="text-center">R$ {{item.med_custo | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">R$ {{item.med_desconto_perc | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">{{item.med_desconto_real | numberFormat:2:',':'.'}} %</td>
-							<td class="text-right">R$ {{item.vlr_desconto | numberFormat:2:',':'.'}}</td>
-							<td class="text-center">R$ {{item.vlr_subtotal | numberFormat:2:',':'.'}}</td>
+							<td class="text-center" ng-click="loadVendasByProduto(item,$event)">{{ item.qtd_vendida }}</td>
+							<td class="text-center">R$ {{item.med_custo | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+							<td class="text-right">R$ {{item.med_desconto_perc | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+							<td class="text-right">{{item.med_desconto_real | numberFormat:config.qtd_casas_decimais:',':'.'}} %</td>
+							<td class="text-right">R$ {{item.vlr_desconto | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
+							<td class="text-center">R$ {{item.vlr_subtotal | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -387,6 +386,13 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- UnderscoreJS -->
+	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

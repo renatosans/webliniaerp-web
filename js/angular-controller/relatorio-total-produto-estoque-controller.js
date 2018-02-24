@@ -1,7 +1,8 @@
-app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, UserService, EmpreendimentoService, TabelaPrecoService) {
+app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, UserService, ConfigService, EmpreendimentoService, TabelaPrecoService) {
 	var ng 				= $scope,
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.config 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.deposito 		= {};
@@ -110,13 +111,14 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 						});
 					}
 					ng.produtos = aux;
-				}else{
+				}
+				else {
 					ng.grupo_tabela = ng.grupo_busca ;
 					ng.busca_deposito = empty(ng.busca.id_deposito) ? false : true ;
 					ng.produtos = data.produtos;
-
-					calculaTotais();
 				}
+
+				calculaTotais();
 				ng.paginacao.produtos = data.paginacao ;
 				$("#modal-aguarde").modal('hide');
 			})
@@ -208,7 +210,7 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 		if(!empty(ng.busca.fabricantes))
 			query_string  += "&"+$.param({nome_fabricante:{exp:"like '%"+ng.busca.fabricantes+"%'"}});
 
-    	aj.get(baseUrlApi()+"fabricantes/"+offset+"/"+limit+query_string)
+    	aj.get(baseUrlApi()+"fabricantes/"+ offset +"/"+ limit + query_string)
 		.success(function(data, status, headers, config) {
 			ng.fabricantes = data.fabricantes ;	
 			ng.paginacao.fabricantes = data.paginacao ;
@@ -221,7 +223,6 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 				ng.fabricantes = [] ;	
 				ng.busca_vazia.fabricantes = true ;
 			}
-				
 		});
 	}
 
@@ -233,8 +234,9 @@ app.controller('RelatorioTotalProdutoEstoque', function($scope, $http, $window, 
 
 	function calculaTotais() {
 		ng.vlr_total_custo = 0;
-		ng.qtd_total_estoque = 0 ;
-		ng.total_produtos_estoque = 0 ;
+		ng.qtd_total_estoque = 0;
+		ng.total_produtos_estoque = 0;
+		ng.vlr_total_estoque = 0;
 		$.each(ng.produtos, function(i, item) {
 			ng.qtd_total_estoque += parseInt(item.qtd_item);
 			ng.vlr_total_estoque += (parseFloat(item.vlr_custo_real) * parseInt(item.qtd_item));

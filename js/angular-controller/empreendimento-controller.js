@@ -88,7 +88,7 @@ app.controller('EmpreendimentoController', function($scope, $http, $window, $dia
 		itemPost.flg_teste           = isNaN(Number(ng.empreendimento.flg_teste)) ? 0 : Number(ng.empreendimento.flg_teste) ;
 		itemPost.qtd_dias_teste      = isNaN(Number(ng.empreendimento.qtd_dias_teste)) ? null : Number(ng.empreendimento.qtd_dias_teste) ;
 
-		/*console.log(itemPost);
+		/*
 		return ;*/
 
 		aj.post(baseUrlApi()+url, itemPost)

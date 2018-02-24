@@ -26,6 +26,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -242,6 +245,7 @@
 												<th>Produto</th>
 												<th>Fabricante</th>
 												<th>Tamanho</th>
+												<th>Cor/Sabor</th>
 												<th style="width: 100px; text-align: center;" colspan="2">Quantidade</th>
 												<td style="width: 200px; text-align: center;">
 													<button class="btn btn-xs btn-primary" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i> Adicionar Item</button>
@@ -264,6 +268,7 @@
 												<td style="line-height: 1.5; vertical-align: middle;">{{ item.nome }}</td>
 												<td>{{ item.nome_fabricante }}</td>
 												<td>{{ item.peso }}</td>
+												<td>{{ item.sabor }}</td>
 												<td width="32">
 													<button type="button" class="btn btn-xs btn-primary" ng-click="showValidades(item)">
 														<i class="fa fa-calendar"></i>
@@ -470,7 +475,9 @@
 										<div class="col-sm-3">
 											<div class="form-group" id="item-qtd-add">
 												<label class="control-label">Quantidade</label>
-												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()">
+												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()" ng-if="produto.flg_unidade_fracao != 1">
+												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
+												<pre>{{ produto }}</pre>
 											</div>
 										</div>
 
@@ -547,6 +554,7 @@
 											<th>#</th>
 											<th>Nome</th>
 											<th>Tamanho</th>
+											<th>Cor/Sabor</th>
 											<th>Fabricante</th>
 											<th width="80"></th>
 										</tr>
@@ -559,6 +567,7 @@
 											<td>{{ item.id }}</td>
 											<td>{{ item.nome }}</td>
 											<td>{{ item.peso }}</td>
+											<td>{{ item.sabor }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>
 											<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
@@ -779,6 +788,10 @@
 
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

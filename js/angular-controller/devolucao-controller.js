@@ -158,7 +158,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		var query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
 
 		if(ng.busca.clientes != ""){
-			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+ng.busca.clientes+"%' OR apelido like '%"+ng.busca.clientes+"%')"}})+"";
+			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+ng.busca.clientes+"%' OR tpf.cpf LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR apelido like '%"+ng.busca.clientes+"%')"}})+"";
 		}
 
 		aj.get(baseUrlApi()+"usuarios/"+ offset +"/"+ limit +"/"+query_string)
@@ -198,7 +198,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
 
 		if(ng.busca.clientes != ""){
-			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
+			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR tpf.cpf LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR tpj.cnpj LIKE '%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
 		}
 
 		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
@@ -245,7 +245,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 	}
 
 	ng.comparaQtd = function(item,index){
-		//console.log(item,index);
+		
 		var qtd 				= Number(item.qtd);
 		var qtd_devolvida 		= Number(item.qtd_devolvida);
 		var qtd_devolvida_real 	= Number(item.qtd_devolvida_real);
@@ -418,7 +418,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 
 	ng.mensagens = function(classe , msg, alertClass){
 		alertClass = alertClass != null  ?  alertClass:'.alert-sistema' ;
-		console.log($(alertClass));
+		
 		$(alertClass).fadeIn().addClass(classe).html(msg);
 		setTimeout(function(){
 			$(alertClass).fadeOut('slow');

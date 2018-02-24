@@ -36,6 +36,11 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 	}
 
 	ng.aplicarFiltro = function() {
+		if( !empty(getUrlVars()) && !empty(getUrlVars().dtaInicial) && !empty(getUrlVars().dtaFinal)) {
+			$("#dtaInicial").val(getUrlVars().dtaInicial);
+			$("#dtaFinal").val(getUrlVars().dtaFinal);
+		}
+
 		$("#modal-aguarde").modal('show');
 		ng.loadVendas(0,ng.itensPorPagina);
 	}
@@ -117,10 +122,8 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 				});
 			})
 			.error(function(data, status, headers, config) {
-
-	});
+		});
 	}
-
 
 	ng.reset();
 	ng.aplicarFiltro(0,10);

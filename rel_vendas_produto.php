@@ -24,6 +24,9 @@
 	<!-- Datepicker -->
 	<link href="css/datepicker/bootstrap-datepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -172,6 +175,42 @@
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label for="" class="control-label">Exibir apenas produto de venda obrigatória?</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input ng-model="flg_venda_obrigatoria" value="1" name="venda_obrigatoria" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+											<label class="label-radio inline">
+												<input ng-model="flg_venda_obrigatoria" value="0" name="venda_obrigatoria" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label for="" class="control-label">Exibir apenas produto de cozinha?</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input ng-model="flg_cozinha" value="1" name="flg_cozinha" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+											<label class="label-radio inline">
+												<input ng-model="flg_cozinha" value="0" name="flg_cozinha" type="radio" class="inline-radio">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
 						</form>
 					</div>
 
@@ -204,6 +243,7 @@
 							<th class="text-right" width="100">Total Vendido</th>
 							<th class="text-right">Margem Lucro</th>
 							<th class="text-right" width="100">Lucro Bruto</th>
+							<th class="text-right">% Faturamento</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -222,22 +262,33 @@
 							<td class="text-right">
 								 <div class="cardBody">
 							 		<a style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" ng-click="detalCustoProduto(venda)" href="#" id="pop{{venda.nme_produto }}" rel="popover" data-content="<i class='fa fa-refresh fa-spin'></i> Aguarde, carregando itens..." data-trigger="focus">
-										R$ {{venda.vlr_custo_total | numberFormat:2:',':'.'}}
+										R$ {{venda.vlr_custo_total | numberFormat : config.qtd_casas_decimais : ',' : '.'}}
 								 	</a>
 							 	</div>
 							</td>
-							<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:2:',':'.'}}</td>
+							<td class="text-right">R$ {{venda.vlr_vendido | numberFormat:config.qtd_casas_decimais:',':'.'}}</td>
 							<td class="text-right">
 						 		<a id="pop{{venda.nme_produto }}" href="#" 
 						 			style="cursor:pointer;text-decoration: underline;" style="font-size: 12px;color: #777" 
 						 			ng-click="showPopoverMargemLucro(venda, index, $event)">
-									{{ venda.med_margem_lucro * 100 | numberFormat:2:',':'.'}}%
+									{{ venda.med_margem_lucro * 100 | numberFormat : config.qtd_casas_decimais : ',' : '.'}}%
 							 	</a>
 							</td>
-							<td class="text-right" ng-if="venda.vlr_lucro_bruto > 0">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</td>
-							<td class="text-right" ng-if="venda.vlr_lucro_bruto < 0"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:2:',':'.' }}</a></td>
+							<td class="text-right"><a style="cursor:pointer;text-decoration: underline;" ng-click="showProdutoDebito(venda)">{{ venda.vlr_lucro_bruto | numberFormat:config.qtd_casas_decimais:',':'.' }}</a></td>
+							<td class="text-right">{{ venda.vlr_percentual | numberFormat:config.qtd_casas_decimais:',':'.'}}%</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td class="text-right text-bold" colspan="5">Totais</td>
+							<td class="text-center text-bold">{{ qtd_total_vendida }}</td>
+							<td class="text-right text-bold">R$ {{ vlr_total_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+							<td class="text-right text-bold">R$ {{ vlr_total_vendido | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				<!--<div class="pull-right">
@@ -369,9 +420,9 @@
 											<td>{{ item.dta_venda | dateFormat:'dateTime' }}</td>
 											<td>{{ item.nome_usuario }}</td>
 											<td>{{ item.nome_cliente }}</td>
-											<td class="text-right">R${{ item.vlr_custo_total | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R${{ item.vlr_custo_total | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 											<td class="text-center">{{ item.qtd }}</td>
-											<td class="text-right">R${{ item.valor_real_item | numberFormat:2:',':'.' }}</td>
+											<td class="text-right">R${{ item.valor_real_item | numberFormat:config.qtd_casas_decimais:',':'.' }}</td>
 										</tr>
 									</tbody>
 								</table>
@@ -462,6 +513,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

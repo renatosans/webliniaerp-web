@@ -26,6 +26,9 @@
 		<!-- Chosen -->
 		<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
 
+		<!-- Bower Components -->	
+		<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 		<!-- Endless -->
 		<link href="css/endless.min.css" rel="stylesheet">
 		<link href="css/endless-skin.css" rel="stylesheet">
@@ -181,9 +184,9 @@
 
 						<div class="panel-tab clearfix">
 							<ul class="tab-bar">
-								<li class="active"><a href="#geral" data-toggle="tab"><i class="fa fa-gear"></i> Dados de Emissão</a></li>
+								<li ng-class="{active:!isTransferencia()}" ><a href="#geral" data-toggle="tab"><i class="fa fa-gear"></i> Dados de Emissão</a></li>
 								<li><a href="#emitente" data-toggle="tab"><i class="fa fa-building-o"></i> Dados do Emitente</a></li>
-								<li><a href="#destinatario" data-toggle="tab"><i class="fa fa-user"></i> Dados do Destinatário</a></li>
+								<li ng-class="{active:isTransferencia()}"><a href="#destinatario" data-toggle="tab"><i class="fa fa-user"></i> Dados do Destinatário</a></li>
 								<li ng-show="(NF.transportadora.modalidade_frete != '' && NF.transportadora.modalidade_frete != '9')"><a href="#transportadora" data-toggle="tab"><i class="fa fa-truck"></i> Dados da Transportadora</a></li>
 								<li><a href="#produtos" data-toggle="tab"><i class="fa fa-list"></i> Produtos</a></li>
 								<li><a href="#resumo" data-toggle="tab"><i class="fa fa-bars"></i> Resumo da NF-e</a></li>
@@ -191,7 +194,7 @@
 						</div>
 						<div class="panel-body">
 							<div class="tab-content">
-								<div class="tab-pane fade in active" id="geral">
+								<div class="tab-pane fade in" ng-class="{active:!isTransferencia()}" id="geral">
 									<div class="alert" style="display:none"></div>
 									<div class="row" ng-if="!(processando_autorizacao || autorizado)">
 										<div class="col-sm-6">
@@ -445,7 +448,17 @@
 									</div>
 								</div>
 
-								<div class="tab-pane fade in" id="destinatario">
+								<div class="tab-pane fade in" id="destinatario"  ng-class="{active:isTransferencia()}">
+									<div class="clearfix">
+										<button class="btn btn-primary" 
+											ng-click="selUsuario('cliente')">
+											<i class="fa fa-users"></i>
+											Selecionar Destinatário
+										</button>
+									</div>
+
+									<br>
+
 									<div class="alert" style="display:none"></div>
 									<div class="row">
 										<div class="col-sm-2">
@@ -985,6 +998,115 @@
 			</div>
 			<!-- /.modal -->
 
+
+			<!-- /Modal Clientes-->
+			<div class="modal fade" id="list_usuarios" style="display:none">
+	  			<div class="modal-dialog modal-lg" >
+	    			<div class="modal-content">
+	      				<div class="modal-header">
+	        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4>{{ busca.tipo_usuario == 'vendedor' && 'Vendedores' || 'Clientes' }}</span></h4>
+	      				</div>
+					    <div class="modal-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="input-group">
+							            <input ng-model="busca.usuarios"   type="text" class="form-control input-sm"
+							            	ng-enter="loadUsuarios(0,10,busca.tipo_usuario)"
+							            	ng-model="loadUsuarios(0,10,busca.tipo_usuario)"
+							            	ng-keyup="loadUsuarios(0,10,busca.tipo_usuario)"
+							            	>
+							            <div class="input-group-btn">
+							            	<button ng-click="loadUsuarios(0,10,busca.tipo_usuario)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+							            		<i class="fa fa-search"></i> Buscar
+							            	</button>
+							            </div> <!-- /input-group-btn -->
+							        </div> <!-- /input-group -->
+								</div><!-- /.col -->
+							</div>
+							<br />
+							<div class="row">
+								<div class="col-sm-12">
+									<table class="table table-bordered table-condensed table-striped table-hover">
+										<tr ng-if="usuarios.length <= 0 || usuarios == null">
+											<th ng-if="emptyBusca.usuarios == false"  class="text-center" colspan="9" style="text-align:center"><strong>Carregando</strong><img src="assets/imagens/progresso_venda.gif"></th>
+											<th ng-if="emptyBusca.usuarios == true"  class="text-center" colspan="9" style="text-align:center">Não a resultado para a busca</th>
+										</tr>
+										<thead ng-show="(usuarios.length != 0)">
+											<tr>
+												<th >Nome</th>
+												<th >Apelido</th>
+												<th >Perfil</th>
+												<th colspan="2">selecionar</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="item in usuarios">
+												<td>{{ item.nome }}</td>
+												<td>{{ item.apelido }}</td>
+												<td>{{ item.nome_perfil }}</td>
+												<td width="50" align="center">
+													<button  type="button" class="btn btn-xs btn-success" data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="addUsuario(item,$event)">
+														<i class="fa fa-check-square-o"></i> Selecionar
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div class="row">
+					    		<div class="col-sm-12">
+					    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_usuarios.length > 1">
+										<li ng-repeat="item in paginacao_usuarios" ng-class="{'active': item.current}">
+											<a href="" h ng-click="loadUsuarios(item.offset,item.limit,busca.tipo_usuario)">{{ item.index }}</a>
+										</li>
+									</ul>
+					    		</div>
+					    	</div>
+					    </div>
+				  	</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
+			<!-- /Modal Processando-->
+			<div class="modal fade" id="modal-tabela-valores" style="display:none">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Escolha a tabela que deseja usar</h4>
+						</div>
+					    <div class="modal-body">
+					    	<p>Você deve escolher qual tabela de preços deseja usar para o processo de emissão de NF-e de transporte de mercadoria.</p>
+					    </div>
+					    <div class="modal-footer">
+					    	<div class="pull-right">
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Atacado <i class='fa fa-refresh fa-spin'></i>" 
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_atacado',$event);">
+					    			Atacado
+					    		</button>
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Intermediario <i class='fa fa-refresh fa-spin'></i>" 
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_intermediario',$event);">
+					    			Intermediario
+				    			</button>
+					    		<button class="btn btn-sm btn-primary" 
+					    			data-loading-text="Varejo <i class='fa fa-refresh fa-spin'></i>"  
+					    			ng-click="loadDadosTransferencia(url_params.id_transferencia,'vlr_venda_varejo',$event);">
+					    			Varejo
+					    		</button>
+					    	</div>
+					    </div>
+				  	</div>
+				  	<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
 			<!-- Footer
 			================================================== -->
 			<footer>
@@ -1047,6 +1169,13 @@
 		<script src="js/moment/moment.min.js"></script>
 
 		<script src="js/jquery.noty.packaged.js"></script>
+
+		<!-- Bower Components -->	
+		<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+	    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
+
+	    <!-- accounting -->
+		<script type="text/javascript" src="js/accounting.min.js"></script>
 
 		<!-- Extras -->
 		<script src="js/extras.js"></script>

@@ -56,5 +56,5 @@ app.controller('RomaneioConferenciaController', function($scope, $http, $window,
 
 	ng.depositos = _.groupByMulti(ng.itens, ['nme_deposito', 'nme_produto']);
 
-	console.log(ng.depositos);
+	
 });

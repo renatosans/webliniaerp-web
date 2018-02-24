@@ -1,7 +1,8 @@
-app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$dialogs, UserService, EmpreendimentoService) {
+app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$dialogs, UserService, ConfigService, EmpreendimentoService) {
 	var ng 				= $scope;
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.deposito 		= {};
@@ -66,7 +67,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$d
 				dta_in += "'"+dta+"',";
 			});
 			dta_in = dta_in.substring(0,dta_in.length-1);
-			console.log(dta_in);
+			
 		}
 
 		if(!empty(dta_in)){
@@ -103,7 +104,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window,$d
 					aux[perido].saldo_vlr_lucro_bruto = saldo_vlr_lucro_bruto;
 				});
 				ng.vendas = aux ;
-				console.log(ng.vendas);
+				
 				$("#modal-aguarde").modal('hide');
 
 			})

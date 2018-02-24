@@ -1,13 +1,15 @@
-app.controller('RelatorioVendasFabricante', function($scope, $http, $window, UserService,FuncionalidadeService, EmpreendimentoService) {
+app.controller('RelatorioVendasFabricante', function($scope, $http, $window, UserService,ConfigService, FuncionalidadeService, EmpreendimentoService) {
 	var ng 				= $scope,
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.vendas 		   	= null;
 	ng.paginacao 	   	= {};
 	ng.busca			= {}
 	ng.busca.vendedores  = '';
+	ng.asd = {};
 
 	ng.doExportExcel = function(id_table){
     	$('#'+ id_table).tableExport({
@@ -101,9 +103,85 @@ app.controller('RelatorioVendasFabricante', function($scope, $http, $window, Use
 
 		aj.get(baseUrlApi()+"relatorio/vendas/fabricante/"+offset+'/'+limit+queryString)
 			.success(function(data, status, headers, config) {
-				ng.vendas = data.vendas;
+				ng.vendas = _.groupBy(data.vendas, 'nme_fabricante');
 				ng.paginacao.vendas = data.paginacao ;
+				
+				angular.forEach(ng.vendas, function(items, fornecedor) {
+					ng.vendas[fornecedor] = {
+						items: items,
+						qtd_total_vendida: 0,
+						vlr_total_custo_medio: 0,
+						vlr_total_vendido: 0
+					};
+
+					angular.forEach(ng.vendas[fornecedor].items, function(item, index) {
+						ng.vendas[fornecedor].qtd_total_vendida 	+= item.qtd_vendida;
+						ng.vendas[fornecedor].vlr_total_custo_medio += item.med_custo;
+						ng.vendas[fornecedor].vlr_total_vendido 	+= item.vlr_subtotal;
+					});
+				});
+
 				$("#modal-aguarde").modal('hide');
+
+			})
+			.error(function(data, status, headers, config) {
+				$("#modal-aguarde").modal('hide');
+				ng.vendas = null;
+				ng.status = status;
+				ng.msg_error = data;
+				ng.paginacao.vendas = null;
+			});
+	}
+
+	ng.loadVendasByProduto = function(item, event){
+
+		$(event.target).popover({
+            title: 'Vendas',
+            placement: 'top',
+            content: '<strong>Aguarde, carregando...</strong>',
+            html: true,
+            container: $(event.target),
+            trigger  :'hover',
+        }).popover('show');
+
+		var dtaInicial  = $("#dtaInicial").val();
+		var dtaFinal    = $("#dtaFinal").val();
+
+		var queryString = "?ven->id_empreendimento="+ng.userLogged.id_empreendimento;
+			queryString += "&"+$.param({'ven->dta_venda':{exp:"BETWEEN '"+ moment(dtaInicial, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 00:00:00' AND '"+ moment(dtaFinal, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 23:59:59'"}});
+
+		ng.id_fabricante = item.id_fabricante;
+			queryString += "&prd->id_fabricante=" + ng.id_fabricante;
+
+		ng.cod_produto = item.cod_produto;
+			queryString += "&prd->id=" + ng.cod_produto;
+
+		
+
+		aj.get(baseUrlApi()+"relatorio/vendas/produto/fabricante/periodo/"+queryString)
+			.success(function(data, status, headers, config) {
+
+				ng.asd = data.teste;
+
+				var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
+					tbl += '<tr>'+'<td>Venda</td>'+'<td class"text-center">Data</td>'+'<td class"text-center">Vendedor</td>'+'<td class"text-center">Cliente</td>'+'<td class"text-center">Qtde. Vendida</td>'+'</tr>';
+
+				$.each(ng.asd,function(i,v){
+					tbl += '<tr>'+'<td class"text-center">'+v.id_venda+'</td>'+'<td class"text-center">'+formatDateBR(v.dta_venda)+'</td>'+'<td class"text-center">'+v.nme_vendedor+'</td>'+'</td>'+'<td class"text-center">'+v.nme_cliente+'</td>'+'</td>'+'<td align="center">'+v.qtd_total+'</td>'+'</tr>';
+				});
+				
+				tbl += '</table>';
+
+				
+
+				 $(event.target).popover('destroy').popover({
+					title: 'Vendas',
+					placement: 'top',
+					content: tbl,
+					html: true,
+					container: $(event.target),
+					trigger  :'hover',
+				}).popover('show');
 
 			})
 			.error(function(data, status, headers, config) {

@@ -1,4 +1,4 @@
-app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService,PrestaShop, EmpreendimentoService){
+app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService,PrestaShop, EmpreendimentoService){
 
 	var ng = $scope
 		aj = $http;
@@ -6,6 +6,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.venda 		= {};
 	ng.vendas 		= null;
 	ng.paginacao 	= {vendas:null}
@@ -31,7 +32,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 				ng.loadVendas(0,10);
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 			});
 	}
 
@@ -156,7 +157,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 				ng.detalhes = data;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 			});*/
 	}
 
@@ -217,7 +218,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 			ng.delItensEdit.push(item.id);
 		ng.edit.splice(index,1);
 		ng.calTotalVendaEdit();
-		console.log(ng.delItensEdit);
+		
 	}
 
 	ng.calDescVendaEdit = function(item,tipo) {
@@ -366,7 +367,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 	ng.loadPopover = true ;
 	ng.getLastVendaProdutoByCliente = function(item){
 		last_venda = { dta_venda:"00-00-00", vlr_custo:0,vlr_produto:0,valor_desconto:0,vlr_real_desconto:0,valor_real_item:0 } ;
-		console.log(ng.venda);
+		
 		aj.get(baseUrlApi()+"venda/lastProduto/"+ng.userLogged.id_empreendimento+"/"+ng.venda.id_cliente+"/"+item.id_produto+"")
 			.success(function(data, status, headers, config) {
 				ng.last_venda = data ;

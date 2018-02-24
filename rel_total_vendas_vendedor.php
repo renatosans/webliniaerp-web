@@ -27,6 +27,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -230,6 +233,7 @@
 							<th width="100" class="text-center">Qtd. Vendas</th>
 							<th width="120" class="text-center">Total Vendas</th>
 							<th width="100" class="text-center">% Comissão</th>
+							<th width="100" class="text-center">Ticket Medio</th>
 							<th width="120" class="text-center">Total Comissão</th>
 						</tr>
 					</thead>
@@ -249,6 +253,7 @@
 							<td class="text-center">{{ item.qtd_vendas }}</td>
 							<td class="text-right">R$ {{item.vlr_total_vendas | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">{{item.med_perc_comissao | numberFormat:2:',':'.'}} %</td>
+							<td class="text-right">R$ {{item.vlr_total_vendas / item.qtd_vendas | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.vlr_total_comissao | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
@@ -387,6 +392,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

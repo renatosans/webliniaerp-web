@@ -1,6 +1,7 @@
 app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService) {
 	var ng = $scope,
 		aj = $http;
+	ng.mostrar_validades 	= false ;
 	ng.userLogged 	 		= UserService.getUserLogado();
 	ng.pth_local            = $.cookie('pth_local');
 	ng.caixa_open           = CaixaService.getCaixaAberto(ng.userLogged.id_empreendimento,ng.pth_local,ng.userLogged.id);
@@ -39,7 +40,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.abertura_reforco    = {} ;
 	ng.pagamentos          = [];
 	ng.caixa_configurado   = true ;
-
+	ng.flg_incluir_cpf_sat_cfe = true;
 	ng.carrinho = [];
 	ng.vlrTotalCompra = 0;
 	ng.exists_cookie = null ;
@@ -134,7 +135,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$("#modal_foto_produto").modal('show');
 	}
 
-	 var isFullscreen = false;
+	var isFullscreen = false;
 	ng.resizeScreen = function() {
 		if(!isFullscreen){
 			$("#map_canvas").css("height", 700);
@@ -179,59 +180,81 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			item.qtd_total = (parseInt(item.qtd_total,10) + 1);
 	}
 
-	ng.loadOrcamento = function(tipo_valor){
-		aj.get(baseUrlApi()+"venda/orcamento/"+id_orcamento+'/'+tipo_valor)
-		.success(function(data, status, headers, config) {
-			var orcamento = data.orcamento;
-			ng.id_orcamento = orcamento.id ;
-			if(!empty(ng.configuracoes.id_deposito_padrao) && orcamento.flg_comanda == 1){
-				ng.dadosOrcamento = orcamento ;
-				ng.caixa.depositos = [ng.configuracoes.id_deposito_padrao] ;
-			}
-			if(Number(data.cliente.id) != Number(ng.configuracoes.id_cliente_movimentacao_caixa))
-				ng.cliente = data.cliente;
+	ng.juntarComanda = function(id_comanda) {
+		ng.ids_comandas_juntas = [id_comanda];
+		ng.loadOrcamento(id_comanda, 'old', true);
+	}
 
-			$.each(orcamento.itens,function(i,v){
-				v.valor_desconto_real = Number(v.valor_desconto)/100;
-				v.flg_desconto        = Number(v.desconto_aplicado);
-				v.nome_produto        = v.nome ;
-				ng.incluirCarrinho(v);
-			});
+	ng.loadOrcamento = function(id_orcamento, tipo_valor, is_juntar){
+		aj.get(baseUrlApi() + 'venda/orcamento/' + id_orcamento + '/' + tipo_valor)
+			.success(function(data, status, headers, config) {
+				if(empty(is_juntar))
+					is_juntar = false;
 
-			$.each(ng.carrinho,function(i,item){
-				ng.aplicarDesconto(i,null,false,false);
-			});
+				var orcamento = data.orcamento;
+				
+				ng.id_comanda = orcamento.id;
+				ng.flg_comanda = (orcamento.flg_comanda == 1);
+				ng.id_orcamento = orcamento.id ;
 
-			ng.calcTotalCompra();
-
-			if(orcamento.flg_comanda == 1 && !empty(ng.configuracoes.id_produto_taxa_servico)) {
-				ng.getProdutoTaxaServico();
-				if(!empty(ng.produto_taxa_servico)) {
-					ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-					ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-					ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-					ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
-
-					var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
-					ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
-					ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
-					ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
-
-					ng.produto_taxa_servico.valor_desconto_real = 0;
-					ng.produto_taxa_servico.flg_desconto        = 0;
-					ng.incluirCarrinho(ng.produto_taxa_servico);
+				if((!is_juntar) && (!empty(ng.configuracoes.id_deposito_padrao)) && (orcamento.flg_comanda == 1)){
+					ng.dadosOrcamento = orcamento ;
+					ng.caixa.depositos = [ng.configuracoes.id_deposito_padrao] ;
 				}
-			}
 
-			ng.calcTotalCompra();
-			ng.totalPagamento();
-			ng.calculaTroco();
-			
-		})
-		.error(function(data, status, headers, config) {
-			alert('O ID do orçamento é invalido');
-			//window.location = "pdv.php";
-		});
+				if((!is_juntar) && (Number(data.cliente.id) != Number(ng.configuracoes.id_cliente_movimentacao_caixa)))
+					ng.cliente = data.cliente;
+
+				$.each(orcamento.itens,function(i,v){
+					v.valor_desconto_real = Number(v.valor_desconto)/100;
+					v.flg_desconto        = Number(v.desconto_aplicado);
+					v.nome_produto        = v.nome;
+					ng.incluirCarrinho(v);
+				});
+
+				$.each(ng.carrinho,function(i,item){
+					ng.aplicarDesconto(i,null,false,false);
+				});
+
+				ng.calcTotalCompra();
+
+				if((orcamento.flg_comanda == 1) && (!empty(ng.configuracoes.id_produto_taxa_servico))) {
+					ng.getProdutoTaxaServico();
+
+					if(is_juntar){
+						var idx_prd_txa_srv = ng.getIndexProdutoCarrinho(ng.produto_taxa_servico);
+						if(idx_prd_txa_srv){
+							ng.carrinho = _.without(ng.carrinho, _.findWhere(ng.carrinho, {id_produto: ng.produto_taxa_servico.id_produto}));
+						}
+					}
+
+					if(!empty(ng.produto_taxa_servico)) {
+						ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+
+						var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
+						ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+						ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+						ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+
+						ng.produto_taxa_servico.valor_desconto_real = 0;
+						ng.produto_taxa_servico.flg_desconto        = 0;
+						ng.incluirCarrinho(ng.produto_taxa_servico);
+					}
+				}
+
+				ng.calcTotalCompra();
+				ng.totalPagamento();
+				ng.calculaTroco();
+
+				if(is_juntar)
+					$('#list_comandas').modal('hide');
+			})
+			.error(function(data, status, headers, config) {
+				alert('O ID do orçamento é invalido');
+			});
 	}
 
 	ng.total_itens = 0 ;
@@ -254,7 +277,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.calcSubTotal = function(item){
 		if(!empty(item.qtd_total)) {
 			item.qtd_total = isNaN(Number(item.qtd_total)) || Number(item.qtd_total) == 0  ? 1 : Number(item.qtd_total) ;
-			item.sub_total = item.qtd_total * Number(item.vlr_unitario);
+
+			if(item.flg_unidade_fracao == 1) // Se o controle de estoque do item for fração
+				item.sub_total = ((Number(item.qtd_total) * 1000) * Number(item.vlr_unitario));
+			else
+				item.sub_total = (Number(item.qtd_total) * Number(item.vlr_unitario));
 		}
 		else
 			item.sub_total = 0;
@@ -282,7 +309,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var estoques = item;
 		var index    = null ;
 		$.each(ng.carrinho,function(i,value){
-			console.log(id_produto, value.id_produto);
+			
 			if(parseInt(id_produto) == parseInt(value.id_produto)){
 				saida     = false ;
 				estoques  = value.estoques;
@@ -352,8 +379,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			produto.valor_desconto = 100;
 		}
 
-		produto.qtd_total = !$.isNumeric(produto.qtd_total) || Number(produto.qtd_total) < 1 ? 1 : Number(produto.qtd_total) ;
-		produto.sub_total = produto.qtd_total * produto.vlr_unitario;
+		produto.qtd_total = !$.isNumeric(produto.qtd_total) ? 1 : Number(produto.qtd_total) ;
+
+		if(produto.flg_unidade_fracao == 1) // Se o controle de estoque do produto for fração
+			produto.sub_total = ((produto.qtd_total * 1000) * produto.vlr_unitario);
+		else
+			produto.sub_total = (produto.qtd_total * produto.vlr_unitario);
+
 
 		ng.vezes_valor			    = produto.qtd_total+' x R$ '+numberFormat(produto.vlr_unitario,2,',','.');
 		ng.nome_ultimo_produto      = produto.nome_produto ;
@@ -376,6 +408,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.ajustaDescontoProdutoCarrinho(produto);
 		}
 		else {
+			produto.validade = produto.dta_validade ;
 			ng.carrinho.push(produto);
 			
 			if(ng.exibeColunaPesquisaProduto('desconto') || ng.is_venda_bonificada)
@@ -388,15 +421,29 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.getIndexProdutoCarrinho = function(produto){
-		var index = false ;
-		$.each(ng.carrinho,function(i,v){
+		var index = false;
+
+		if(produto.flg_controlar_validade == 1)
+			index = _.indexOf(ng.carrinho, _.findWhere(ng.carrinho, {id_produto: produto.id_produto, dta_validade: produto.dta_validade}));
+		else
+			index = _.indexOf(ng.carrinho, _.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
+
+		/*$.each(ng.carrinho,function(i,v){
 			if(!empty(produto.id_produto)){
-				if(v.id_produto == produto.id_produto){
+				if(
+					( (v.id_produto == produto.id_produto) && (produto.flg_controlar_validade == 0) )
+					||
+					( (v.id_produto == produto.id_produto) && (produto.flg_controlar_validade == 1) && (produto.dta_validade == v.dta_validade) )
+				){
 					index = i ;
 					return ;
 				}
 			}
-		});
+		});*/
+
+		if(index == -1)
+			index = false;
+
 		return index;
 	}
 
@@ -459,6 +506,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		if(ng.finalizarOrcamento) ng.id_venda_ignore = params.id_orcamento ;
 		ng.finalizarOrcamento = false
 		ng.salvar() ;
+		ng.addCloseWindowBlock();
 	}
 
 
@@ -594,18 +642,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		var produtos = angular.copy(ng.carrinho);
 		var venda    = {
-							id        			: empty(params.id_orcamento) ?  null : params.id_orcamento ,
-							id_usuario			: ng.vendedor.id_vendedor,
-							id_cliente 			: ng.cliente.id,
-							id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
-							venda_confirmada 	: ng.orcamento ? 0 : 1,
-							id_empreendimento	: ng.userLogged.id_empreendimento,
-							id_deposito 		: ng.caixa.depositos,
-							id_status_venda 	: ng.orcamento ? 1 : 4,
-							margem_aplicada     : ng.margem_aplicada_venda,
-							dta_venda           : (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') ),
-							dsc_observacoes_gerais : ng.dsc_observacoes_gerais
-						};
+			id        						: empty(params.id_orcamento) ?  null : params.id_orcamento ,
+			id_usuario						: ng.vendedor.id_vendedor,
+			id_cliente 						: ng.cliente.id,
+			cpf_cliente 					: (!empty(ng.cliente.id)) ? ng.cliente.cpf : null,
+			vlr_total_venda					: ng.vlrTotalCompra,
+			vlr_troco						: ng.troco,
+			id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
+			venda_confirmada 				: ng.orcamento ? 0 : 1,
+			id_empreendimento				: ng.userLogged.id_empreendimento,
+			id_deposito 					: ng.caixa.depositos,
+			id_status_venda 				: ng.orcamento ? 1 : 4,
+			margem_aplicada     			: ng.margem_aplicada_venda,
+			dta_venda           			: (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') ),
+			dsc_observacoes_gerais 			: ng.dsc_observacoes_gerais
+		};
 
 		venda.id_cliente = (venda.id_cliente == "" || venda.id_cliente == undefined) ? ng.caixa.id_cliente_movimentacao_caixa : venda.id_cliente;
 
@@ -707,9 +758,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			return
 		}else if( !$.isNumeric(ng.cliente.id) && !empty(ng.busca.cliente_outo_complete) && (isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete) ) ){
 			if(isCPF(ng.busca.cliente_outo_complete)){
-				ng.newCliente = { tipo_cadastro : 'pf', cpf: ng.busca.cliente_outo_complete }
+				ng.newCliente = { 
+					tipo_cadastro : 'pf', 
+					cpf: ng.busca.cliente_outo_complete, 
+					id_estado: ng.empreendimento.cod_estado, 
+					id_cidade: ng.empreendimento.cod_cidade
+				};
 			}else{
-				ng.newCliente = { tipo_cadastro : 'pj', cnpj: ng.busca.cliente_outo_complete }
+				ng.newCliente = { 
+					tipo_cadastro : 'pj', 
+					cnpj: ng.busca.cliente_outo_complete, 
+					id_estado: ng.empreendimento.cod_estado, 
+					id_cidade: ng.empreendimento.cod_cidade 
+				};
 			}
 		}else if(existsFormaPag(9) && !$.isNumeric(ng.cliente.id)){
 			$dialogs.notify('Atenção!','<strong>Para realizar um pagamento "Promessa de Pagamneto" é necessário informar um cliente</strong>');
@@ -721,22 +782,29 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}else{
 			$('#btn-fazer-compra').button('loading');
 		}
+
+		ng.addCloseWindowBlock();
+
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today){
-					ng.efetivarCompra();
-				}else{
-					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
-					dialog.result.then(
-						function(btn){
-							ng.show_cancel_button_fechamento_caixa = false;
-							ng.modalFechar();
-						},
-						function(){
-							// Do nothing
-						}
-					);
-					return;
+				ng.efetivarCompra();
+
+				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
+					if(data.open_today){
+						ng.efetivarCompra();
+					}else{
+						var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+						dialog.result.then(
+							function(btn){
+								ng.show_cancel_button_fechamento_caixa = false;
+								ng.modalFechar();
+							},
+							function(){
+								// Do nothing
+							}
+						);
+						return;
+					}
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -746,6 +814,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					alert('Encontramos uma falha ao processar a requisição. Feche esta mensagem e clique em salvar novamente!');
 				// window.location = 'pdv.php';
 			}); 
+	}
+
+	ng.getIdprodutoCarrinho = function(item){
+		if(item.flg_controlar_validade == 1) return item.id_produto+"_"+item.dta_validade ;
+		else return item.id_produto;
 	}
 
 	ng.clearOutProdutos = function(){
@@ -774,7 +847,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			)
 			.success(function(data, status, headers, config) {
 				if (init+1 >= cont_itens){
-					//console.log(ng.out_produtos);
+					
 					if(ng.out_produtos.length > 0 || ng.out_descontos.length > 0){
 						ng.modalProgressoVenda('hide');
 						if(ng.out_produtos.length > 0)
@@ -811,7 +884,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.receber_pagamento = true ;
 
 						ng.$watch('dados_venda', function(new_value, old_value) {
-							console.log(new_value, old_value);
+							
 						});
 					}else if(acao == 'efetivar_orcamento'){
 						$('#text_status_venda').text('Salvando Venda');
@@ -825,10 +898,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.receber_pagamento = false;
 					if(data.out_estoque.length > 0){
 						$.each(data.out_estoque,function(i, value){
+							
+							if(!empty(value.validade)) var IdTrProduto = value.id_produto+"_"+value.validade;
+							else var IdTrProduto = value.id_produto ;
+
 							ng.out_produtos.push(value);
-							/*setTimeout(function(){
-								$("#"+value+" td").css({background:"#FF9191"});
-							}, 300);*/
+							setTimeout(function(){
+								$("#"+IdTrProduto+" td").css({background:"#FF9191"});
+							}, 300);
 							ng.recebidos = [];
 							ng.totalPagamento();
 						});
@@ -837,9 +914,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					if(data.out_desconto.length > 0){
 						$.each(data.out_desconto,function(i, value){
 							ng.out_descontos.push(value);
-							/*setTimeout(function(){
+							setTimeout(function(){
 								$("#"+value+" td").css({background:"#FF9191"});
-							}, 300);*/
+							}, 300);
 							ng.recebidos = [];
 							ng.totalPagamento();
 						});
@@ -903,15 +980,77 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		return msg;
 	}
 
+	ng.formatMsgCpf = function(){
+		var msg = '';
+			msg = "Deseja incluir o CPF do cliente no cupom fiscal?";
+
+		return msg;
+	}
+
+	ng.validaDocumentoCliente = function(){
+		if(!empty(ng.cliente.cpf)) {
+			if(ng.cliente.cpf.length === 11 && isCPF(ng.cliente.cpf)){
+				ng.pesquisaClienteByCpf();
+			}
+			else if(ng.cliente.cpf.length === 11 && !isCPF(ng.cliente.cpf)){
+				$('#modal-cpf-venda input[ng-model="cliente.cpf"]').parents('.form-group').addClass("has-error");
+				var formControl = $('#modal-cpf-venda input[ng-model="cliente.cpf"]').parent()
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", "CPF inválido")
+					.attr("data-original-title", "CPF/CNPJ inválido");
+				formControl.tooltip('show');
+			}
+		}
+	}
+
+	ng.pesquisaClienteByCpf = function () {
+		var query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
+			query_string += "&"+$.param({'(cpf':{exp:" LIKE '%"+ng.cliente.cpf+"%' OR cnpj LIKE '%"+ng.cliente.cpf+"%')"}});
+
+		if(!empty(ng.configuracoes.flg_filtrar_cliente_por_vendedor) && ng.configuracoes.flg_filtrar_cliente_por_vendedor == 1){
+			query_string += "&usu->id_vendedor_responsavel="+ ng.userLogged.id;
+		}
+
+		aj.get(baseUrlApi()+"usuarios/"+query_string)
+			.success(function(data, status, headers, config) {
+				if(data.usuarios.length == 1) {
+					ng.addClienteAutoComplete(data.usuarios[0]);
+					ng.cancelarModal('modal-cpf-venda');
+				}
+			})
+			.error(function(data, status, headers, config) {
+				ng.clientes_auto_complete = [];
+				ng.busca.cliente_outo_complete = angular.copy(ng.cliente.cpf);
+				ng.cancelarModal('modal-cpf-venda');
+			});
+	}
+
 	ng.verificaOutEstoque = function(item){
 		exists = false ;
 		$.each(ng.out_produtos,function(i,v){
-			if(Number(v[0]) == Number(item.id_produto)){
+
+			if( (Number(v.id_produto) == Number(item.id_produto)) && item.flg_controlar_validade !=1 ){
+				exists = true ;
+				return ;
+			}else if( (Number(v.id_produto) == Number(item.id_produto)) && (item.validade == v.validade) ){
 				exists = true ;
 				return ;
 			}
 		});
 		return exists ;
+	}
+
+	ng.existeProdutoValidade = function(){
+		var x = false ;
+		$.each(ng.carrinho,function(i,v){
+			if(v.flg_controlar_validade == 1){
+				x = true ;
+				return 
+			}
+		});
+
+		return x ;
 	}
 
 	ng.autorizarDesconto = function(){
@@ -929,7 +1068,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						(ng.out_descontos[0].vlr_desconto * 100) <= (faixa.perc_desconto_max * 100)
 					){
 						$.each(faixa.usuarios, function(i, usuario) {
-							if(usuario.login === ng.autorizador.login && usuario.senha === md5(ng.autorizador.senha)) {
+							if(usuario.login.toLowerCase() === ng.autorizador.login.toLowerCase() && usuario.senha === md5(ng.autorizador.senha)) {
 								ng.autorizador.id = usuario.id_usuario;
 								encontrado = true;
 							}
@@ -945,7 +1084,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					$('#alert-modal-password-discount').text('O usuário informado não possui permissão para autorizar o desconto!').css('display','block');	
 			},
 			function errorCallback(response) {
-				console.log(response);
+				
 			}
 		);
 	}
@@ -965,7 +1104,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.venda.is_venda_bonificada = ng.is_venda_bonificada;
 
 		aj.post(baseUrlApi()+"venda/gravarVenda",{
-			venda: ng.venda
+			venda: ng.venda,
+			ids_comandas_juntas: ng.ids_comandas_juntas
 		}).success(function(data, status, headers, config) {
 			$('#text_status_venda').text('Salvando Itens');
 			if($.isNumeric(data.id_cliente)){
@@ -1002,6 +1142,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				btn.button('reset');
 				ng.modalProgressoVenda('hide');
 				ng.showModalPrint();
+				ng.clearCloseWindowBlock();
 				ng.printPdf();
 				PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 				return ;
@@ -1049,6 +1190,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				btn.button('reset');
 				ng.modalProgressoVenda('hide');
 				ng.showModalPrint();
+				ng.clearCloseWindowBlock();
 				ng.printPdf();
 				return ;
 			}
@@ -1071,8 +1213,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	};
 
+	ng.changeFlagImprimirSATCFe = function() {
+		var actual_value = angular.copy(ng.caixa_aberto.flg_imprimir_sat_cfe);
+		if(parseInt(actual_value, 10) === 1)
+			ng.caixa_aberto.flg_imprimir_sat_cfe = 0;
+		else
+			ng.caixa_aberto.flg_imprimir_sat_cfe = 1;
+	}
+
 	ng.gravarMovimentacoes = function(){
-			console.log(ng.pagamentos_enviar);
+			
 			var id_venda = ng.finalizarOrcamento == true ? ng.id_orcamento : ng.id_venda;
 			var id_mesa = null; 
 			if(!empty(ng.dadosOrcamento)){
@@ -1096,12 +1246,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.sendMessageWebSocket(msg);
 				}
 				if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
-
+					console.log('data.flg_incluir_cpf_sat_cfe: '+ ng.flg_incluir_cpf_sat_cfe);
+					
 					if(empty(ng.caixa_open.id_ws_dsk)){
 						$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
 					}else{
 						$('#modal_progresso_venda').modal('hide');
-						ng.showModalSatCfe();
+						ng.showModalSatCfe('Aguarde, imprimindo CF-e SAT...');
 						var post = { 
 							id_empreendimento : ng.userLogged.id_empreendimento,
 							id_venda          : ng.id_venda,
@@ -1125,6 +1276,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								txt_sign_ac : ng.configuracoes.txt_sign_ac,
 								num_cnpj_sw : ng.configuracoes.num_cnpj_sw
 							};
+							data.flg_incluir_cpf_sat_cfe = ng.flg_incluir_cpf_sat_cfe;
+							
+							console.log('data.flg_incluir_cpf_sat_cfe: '+ data.flg_incluir_cpf_sat_cfe);
+
 							var dadosWebSocket = {
 								from 		: ng.caixa_open.id_ws_web ,
 								to  		: ng.caixa_open.id_ws_dsk ,
@@ -1143,22 +1298,39 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}else{
 					var btn = $('#btn-fazer-compra');
 						btn.button('reset');
-					ng.loadControleNfe('cfop','lista_operacao');
+					
+					if(!empty(ng.configuracoes.flg_emitir_nfe_pdv) && ng.configuracoes.flg_emitir_nfe_pdv == 1)
+						ng.loadControleNfe('cfop','lista_operacao');
+
 					ng.modalProgressoVenda('hide');
 					ng.vlr_saldo_devedor = data.vlr_saldo_devedor ;
 					ng.id_controle_pagamento = data.id_controle_pagamento ;
 
-					if((!ng.pagamento_fulso) && (!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1))
+					if(
+						(!ng.pagamento_fulso) && 
+						(!empty(ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia) && ng.configuracoes.flg_imprimir_cnf_antes_de_fechar_guia == 1)
+					) {
 						ng.printTermic(true);
-					else 
-						ng.showModalPrint();
-
-					if(ng.pagamento_fulso) {
-						ng.receber_pagamento = false;
-						ng.pagamento_fulso = false;
+					}
+					else { 
+						if(
+								!empty(ng.dadosOrcamento) // deve ser um orçamento...
+								&& !empty(ng.dadosOrcamento.flg_comanda) // o orçamento deve ser uma comanda...
+								&& ng.dadosOrcamento.flg_comanda == 1 // o orçamento deve ser uma comanda...
+								&& !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) // deve fechar a guia ao finalizar uma comanda...
+								&& ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1 // deve fechar a guia ao finalizar uma comanda...
+						) {
+							ng.clearCloseWindowBlock();
+							window.close();
+						}
+						else {
+							ng.clearCloseWindowBlock();
+							ng.showModalPrint();
+						}
 					}
 
 					ng.printPdf();
+
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 				}
 			})
@@ -1168,7 +1340,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.aplicarDesconto = function(index, $event, checkebox, calc){
-		console.log(index, $event, checkebox, calc);
+		
 		var vlr_real = parseFloat(accounting.toFixed(ng.carrinho[index].vlr_real,2));
 		
 		ng.carrinho[index].tipo_desconto = 'perc';
@@ -1238,7 +1410,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 		})
 		.error(function(data, status, headers, config) {
-			console.log('erro ao consultar saldo do cliente');
+			
 		});
 	}
 	ng.changeMargemAplicada = function(obj){
@@ -1344,7 +1516,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+"&usu->id[exp]= NOT IN("+ng.configuracoes.id_cliente_movimentacao_caixa+","+ng.configuracoes.id_usuario_venda_vitrine+"))";
 
 		if(ng.busca.clientes != ""){
-			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
+			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR tpf.cpf LIKE '%"+ng.busca.clientes+"%' OR tpj.cnpj LIKE '%"+ng.busca.clientes+"%' OR tpj.nome_fantasia LIKE '%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
 		}
 
 		if(!empty(ng.configuracoes.flg_filtrar_cliente_por_vendedor) && ng.configuracoes.flg_filtrar_cliente_por_vendedor == 1){
@@ -1445,10 +1617,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.produtos = data.produtos;
 				ng.paginacao.produtos = data.paginacao;
 
-				angular.forEach(ng.carrinho, function(prd_car){
-					angular.forEach(ng.produtos, function(prd_modal, idx_modal){
+				angular.forEach(ng.produtos, function(prd_modal, idx_modal){
+					angular.forEach(ng.carrinho, function(prd_car){
+						
 						if(prd_modal.id_produto === prd_car.id_produto) {
-							prd_modal.qtd_total 			= prd_car.qtd_total;
+							if(empty(prd_modal.qtd_total))  prd_modal.qtd_total = 0 ;
+							prd_modal.qtd_total 			+= prd_car.qtd_total;
 							prd_modal.flg_desconto 			= prd_car.flg_desconto;
 							prd_modal.tipo_desconto 		= prd_car.tipo_desconto;
 							prd_modal.valor_desconto 		= prd_car.valor_desconto;
@@ -1459,6 +1633,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 					});
 				});
+				
 			})
 			.error(function(data, status, headers, config) {
 				ng.produtos = [];
@@ -1466,7 +1641,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.isProdutoSelecionado = function(produto) {
-		return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
+		if(produto.flg_controlar_validade == 1)
+			return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto,dta_validade:produto.dta_validade}));
+		else
+			return !empty(_.findWhere(ng.carrinho, {id_produto: produto.id_produto}));
 	}
 
 	ng.getProdutoTaxaServico = function() {
@@ -1478,7 +1656,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
 			query_string += "&tp->id=" + ng.configuracoes.id_produto_taxa_servico;
-			query_string += "&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC";
+			// query_string += "&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC";
 
 		ng.produto_taxa_servico = null;
 		
@@ -1499,6 +1677,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.findProductByBarCode = function(offset,limit) {
+		ng.mostrar_validades = false ;
 		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 10 : limit;
 		var depositos = ng.caixa.depositos ;
@@ -1521,8 +1700,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.busca.ok = !ng.busca.ok;
 			
 			//$http.get(baseUrlApi()+"estoque/?group&(prd->codigo_barra[exp]=="+codigo+"%20OR%20prd.id="+codigo+")&emp->id_empreendimento="+ng.userLogged.id_empreendimento+"&prd->flg_excluido=0")
-
 			//var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&tp->codigo_barra="+ codigo;
+			
 			var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0";
 				query_string += "&("+$.param({'tp->id':{exp:"='"+codigo+"%' OR tp.codigo_barra like '%"+codigo+"%'"}})+")";
 
@@ -1530,7 +1709,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			if(qtd_minima != 'null')
 				query_string += "&" + $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
 
-			$http.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
+			$http.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string)// +"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC"
 				.success(function(data, status, headers, config) {
 					ng.busca.codigo = "" ;
 					if(data.produtos.length == 1){
@@ -1586,11 +1765,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		if(item.flg_controlar_lote != 1){
 			ng.add_index = index;
+			ng.add_validade = item.dta_validade ;
 			ng.loading_add_produto = true;
 
-			item.vlr_venda_atacado = round(item.vlr_venda_atacado,2);
-			item.vlr_venda_intermediario = round(item.vlr_venda_intermediario,2);
-			item.vlr_venda_varejo = round(item.vlr_venda_varejo,2);
+			item.vlr_venda_atacado = item.vlr_venda_atacado;
+			item.vlr_venda_intermediario = item.vlr_venda_intermediario;
+			item.vlr_venda_varejo = item.vlr_venda_varejo;
 
 			ng.incluirCarrinho(angular.copy(item), 'UPDATE');
 			ng.calcTotalCompra();
@@ -1753,22 +1933,26 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		btn_reforco.button('loading');
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today){
-					ng.efetivarReforco() ;
-				}else{
-					btn_reforco.button('reset');
-					$("#modal-reforco").modal('hide');
-					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
-					dialog.result.then(
-						function(btn){
-							ng.show_cancel_button_fechamento_caixa = false;
-							ng.modalFechar();
-						},
-						function(){
-							// Do nothing
-						}
-					);
-					return;
+				ng.efetivarReforco();
+				
+				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
+					if(data.open_today){
+						ng.efetivarReforco() ;
+					}else{
+						btn_reforco.button('reset');
+						$("#modal-reforco").modal('hide');
+						var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+						dialog.result.then(
+							function(btn){
+								ng.show_cancel_button_fechamento_caixa = false;
+								ng.modalFechar();
+							},
+							function(){
+								// Do nothing
+							}
+						);
+						return;
+					}
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -1939,22 +2123,26 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today){
-					ng.efetivarSangria() ;
-				}else{
-					btn_sangria.button('reset');
-					$("#modal-sangria").modal('hide');
-					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
-					dialog.result.then(
-						function(btn){
-							ng.show_cancel_button_fechamento_caixa = false;
-							ng.modalFechar();
-						},
-						function(){
-							// Do nothing
-						}
-					);
-					return;
+				ng.efetivarSangria();
+
+				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
+					if(data.open_today){
+						ng.efetivarSangria();
+					}else{
+						btn_sangria.button('reset');
+						$("#modal-sangria").modal('hide');
+						var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+						dialog.result.then(
+							function(btn){
+								ng.show_cancel_button_fechamento_caixa = false;
+								ng.modalFechar();
+							},
+							function(){
+								// Do nothing
+							}
+						);
+						return;
+					}
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -2016,19 +2204,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.caixa_aberto = data;
 				ng.vendedor.id_vendedor   = data.id_operador;
 				ng.vendedor.nome_vendedor = data.nome_operador;
-				if(!data.open_today){	
-					var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
-					dialog.result.then(
-						function(btn){
-							ng.show_cancel_button_fechamento_caixa = false;
-							ng.modalFechar();
-						},
-						function(){
-							// Do nothing
-						}
-					);
+				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
+					if(!data.open_today){	
+						var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
+						dialog.result.then(
+							function(btn){
+								ng.show_cancel_button_fechamento_caixa = false;
+								ng.modalFechar();
+							},
+							function(){
+								// Do nothing
+							}
+						);
+					}
 				}
-				
 			})
 			.error(function(data, status, headers, config) {
 				if (status == 406) {
@@ -2103,6 +2292,34 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.out_produtos = [] ;
 		ng.out_descontos = [] ;
 		ng.verificaEstoque(produtos_enviar,0,'receber');
+		
+		if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
+			dlg = $dialogs.confirm(
+				'Atenção!!!',
+				'<strong>'+ ng.formatMsgCpf() +'</strong>',
+				{
+					size: 'modal-sm'
+				}
+			);
+			dlg.result.then(
+				function(btn){
+					ng.flg_incluir_cpf_sat_cfe = true;
+					
+					if(!empty(ng.cliente.id) && !((!empty(ng.cliente.cpf) && isCPF(ng.cliente.cpf)) || (!empty(ng.cliente.cnpj) && isCnpj(ng.cliente.cnpj)))) {
+						$("#modal-cpf-venda").modal('show');
+						ng.validaDocumentoCliente();
+					}
+					else if(empty(ng.cliente.id)) {
+						$("#modal-cpf-venda").modal('show');
+					}
+				},
+				function(){
+					ng.flg_incluir_cpf_sat_cfe = false;
+				}
+			);
+		}
+
+		ng.addCloseWindowBlock();
 	}
 
 	ng.receber = function(){
@@ -2124,12 +2341,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.calculaTroco = function(){
-		var troco = 0 ;
-		troco = ng.total_pg - ng.vlrTotalCompra;
+		var troco = 0;
+			troco = ng.total_pg - ng.vlrTotalCompra;
 		if(troco > 0)
 			ng.troco = troco;
 		else
-			ng.troco = 0 ;
+			ng.troco = 0;
 	}
 
 	ng.pagamento = {};
@@ -2160,7 +2377,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				.attr("data-original-title", 'A escolha da forma de chequ é obrigatória');
 			formControl.tooltip();
 		}
-		console.log(ng.pagamento);
+		
 		if(ng.pagamento.valor ==  undefined || ng.pagamento.valor ==  ''){
 			error ++ ;
 			$("#pagamento_valor").addClass("has-error");
@@ -2182,6 +2399,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				.attr("data-placement", "bottom")
 				.attr("title", 'O escolha da maquineta é obrigatório')
 				.attr("data-original-title", 'O escolha da maquineta é obrigatório');
+			formControl.tooltip();
+		}
+
+		if((ng.pagamento.id_bandeira ==  undefined || ng.pagamento.id_bandeira ==  '') && (ng.pagamento.id_forma_pagamento == 5 || ng.pagamento.id_forma_pagamento == 6 ) ){
+			error ++ ;
+			$("#bandeira").addClass("has-error");
+
+			var formControl = $("#bandeira")
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "bottom")
+				.attr("title", 'O escolha da bandeira é obrigatório')
+				.attr("data-original-title", 'O escolha da bandeira é obrigatório');
 			formControl.tooltip();
 		}
 
@@ -2467,6 +2696,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
+								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca,
 								agencia_transferencia            : ng.pagamento.agencia_transferencia,
@@ -2480,6 +2710,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
+								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca
 						   };
@@ -2491,7 +2722,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.totalPagamento();
 		ng.calculaTroco();
 		ng.pagamento = {} ;
-		//console.log(ng.recebidos,ng.cheques);
+		
 	}
 
 	ng.deleteRecebidos = function(index){
@@ -2511,6 +2742,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			})
 			.error(function(data, status, headers, config) {
 				ng.paginacao.maquinetas = [] ;
+			});
+	}
+
+	ng.loadBandeiras = function(id) {
+		ng.bandeiras = [];
+
+		aj.get(baseUrlApi()+"bandeiras/"+id)
+			.success(function(data, status, headers, config) {
+				ng.bandeiras = data;
+			})
+			.error(function(data, status, headers, config) {
+
 			});
 	}
 
@@ -2583,13 +2826,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				if(data.open_today)
-					var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"";
-				else{
-					dta_fechamento = data.dta_abertura ;
-					dta_fechamento = dta_fechamento.split(' ');
-					dta_fechamento = dta_fechamento[0]+' 23:59:59';
-					var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"/"+dta_fechamento;
+				var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"";
+				
+				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
+					if(data.open_today)
+						var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"";
+					else{
+						dta_fechamento = data.dta_abertura ;
+						dta_fechamento = dta_fechamento.split(' ');
+						dta_fechamento = dta_fechamento[0]+' 23:59:59';
+						var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"/"+dta_fechamento;
+					}
 				}
 
 				aj.get(url)
@@ -2670,6 +2917,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				total_desconto_taxa_maquineta_debito: 0,
 				total_desconto_taxa_maquineta_credito: 0,
 				total_reforco_caixa: 0,
+				total_sangria: 0,
 				total_vendas: 0
 			},
 			printerModel: ng.caixa.mod_impressora,
@@ -2707,6 +2955,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 					if(v.id_tipo_movimentacao == 1) // Reforço de Caixa
 						ng.fechamento_caixa.totais.total_reforco_caixa += Number(v.valor_entrada);
+
+					if((data[i].isSaida) && (v.tipo_movimentacao == 'Sangria')) // Sangria
+						ng.fechamento_caixa.totais.total_sangria += Number(v.valor_entrada);
 
 					if(!empty(v.id_venda))
 						ng.fechamento_caixa.totais.total_vendas += Number(v.valor_entrada);
@@ -2926,11 +3177,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('.modal-backdrop.in').css({opacity:1,'background-color':'#C7C7C7'});
 	}
 
-	ng.showModalSatCfe = function(){
+	ng.showModalSatCfe = function(message){
 		$('#modal-sat-cfe').modal({
 		  backdrop: 'static',
 		  keyboard: false
 		});
+		ng.mensagem_sat_modal = message;
 	}
 
 	ng.showModalCNF = function(type){
@@ -3034,7 +3286,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					};
 					ng.sendMessageWebSocket(msg);
 
-					if(!empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
+					if(!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1 && !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
 						window.close();
 					else
 						ng.resetPdv('venda',true);
@@ -3212,6 +3464,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.calTotalBoleto();
 		}	
 
+		ng.loadBandeiras(id);
 		ng.loadDatapicker();
 	}
 
@@ -3305,7 +3558,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.showCadastroRapido = function(){
-		ng.new_cliente          = {tipo_cadastro: 'pf', id_perfil: 6} ;
+		ng.new_cliente = {
+			tipo_cadastro: 'pf', 
+			id_perfil: 6, 
+			id_estado: ng.empreendimento.cod_estado,
+			id_cidade: ng.empreendimento.cod_cidade
+		};
+
+		ng.loadCidadesByEstado(ng.empreendimento.nme_cidade);
+
 		$("#modal_cadastro_rapido_cliente").modal({
 		  backdrop: 'static',
 		  keyboard: false
@@ -3313,6 +3574,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		$('#modal_cadastro_rapido_cliente').on('shown.bs.modal', function (e) {
 			$('#modal_cadastro_rapido_cliente input#nome').focus();
+		});
+		ng.loadComoEncontrou();
+	}
+
+	ng.loadComoEncontrou = function () {
+		ng.comoencontrou = [];
+
+		aj.get(baseUrlApi()+"comoencontrou")
+		.success(function(data, status, headers, config) {
+			data.push({id:"outros",nome:"Outros"});
+			ng.comoencontrou = data;
+		})
+		.error(function(data, status, headers, config) {
+
 		});
 	}
 
@@ -3374,6 +3649,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		if(!empty(new_cliente.dta_nacimento))
 			new_cliente.dta_nacimento = moment(new_cliente.dta_nacimento,'DD-MM-YYYY').format('YYYY-MM-DD');
 		new_cliente.id_vendedor_responsavel = ng.userLogged.id;
+
+		if( (!empty(ng.busca.cliente_outo_complete)) && (!(isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete))) ){
+			$("#input_auto_complete_cliente").parents('.form-group').addClass("has-error");
+			var formControl = $("#input_auto_complete_cliente").parent()
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "top")
+				.attr("title", "CPF/CNPJ inválido")
+				.attr("data-original-title", "CPF/CNPJ inválido");
+			formControl.tooltip('show');
+			$('html,body').animate({scrollTop: 0},'slow');
+			return false;
+		}
+
 		aj.post(baseUrlApi()+"cliente/cadastro/rapido",new_cliente)
 			.success(function(data, status, headers, config) {
 				ng.addCliente(data.dados);
@@ -3427,7 +3715,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.esconder_cliente = true ;
 			}
 		}
-		console.log(busca);
+		
 		ng.produtos_auto_complete_visible = true ;
 		clearInterval(interval_produto);
 		if(empty(busca)){
@@ -3655,10 +3943,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.newConnWebSocket = function(){
 		ng.id_ws_dsk = ng.caixa_open.id_ws_dsk ;
 		ng.conn = null;
+
+		if(location.protocol === 'https:')
+			ng.configuracoes.patch_socket_sat = ng.configuracoes.patch_socket_sat.replace('ws', 'wss');
+
 		ng.conn = new WebSocket(ng.configuracoes.patch_socket_sat);
 		ng.conn.onopen = function(e) {
 			$scope.$apply(function () { ng.status_websocket = 1 ;});
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - WebSocket conectado.');
+			
 		};
 
 		ng.conn.onclose = function(e) {
@@ -3671,7 +3963,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 
 		ng.conn.onmessage = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Mensagem Recebida : '+e.data);
 			var data = JSON.parse(e.data);
 			data.message = parseJSON(data.message);
 			switch(data.type){
@@ -3682,10 +3973,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:data.to,id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
 						success: function(data) {
 							aux = true ;
-							console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - id_ws_web gravado com sucesso');
+							
 						},
 						error: function(error) {
-							console.log('Não foi possível gravar o id_ws_web');
+							
 							ng.status_websocket = 1 ;
 						}
 					 });
@@ -3699,7 +3990,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 						ng.sendMessageWebSocket(mg);
 					 }else{
-						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível estabelecer conexão com o APP Client');
+						
 					 }
 
 					if(ng.status_websocket == 2){
@@ -3766,6 +4057,31 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						
 					});
 					break;
+				case 'satcfe_cancel_success':
+					var post_data = {
+						chave_cancelamento: data.message.chave, 
+						cod_nota_fiscal: ng.dados_sat_cancelamento_in_progress.cod_nota_fiscal, 
+						data_cancelamento: data.message.dataProcessado,
+						xml_cancelamento: data.message.xmlProcessado
+					};
+					aj.post(baseUrlApi()+"nota_fiscal/cancelar/sat", post_data)
+						.success(function(data, status, headers, config) {
+							ng.resetPdv('venda',true);
+						})
+						.error(function(data, status, headers, config) {
+							ng.resetPdv('venda',true);
+						});
+					break;
+				case 'satcfe_cancel_error':
+					$('#modal-sat-cfe').modal('hide');
+					$('#modal-erro-sat').modal({ backdrop: 'static',keyboard: false});
+					$scope.$apply(function(){
+						ng.erro_sat = {
+							codigoErro: 'WebliniaERP-x0000-95829',
+							msgErro: data.message
+						};
+					},1);
+					break;
 				case 'connection_search_response':
 					$scope.$apply(function () {
 						ng.status_websocket = 2 ;
@@ -3781,7 +4097,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						}
 					$('#dados-websocket').popover('destroy');
 					$('#dados-websocket').popover(config).popover();
-					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Conexão com App client extabelecida');
+					
 					enviaTesteConexao();
 					break;
 				case 'connection_search_request':
@@ -3851,7 +4167,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.sendMessageWebSocket(mg);
 			 timeOutWaitingResponseTestConection = setTimeout(function() {
 				$scope.$apply(function () { ng.status_websocket = 1 ;});
-				console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+				
 			 }, TimeWaitingResponseTestConection);
 		},60000);
 	}
@@ -3866,14 +4182,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.loadVendasReenviarSat = function(offset,limit){
 		ng.paginacao.vendas_reenviar_sat = [];
 		ng.vendas_reenviar_sat = null;
+		
 		query = 'SELECT GROUP_CONCAT(id_venda) AS in_venda FROM'+
 				'('+
 					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
 					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
 					'INNER JOIN tbl_abertura_caixa AS tac ON tac.id = tmc.id_abertura_caixa '+
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL '+
-					'GROUP BY tmc.id_venda '+
+					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
+		   query += (!empty(ng.busca.vendas_sat)) ? ' AND tmc.id_venda = ' + ng.busca.vendas_sat + ' ' : '';
+		   query += 'GROUP BY tmc.id_venda '+
 					'ORDER BY tmc.id_venda DESC '+
 				') AS tb ';
 		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
@@ -3956,6 +4274,50 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		});
 	}
 
+	ng.modalCancelarCupomSat = function(){
+		$('#modal-cancelar-cupom-sat').modal('show');
+		ng.loadVendasCancelarSat(0,10);
+	}
+
+	ng.loadVendasCancelarSat = function(offset, limit){
+		var dta_inicial = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+		var dta_final = moment().format('YYYY-MM-DD HH:mm:ss');
+
+		var query_string  = "?tnf->cod_empreendimento="+ ng.userLogged.id_empreendimento;
+			query_string += "&tnf->status=autorizado";
+			query_string += "&tnf->flg_sat=1";
+			// query_string += "&tnf->data_processado_sat[exp]=BETWEEN '"+ dta_inicial +"' AND '"+ dta_final +"'";
+
+		ng.vendas_cancelar_sat = [];
+		aj.get(baseUrlApi()+"nota_fiscal/sat/"+ offset +"/"+limit +"/"+ query_string)
+			.success(function(data, status, headers, config) {
+				ng.vendas_cancelar_sat = data;
+			})
+			.error(function(data, status, headers, config) {
+				ng.vendas_cancelar_sat = [];
+			});
+	}
+
+	ng.cancelarSat = function(item){
+		var dadosWebSocket = {
+			from 	: ng.caixa_open.id_ws_web,
+			to  	: ng.caixa_open.id_ws_dsk,
+			type 	: 'satcfe_cancel',
+			message : JSON.stringify({
+				ide: {
+					CNPJ: ng.empreendimento.num_cnpj,
+					signAC: ng.configuracoes.txt_sign_ac
+				},
+				chCanc: item.chave_sat
+			})
+		};
+		ng.dados_sat_cancelamento_in_progress = angular.copy(item);
+		ng.sendMessageWebSocket(dadosWebSocket);
+
+		$('#modal-cancelar-cupom-sat').modal('hide');
+		ng.showModalSatCfe('Aguarde, processando cancelamento do CF-e SAT...');
+	}
+
 	ng.showModalReimpressaoCNF = function(){
 		ng.process_reimprimir_cnf = false ;
 		ng.cod_nota_fiscal_reimprimir_cnf = null ;
@@ -4021,7 +4383,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		window.location=page;
 	}
 	ng.sendMessageWebSocket = function(data){
-		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - mensagem Enviada: '+JSON.stringify(data));
+		
 		ng.conn.send(JSON.stringify(data));
 	}
 	var dadosWebSocket = {
@@ -4140,11 +4502,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.loadComandas = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 20 : limit;
+		
 		var query_string = "?te->id="+ng.userLogged.id_empreendimento+"&tv->venda_confirmada=0";
-		if(!empty(ng.busca.id_mesa_comanda)) query_string += "&tm->id_mesa="+ng.busca.id_mesa_comanda;
+		
+		if(!empty(ng.busca.id_mesa_comanda))
+			query_string += "&tm->id_mesa="+ng.busca.id_mesa_comanda;
+		
+		if(!empty(ng.flg_comanda) && ng.flg_comanda)
+			query_string += "&tv->id[exp]=<>"+ ng.id_comanda;
 		
 		if(!empty(ng.busca.comandas)){	
-				query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
+			query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
 		}
 
 		ng.comandas =  {dados:null,paginacao:[]};
@@ -4177,6 +4545,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			window.location = 'pdv.php';
 			return ;
 		}
+		if(ng.pagamento_fulso) {
+			ng.receber_pagamento = false;
+			ng.pagamento_fulso = false;
+		}
+		ng.orcamento = false;
 		$('.modal').modal('hide');
 		//ng.receber_pagamento = false;
 		if(tela == null || tela == 'inicial'){
@@ -4208,6 +4581,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.busca.cliente_outo_complete = "" ;
 		ng.setMargemAplicada();
 		ng.nome_ultimo_produto = null ;
+		ng.dados_sat_cancelamento_in_progress = null;
 		$('button').button('reset');
 	}
 
@@ -4433,7 +4807,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		aj.get(baseUrlApi()+"cidades/"+ng.new_cliente.id_estado)
 		.success(function(data, status, headers, config) {
 			ng.new_cliente.id_cidade = angular.copy(id_cidade);
-			console.log(ng.new_cliente.id_cidade);
+			
 			ng.cidades = data;
 			setTimeout(function(){$("select").trigger("chosen:updated");},300);
 			if(nome_cidade != null){
@@ -4531,6 +4905,64 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		return estado;
 	}
 
+	ng.addCloseWindowBlock = function() {
+		window.onbeforeunload = function goodbye(e){
+			if(!e) e = window.event;
+			//e.cancelBubble is supported by IE - this will kill the bubbling process.
+			e.cancelBubble = true;
+			e.returnValue = 'You sure you want to leave?'; //This is displayed on the dialog
+
+			//e.stopPropagation works in Firefox.
+			if (e.stopPropagation) {
+				e.stopPropagation();
+				e.preventDefault();
+			}
+		}; 
+	}
+
+	ng.clearCloseWindowBlock = function() {
+		window.onbeforeunload = undefined;
+	}
+
+	ng.voltarListaProdutos = function(){
+		ng.mostrar_validades = false ;
+	}
+
+	ng.mostrarValidades = function(item,index){
+		ng.produto_selecionar_validade = angular.copy(item);
+		ng.lista_produto_selecionar_validade = [] ;
+		ng.mostrar_validades = true ;
+		var _in = ''; 
+		$.each(ng.caixa.depositos,function(i,v){
+			_in += v+',';
+		});
+		_in = _in.substring(0,_in.length-1)
+
+		aj.get(baseUrlApi()+"estoque/deposito/"+ng.userLogged.id_empreendimento+"?pro->id="+item.id_produto+"&est->id_deposito[exp]=IN("+_in+")")
+			.success(function(data, status, headers, config) {
+				$.each(data,function(i,v){
+					var aux = angular.copy(item);
+					aux.dta_validade = v.dta_validade ;
+					aux.qtd_item = v.qtd_item ;
+					var index = ng.getIndexProdutoCarrinho(aux);
+					if(index !== false){
+						aux.qtd_total = ng.carrinho[index].qtd_total  ;
+						aux.flg_desconto = ng.carrinho[index].flg_desconto ;
+						aux.tipo_desconto = ng.carrinho[index].tipo_desconto ;
+						aux.valor_desconto = ng.carrinho[index].valor_desconto ;
+						aux.valor_desconto_real =  ng.carrinho[index].valor_desconto_real ;
+					}else{
+						aux.qtd_total = null ;
+					}
+					ng.lista_produto_selecionar_validade.push(aux);
+				});
+			})
+			.error(function(data, status, headers, config) {
+					
+			});
+
+	}
+
 	ng.selectMargemAplicadaInicial();	
 	ng.loadEstados();
 	ng.loadEmpreendimento();
@@ -4574,13 +5006,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			if(ng.configuracoes.flg_questionar_manutencao_precos_orcamento === 1) {
 				dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Deseja trabalhar com os valores de venda dos itens do momento do orçamento?</strong>');
 				dlg.result.then(function(btn){
-					ng.loadOrcamento('old');
+					ng.loadOrcamento(id_orcamento, 'old');
 				}, function(){
-					ng.loadOrcamento('new');
+					ng.loadOrcamento(id_orcamento, 'new');
 				});
 			}
 			else {
-				ng.loadOrcamento('old');
+				ng.loadOrcamento(id_orcamento, 'old');
 			}
 		}else{
 			ng.finalizarOrcamento = false ;
@@ -4599,5 +5031,3 @@ app.directive('bsTooltip', function ($timeout) {
 		}
 	}
 });
-
-

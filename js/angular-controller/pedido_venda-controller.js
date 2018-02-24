@@ -245,7 +245,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao consultar saldo do cliente');
+				
 			});
 	}
 	ng.removeCliente = function(){
@@ -500,7 +500,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 		});
 
 		ng.chinelos_gerados = chinelos_gerados ;
-		console.log(ng.chinelos_gerados);
+		
 
 	}
 
@@ -722,7 +722,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 		venda.itens = produtos;
 		
 
-		console.log({pedido_venda:venda,pagamentos:pagamentos});
+		
 		return ;
 		
 		aj.post(baseUrlApi()+"pedido_venda/gravar_pedido_venda",{pedido_venda:venda,pagamentos:pagamentos})
@@ -842,7 +842,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				ng.paginacao.vendas = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 				ng.vendas  = [] ;
 				ng.paginacao.vendas = [] ;
 			});
@@ -916,7 +916,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				ng.paginacao.acessorios  = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 				ng.acessorios = null ;
 			});
 	}
@@ -937,7 +937,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				ng.paginacao.tiras  = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);
+				
 				ng.tiras = null ;
 			});
 	}
@@ -1023,7 +1023,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 					}
 				});
 			});
-			console.log(ng.base_selecionadas);
+			
 		}
 	}
 	// Funções de pagamento 
@@ -1169,7 +1169,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 				.attr("data-original-title", 'A escolha da forma de chequ é obrigatória');
 			formControl.tooltip();
 		}
-		console.log(ng.pagamento);
+		
 		if(ng.pagamento.valor ==  undefined || ng.pagamento.valor ==  ''){
 			error ++ ;
 			$("#pagamento_valor").addClass("has-error");
@@ -1428,7 +1428,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 			});
 		}
 
-		console.log(ng.pg_boletos);
+		
 
 		if(ng.pagamento.id_forma_pagamento == 3){
 			$.each(ng.recebidos,function(x,y){
@@ -1474,7 +1474,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 		ng.totalPagamento();
 		ng.calculaTroco();
 		ng.pagamento = {} ;
-		//console.log(ng.recebidos,ng.cheques);
+		
 	}
 
 	ng.deleteRecebidos = function(index){
@@ -1661,7 +1661,7 @@ app.controller('PedidoVendaController', function($scope, $http, $window, $dialog
 	}
 	ng.view = {desconto_all:0} ;
 	ng.aplicarDescontoAll = function(){
-		//console.log(ng.view.desconto_all);
+		
 		$(".has-error").tooltip('destroy');
 		$(".has-error").removeClass('has-error');
 		if(empty(ng.view.desconto_all)){

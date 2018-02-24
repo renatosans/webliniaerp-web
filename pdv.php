@@ -6,7 +6,7 @@
 <html lang="en" ng-app="HageERP">
   <head>
     <meta charset="utf-8">
-    <title>WebliniaERP</title>
+    <title>PDV | WebliniaERP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -31,6 +31,9 @@
 
 	<!-- Chosen -->
 	<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
+
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
 
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -177,7 +180,9 @@
 			<div class="padding-md" ng-show="caixa_aberto == false && abrir_pdv == false && caixa_configurado == true && caixa_other_operador == false && operador_other_caixa == false">
 				<div class="panel panel-primary" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-desktop"></i>
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-primary hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -200,8 +205,9 @@
 			<div class="padding-md" ng-if="caixa_other_operador == true">
 				<div class="panel panel-warning" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -223,8 +229,9 @@
 			<div class="padding-md" ng-if="operador_other_caixa == true">
 				<div class="panel panel-warning" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -246,7 +253,9 @@
 			<div class="padding-md" ng-if="caixa_configurado == false">
 				<div class="panel panel-danger" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-danger hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -272,7 +281,9 @@
 			<div class="padding-md" ng-if="abrir_pdv">
 				<div class="panel panel-primary" style="width:500px;margin:0 auto">
 					<div class="panel-heading">
-						<i class="fa fa-desktop"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-desktop"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
 					</div>
 
 
@@ -319,7 +330,10 @@
 				<div class="panel panel-primary" style="margin-bottom: 0px !important;">
 					<div class="panel-heading">
 						<i style="cursor: pointer" id="dados-websocket" class="fa fa-desktop" 
-							ng-class="{'text-danger':  (status_websocket == 0), 'text-warning': (status_websocket == 1), 'text-success': (status_websocket == 2)}"></i> Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+							ng-class="{'text-danger':  (status_websocket == 0), 'text-warning': (status_websocket == 1), 'text-success': (status_websocket == 2)}"></i> 
+						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"
+							ng-click="changeFlagImprimirSATCFe()"></i>
 						<div class="btn-group"  style="margin-left: 40px;" >
 							<i class="fa fa-user"></i> Vendedor - {{ vendedor.nome_vendedor }}
 						</div>
@@ -338,6 +352,7 @@
 								<li><a ng-if="modo_venda == 'est'" href="#" ng-click="abrirVenda('pdv')"><i class="fa fa-desktop"></i> Nova Venda (Modo Loja)</a></li>
 								<li><a ng-if="modo_venda == 'pdv'" href="#" ng-click="abrirVenda('est')"><i class="fa fa-desktop"></i> Nova Venda (Modo Depósito)</a></li>
 								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalListaReenviarSat()"><i class="fa fa-file-text-o"></i> Reprocessar Cupom SAT</a></li>
+								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalCancelarCupomSat()"><i class="fa fa-times-circle"></i> Cancelar Cupom SAT</a></li>
 								<li ng-show="caixa_aberto"><a href="#" ng-click="showModalReimpressaoCNF()"><i class="fa fa-file-text-o"></i> Re-imprimir Cupom Não Fiscal</a></li>
 								<li ng-show="finalizarOrcamento == false"><a href="#" ng-click="pagamentoFulso()"><i class="fa fa-money"></i> Pagamento</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="resizeScreen()"><i class="fa fa-arrows-alt"></i>Tela Inteira</a></li>
@@ -354,7 +369,7 @@
 					</div>
 
 					<div class="panel-body" ng-if="receber_pagamento">
-						<div class="alert alert-pagamento" style="display:none"></div>
+						<div class="alert alert-pagamento" style="display: none;"></div>
 				    	<div class="row">
 				    		<div class="col-sm-7">
 					    		<div class="row">
@@ -462,6 +477,12 @@
 						    			<label class="control-label">Maquineta</label>
 										<select ng-model="pagamento.id_maquineta" class="form-control input-sm">
 											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">{{ item.num_serie_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+									<div class="col-sm-6" id="bandeiras" ng-if="pagamento.id_forma_pagamento == 5 || pagamento.id_forma_pagamento == 6 ">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento.id_bandeira" class="form-control input-sm">
+											<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{ item.nome }}</option>
 										</select>
 									</div>
 						    		<div class="col-sm-6" id="numero_parcelas" ng-if="pagamento.id_forma_pagamento == 6">
@@ -1081,7 +1102,7 @@
 									<div class="row">
 									
 										<div class="col-sm-12">
-											<div class="form-group" style="overflow-y: scroll; max-height: 250px;">
+											<div class="form-group">
 												<table id="tbl_carrinho" 
 													class="table table-condensed table-bordered table-hover table-striped">
 													<tr ng-hide="carrinho.length > 0" class="hidden-print">
@@ -1095,6 +1116,7 @@
 															<th ng-show="show_aditional_columns">Fabricante</th>
 															<th ng-show="show_aditional_columns">Tamanho</th>
 															<th ng-show="show_aditional_columns">Sabor/Cor</th>
+															<th class="text-center" style="width: 100px;" ng-if="existeProdutoValidade()" >Validade</th>
 															<th class="text-center" style="width: 80px;" >Qtd</th>
 															<th class="text-center" style="width: 100px;" ng-if="show_vlr_real" >RV</th>
 															<th class="text-center" style="width: 100px;">Valor Unit.</th>
@@ -1107,22 +1129,31 @@
 														</tr>
 													</thead>
 													<tbody>
-														<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}" 
+														<tr ng-repeat="item in carrinho" id="{{ getIdprodutoCarrinho(item) }}" 
 															ng-class="{'error-estoque': verificaOutEstoque(item) }"
 															ng-click="showFotoProduto(item)">
 															<td>{{ item.nome_produto }}</td>
 															<td ng-show="show_aditional_columns">{{ item.nome_fabricante }}</td>
 															<td ng-show="show_aditional_columns">{{ item.peso }}</td>
 															<td ng-show="show_aditional_columns">{{ item.sabor }}</td>
+															<td class="text-center"  ng-if="existeProdutoValidade()" >{{ item.flg_controlar_validade == 1 && (item.validade | dateFormat:'date') || '' }}</td>
 															<td class="text-center" width="80">
 																<input type="text" 
 																	class="form-control text-center input-xs"
-																	onKeyPress="return SomenteNumero(event);" 
+																	onKeyPress="return SomenteNumero(event);"
 																	ng-keyUp="calcSubTotal(item)"  
-																	ng-model="item.qtd_total"/>
+																	ng-model="item.qtd_total"
+																	ng-if="item.flg_unidade_fracao != 1"/>
+																<input type="text" 
+																	class="form-control text-center input-xs"
+																	onKeyPress="return SomenteNumero(event);"
+																	thousands-formatter precision="3" 
+																	ng-keyUp="calcSubTotal(item)"  
+																	ng-model="item.qtd_total"
+																	ng-if="item.flg_unidade_fracao == 1"/>
 															</td>
-															<td class="text-center" ng-if="show_vlr_real" > R${{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
-															<td class="text-right">R$ {{ item.vlr_real | numberFormat : 2 : ',' : '.' }}</td>
+															<td class="text-center" ng-if="show_vlr_real" >R${{ item.vlr_custo_real | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+															<td class="text-right">R$ {{ item.vlr_real | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 															<td class="text-center" style="width: 30px;"
 																ng-if="!(is_venda_bonificada)">
 																<!-- <label class="label-checkbox" id="label-checkbox-{{ $index }}">
@@ -1148,8 +1179,8 @@
 																<span style="display: block;float: left;" ng-if="item.flg_desconto == 1">R$</span>
 																<input style="width:80%;float:right"  ng-keyUp="aplicarDesconto($index,$event,false,true)" ng-if="item.flg_desconto == 1" thousands-formatter ng-model="item.valor_desconto_real" type="text" class="form-control text-right input-xs" id="teste_teste" />
 															</td>
-															<td class="text-right">R$ {{ item.vlr_unitario    | numberFormat : 2 : ',' : '.' }}</td>
-															<td class="text-right">R$ {{ item.sub_total    | numberFormat : 2 : ',' : '.' }}</td>
+															<td class="text-right">R$ {{ item.vlr_unitario    | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+															<td class="text-right">R$ {{ item.sub_total    | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 															<td class="text-center" class="hidden-print">
 																<button type="button" class="btn btn-xs btn-danger"  ng-click="delItem($index)"><i class="fa fa-trash-o"></i></button>
 															</td>
@@ -1167,7 +1198,7 @@
 													<h2 class="no-margin">
 														{{ total_itens }} Itens
 														-
-														R$ {{ vlrTotalCompra | numberFormat : 2 : ',' : '.' }}
+														R$ {{ vlrTotalCompra | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}
 													</h2>
 												</div>
 											</div>
@@ -1727,13 +1758,14 @@
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
         					<i class="fa fa-times-circle-o"></i> Fechar Janela
         				</button>
-						<h4 ng-if="cdb_busca.status==false">Pesquisa de Produtos</span></h4>
-						<h4 ng-if="cdb_busca.status==true" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
-						<span ng-if="cdb_busca.status==true" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
+        				<h4 ng-if="mostrar_validades">Selecione a validade</span></h4>
+						<h4 ng-if="cdb_busca.status==false && mostrar_validades == false">Pesquisa de Produtos</span></h4>
+						<h4 ng-if="cdb_busca.status==true && mostrar_validades == false" style="margin-bottom: 0px;">Pesquisa de Produtos</span></h4>
+						<span ng-if="cdb_busca.status==true && mostrar_validades == false" class="text-muted">Produtos relacionados ao codigo de barra {{ cdb_busca.codigo }}</span>
       				</div>
 
 				    <div class="modal-body">
-						<div class="row">
+						<div class="row" ng-if="mostrar_validades == false">
 							<div class="col-md-12">
 								<div class="input-group">
 						            <input ng-model="busca.produtos" id="foco" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" 
@@ -1751,11 +1783,63 @@
 
 						<br>
 
+						<div class="row" ng-if="mostrar_validades">
+							<div class="col-md-12 table-responsive">
+								<div class="alert alert-produtos" style="display:none"></div>
+									<table style="width: auto !important;margin: 0 auto;" class="table table-bordered table-striped table-hover">
+										<thead>
+											<tr>
+												<td colspan="4" style="text-align: center">
+													{{ produto_selecionar_validade.nome_produto }}	
+												</td>
+											</tr>
+											<tr>
+												<td style="text-align: center;width: 150px">
+													Validade
+												</td>
+												<td style="text-align: center;width: 150px">
+													Estoque
+												</td>
+
+												<td style="text-align: center;width: 100px">
+													Qtd
+												</td>
+												<td style="text-align: center;width: 50px">
+													
+												</td>
+											</tr>
+											<tr ng-repeat="item in lista_produto_selecionar_validade">
+												<td style="text-align: center">{{ item.dta_validade | dateFormat:'date' }}</td>
+												<td style="text-align: center">{{ item.qtd_item }}</td>
+												<td >
+													<input type="text" class="form-control text-center no-padding" ng-model="item.qtd_total" style="font-size: 10px;" />
+												</td>
+												<td>
+													<button type="button" class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}} data-loading-text="Aguarde..." ng-click="addProduto(item, index)">
+														<span>
+																<span ng-if="!(isProdutoSelecionado(item)) && !((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-check-square-o"></i>
+														</span>
+														<span ng-if="(isProdutoSelecionado(item)) && !((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-refresh"></i>
+														</span>
+														<span ng-if="((add_index === index && add_validade === item.dta_validade) && (loading_add_produto))">
+															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+														</span>
+													</button>
+												</td>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							</div>
+
 						<div class="row">
 							<div class="col-md-12 table-responsive">
 								<div class="alert alert-produtos" style="display:none"></div>
 
-								<div class="table-responsive">
+								<div class="table-responsive" ng-if="mostrar_validades == false">
 							   		<table class="table table-bordered table-striped table-hover">
 										<thead ng-show="(produtos.length != 0)">
 											<tr>
@@ -1919,8 +2003,14 @@
 														ng-model="item.valor_desconto_real"/>
 												<td style="min-width: {{ (configuracoes.flg_botoes_quantidade_pesquisa_produto) ? '140' : '100' }}px;">
 													<input type="text" class="form-control text-center"
-														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto)"
-														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"/>
+														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && !(item.flg_unidade_fracao == 1)"
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
+														ng-disabled="item.flg_controlar_validade == 1"/>
+													<input type="text" class="form-control text-center"
+														thousands-formatter precision="3"
+														ng-if="!(configuracoes.flg_botoes_quantidade_pesquisa_produto) && (item.flg_unidade_fracao == 1)"
+														ng-model="item.qtd_total" ng-enter="addProduto(item, index)"
+														ng-disabled="item.flg_controlar_validade == 1"/>
 
 													<div class="input-group" ng-if="(configuracoes.flg_botoes_quantidade_pesquisa_produto)">
 														<span class="input-group-btn">
@@ -1941,10 +2031,10 @@
 													</div>
 												</td>
 												<td class="text-right text-middle" style="min-width: 80px;">
-													R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}
+													R$ {{ item.vlr_unitario | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}
 												</td>
 												<td class="text-center text-middle">
-													<button type="button" 
+													<button type="button" ng-if="(item.flg_controlar_validade != 1)"
 														ng-click="addProduto(item, index)"
 														class="btn btn-{{ !(isProdutoSelecionado(item)) ? 'success' : 'info'}}"
 														data-loading-text="Aguarde...">
@@ -1956,6 +2046,15 @@
 														</span>
 														<span ng-if="((add_index === index) && (loading_add_produto))">
 															<i class="fa fa-spinner fa-spin"></i>
+														</span>
+													</button>
+													<button
+														class="btn"
+														type="button" ng-if="(item.flg_controlar_validade == 1)"
+														ng-click="mostrarValidades(item, index)"
+													>
+														
+															<i class="fa fa-calendar"></i>
 														</span>
 													</button>
 												</td>
@@ -1972,8 +2071,13 @@
 			    			<button class="btn btn-default" data-dismiss="modal">
 			    				Fechar Janela
 			    			</button>
+
+			    			<button ng-if="mostrar_validades" ng-click="voltarListaProdutos()" class="btn btn-info">
+			    				Voltar a lista
+			    			</button>
+
 			    		</div>
-			    		<div class="pull-right">
+			    		<div class="pull-right" ng-if="mostrar_validades == false">
 							<div class="input-group">
 					             <ul class="pagination m-top-none" ng-show="paginacao.produtos.length > 1">
 									<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
@@ -2107,9 +2211,9 @@
 									<td>{{ item.nome_fabricante }}</td>
 									<td>{{ item.peso }}</td>
 									<td class="text-center" width="20">{{ item.qtd_total }}</td>
-									<td class="text-right">R$ {{ item.vlr_unitario | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_unitario | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 									<td class="text-center"><span ng-if="item.valor_desconto_real > 0 && item.valor_desconto_real != undefined">R$<span> {{ item.valor_desconto_real }}</td>
-									<td class="text-right">R$ {{ item.sub_total | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.sub_total | numberFormat : configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 								</tr>
 								<tr>
 									<td></td>
@@ -2146,9 +2250,9 @@
 					    		href="{{ url_pdf }}" target="_blank" 
 					    		ng-show="!emitirNfe"
 					    		ng-click="setvalue('sendEmailPdf',false); emitirNfe = false;">
-					    		<i class="fa fa-file-pdf-o"></i> Visualizar PDF (Comprovante de Venda)
+					    		<i class="fa fa-file-pdf-o"></i> Visualizar PDF (Comprovante de <span ng-if="!pagamento_fulso">Venda</span><span ng-if="pagamento_fulso">Pagamento</span>)
 					    	</a>
-					    	<a ng-show="!emitirNfe" id="printTermic" class="btn btn-md btn-block btn-primary" 
+					    	<a ng-show="!emitirNfe" ng-if="!pagamento_fulso" id="printTermic" class="btn btn-md btn-block btn-primary" 
 					    		data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." 
 					    		ng-click="printTermic(false)" >
 					    		<i class="fa fa-print"></i> Imprimir (via Impressora Térmica)
@@ -2341,6 +2445,18 @@
 													</select>
 												</div>
 											</div>
+											<div class="col-sm-2">
+												<div id="id_como_encontrou" class="form-group">
+													<label class="control-label">Como Encontrou?</label>
+													<select class="form-control input-sm" ng-model="new_cliente.id_como_encontrou" ng-options="a.id as a.nome for a in comoencontrou"><option value=""></option></select>
+												</div>
+											</div>
+											<div class="col-sm-4" ng-show="new_cliente.id_como_encontrou == 'outros' ">
+											<div id="como_entrou_outros" class="form-group">
+												<label class="control-label">Descreva</label>
+												<input type="text" class="form-control input-sm" ng-model="cliente.como_entrou_outros">
+											</div>
+										</div>
 										</div>
 										<div class="row">
 										<div class="col-sm-2">
@@ -2540,15 +2656,7 @@
       				</div>
 
 				    <div class="modal-body">
-				    	<div class="alert alert-reforco" style="display:none"></div>
-
-				    	<div class="row">
-				    		<div class="col-sm-6" id="valor_pagamento">
-				    		<p>
-				    			<strong id="text_status_sat_cfe">Imprimindo Cupom Fiscal</strong><img src="assets/imagens/progresso_venda.gif">
-				    		</p>
-							</div>
-				    	</div>
+				    	<p><i class="fa fa-spin fa-spinner"></i> {{ mensagem_sat_modal }}</p>
 				    </div>
 			  	</div>
 			  	<!-- /.modal-content -->
@@ -2586,7 +2694,7 @@
   			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
       				<div class="modal-header">
-      					<h4>Ocorreu um erro ao processar o SAT</h4>
+      					<h4>Ocorreu um erro ao processar o CF-e SAT</h4>
       				</div>
 				    <div class="modal-body">
 				    	<div class="row">
@@ -2674,20 +2782,21 @@
 						<h4 ng-if="cdb_busca.status==false">Vendas</span></h4>
       				</div>
 				    <div class="modal-body">
-						<!-- <div class="row">
+						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" class="form-control input-sm">
+						            <input type="text" class="form-control input-sm"
+						            	ng-model="busca.vendas_sat" ng-enter="loadVendasReenviarSat(0,10)">
 
 						            <div class="input-group-btn">
 						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)">
+						            		ng-click="loadVendasReenviarSat(0,10)">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
 						            </div> 
 						        </div>
 							</div>
-						</div><br> -->
+						</div><br>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="alert alert-produtos" style="display:none"></div>
@@ -2785,7 +2894,7 @@
 											<th class="text-center" colspan="9" style="text-align:center"><i class="fa fa-refresh fa-spin"></i> <strong>Carregando</strong></th>
 										</tr>
 										<tr ng-show="(vendas_caixa_aberto.length == 0)">
-											<td colspan="3">Nenhum venda encontrada</td>
+											<td colspan="3">Nenhuma venda encontrada</td>
 										</tr>
 										<tr ng-repeat="item in vendas_caixa_aberto" bs-tooltip >
 											<td>{{ item.id }}</td>
@@ -2810,6 +2919,68 @@
 						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.vendas_caixa_aberto.length > 1">
 										<li ng-repeat="item in paginacao.vendas_caixa_aberto" ng-class="{'active': item.current}">
 											<a href="" ng-click="loadVendasCaixaAberto(item.offset,item.limit)">{{ item.index }}</a>
+										</li>
+									</ul>
+						        </div> <!-- /input-group -->
+							</div><!-- /.col -->
+						</div>
+					</div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- Modal Cancelamento SAT -->
+		<div class="modal fade" id="modal-cancelar-cupom-sat" style="display:none">
+  			<div class="modal-dialog modal-lg">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Cancelamento de CF-e SAT</h4>
+      				</div>
+				    <div class="modal-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="alert alert-produtos" style="display:none"></div>
+						   		<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead ng-show="(vendas_reenviar_sat.length != 0)">
+										<tr>
+											<th width="70">#</th>
+											<th width="150">Data</th>
+											<th>Vendedor</th>
+											<th>Cliente</th>
+											<th class="text-center" width="90">Valor</th>
+											<th width="40"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-show="(vendas_cancelar_sat.notas.length == 0)">
+											<td class="text-center" colspan="6">Nenhuma venda encontrada</td>
+										</tr>
+										<tr ng-repeat="item in vendas_cancelar_sat.notas" bs-tooltip >
+											<td>{{ item.cod_venda }}</td>
+											<td>{{ item.dta_venda | dateFormat: 'dateTime' }}</td>
+											<td>{{ item.nme_vendedor }}</td>
+											<td>{{ item.nme_cliente }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_venda | numberFormat:2:',':'.' }}</td>
+											<td>
+												<button type="button" class="btn btn-danger btn-xs"
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i>' 
+													ng-click="cancelarSat(item)" >
+													<i class="fa fa-times-circle"></i> Cancelar SAT
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					    <div class="row">
+					    	<div class="col-md-12">
+								<div class="input-group pull-right">
+						             <ul class="pagination pagination-xs m-top-none" ng-show="vendas_cancelar_sat.paginacao.length > 1">
+										<li ng-repeat="item in vendas_cancelar_sat.paginacao" ng-class="{'active': item.current}">
+											<a href="" ng-click="loadVendasCancelarSat(item.offset,item.limit)">{{ item.index }}</a>
 										</li>
 									</ul>
 						        </div> <!-- /input-group -->
@@ -2940,7 +3111,7 @@
 						</div>
 				    <div class="modal-body">
 						<div class="row">
-							<div class="col-md-4">
+							<div class="col-md-4" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">
 								<div class="form-group" id="regimeTributario">
 									<!--<label class="control-label">Operação</label> -->
 									<select chosen
@@ -2974,7 +3145,7 @@
 									<thead ng-show="(comandas.dados != 0)">
 										<tr>
 											<th class="text-center">Nº Comanda</th>
-											<th class="text-center">Mesa</th>
+											<th class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">Mesa</th>
 											<th class="text-center">Cliente</th>
 											<th class="text-center">Quantidade itens</th>
 											<th width="100" class="text-center">Valor</th>
@@ -2990,7 +3161,7 @@
 										</tr>
 										<tr ng-repeat="item in comandas.dados">
 											<td class="text-center">#{{ item.id_comanda }}</td>
-											<td class="text-center">{{ item.dsc_mesa }}</td>
+											<td class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">{{ item.dsc_mesa }}</td>
 											<td ng-if="config.id_cliente_movimentacao_caixa != item.id_cliente">{{ item.nome_cliente }}</td>
 											<td ng-if="config.id_cliente_movimentacao_caixa == item.id_cliente">(Não informado)</td>
 											<td class="text-center">{{ item.qtd_total }}</td>
@@ -3001,6 +3172,12 @@
 													tooltip title="Fechar Comanda">
 													<i class="fa fa-dollar"></i>
 												</a>
+												<button type="button" class="btn btn-xs btn-primary" 
+													tooltip title="Juntar à Comanda"
+													ng-click="juntarComanda(item.id_comanda)"
+													ng-if="(flg_comanda)">
+													<i class="fa fa-link"></i>
+												</button>
 												<button type="button" class="btn btn-xs btn-info" 
 													tooltip title="Imprimir Comanda"
 													ng-click="printComanda(item.id_comanda)">
@@ -3118,6 +3295,35 @@
 		</div>
 		<!-- /.modal -->
 
+		<!-- /Modal CPF na venda-->
+		<div class="modal fade" id="modal-cpf-venda" style="display:none">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>CPF do Cliente</h4>
+					</div>
+					<div class="modal-body" style="padding-top: 10px; padding-bottom: 0px;">
+						<div class="form-group">
+							<label class="control-label">Insira o CPF do cliente:</label>
+							<input type="text" class="form-control" 
+								ng-model="cliente.cpf"
+								ng-keyup="validaDocumentoCliente()"/>
+						</div>
+					</div>
+					<br>
+					<div class="modal-footer" style="margin-top: 0px;">
+						<button type="button" class="btn btn-md btn-default fechar-modal"
+							data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..."
+							ng-click="cancelarModal('modal-cpf-venda')">
+							<i class="fa fa-times-circle"></i> Cancelar
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /.modal -->
+
 		<!-- Footer
 		================================================== -->
 		<footer>
@@ -3185,6 +3391,10 @@
 
 	<!-- fold-to-ascii -->
 	<script type="text/javascript" src="js/fold-to-ascii.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js?version=<?php echo date("dmY-His", filemtime("js/extras.js")) ?>"></script>

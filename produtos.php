@@ -7,7 +7,7 @@
 <html lang="en" ng-app="HageERP">
   <head>
     <meta charset="utf-8">
-    <title>WebliniaERP</title>
+    <title>Produtos | WebliniaERP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -30,7 +30,10 @@
 	<link href="css/fileinput/fileinput.css" media="all" rel="stylesheet" type="text/css" />
 
 	<link href="js/Trumbowyg-master/dists/ui/trumbowyg.css" media="all" rel="stylesheet" type="text/css" />
-	
+
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -250,7 +253,7 @@
 												</div>
 												<div class="col-sm-2">
 													<div class="form-group" id="peso">
-															<label class="control-label">Cor/sabor</label> <i ng-click="showModalNovaCor()" style="cursor:pointer;color: #9ad268;" class="fa fa-plus-circle fa-lg"></i>
+															<label class="control-label">Sabor/Cor</label> <i ng-click="showModalNovaCor()" style="cursor:pointer;color: #9ad268;" class="fa fa-plus-circle fa-lg"></i>
 															<select chosen ng-change="ClearChosenSelect('cor');incluirCombinacaoDefault()"
 														    option="cores"
 														    ng-model="produto.id_cor"
@@ -259,6 +262,7 @@
 													</div>
 												</div>
 											</div>
+											
 											<br/>
 											<div class="row" ng-if="produto.flg_produto_composto == 1">
 												<div class="col-sm-12">
@@ -269,13 +273,13 @@
 																	<tr>
 																		<td colspan="7"><i class="fa fa fa-th fa-lg"></i> Insumos</td>
 																		<td width="60" align="center">
-																			<button class="btn btn-xs btn-primary" ng-click="showInsumos()"><i class="fa fa-plus-circle"></i></button>
+																			<button class="btn btn-xs btn-primary" ng-click="showInsumos('insumos')"><i class="fa fa-plus-circle"></i></button>
 																		</td>
 																	</tr>
 																</thead>
 																<tbody>
 																	<tr ng-show="(insumos.length == 0)">
-																		<td colspan="8" align="center">Nenhum insumo selecionado</td>
+																		<td colspan="8" align="center">Nenhum insumo selecionado!</td>
 																	</tr>
 																	<tr ng-show="(insumos.length > 0)">
 																		<td>#</td>
@@ -293,8 +297,21 @@
 																		<td>{{ item.nome_fabricante }}</td>
 																		<td>{{ item.peso }}</td>
 																		<td>{{ item.sabor }}</td>
-																		<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-																		<td  width="50"><input  ng-model="item.qtd" onKeyPress="return SomenteNumero(event);" ng-keyup="calVlrCustoInsumos()" type="text" class="form-control input-xs" /></td>
+																		<td class="text-right" width="70">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
+																		<td width="80">
+																			<input type="text" class="form-control input-xs text-center"
+																				onKeyPress="return SomenteNumero(event);" 
+																				ng-model="item.qtd" 
+																				ng-keyup="calVlrCustoInsumos()" 
+																				ng-if="item.flg_unidade_fracao != 1"/>
+
+																			<input type="text" class="form-control input-xs text-center"
+																				thousands-formatter precision="3"
+																				onKeyPress="return SomenteNumero(event);" 
+																				ng-model="item.qtd" 
+																				ng-keyup="calVlrCustoInsumos()" 
+																				ng-if="item.flg_unidade_fracao == 1"/>
+																		</td>
 																		<td align="center">
 																			<button class="btn btn-xs btn-danger" ng-click="delInsumo($index,item)"><i class="fa fa-trash-o"></i></button>
 																		</td>
@@ -305,13 +322,62 @@
 													</div>
 												</div>
 											</div>
+
+											<br/>
+											<div class="row" ng-if="produto.flg_produto_composto == 1">
+												<div class="col-sm-12">
+													<div class="empreendimentos form-group" id="adicionais">
+														
+															<table class="table table-bordered table-condensed table-striped table-hover">
+																<thead>
+																	<tr>
+																		<td colspan="5"><i class="fa fa fa-th fa-lg"></i> Adicionais</td>
+																		<td width="60" align="center">
+																			<button class="btn btn-xs btn-primary" ng-click="showInsumos('adicionais')"><i class="fa fa-plus-circle"></i></button>
+																		</td>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr ng-show="(adicionais.length == 0)">
+																		<td colspan="8" align="center">Nenhum adicional selecionado!</td>
+																	</tr>
+																	<tr ng-show="(adicionais.length > 0)">
+																		<td class="text-center">#</td>
+																		<td class="text-center">Produto</td>
+																		<td class="text-center">Fabricante</td>
+																		<td class="text-center">Tamanho</td>
+																		<td class="text-center">Sabor/Cor</td>
+																		<td class="text-center" align="center"></td>
+																	</tr>
+																	<tr ng-repeat="item in adicionais">
+																		<td class="text-center">{{ item.id }}</td>
+																		<td>{{ item.nome }}</td>
+																		<td>{{ item.nome_fabricante }}</td>
+																		<td>{{ item.peso }}</td>
+																		<td>{{ item.sabor }}</td>
+																		<td align="center">
+																			<button class="btn btn-xs btn-danger" 
+																				ng-click="delAdicional($index,item)">
+																				<i class="fa fa-trash-o"></i>
+																			</button>
+																		</td>
+																	</tr>
+																</tbody>
+															</table>
+												
+													</div>
+												</div>
+											</div>
+
 											<div class="row">
 												<div class="col-sm-12">
 													<div class="pull-right">
 														<button ng-click="showBoxNovo(); reset();" type="submit" class="btn btn-danger btn-sm">
 															<i class="fa fa-times-circle"></i> Cancelar
 														</button>
-														<button type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." ng-click="salvar('btn-salvar-informacoes-basicas')"type="submit" id="btn-salvar-informacoes-basicas" class="btn btn-success btn-sm">
+														<button type="submit" class="btn btn-success btn-sm" id="btn-salvar-informacoes-basicas"
+															data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." 
+															ng-click="salvar('btn-salvar-informacoes-basicas')">
 															<i class="fa fa-save"></i> Salvar
 														</button>
 													</div>
@@ -416,9 +482,41 @@
 														</div>
 													</div>
 												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="" class="control-label">Estoque controlado por validade?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_controlar_validade"  name="controlar_validade" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_controlar_validade"  name="controlar_validade" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="" class="control-label">Unidade de Medida</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_unidade_fracao"  name="unidade_fracao" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Unidade</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_unidade_fracao"  name="unidade_fracao" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Fração</span>
+															</label>
+														</div>
+													</div>
+												</div>
 											</div>
-
-
 											<div ng-if="funcioalidadeAuthorized('alterar_quantidade')" class="row">
 												<div class="col-sm-3" id="inventario_novo_deposito">
 													<label class="control-label">Depósito</label>
@@ -454,10 +552,16 @@
 														<input ng-model="inventario_novo.lote" type="text" class="form-control input-xs">
 													</div>
 												</div>
-												<div class="col-sm-1">
+												<div class="col-sm-1" ng-if="produto.flg_unidade_fracao != 1">
 													<div class="form-group" id="inventario_novo_qtd">
 														<label class="control-label">Qtd.</label>
 														<input ng-model="inventario_novo.qtd_ivn" onkeypress="return SomenteNumero(event);" type="text" class="form-control input-xs">
+													</div>
+												</div>
+												<div class="col-sm-2" ng-if="produto.flg_unidade_fracao == 1">
+													<div class="form-group" id="inventario_novo_qtd">
+														<label class="control-label">Qtd.</label>
+														<input ng-model="inventario_novo.qtd_ivn" thousands-formatter precision="3" onkeypress="return SomenteNumero(event);" type="text" class="form-control input-xs">
 													</div>
 												</div>
 												<div class="col-sm-1">
@@ -491,7 +595,8 @@
 																<td class="text-center" ng-if="value.dta_validade == '2099-12-31'"></td>
 																<td class="text-center" ng-if="produto.flg_controlar_lote==1">{{ value.lote }}</td>
 																<td  ng-if="funcioalidadeAuthorized('alterar_quantidade')" class="text-center" >
-																	<input type="text" ng-if="value.flg_visivel == 1"  onkeypress="return SomenteNumero(event);"   class="form-control input-xs text-center" ng-model="value.qtd_ivn" >
+																	<input type="text" ng-if="value.flg_visivel == 1 && produto.flg_unidade_fracao != 1" onkeypress="return SomenteNumero(event);"   class="form-control input-xs text-center" ng-model="value.qtd_ivn" >
+																	<input type="text" ng-if="value.flg_visivel == 1 && produto.flg_unidade_fracao == 1" thousands-formatter precision="3" onkeypress="return SomenteNumero(event);"   class="form-control input-xs text-center" ng-model="value.qtd_ivn" >
 																	<span ng-if="value.flg_visivel != 1">{{ value.qtd_ivn }}</span>
 																</td>
 																<td ng-if="!funcioalidadeAuthorized('alterar_quantidade')" class="text-center">{{ value.qtd_ivn }} </td>
@@ -592,6 +697,29 @@
 														    ng-model="produto.id_importador"
 														    ng-options="importador.id as importador.nome_importador for importador in importadores">
 															</select>
+													</div>													
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label for="" class="control-label">Venda Obrigatória?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_venda_obrigatoria"  name="venda_obrigatoria" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_venda_obrigatoria"  name="venda_obrigatoria" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group" id="id_referencia_externo">
+														<label class="control-label">ID Externo</label>
+														<input ng-model="produto.id_referencia_externo" type="text" class="form-control input-sm">
 													</div>
 												</div>
 											</div>
@@ -1025,14 +1153,14 @@
 											<td class="text-center">{{ item.peso }}</td> 
 											<td class="text-center">{{ item.sabor }}</td>
 											<td class="text-center"><a href="#"  ng-click="qtdDepostito(item,$event)">{{ configuracao.id_produto_debito_anterior_cliente == item.id_produto && ' ' || item.qtd_item }}</a></td>
-											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td align="center">
 												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')">
 													<i class="fa fa-edit"></i>
 												</button>
-												<button type="button" ng-click="delete(item)"  ng-disabled="configuracao.id_produto_debito_anterior_cliente == item.id_produto" class="btn btn-xs btn-danger delete">
+												<button type="button" ng-click="delete(item)" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')"  ng-disabled="configuracao.id_produto_debito_anterior_cliente == item.id_produto" class="btn btn-xs btn-danger delete">
 													<i class="fa fa-trash-o"></i>
 												</button>
 											</td>
@@ -1222,35 +1350,57 @@
 				   		<div class="row">
 				   			<div class="col-sm-12">
 				   				<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(modal_insumos.length != 0)">
+									<thead>
 										<tr>
-											<th >ID</th>
-											<th >Nome</th>
-											<th >Fabricante</th>
-											<th >Tamanho</th>
-											<th >Sabor/cor</th>
-											<th>Vlr. Custo</th>
-											<th >qtd</th>
-											<th ></th>
+											<th class="text-center">ID</th>
+											<th>Nome</th>
+											<th>Fabricante</th>
+											<th>Tamanho</th>
+											<th>Sabor/Cor</th>
+											<th class="text-center" ng-if="(sublist_name == 'insumos')">R$ Custo</th>
+											<th class="text-center" ng-if="(sublist_name == 'insumos')">Qtd.</th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
+										<tr ng-show="(!modal_insumos)">
+											<td class="text-center" colspan="8">Nenhum produto encontrado!</td>
+										</tr>
 										<tr ng-show="(modal_insumos.length == 0)">
-											<td colspan="4">Nenhum Produto Encontrado</td>
+											<td class="text-center" colspan="8">
+												<i class="fa fa-spin fa-spinner"></i>
+												Aguarde, carregando produtos...
+											</td>
 										</tr>
 										<tr ng-repeat="item in modal_insumos">
-											<td>{{ item.id }}</td>
+											<td class="text-center">{{ item.id }}</td>
 											<td>{{ item.nome }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
-											<td>{{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-											<td  width="50"><input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd" type="text" class="form-control input-xs" /></td>
+											<td class="text-right" ng-if="(sublist_name == 'insumos')">
+												R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}
+											</td>
+											<td width="80" ng-if="(sublist_name == 'insumos')">
+												<input type="text" class="form-control input-xs text-center" 
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-if="item.flg_unidade_fracao != 1"/>
+
+												<input type="text" class="form-control input-xs text-center" 
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-if="item.flg_unidade_fracao == 1"
+													thousands-formatter precision="3"/>
+											</td>
 											<td width="50" align="center">
-												<button ng-if="!existsInsumo(item.id)" type="button" class="btn btn-xs btn-success" ng-disabled="" ng-click="addInsumo(item)">
+												<button type="button" class="btn btn-xs btn-success" 
+													ng-if="!existsInsumo(item.id)"
+													ng-click="addInsumo(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
 												</button>
-												<button ng-if="existsInsumo(item.id)"  ng-disabled="true" class="btn btn-primary btn-xs" type="button">
+												<button type="button" class="btn btn-primary btn-xs" disabled="disabled" 
+													ng-if="existsInsumo(item.id)">
                                                		 <i class="fa fa-check-circle-o"></i> Selecionado
                                            		 </button>
 											</td>
@@ -1601,20 +1751,20 @@
 			</div><!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
-		<!-- /Modal novo cor/sabor-->
+		<!-- /Modal novo Sabor/Cor-->
 		<div class="modal fade" id="modal-nova-cor" style="display:none">
   			<div class="modal-dialog modal-sm">
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Nova Cor/Sabor</span></h4>
+						<h4>Nova Sabor/Cor</span></h4>
       				</div>
 				    <div class="modal-body">
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="row">
 						    		<div class="col-sm-12" id="nome_cor">
-						    			<label class="control-label">Cor/Sabor:</label>
+						    			<label class="control-label">Sabor/Cor:</label>
 						    			<div class="form-group ">
 						    					<input ng-model="cor_produto.nome_cor" type="text"  class="form-control input-sm" ng-enter="salvarCorProduto()" >
 						    			</div>
@@ -1708,7 +1858,7 @@
 							</div>
 							<div class="col-sm-4">
 								<div class="form-group" id="peso">
-										<label class="control-label">Cor/sabor</label>
+										<label class="control-label">Sabor/Cor</label>
 										<select chosen ng-change="ClearChosenSelect('cor');addCombinacaoDefault()"
 									    option="cores"
 									    ng-model="combinacao.id_cor"
@@ -1821,7 +1971,7 @@
 										<tr>
 											<th width="50">#</th>
 											<th>Tamanho</th>
-											<th>Cor/Sabor</th>
+											<th>Sabor/Cor</th>
 											<th></th>
 										</tr>
 									</thead>
@@ -1956,6 +2106,10 @@
 
 	<script src="js/jquery.noty.packaged.js"></script>
 
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
@@ -1995,7 +2149,6 @@
     </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
-    <script src="js/angular-services/user-service.js"></script>
     <script src="js/angular-services/user-service.js"></script>
 	<script src="js/angular-controller/produtos-controller.js?<?php echo filemtime('js/angular-controller/produtos-controller.js')?>"></script>
 	<script type="text/javascript">
