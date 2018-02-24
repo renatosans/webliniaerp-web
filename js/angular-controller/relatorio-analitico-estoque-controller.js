@@ -1,4 +1,4 @@
-app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $window, UserService,FuncionalidadeService,ConfigService, EmpreendimentoService) {
+app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $window, UserService,FuncionalidadeService,ConfigService, EmpreendimentoService, TabelaPrecoService) {
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
@@ -9,6 +9,16 @@ app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $w
 	ng.depositos = [];
 	ng.itens = [];
 	ng.paginacao = {};
+
+	ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
+
+		ng.resetFilter = function() {
+			$("#dtaInicial").val("");
+			$("#dtaFinal").val("");
+			ng.reset();
+		}
 
 	ng.funcioalidadeAuthorized = function(cod_funcionalidade){
     	return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);

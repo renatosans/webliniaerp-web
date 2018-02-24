@@ -1,10 +1,11 @@
-app.controller('DashboardController', function($scope, $http, $window, UserService,ConfigService,FuncionalidadeService) {
+app.controller('DashboardController', function($scope, $http, $window, UserService,ConfigService,FuncionalidadeService,TabelaPrecoService) {
 	try {
 		var ng = $scope,
 			aj = $http;
 
 		ng.userLogged = UserService.getUserLogado();
 		ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
+
 		// Labels de Valores Totais
 		ng.total = {
 			vlrTotalFaturamento 				: 0,
@@ -151,6 +152,10 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 				}
 			});
 		}*/
+
+		ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
 
 		ng.resetFilter = function() {
 			$("#dtaInicial").val("");

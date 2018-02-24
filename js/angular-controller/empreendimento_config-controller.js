@@ -86,6 +86,12 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 0, name: 'desconto', 				label: 'Desconto'}
 	];
 
+	ng.tabela_de_vendas = [
+		{value: 0, name: 'atacado', 				label: 'Atacado'},
+		{value: 0, name: 'intermediario', 			label: 'Intermediário'},
+		{value: 0, name: 'varejo', 					label: 'Varejo'}
+	];
+
 	ng.colunas_ordenacao_produtos = [
 		{value: 'id_produto', label: 'ID do Produto'},
 		{value: 'nome_produto', label: 'Nome do Produto'},
@@ -110,6 +116,9 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
 		ng.colunas_pesquisa_produto = parseJSON(ng.cfg.colunas_pesquisa_produto);
+
+	if(typeof parseJSON(ng.cfg.tabela_de_vendas) == 'object')
+		ng.tabela_de_vendas = parseJSON(ng.cfg.tabela_de_vendas);
 
 	if(typeof parseJSON(ng.cfg.campos_ordenacao_produtos) == 'object')
 		ng.campos_ordenacao_produtos = parseJSON(ng.cfg.campos_ordenacao_produtos);
@@ -981,6 +990,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item5);
+		}
+
+		if(typeof ng.tabela_de_vendas == 'object'){
+			var tabela_de_vendas = JSON.stringify(angular.copy(ng.tabela_de_vendas));
+			var item11 = {
+							nome 				:'tabela_de_vendas',
+							valor 				:tabela_de_vendas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
 		}
 
 		btn.button('loading');

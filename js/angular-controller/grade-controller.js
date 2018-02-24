@@ -1,4 +1,4 @@
-app.controller('GradeController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('GradeController', function($scope, $http, $window, $dialogs, UserService, TabelaPrecoService){
 
 	var ng = $scope
 		aj = $http;
@@ -16,6 +16,10 @@ app.controller('GradeController', function($scope, $http, $window, $dialogs, Use
 
     ng.editing = false;
     ng.paginacao = {};
+    
+    ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
 
     ng.showBoxNovo = function(onlyShow){
     	if(onlyShow) {

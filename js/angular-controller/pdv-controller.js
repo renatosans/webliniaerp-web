@@ -1,4 +1,4 @@
-app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop) {
+app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService) {
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged 	 		= UserService.getUserLogado();
@@ -32,8 +32,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.sendEmailPdf = false ;
 	ng.emailSendPdfVenda = [] ;
 	ng.print_report_thermal_printer = false;
-    ng.complete_report_thermal_printer = false;
-    ng.show_cancel_button_fechamento_caixa = true;
+	ng.complete_report_thermal_printer = false;
+	ng.show_cancel_button_fechamento_caixa = true;
 	ng.reforco             = {} ;
 	ng.sangria             = {} ;
 	ng.abertura_reforco    = {} ;
@@ -70,6 +70,47 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	if(!empty(ng.configuracoes.colunas_pesquisa_produto))
 		ng.configuracoes.colunas_pesquisa_produto = parseJSON(ng.configuracoes.colunas_pesquisa_produto);
+
+	ng.existeTabelaPreco = function(obj_nome_tabela){
+		nome_tabela = _.keys(obj_nome_tabela)[0];
+		return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+	};
+
+	ng.selectMargemAplicadaInicial = function(){
+		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
+			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
+
+		if(hasVarejo) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				varejo: true,
+				parceiro: false
+			};
+		} else if(hasAtacado) {
+			ng.margemAplicada = {
+				atacado: true,
+				intermediario: false,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(hasIntermediario) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: true,
+				varejo: false,
+				parceiro: false
+			};
+		} else {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				varejo: false,
+				parceiro: true
+			};
+		}
+	  }
 
 	ng.exibeColunaPesquisaProduto = function(nome_coluna) {
 		var can_show = !empty(_.findWhere(ng.configuracoes.colunas_pesquisa_produto, {name: nome_coluna, value: 1}));
@@ -655,7 +696,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			return;
 		}
 		else if( !$.isNumeric(ng.cliente.id) && !empty(ng.busca.cliente_outo_complete) && !(isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete) ) ){
-		 	$("#input_auto_complete_cliente").parents('.form-group').addClass("has-error");
+			$("#input_auto_complete_cliente").parents('.form-group').addClass("has-error");
 			var formControl = $("#input_auto_complete_cliente").parent()
 				.attr("data-toggle", "tooltip")
 				.attr("data-placement", "top")
@@ -665,11 +706,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			$('html,body').animate({scrollTop: 0},'slow');
 			return
 		}else if( !$.isNumeric(ng.cliente.id) && !empty(ng.busca.cliente_outo_complete) && (isCPF(ng.busca.cliente_outo_complete) || isCnpj(ng.busca.cliente_outo_complete) ) ){
-		 	if(isCPF(ng.busca.cliente_outo_complete)){
-		 		ng.newCliente = { tipo_cadastro : 'pf', cpf: ng.busca.cliente_outo_complete }
-		 	}else{
-		 		ng.newCliente = { tipo_cadastro : 'pj', cnpj: ng.busca.cliente_outo_complete }
-		 	}
+			if(isCPF(ng.busca.cliente_outo_complete)){
+				ng.newCliente = { tipo_cadastro : 'pf', cpf: ng.busca.cliente_outo_complete }
+			}else{
+				ng.newCliente = { tipo_cadastro : 'pj', cnpj: ng.busca.cliente_outo_complete }
+			}
 		}else if(existsFormaPag(9) && !$.isNumeric(ng.cliente.id)){
 			$dialogs.notify('Atenção!','<strong>Para realizar um pagamento "Promessa de Pagamneto" é necessário informar um cliente</strong>');
 			return;
@@ -722,15 +763,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.post(baseUrlApi()+"venda/verificaEstoque",{
 														id_empreendimento:ng.userLogged.id_empreendimento,
-											        	id_deposito:ng.caixa.depositos,
-											        	produtos:item_enviar,
-											        	venda_confirmada : ng.venda_confirmada,
-											        	id_vendedor      : Number(ng.vendedor.id_vendedor),
-											        	id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore ),
-											        	id_autorizador_desconto	 : (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
-											        	is_venda_bonificada : (!empty(ng.is_venda_bonificada)) ? ng.is_venda_bonificada : false
-	        										 }
-	        )
+														id_deposito:ng.caixa.depositos,
+														produtos:item_enviar,
+														venda_confirmada : ng.venda_confirmada,
+														id_vendedor      : Number(ng.vendedor.id_vendedor),
+														id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore ),
+														id_autorizador_desconto	 : (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
+														is_venda_bonificada : (!empty(ng.is_venda_bonificada)) ? ng.is_venda_bonificada : false
+													 }
+			)
 			.success(function(data, status, headers, config) {
 				if (init+1 >= cont_itens){
 					//console.log(ng.out_produtos);
@@ -740,12 +781,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						$('html,body').animate({scrollTop: 0},'slow');
 						if(ng.out_descontos.length > 0) {
 
-			         		//$dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
-			         		
-			         		dlg = $dialogs.confirm(
-			         			'Atenção!!!',
-			         			'<strong>'+ ng.formatMsgOutDesconto() +'</strong>'
-		         			);
+							//$dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
+							
+							dlg = $dialogs.confirm(
+								'Atenção!!!',
+								'<strong>'+ ng.formatMsgOutDesconto() +'</strong>'
+							);
 
 							dlg.result.then(
 								function(btn){
@@ -755,7 +796,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 									// Do nothing
 								}
 							);
-		         		}
+						}
 						if(ng.orcamento)
 							var btn = $('#btn-fazer-orcamento');
 						else
@@ -777,7 +818,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.gravarVenda();
 					}
 				}else
-	           		ng.verificaEstoque(produtos_enviar,init+1,acao);
+					ng.verificaEstoque(produtos_enviar,init+1,acao);
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 406){
@@ -804,20 +845,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						});
 					}
 
-		         	if (init+1 >= cont_itens){
-		         		if(ng.out_produtos.length > 0){
-		         			setTimeout(function(){
-		         				$('html,body').animate({scrollTop: $('.alert-out').offset().top-10},'slow');
-		         			},300);
-			         		
-		         		}
-		         		if(ng.out_descontos.length > 0){
-			         		// $dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
+					if (init+1 >= cont_itens){
+						if(ng.out_produtos.length > 0){
+							setTimeout(function(){
+								$('html,body').animate({scrollTop: $('.alert-out').offset().top-10},'slow');
+							},300);
+							
+						}
+						if(ng.out_descontos.length > 0){
+							// $dialogs.notify('Atenção!','<strong>'+ng.formatMsgOutDesconto()+'</strong>');
 
-			         		dlg = $dialogs.confirm(
-			         			'Atenção!!!',
-			         			'<strong>'+ ng.formatMsgOutDesconto() +'<br/>Deseja informar a senha de um usuário que possua permissão?</strong>'
-		         			);
+							dlg = $dialogs.confirm(
+								'Atenção!!!',
+								'<strong>'+ ng.formatMsgOutDesconto() +'<br/>Deseja informar a senha de um usuário que possua permissão?</strong>'
+							);
 
 							dlg.result.then(
 								function(btn){
@@ -827,16 +868,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 									// Do nothing
 								}
 							);
-		         		}
+						}
 
-		         		if(ng.orcamento)
+						if(ng.orcamento)
 							var btn = $('#btn-fazer-orcamento');
 						else
 							var btn = $('#btn-fazer-compra');
 						btn.button('reset');
 						ng.modalProgressoVenda('hide');
 					}else{
-		           		ng.verificaEstoque(produtos_enviar,init+1,acao);
+						ng.verificaEstoque(produtos_enviar,init+1,acao);
 					}
 				}
 			});
@@ -975,9 +1016,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 														produtos:item_enviar,
 														venda_confirmada 	: ng.orcamento ? 0 : 1,
 														id_empreendimento:ng.userLogged.id_empreendimento,
-											        	id_deposito:ng.caixa.depositos,
-											        	id_caixa : ng.caixa.id
-											          }
+														id_deposito:ng.caixa.depositos,
+														id_caixa : ng.caixa.id
+													  }
 			)
 			.success(function(data, status, headers, config) {
 				ng.salvarItensVenda(id_venda,produtos_enviar,init+1);
@@ -1019,8 +1060,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		aj.post(baseUrlApi()+"venda/efetivarOrcamento",{id_venda:id_venda ,
 														produtos:item_enviar,
 														id_empreendimento:ng.userLogged.id_empreendimento,
-											        	id_deposito:ng.caixa.depositos
-											          }
+														id_deposito:ng.caixa.depositos
+													  }
 			)
 			.success(function(data, status, headers, config) {
 				ng.efetivarOrcamento(id_venda,produtos_enviar,init+1);
@@ -1085,13 +1126,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								num_cnpj_sw : ng.configuracoes.num_cnpj_sw
 							};
 							var dadosWebSocket = {
-					 			from 		: ng.caixa_open.id_ws_web ,
-					 			to  		: ng.caixa_open.id_ws_dsk ,
+								from 		: ng.caixa_open.id_ws_web ,
+								to  		: ng.caixa_open.id_ws_dsk ,
 								type 		: 'satcfe_process',
 								message 	: JSON.stringify(data)
-				 			};
-				 			ng.dadosSatCalculados = data ;
-		    				ng.sendMessageWebSocket(dadosWebSocket);
+							};
+							ng.dadosSatCalculados = data ;
+							ng.sendMessageWebSocket(dadosWebSocket);
 						})
 						.error(function(data, status, headers, config) {
 							$('#modal-sat-cfe').modal('hide');
@@ -1099,8 +1140,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						});
 					}
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
-			 	}else{
-			 		var btn = $('#btn-fazer-compra');
+				}else{
+					var btn = $('#btn-fazer-compra');
 						btn.button('reset');
 					ng.loadControleNfe('cfop','lista_operacao');
 					ng.modalProgressoVenda('hide');
@@ -1119,7 +1160,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 					ng.printPdf();
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
-			 	}
+				}
 			})
 			.error(function(data, status, headers, config) {
 				alert('Erro fatal');
@@ -1162,7 +1203,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.selCliente = function(){
 		var offset = 0  ;
-    	var limit  =  10 ;;
+		var limit  =  10 ;;
 		ng.loadCliente(offset,limit);
 		$("#list_clientes").modal("show");
 	}
@@ -1205,12 +1246,42 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.changeValorProdutos();
 	}
 	ng.setMargemAplicada = function(){
-		ng.margemAplicada   = {atacado:false,intermediario:false,varejo:false,parceiro:false} ;
-		if(ng.cliente.perc_venda == "perc_venda_atacado") 				ng.margemAplicada.atacado 			= true ;
-		else if(ng.cliente.perc_venda == "perc_venda_varejo") 			ng.margemAplicada.varejo 			= true ;
-		else if(ng.cliente.perc_venda == "perc_venda_intermediario") 	ng.margemAplicada.intermediario 	= true ;
-		else if(ng.cliente.perc_venda == 'vlr_custo') 					ng.margemAplicada.parceiro   		= true ;
-		else 															ng.margemAplicada.varejo   			= true ;
+		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
+			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
+
+		if(ng.cliente.perc_venda == "perc_venda_varejo" && hasVarejo) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				varejo: true,
+				parceiro: false
+			};
+		} else if(ng.cliente.perc_venda == "perc_venda_atacado" && hasAtacado) {
+			ng.margemAplicada = {
+				atacado: true,
+				intermediario: false,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(ng.cliente.perc_venda == "perc_venda_intermediario" && hasIntermediario) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: true,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(ng.cliente.perc_venda == "vlr_custo") {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				varejo: false,
+				parceiro: true
+			};
+		}
+		else
+			ng.selectMargemAplicadaInicial();
+
 		ng.changeValorProdutos();
 	}
 
@@ -1268,7 +1339,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	
 	ng.loadCliente= function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 10 : limit;
+		limit  = limit  == null ? 10 : limit;
 		ng.clientes = null;
 		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+"&usu->id[exp]= NOT IN("+ng.configuracoes.id_cliente_movimentacao_caixa+","+ng.configuracoes.id_usuario_venda_vitrine+"))";
 
@@ -1319,38 +1390,38 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.produtos = [] ;
 
-   	ng.showProdutos = function(busca_cdb){
-   		if(busca_cdb != true)
-    		ng.cdb_busca = { status:false, codigo:null } ;
+	ng.showProdutos = function(busca_cdb){
+		if(busca_cdb != true)
+			ng.cdb_busca = { status:false, codigo:null } ;
 
-   		ng.busca.produtos = "" ;
-   		ng.loadProdutos(0,ng.configuracoes.qtd_registros_pesquisa_produtos);
-   		$('#list_produtos').modal('show');
-   	}
+		ng.busca.produtos = "" ;
+		ng.loadProdutos(0,ng.configuracoes.qtd_registros_pesquisa_produtos);
+		$('#list_produtos').modal('show');
+	}
 
-   	ng.loadProdutos = function(offset,limit) {
+	ng.loadProdutos = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 5 : ((limit > 0) ? limit : 5);
-    	
-    	var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
+		limit  = limit  == null ? 5 : ((limit > 0) ? limit : 5);
+		
+		var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
 
-    	var depositos = '';
-    		
-    	if(qtd_minima != 'null')
-    		depositos = $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
+		var depositos = '';
+			
+		if(qtd_minima != 'null')
+			depositos = $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
 
-    	if(ng.cdb_busca.status == false)
-    		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
-    	else{
-    		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&tp->codigo_barra="+ng.cdb_busca.codigo+"&"+depositos;
-    	}
+		if(ng.cdb_busca.status == false)
+			var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
+		else{
+			var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&tp->codigo_barra="+ng.cdb_busca.codigo+"&"+depositos;
+		}
 
-    	if(ng.busca.produtos != ""){
-    		if(isNaN(Number(ng.busca.produtos)))
-    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tc.descricao_categoria like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
-    		else
-    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tc.descricao_categoria like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.id = "+ng.busca.produtos+"  OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
-    	}
+		if(ng.busca.produtos != ""){
+			if(isNaN(Number(ng.busca.produtos)))
+				query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tc.descricao_categoria like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
+			else
+				query_string += "&("+$.param({'tp->nome':{exp:"like'%"+ng.busca.produtos+"%' OR tc.descricao_categoria like'%"+ng.busca.produtos+"%' OR tf.nome_fabricante like'%"+ng.busca.produtos+"%' OR tp.id = "+ng.busca.produtos+"  OR tp.codigo_barra like '%"+ng.busca.produtos+"%'"}})+")";
+		}
 
 		ng.produtos =  null;
 		
@@ -1399,13 +1470,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.getProdutoTaxaServico = function() {
-    	var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
-    	var depositos = '';
-    		
-    	if(qtd_minima != 'null')
-    		depositos = $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
+		var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
+		var depositos = '';
+			
+		if(qtd_minima != 'null')
+			depositos = $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
 
-    	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
+		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0&"+depositos;
 			query_string += "&tp->id=" + ng.configuracoes.id_produto_taxa_servico;
 			query_string += "&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC";
 
@@ -1457,7 +1528,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 			var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
 			if(qtd_minima != 'null')
-    			query_string += "&" + $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
+				query_string += "&" + $.param({'te->id_deposito':{'exp':' IN('+ng.caixa.depositos.join()+')'}});
 
 			$http.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
 				.success(function(data, status, headers, config) {
@@ -1497,10 +1568,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					}
 					ng.calcTotalCompra();
 					//ng.verificarCarrinho(data.produtos);
-		        }).error(function(data, status) {
-		        	ng.busca.ok = false;
+				}).error(function(data, status) {
+					ng.busca.ok = false;
 					ng.msg = "O código de barra não existe ou o produto não está disponivel em estoque!";
-		   	    });
+				});
 
 		}
 		else {
@@ -1553,15 +1624,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	/* end */
 
 	ng.showValeTroca = function(){
-   		ng.loadValeTroca(0,10);
-   		$('#list_vl_troca').modal('show');
-   	}
+		ng.loadValeTroca(0,10);
+		$('#list_vl_troca').modal('show');
+	}
 
 	ng.vales = null;
 	ng.loadValeTroca = function(offset,limit) {
 		ng.vales = null;
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 20 : limit;
+		limit  = limit  == null ? 20 : limit;
 
 
 		ng.vales = [];
@@ -1636,7 +1707,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		.error(function(data, status, headers, config) {
 			btn_reforco.button('reset');
 			if(status == 406){
-		 			$.each(data, function(i, item) {
+					$.each(data, function(i, item) {
 						$("#"+i).addClass("has-error");
 
 						var formControl = $($("#"+i))
@@ -1646,7 +1717,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							.attr("data-original-title", item);
 						formControl.tooltip();
 					});
-		 		}
+				}
 		});
 	}
 
@@ -1752,7 +1823,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			var element_count = 0;
 			for (e in data) { element_count++; }
 			if(status == 406 && element_count == 1){
-		 			$.each(data, function(i, item) {
+					$.each(data, function(i, item) {
 						$("#entrada_"+i).addClass("has-error");
 
 						var formControl = $($("#entrada_"+i))
@@ -1762,9 +1833,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							.attr("data-original-title", item);
 						formControl.tooltip();
 					});
-		 	}else{
-		 		window.location = "pdv.php" ;
-		 	}
+			}else{
+				window.location = "pdv.php" ;
+			}
 		});
 
 	}
@@ -1816,8 +1887,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			btn_sangria.button('reset');
 			var valor_nao_permitido = false ;
 			if(status == 406){
-	 			$.each(data, function(i, item) {
-	 				if(i != 'valor_nao_permitido'){
+				$.each(data, function(i, item) {
+					if(i != 'valor_nao_permitido'){
 						$("#"+i).addClass("has-error");
 
 						var formControl = $($("#"+i))
@@ -1834,7 +1905,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.mensagens('alert-danger',msg,'.alert-sangria');
 			});
 
-		 	}
+			}
 		});
 	}
 	ng.aplicarSangria = function(){
@@ -1907,9 +1978,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.operador_other_caixa = false ;
 	ng.abrirCaixa = function(){
 		var btn = $('#btn-abrir-caixa');
-   		btn.button('loading');
+		btn.button('loading');
 
-   		aj.get(baseUrlApi()+"caixa/abrir/"+ng.caixa.id+"/"+ng.userLogged.id+"/"+ng.userLogged.id_empreendimento)
+		aj.get(baseUrlApi()+"caixa/abrir/"+ng.caixa.id+"/"+ng.userLogged.id+"/"+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.abrir_pdv = true;
 				ng.caixaAberto();
@@ -2521,7 +2592,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					var url = baseUrlApi()+"caixa/fechamento/"+ng.caixa_aberto.id+"/"+ng.fechamento.id_conta_bancaria+"/"+dta_fechamento;
 				}
 
-		   		aj.get(url)
+				aj.get(url)
 					.success(function(data, status, headers, config) {
 						if(ng.print_report_thermal_printer)
 							ng.getInformacoesFechamentoCaixa(ng.caixa_aberto.id);
@@ -2550,7 +2621,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.getFechamentosCaixa = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 10 : limit;
+		limit  = limit  == null ? 10 : limit;
 		
 		ng.fechamento = {};
 
@@ -2602,7 +2673,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				total_vendas: 0
 			},
 			printerModel: ng.caixa.mod_impressora,
-            fullReport: ng.complete_report_thermal_printer
+			fullReport: ng.complete_report_thermal_printer
 		};
 		aj.get(baseUrlApi()+"caixa/allAberturas?abt_caixa->id="+ id_fechamento_caixa)
 			.success(function(data, status, headers, config) {
@@ -2613,7 +2684,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			.error(function(data, status, headers, config) {
 				if(status == 404)
 					ng.fechamento_caixa = null;
-	 	});
+		});
 	}
 
 	ng.getMovimentacoesFechamentoCaixa = function(id_fechamento_caixa) {
@@ -2648,7 +2719,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			.error(function(data, status, headers, config) {
 				if(status == 404)
 					ng.fechamento_caixa.movimentacoes = null;
-	 	});
+		});
 	}
 
 	ng.getTotaisFormasPagamentoFechamentoCaixa = function(id_fechamento_caixa) {
@@ -2709,14 +2780,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.existsCookie = function(){
 		 $.ajax({
-		 	url: "setup_caixa.php?exists=true",
-		 	async: false,
-		 	success: function(data) {
-		 		ng.exists_cookie = true;
-		 	},
-		 	error: function(error) {
-		 		ng.exists_cookie = false
-		 	}
+			url: "setup_caixa.php?exists=true",
+			async: false,
+			success: function(data) {
+				ng.exists_cookie = true;
+			},
+			error: function(error) {
+				ng.exists_cookie = false
+			}
 		 });
 	}
 
@@ -2760,16 +2831,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.estoqueDep = null ;
 		}
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 10 : limit;
-    	ng.pg_ant    = {offset:offset,limit:limit};
-    	query_string = "";
-    	if(ng.busca.estoqueDep != ""){
-    		query_string += "?"+$.param(
-	    									{
-	    										'pro->nome':{exp:"like'%"+ng.busca.estoqueDep+"%' OR fab.nome_fabricante like'%"+ng.busca.estoqueDep+"%' OR dep.nme_deposito LIKE '%"+ng.busca.estoqueDep+"%'"}
-	    									}
-    									);
-    	}
+		limit  = limit  == null ? 10 : limit;
+		ng.pg_ant    = {offset:offset,limit:limit};
+		query_string = "";
+		if(ng.busca.estoqueDep != ""){
+			query_string += "?"+$.param(
+											{
+												'pro->nome':{exp:"like'%"+ng.busca.estoqueDep+"%' OR fab.nome_fabricante like'%"+ng.busca.estoqueDep+"%' OR dep.nme_deposito LIKE '%"+ng.busca.estoqueDep+"%'"}
+											}
+										);
+		}
 
 		ng.produtos = [];
 		aj.get(baseUrlApi()+"estoque/deposito/"+ng.userLogged.id_empreendimento+"/"+offset+"/"+limit+"/"+query_string)
@@ -2816,14 +2887,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.post(baseUrlApi()+"estoque/transferir",item)
 			.success(function(data, status, headers, config) {
-		    	var query_string = "";
-		    	if(ng.busca.estoqueDep != ""){
-		    		query_string += "?"+$.param(
-			    									{
-			    										'pro->nome':{exp:"like'%"+ng.busca.estoqueDep+"%' OR fab.nome_fabricante like'%"+ng.busca.estoqueDep+"%' OR dep.nme_deposito LIKE '%"+ng.busca.estoqueDep+"%'"}
-			    									}
-		    									);
-		    	}
+				var query_string = "";
+				if(ng.busca.estoqueDep != ""){
+					query_string += "?"+$.param(
+													{
+														'pro->nome':{exp:"like'%"+ng.busca.estoqueDep+"%' OR fab.nome_fabricante like'%"+ng.busca.estoqueDep+"%' OR dep.nme_deposito LIKE '%"+ng.busca.estoqueDep+"%'"}
+													}
+												);
+				}
 				ng.produtos = [];
 				aj.get(baseUrlApi()+"estoque/deposito/"+ng.userLogged.id_empreendimento+"/"+ng.pg_ant.offset+"/"+ng.pg_ant.limit+"/"+query_string)
 					.success(function(data, status, headers, config) {
@@ -2999,7 +3070,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		contentToPrint = contentToPrint+' '+$('#tbl_print').html() + '' + $('#tbl_print_pg').html() ;
 		printWindow = window.open(pg);
 
-	    printWindow.document.write("<link href='bootstrap/css/bootstrap.min.css' rel='stylesheet'>");
+		printWindow.document.write("<link href='bootstrap/css/bootstrap.min.css' rel='stylesheet'>");
 		printWindow.document.write("<link href='css/font-awesome.min.css' rel='stylesheet'>");
 		printWindow.document.write("<link href='css/pace.css' rel='stylesheet'>");
 		printWindow.document.write("<link href='css/endless.min.css' rel='stylesheet'>");
@@ -3160,7 +3231,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.bancos = [] ;
 	ng.loadBancos = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 20 : limit;
+		limit  = limit  == null ? 20 : limit;
 
 		ng.bancos = [];
 
@@ -3314,28 +3385,28 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			.error(function(data, status, headers, config) {
 				btn.button('reset');
 				if(status == 406) {
-			 			var errors = data;
-			 			var count = 0 ;
-			 			var msg_erro = "";
-			 			$.each(errors, function(campo, erro) {
-			 				if(campo == 'email'){
-				 				$("#"+campo).addClass("has-error");
-				 				var formControl = $($("#"+campo))
-				 					.attr("data-toggle", "tooltip")
-				 					.attr("data-placement", "bottom")
-				 					.attr("title", erro)
-				 					.attr("data-original-title", erro);
-				 				formControl.tooltip('show');
-				 				count ++ ;
-			 				}
-			 				msg_erro += erro + "<br>";
-			 			});
-			 			if(count == 0){
-			 				ng.mensagens('alert-warning','<strong>'+ msg_erro +'</strong>','.alert-cadastro-rapido-error');
-			 			}
-			 	}else{
-			 		ng.mensagens('alert-danger','<strong>Ocorreu um erro fatal</strong>','.alert-cadastro-rapido');
-			 	}
+						var errors = data;
+						var count = 0 ;
+						var msg_erro = "";
+						$.each(errors, function(campo, erro) {
+							if(campo == 'email'){
+								$("#"+campo).addClass("has-error");
+								var formControl = $($("#"+campo))
+									.attr("data-toggle", "tooltip")
+									.attr("data-placement", "bottom")
+									.attr("title", erro)
+									.attr("data-original-title", erro);
+								formControl.tooltip('show');
+								count ++ ;
+							}
+							msg_erro += erro + "<br>";
+						});
+						if(count == 0){
+							ng.mensagens('alert-warning','<strong>'+ msg_erro +'</strong>','.alert-cadastro-rapido-error');
+						}
+				}else{
+					ng.mensagens('alert-danger','<strong>Ocorreu um erro fatal</strong>','.alert-cadastro-rapido');
+				}
 			});
 	}
 
@@ -3358,21 +3429,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 		console.log(busca);
 		ng.produtos_auto_complete_visible = true ;
-        clearInterval(interval_produto);
-        if(empty(busca)){
-        	ng.produtos_auto_complete = [] ;
-        	return ;
-        }
-        interval_produto = window.setTimeout(function(){  
+		clearInterval(interval_produto);
+		if(empty(busca)){
+			ng.produtos_auto_complete = [] ;
+			return ;
+		}
+		interval_produto = window.setTimeout(function(){  
 
-    		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0";  	
-	    	if(busca != ""){
-	    		if(isNaN(Number(busca)))
-	    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+busca+"%' OR tf.nome_fabricante like'%"+busca+"%' OR tp.codigo_barra like '%"+busca+"%' OR tt.nome_tamanho like '%"+busca+"%' "}})+")";
-	    		else
-	    			query_string += "&("+$.param({'tp->nome':{exp:"like'%"+busca+"%' OR tf.nome_fabricante like'%"+busca+"%' OR tp.id = "+busca+" OR tp.codigo_barra like '%"+busca+"%' OR tt.nome_tamanho like '%"+busca+"%' "}})+")";
-	    	}
-	    	var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
+			var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&tp->flg_excluido=0";  	
+			if(busca != ""){
+				if(isNaN(Number(busca)))
+					query_string += "&("+$.param({'tp->nome':{exp:"like'%"+busca+"%' OR tf.nome_fabricante like'%"+busca+"%' OR tp.codigo_barra like '%"+busca+"%' OR tt.nome_tamanho like '%"+busca+"%' "}})+")";
+				else
+					query_string += "&("+$.param({'tp->nome':{exp:"like'%"+busca+"%' OR tf.nome_fabricante like'%"+busca+"%' OR tp.id = "+busca+" OR tp.codigo_barra like '%"+busca+"%' OR tt.nome_tamanho like '%"+busca+"%' "}})+")";
+			}
+			var qtd_minima = ng.configuracoes.flg_controlar_estoque != undefined && Number(ng.configuracoes.flg_controlar_estoque) == 0 ? 'null' : '1' ; 
 			aj.get(baseUrlApi()+"estoque_produtos/"+qtd_minima+"/"+query_string)
 				.success(function(data, status, headers, config) {
 					
@@ -3383,21 +3454,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.produtos_auto_complete = [] ;
 				});
 
-        }, 500);  	
+		}, 500);  	
 	}
 
 	ng.selVendedor = function(){
 		var offset = 0  ;
-    	var limit  =  10 ;;
-    	ng.modal_senha_vendedor.show = false ;
-    	ng.modal_senha_vendedor.senha_vendedor = null;
+		var limit  =  10 ;;
+		ng.modal_senha_vendedor.show = false ;
+		ng.modal_senha_vendedor.senha_vendedor = null;
 		ng.loadVendedor(offset,limit);
 		$("#list-vendedor").modal("show");
 	}
 
 	ng.loadVendedor= function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 10 : limit;
+		limit  = limit  == null ? 10 : limit;
 		ng.clientes = [];
 		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+") AND (usu.flg_tipo='usuario')";
 		//query_string += "&"+$.param({'usu->id_perfil':{exp:" IN(1,4,5,8)"}});
@@ -3478,17 +3549,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 		ng.clientes_auto_complete_visible = true ;
 		$('.content-outo-complete-cliente-pdv').css('width',($('#input_auto_complete_cliente').parent().width()-1)+'px');
-        clearInterval(interval_cliente);
-        if(empty(busca)){
-        	ng.clientes_auto_complete = [] ;
-        	return ;
-        }
-        interval_cliente = window.setTimeout(function(){  
-	        query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
+		clearInterval(interval_cliente);
+		if(empty(busca)){
+			ng.clientes_auto_complete = [] ;
+			return ;
+		}
+		interval_cliente = window.setTimeout(function(){  
+			query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
 
-	        if(!isNaN(Number(busca)) && Number(busca) != 0){
-	        	query_string += "&"+$.param({'(cpf':{exp:" LIKE '%"+busca+"%' OR cnpj LIKE '%"+busca+"%')"}});
-	        }else if(!empty(busca)){
+			if(!isNaN(Number(busca)) && Number(busca) != 0){
+				query_string += "&"+$.param({'(cpf':{exp:" LIKE '%"+busca+"%' OR cnpj LIKE '%"+busca+"%')"}});
+			}else if(!empty(busca)){
 				query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+busca+"%' OR usu.apelido LIKE '%"+busca+"%')"}});
 			}
 
@@ -3507,36 +3578,36 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.clientes_auto_complete = [] ;
 				});
 
-        }, 500);  	
+		}, 500);  	
 	}
 
 	ng.closeAutoComplete = function(e){
-	    var arr = [
-	    			{"class":".content-outo-complete-cliente-pdv","visible":"clientes_auto_complete_visible"},
-	    		   	{"class":".content-outo-complete-produto-pdv","visible":"produtos_auto_complete_visible"}
-	    		  ];
-	    $.each(arr,function(i,v){
-	    	if($(""+v.class+"").is(':visible')){
+		var arr = [
+					{"class":".content-outo-complete-cliente-pdv","visible":"clientes_auto_complete_visible"},
+					{"class":".content-outo-complete-produto-pdv","visible":"produtos_auto_complete_visible"}
+				  ];
+		$.each(arr,function(i,v){
+			if($(""+v.class+"").is(':visible')){
 				 var element = $(""+v.class+"").offset();
 				 var input_prev = $(""+v.class+"").prev('input');
 				 element.right = element.left + $(""+v.class+"").outerWidth();
 				 element.bottom = element.top + $(""+v.class+"").outerHeight();
 
 				 if(e.pageY < (element.top - input_prev.outerHeight() )){
-				 	ng[""+v.visible+""] = false ;
+					ng[""+v.visible+""] = false ;
 				 }else if(e.pageY > element.bottom){
-				 	ng[""+v.visible+""] = false ;
+					ng[""+v.visible+""] = false ;
 				 }
 
 				 if(e.pageX < element.left){
-				 	ng[""+v.visible+""] = false ;
+					ng[""+v.visible+""] = false ;
 				 }else if (e.pageX > element.right){
-				 	ng[""+v.visible+""] = false ;
+					ng[""+v.visible+""] = false ;
 				 }
-	    	}
-	    });
+			}
+		});
 	}
- 	
+	
    ng.loadOperacaoCombo = function() {
 		ng.lista_operacao  = [{cod_operacao:'',dsc_operacao:'--- Selecione ---'}] ;
 		aj.get(baseUrlApi()+"operacao/get/?cod_empreendimento="+ng.userLogged.id_empreendimento+"&flg_excluido=0")
@@ -3593,7 +3664,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.conn.onclose = function(e) {
 			 $scope.$apply(function () {ng.status_websocket = 0 ;});
 			 $.ajax({url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:'null',id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
-			 	success: function(data) {}
+				success: function(data) {}
 			 });
 			 clearTimeout(timeOutWaitingResponseTestConection);
 			 clearTimeout(timeOutSendTestConection);
@@ -3608,51 +3679,51 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.caixa_open.id_ws_web = data.to ;
 					var aux = false ;
 					 $.ajax({
-					 	url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:data.to,id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
-					 	success: function(data) {
-					 		aux = true ;
-					 		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - id_ws_web gravado com sucesso');
-					 	},
-					 	error: function(error) {
-					 		console.log('Não foi possível gravar o id_ws_web');
-					 		ng.status_websocket = 1 ;
-					 	}
+						url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:data.to,id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
+						success: function(data) {
+							aux = true ;
+							console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - id_ws_web gravado com sucesso');
+						},
+						error: function(error) {
+							console.log('Não foi possível gravar o id_ws_web');
+							ng.status_websocket = 1 ;
+						}
 					 });
 
 					 if(aux && !empty(ng.caixa_open.id_ws_dsk)){
-					 	var mg = {
-					 		from : ng.caixa_open.id_ws_web,
-					 		to : ng.caixa_open.id_ws_dsk,
-					 		type : 'connection_search_request',
-					 		message : 'find desktop'
-					 	}
-					 	ng.sendMessageWebSocket(mg);
+						var mg = {
+							from : ng.caixa_open.id_ws_web,
+							to : ng.caixa_open.id_ws_dsk,
+							type : 'connection_search_request',
+							message : 'find desktop'
+						}
+						ng.sendMessageWebSocket(mg);
 					 }else{
-					 	console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível estabelecer conexão com o APP Client');
+						console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível estabelecer conexão com o APP Client');
 					 }
 
 					if(ng.status_websocket == 2){
 						var config = {
 							title: 'Conexão WebSocket' ,
-			                placement: 'right' ,
-			                content:  '<b>Web:</b>'+ng.caixa_open.id_ws_web+'<br/><b>Desk:</b>'+ng.caixa_open.id_ws_dsk ,
-			                html: true,
-			                container: 'body',
-			                trigger  :'click'
-			            }
-		    			$('#dados-websocket').popover('destroy');
-		    			$('#dados-websocket').popover(config).popover();
+							placement: 'right' ,
+							content:  '<b>Web:</b>'+ng.caixa_open.id_ws_web+'<br/><b>Desk:</b>'+ng.caixa_open.id_ws_dsk ,
+							html: true,
+							container: 'body',
+							trigger  :'click'
+						}
+						$('#dados-websocket').popover('destroy');
+						$('#dados-websocket').popover(config).popover();
 					}
 					break;
 				case 'satcfe_success':
 					var post = angular.copy(ng.dadosSatCalculados);
 					var retornoClient =  data.message ;
 					$scope.$apply(function () {
-			           ng.process_reeviar_sat = false ;
-			        });
+					   ng.process_reeviar_sat = false ;
+					});
 					post.id_empreendimento = ng.userLogged.id_empreendimento ;
-		 			post.dados_emissao.status = 'autorizado' ;
-		 			post.chave_sat = retornoClient.chave;
+					post.dados_emissao.status = 'autorizado' ;
+					post.chave_sat = retornoClient.chave;
 					post.codigo_sefaz_sat = retornoClient.codigoSefaz;
 					post.data_processado_sat = moment(retornoClient.dataProcessado).format('YYYY-MM-DD HH:mm:ss');
 					post.id_pdv_sat = retornoClient.idPDV;
@@ -3664,7 +3735,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					post.uuid_sat = retornoClient.uuid;
 					post.xml_envio_base64 = retornoClient.xmlEnvio;
 					post.dados_emissao.cod_nota_fiscal = ng.cod_nota_fiscal_reenviar_sat ;
-		 			aj.post(baseUrlApi()+"nfe/gravarDadosSat",post)
+					aj.post(baseUrlApi()+"nfe/gravarDadosSat",post)
 					.success(function(data, status, headers, config) {
 						ng.resetPdv('venda',true);
 					})
@@ -3675,19 +3746,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				case 'satcfe_error':
 					$scope.$apply(function () {
 					   data.message.problemas = typeof data.message.problemas == 'string' ? [data.message.problemas] : data.message.problemas  ;
-			           ng.erro_sat =  angular.copy(data.message) ;
-			           ng.process_reeviar_sat = false ;
-			        });
-			        $('#modal-sat-cfe').modal('hide');
-			        $('#modal-erro-sat').modal({ backdrop: 'static',keyboard: false});
-			        var post = angular.copy(ng.dadosSatCalculados);
-			        post.id_empreendimento = ng.userLogged.id_empreendimento ;
-			 		post.dados_emissao.status = 'erro_validacao' ;
-			 		post.codigo_erro_sat = ng.erro_sat.codigoErro
+					   ng.erro_sat =  angular.copy(data.message) ;
+					   ng.process_reeviar_sat = false ;
+					});
+					$('#modal-sat-cfe').modal('hide');
+					$('#modal-erro-sat').modal({ backdrop: 'static',keyboard: false});
+					var post = angular.copy(ng.dadosSatCalculados);
+					post.id_empreendimento = ng.userLogged.id_empreendimento ;
+					post.dados_emissao.status = 'erro_validacao' ;
+					post.codigo_erro_sat = ng.erro_sat.codigoErro
 					post.msg_erro_sat = ng.erro_sat.msgErro
 					post.json_erros_base64_sat = JSON.stringify(ng.erro_sat.problemas);
 					post.dados_emissao.cod_nota_fiscal = ng.cod_nota_fiscal_reenviar_sat ;
-		 			aj.post(baseUrlApi()+"nfe/gravarDadosSat",post)
+					aj.post(baseUrlApi()+"nfe/gravarDadosSat",post)
 					.success(function(data, status, headers, config) {
 		
 					})
@@ -3702,14 +3773,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					});
 					var config = {
 							title: 'Conexão WebSocket' ,
-			                placement: 'right' ,
-			                content:  '<b>Web:</b>'+ng.caixa_open.id_ws_web+'<br/><b>Desk:</b>'+ng.caixa_open.id_ws_dsk ,
-			                html: true,
-			                container: 'body',
-			                trigger  :'click'
-			            }
-		    		$('#dados-websocket').popover('destroy');
-		    		$('#dados-websocket').popover(config).popover();
+							placement: 'right' ,
+							content:  '<b>Web:</b>'+ng.caixa_open.id_ws_web+'<br/><b>Desk:</b>'+ng.caixa_open.id_ws_dsk ,
+							html: true,
+							container: 'body',
+							trigger  :'click'
+						}
+					$('#dados-websocket').popover('destroy');
+					$('#dados-websocket').popover(config).popover();
 					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Conexão com App client extabelecida');
 					enviaTesteConexao();
 					break;
@@ -3720,14 +3791,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					});
 					var config = {
 							title: 'Conexão WebSocket' ,
-			                placement: 'right' ,
-			                content:  '<b>Web:</b>'+ng.caixa_open.id_ws_web+'<br/><b>Desk:</b>'+ng.caixa_open.id_ws_dsk ,
-			                html: true,
-			                container: 'body',
-			                trigger  :'click'
-			            }
-		    		$('#dados-websocket').popover('destroy');
-		    		$('#dados-websocket').popover(config).popover();
+							placement: 'right' ,
+							content:  '<b>Web:</b>'+ng.caixa_open.id_ws_web+'<br/><b>Desk:</b>'+ng.caixa_open.id_ws_dsk ,
+							html: true,
+							container: 'body',
+							trigger  :'click'
+						}
+					$('#dados-websocket').popover('destroy');
+					$('#dados-websocket').popover(config).popover();
 					var mg = {
 						from:ng.caixa_open.id_ws_web,
 						to:ng.caixa_open.id_ws_dsk,
@@ -3779,8 +3850,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		timeOutSendTestConection = setTimeout(function(){
 			ng.sendMessageWebSocket(mg);
 			 timeOutWaitingResponseTestConection = setTimeout(function() {
-			 	$scope.$apply(function () { ng.status_websocket = 1 ;});
-			 	console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+				$scope.$apply(function () { ng.status_websocket = 1 ;});
+				console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
 			 }, TimeWaitingResponseTestConection);
 		},60000);
 	}
@@ -3866,13 +3937,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				};
 				ng.cod_nota_fiscal_reenviar_sat = dataCrud.nota.cod_nota_fiscal == undefined ? null : dataCrud.nota.cod_nota_fiscal ;
 				var dadosWebSocket = {
-		 			from 		: ng.caixa_open.id_ws_web ,
-		 			to  		: ng.caixa_open.id_ws_dsk ,
+					from 		: ng.caixa_open.id_ws_web ,
+					to  		: ng.caixa_open.id_ws_dsk ,
 					type 		: 'satcfe_process',
 					message 	: JSON.stringify(data)
-	 			};
-	 			ng.dadosSatCalculados = data ;
-	 			ng.sendMessageWebSocket(dadosWebSocket);
+				};
+				ng.dadosSatCalculados = data ;
+				ng.sendMessageWebSocket(dadosWebSocket);
 			})
 			.error(function(data, status, headers, config) {
 				ng.process_reeviar_sat = false ;
@@ -4027,7 +4098,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			  if(/Firefox[\/\s](\d+)/.test(navigator.userAgent) && new Number(RegExp.$1) >= 4) {
 				if(typeof ng.caixa_open == 'object' &&  Number(ng.caixa_open.flg_imprimir_sat_cfe) == 1){
 					 $.ajax({url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:'null',id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
-					 	success: function(data) {}
+						success: function(data) {}
 					 });
 				}
 				if(!empty(ng.caixa_open.id_ws_dsk)){
@@ -4043,7 +4114,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			  else {
 				if(typeof ng.caixa_open == 'object' &&  Number(ng.caixa_open.flg_imprimir_sat_cfe) == 1){
 					 $.ajax({url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:'null',id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
-					 	success: function(data) {}
+						success: function(data) {}
 					 });
 					 if(!empty(ng.caixa_open.id_ws_dsk)){
 						 var mg = {
@@ -4068,13 +4139,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.loadComandas = function(offset,limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 20 : limit;
-    	var query_string = "?te->id="+ng.userLogged.id_empreendimento+"&tv->venda_confirmada=0";
-    	if(!empty(ng.busca.id_mesa_comanda)) query_string += "&tm->id_mesa="+ng.busca.id_mesa_comanda;
-    	
-    	if(!empty(ng.busca.comandas)){	
-    			query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
-    	}
+		limit  = limit  == null ? 20 : limit;
+		var query_string = "?te->id="+ng.userLogged.id_empreendimento+"&tv->venda_confirmada=0";
+		if(!empty(ng.busca.id_mesa_comanda)) query_string += "&tm->id_mesa="+ng.busca.id_mesa_comanda;
+		
+		if(!empty(ng.busca.comandas)){	
+				query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
+		}
 
 		ng.comandas =  {dados:null,paginacao:[]};
 		aj.get(baseUrlApi()+"comandas/"+offset+"/"+limit+query_string)
@@ -4087,7 +4158,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.loadMesas = function() {
-    	var query_string = "?tm->id_empreendimento="+ng.userLogged.id_empreendimento;
+		var query_string = "?tm->id_empreendimento="+ng.userLogged.id_empreendimento;
 		ng.mesas = [] ;
 		aj.get(baseUrlApi()+"mesas"+query_string)
 			.success(function(data, status, headers, config) {
@@ -4195,21 +4266,21 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.url_pdf = '' ;
 	ng.printPdf = function(){
 		ng.url_pdf = baseUrlApi()+'relPDF?template=comprovante_venda&'+($.param({dados:{json:JSON.stringify({
-                    pagamentos : ng.recebidos,
+					pagamentos : ng.recebidos,
 					vlr_saldo_devedor: ng.cliente.vlr_saldo_devedor,
 					id_empreendimento : ng.userLogged.id_empreendimento,
-                    id_venda : ng.id_venda,
-                    id_cliente : ng.cliente.id,
-                    pagamento_fulso : ng.pagamento_fulso,
-                    id_controle_pagamento : (ng.pagamento_fulso ? ng.id_controle_pagamento : null)
+					id_venda : ng.id_venda,
+					id_cliente : ng.cliente.id,
+					pagamento_fulso : ng.pagamento_fulso,
+					id_controle_pagamento : (ng.pagamento_fulso ? ng.id_controle_pagamento : null)
 				})}}));
 		/*$('#load-pdf-venda').show();
 		$('#pdf-venda').hide();
 		$('#pdf-venda').html('<iframe style="height:450px" width="100%"  src="'+ng.url_pdf+'" frameborder=0 allowTransparency="true"  style=" width: 100%;height: 900px;background: #fff;border: none;overflow: hidden; display:none"></iframe>')
 		$('#pdf-venda iframe').load(function(){
 			$('#pdf-venda').show();
-		    $(this).show();
-		   	$('#load-pdf-venda').hide();
+			$(this).show();
+			$('#load-pdf-venda').hide();
 		});*/
 	}
 
@@ -4310,11 +4381,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		var post = {
 					id_empreendimento:ng.userLogged.id_empreendimento,
-		        	id_deposito:ng.caixa.depositos,
-		        	produtos:[produto],
-		        	venda_confirmada : ng.venda_confirmada,
-		        	id_vendedor      : Number(ng.vendedor.id_vendedor),
-		        	id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore )
+					id_deposito:ng.caixa.depositos,
+					produtos:[produto],
+					venda_confirmada : ng.venda_confirmada,
+					id_vendedor      : Number(ng.vendedor.id_vendedor),
+					id_venda_ignore  : (empty(ng.id_venda_ignore) ? null : ng.id_venda_ignore )
 				 }
 
 		aj.post(baseUrlApi()+"venda/verificaEstoque",post)
@@ -4381,13 +4452,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.showPopoverOrcamentosProdutoReservado = function(item, index, event){
 		$(event.target).popover({
-            title: 'Orçamentos',
-            placement: 'top',
-            content: '<strong>Aguarde, carregando...</strong>',
-            html: true,
-            container: 'body',
-            trigger  :'click',
-        }).popover('show');
+			title: 'Orçamentos',
+			placement: 'top',
+			content: '<strong>Aguarde, carregando...</strong>',
+			html: true,
+			container: 'body',
+			trigger  :'click',
+		}).popover('show');
 
 		 aj.get(baseUrlApi()+"produto/"+ item.id_produto +"/orcamento/"+ ng.userLogged.id_empreendimento +"/reservado/")
 			.success(function(data, status, headers, config) {
@@ -4398,13 +4469,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				});
 				tbl += '</table>';
 				 $(event.target).popover('destroy').popover({
-	                    title: 'Orçamentos',
-	                    placement: 'top',
-	                    content: tbl,
-	                    html: true,
-	                    container: 'body',
-	                    trigger  :'click',
-	                }).popover('show');
+						title: 'Orçamentos',
+						placement: 'top',
+						content: tbl,
+						html: true,
+						container: 'body',
+						trigger  :'click',
+					}).popover('show');
 
 			})
 			.error(function(data, status, headers, config) {
@@ -4436,15 +4507,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.validCep = function(cep){
 		if(cep != cep_anterior){
 			 var exp  = /^[0-9]{8}$/;
-	         var cep = cep;
-	         if(exp.test(cep)){
-	         	cep_anterior = cep ;
-	         	$('#busca-cep').modal({
+			 var cep = cep;
+			 if(exp.test(cep)){
+				cep_anterior = cep ;
+				$('#busca-cep').modal({
 				  backdrop: 'static',
 				  keyboard: false
 				});
 				ng.consultaCep();
-	         }
+			 }
 		}
 	}
 
@@ -4452,7 +4523,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var estado = null ;
 		$.each(ng.estados,function(i,x){
 			if(x.uf.toUpperCase() == uf.toUpperCase()){
-			    estado = x;
+				estado = x;
 				return false;
 			}
 		});
@@ -4460,6 +4531,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		return estado;
 	}
 
+	ng.selectMargemAplicadaInicial();	
 	ng.loadEstados();
 	ng.loadEmpreendimento();
 	ng.existsCookie();
@@ -4518,14 +4590,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 });
 app.directive('bsTooltip', function ($timeout) {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attr) {
-            $timeout(function () {
-                	  element.find("[data-toggle=tooltip]").tooltip();
-            });
-        }
-    }
+	return {
+		restrict: 'A',
+		link: function (scope, element, attr) {
+			$timeout(function () {
+					  element.find("[data-toggle=tooltip]").tooltip();
+			});
+		}
+	}
 });
 
 

@@ -1110,6 +1110,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		$('.data-cc').val('');
 		console.log(ng.recebidos);
 	}
+
 	ng.fornecedor = {}
 	ng.salvarPagamento = function(){
 		ng.modalProgressoPagamento('show');
@@ -1290,6 +1291,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				ng.pg_cheques = [];
 				ng.pg_boletos = [];
 				ng.total_pg = 0;
+				ng.pagamento = null;
 				ng.load(0,20);
 			})
 			.error(function(data, status, headers, config) {

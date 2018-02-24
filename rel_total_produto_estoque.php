@@ -236,9 +236,9 @@
 									<th width="100" class="text-center">Tamanho</th>
 									<th width="100" class="text-center">Sabor/Cor</th>
 									<th width="100" class="text-center">R$ Custo</th>
-									<th width="100" class="text-center">R$ Atacado</th>
-									<th width="100" class="text-center">R$ Interm.</th>
-									<th width="100" class="text-center">R$ Varejo</th>
+									<th width="100" class="text-center" ng-if="existeTabelaPreco('atacado')">R$ Atacado</th>
+									<th width="100" class="text-center" ng-if="existeTabelaPreco('intermediario')">R$ Interm.</th>
+									<th width="100" class="text-center" ng-if="existeTabelaPreco('varejo')">R$ Varejo</th>
 									<th width="100" class="text-center" ng-if="(grupo_busca)" >Depósito</th>
 									<th width="100" class="text-center" ng-if="grupo_tabela == 'validade'">Validade</th>
 									<th width="100" class="text-center">Estoque</th>
@@ -268,9 +268,9 @@
 									<td class="text-center">{{ item.sabor }}</td>
 									
 									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
 
 									<td class="text-center" ng-if="(grupo_busca)">{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
 									<td class="text-center" ng-if="grupo_tabela == 'validade'">{{ item.dta_validade != '2099-12-31' && (item.dta_validade | dateFormat:'date') || ' ' }}</td>
@@ -283,7 +283,7 @@
 								<tr>
 									<td class="text-right text-bold" colspan="2">QUANTIDADE DE PRODUTOS</td>
 									<td class="text-left text-bold">{{ total_produtos_estoque }}</td>
-									<td class="text-right text-bold" colspan="9">TOTAIS</td>
+									<td class="text-right text-bold" colspan="{{ formataColspan() }}">TOTAIS</td>
 									<td class="text-center text-bold">{{ qtd_total_estoque }}</td>
 									<td class="text-right text-bold">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
 								</tr>
