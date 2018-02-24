@@ -265,7 +265,7 @@ app.controller('PedidosFornecedoresController', function($scope, $http, $window,
 		$.each(ng.novoPedido,function(i,item){
 			var qtd          = item.qtd == '' ? 1 : parseInt(item.qtd);
 			var custo_compra = parseFloat(item.custo_compra);
-			console.log(item);
+			
 			total += qtd * custo_compra ;
 		});
 		ng.total = total;

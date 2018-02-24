@@ -1,17 +1,21 @@
-app.controller('ProdutosController', function($scope, $timeout, $http, $window, $dialogs, ConfigService, UserService, FuncionalidadeService, PrestaShop){
+app.controller('ProdutosController', function($scope, $timeout, $http, $window, $dialogs, ConfigService, UserService, FuncionalidadeService, PrestaShop, TabelaPrecoService){
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.ids_empreendimento_usuario = [] ;
-	console.log(ng.ids_empreendimento_usuario);
+	
 	var $checkableTree ;
 	var produtoTO = {
 		id_tamanho : null,
 		id_cor     : null,
 		flg_produto_composto : 0,
 		flg_controlar_lote: 0,
+		flg_controlar_validade: 0,
+		flg_venda_obrigatoria: 0,
+		flg_unidade_fracao: 0,
 		estoque:[],
 		peso_frete : 0 ,
 		largura_pacote : 0 ,
@@ -42,7 +46,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 
 	ng.produto 			= angular.copy(produtoTO)  ;
 	ng.combinacoes 		= angular.copy(produtoTO)  ;
-
+	ng.sublist_name = null;
 	ng.campos_extras_produto  = [] ;
     ng.produtos		= null;
     ng.importadores	= [];
@@ -60,6 +64,10 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
     ng.chosen_origem_mercadoria   = [{ cod_controle_item_nfe: null, nme_item : 'Selecione' }];
     ng.chosen_tipo_tributacao_ipi = [{ cod_controle_item_nfe: null, nme_item : 'Selecione' }];
     ng.chosen_especializacao_ncm  = [{ cod_especializacao_ncm: null, dsc_especializacao_ncm : 'Selecione' }];
+
+    ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
 
     ng.replicarCusto = function(preco){
     	var vlr_custo_linha = preco.vlr_custo;
@@ -125,6 +133,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		$('#descricao_html').trumbowyg('html','');
 		//$('#descricao_html_curta').trumbowyg('html','');
 		ng.insumos = [] ;
+		ng.adicionais = [] ;
 		ng.produto 		= angular.copy(produtoTO)  ;
 		ng.combinacoes 		= angular.copy(produtoTO)  ;
 		ng.editing = false;
@@ -200,31 +209,37 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				query_string += "&("+$.param({nome:{exp:"like '%"+ng.busca.insumos+"%' OR codigo_barra like '%"+ng.busca.insumos+"%' OR fab.nome_fabricante like '%"+ng.busca.insumos+"%' OR pro.id = "+ng.busca.insumos+""}})+")";
 		}
 
-		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+query_string)
+		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+ query_string)
 			.success(function(data, status, headers, config) {
 				ng.modal_insumos = data.produtos;
 				ng.paginacao.modal_insumos = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404) {
-					ng.modal_insumos = [];
+					ng.modal_insumos = null;
 					ng.paginacao.modal_insumos = null;
 				}
 			});
 	}
 	ng.insumos = [] ;
-	ng.showInsumos = function(){
+	ng.showInsumos = function(sublist_name){
 		$('#list_insumos').modal('show');
+		ng.sublist_name = sublist_name;
 		ng.busca.insumos = "";
 		ng.loadInsumos(0,10);
 	}
 
 	ng.addInsumo = function(item){
-		var insumo = {id:item.id,nome:item.nome,qtd:(empty(item.qtd)? 1 : item.qtd ),vlr_custo_real:item.vlr_custo_real};
-		ng.insumos.push(insumo);
-		ng.calVlrCustoInsumos();
-		item.qtd = null ;
-		//$('#list_fornecedores').modal('hide');
+		switch(ng.sublist_name) {
+			case 'insumos':
+				ng.insumos.push(_.extend(angular.copy(item), {qtd: (empty(item.qtd)) ? 1 : item.qtd}));
+				ng.calVlrCustoInsumos();
+				item.qtd = null;
+				break;
+			case 'adicionais':
+				ng.adicionais.push(angular.copy(item));
+				break;
+		}
 	}
 
 	ng.calVlrCustoInsumos = function(){
@@ -245,37 +260,24 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 	}
 
 	ng.existsInsumo = function(id_produto){
-		var r = false ;
-		$.each(ng.insumos,function(i,x){
+		var r = false;
+		$.each(ng[ng.sublist_name],function(i,x){
 			if(Number(x.id) == Number(id_produto)){
 				r = true ;
 				return;
 			}
 		});
-		return r ;
+		return r;
 	}
 
 	ng.delInsumo = function(index){
-		console.log(index);
 		ng.insumos.splice(index,1);
 		ng.calVlrCustoInsumos();
 	}
 
-	
-	ng.loadFabricantes = function(nome_fabricante) {
-		ng.fabricantes = [{id:"",nome_fabricante:"--- Selecione ---"}];
-		aj.get(baseUrlApi()+"fabricantes?tfe->id_empreendimento="+ng.userLogged.id_empreendimento)
-			.success(function(data, status, headers, config) {
-				ng.fabricantes = ng.fabricantes.concat(data.fabricantes);
-				if(nome_fabricante != null)
-					ng.produto.id_fabricante = ng.getFabricanteByName(nome_fabricante);
-			})
-			.error(function(data, status, headers, config) {
-				if(status == 404)
-					ng.fabricantes = [];
-			});
+	ng.delAdicional = function(index){
+		ng.adicionais.splice(index,1);
 	}
-
 	
 	ng.loadImportadores = function(nome_importador) {
 		ng.importadores = [{id:"",nome_importador:"--- Selecione ---"}];
@@ -288,6 +290,20 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			.error(function(data, status, headers, config) {
 				if(status == 404)
 					ng.importadores = [];
+			});
+	}
+
+	ng.loadFabricantes = function(nome_fabricante) {
+		ng.fabricantes = [{id:"",nome_fabricante:"--- Selecione ---"}];
+		aj.get(baseUrlApi()+"fabricantes?tfe->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.fabricantes = ng.fabricantes.concat(data.fabricantes);
+				if(nome_fabricante != null)
+					ng.produto.id_fabricante = ng.getFabricanteByName(nome_fabricante);
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.fabricantes = [];
 			});
 	}
 
@@ -339,9 +355,9 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 
 	ng.salvar = function(id_btn) {
 		var btn = $('#'+id_btn);
-   		btn.button('loading');
-		var url = ng.editing ? 'produto/update' : 'produto';
+   			btn.button('loading');
 
+		var url = ng.editing ? 'produto/update' : 'produto';
 		var msg = ng.editing ? 'Produto Atualizado com sucesso' : 'Produto salvo com sucesso!';
 
 		$($(".has-error").find(".form-control")).tooltip('destroy');
@@ -349,32 +365,29 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		$(".has-error").removeClass("has-error");
 
 		ng.produto.id_empreendimento = ng.userLogged.id_empreendimento;
-		var produto = angular.copy(ng.produto) ;
+		
+		var produto = angular.copy(ng.produto);
 
 		produto.descricao = $('#descricao_html').trumbowyg('html');
-		//produto.descricao_curta = $('#descricao_html_curta').trumbowyg('html');
-
-		console.log(produto);
-
-		//console.log(produto);
+		//produto.descricao_curta = $('#descricao_html_curta').trumbowyg('html');	
 		//return;
 
 		/*if(produto.preco != undefined){
-		    produto.preco = cloneArray(ng.produto.preco,['$$hashKey']) ;
-
-			produto.valor_desconto_cliente         = produto.valor_desconto_cliente         /100 ;
-			produto.preco.perc_desconto_compra     = produto.preco.perc_desconto_compra     / 100;
-			produto.preco.perc_imposto_compra      = produto.preco.perc_imposto_compra      / 100;
-			produto.preco.perc_venda_atacado       = produto.preco.perc_venda_atacado       / 100;
-			produto.preco.perc_venda_intermediario = produto.preco.perc_venda_intermediario / 100;
-			produto.preco.perc_venda_varejo        = produto.preco.perc_venda_varejo        / 100;
+			produto.valor_desconto_cliente         = (produto.valor_desconto_cliente / 100);
+		    
+		    produto.preco = cloneArray(ng.produto.preco,['$$hashKey']);
+			produto.preco.perc_desconto_compra     = (produto.preco.perc_desconto_compra / 100);
+			produto.preco.perc_imposto_compra      = (produto.preco.perc_imposto_compra / 100);
+			produto.preco.perc_venda_atacado       = (produto.preco.perc_venda_atacado / 100);
+			produto.preco.perc_venda_intermediario = (produto.preco.perc_venda_intermediario / 100);
+			produto.preco.perc_venda_varejo        = (produto.preco.perc_venda_varejo / 100);
 		}*/
 
 		$.each(produto.precos,function(i,prc){
-				produto.precos[i].valor_desconto_cliente     = prc.valor_desconto_cliente   /100;
-				produto.precos[i].perc_venda_atacado       	= prc.perc_venda_atacado       / 100;
-				produto.precos[i].perc_venda_intermediario 	= prc.perc_venda_intermediario / 100;
-				produto.precos[i].perc_venda_varejo        	= prc.perc_venda_varejo        / 100;
+			produto.precos[i].valor_desconto_cliente    = (prc.valor_desconto_cliente / 100);
+			produto.precos[i].perc_venda_atacado       	= (prc.perc_venda_atacado / 100);
+			produto.precos[i].perc_venda_intermediario 	= (prc.perc_venda_intermediario / 100);
+			produto.precos[i].perc_venda_varejo        	= (prc.perc_venda_varejo / 100);
 		});
 
 		//if(ng.editing){
@@ -390,15 +403,16 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		var inventario   = [] ;
 		var inventarios  = [] ;
 		var estoques     = _.groupBy(ng.produto.estoque, "nome_deposito");
-		var dta_contagem = dia+"-"+mes+"-"+ano+" "+hora+":"+minutos+":"+segundos;
-		$.each(estoques,function(i,itens){
-			inventario={
-					tipo                    : 'entrada',
-					id_deposito 			: null,
-					id_usuario_responsavel 	: ng.userLogged.id,
-					dta_contagem 			: dta_contagem,
-					itens                   : []               
-				}
+		var dta_contagem = dia + "-" + mes + "-" + ano +" "+ hora +":"+ minutos +":"+ segundos;
+
+		$.each(estoques, function(i,itens){
+			inventario = {
+				tipo: 					 	'entrada',
+				id_deposito: 			 	null,
+				id_usuario_responsavel: 	ng.userLogged.id,
+				dta_contagem: 			 	dta_contagem,
+				itens: 				 		[]
+			};
 
 			$.each(itens,function(y,item){
 				if(!(Number(item.qtd_item) == Number(item.qtd_ivn))){
@@ -417,7 +431,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				inventarios.push(inventario);
 		});
 
-		produto.inventario = inventarios ;
+		produto.inventario = inventarios;
 		//}
 
 		if(!(ng.empreendimentosAssociados == null || ng.empreendimentosAssociados.length == undefined || ng.empreendimentosAssociados.length == 0)){
@@ -429,12 +443,14 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		}
 
 		if(Number(produto.flg_produto_composto) == 1){
-			produto.insumos = ng.insumos ;
+			produto.insumos 	= ng.insumos;
+			produto.adicionais 	= ng.adicionais;
 		}
+
 		$('#formProdutos').ajaxForm({
 		 	url: baseUrlApi()+url,
 		 	type: 'post',
-		 	data:produto,
+		 	data: produto,
 		 	success:function(data){
 		 		$('#formProdutos')[0].reset();
 		 		btn.button('reset');
@@ -546,6 +562,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.getEstoque(item.id_produto);
 		//ng.calcularAllMargens();
 		ng.loadProdutoInsumos();
+		ng.loadProdutoAdicionais();
 
 		valor_campo_extra = angular.copy(ng.valor_campo_extra);
 		ng.produto.valor_campo_extra = valor_campo_extra ;
@@ -614,6 +631,17 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			});
 	}
 
+	ng.loadProdutoAdicionais = function() {
+		ng.adicionais = [];
+		aj.get(baseUrlApi() +"produto/get/adicionais/"+ ng.produto.id)
+			.success(function(data, status, headers, config) {
+				ng.adicionais = data;
+			})
+			.error(function(data, status, headers, config) {
+				ng.adicionais = [];
+			});
+	}
+
 	ng.addFornecedor = function(item){
 		var fornecedor = {id_fornecedor:item.id,nome_fornecedor:item.nome_fornecedor};
 		if(ng.produto.fornecedores == null || ng.produto.fornecedores == false)
@@ -623,7 +651,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 	}
 
 	ng.delFornecedor = function(index){
-		console.log(index);
 		ng.produto.fornecedores.splice(index,1);
 	}
 
@@ -724,7 +751,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 						depositos[deposito].qtd_ivn   = total_itens ;
 					});
 					id_deposito_exists = id_deposito_exists.substring(0,(id_deposito_exists.length-1)) ;
-					console.log(depositos);*/
+					*/
 
 					/*aj.get(baseUrlApi()+"depositos?id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+"&dep->id[exp]= NOT IN ("+id_deposito_exists+")")
 						.success(function(data, status, headers, config) {
@@ -866,6 +893,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				formControl.tooltip();
 			}
 		}
+		
 
 		if(error > 0)
 			return false;
@@ -940,22 +968,21 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				aj.get(baseUrlApi()+"produto/precos?cplSql=tp.id="+id_produto+" AND te.id IN("+ids_empreendimento_usuario+")")
 				.success(function(dataPrc, statusPrc) {
 					$.each(dataPrc,function(i,x){
-						dataPrc[i].vlr_custo =  numberFormat( ( empty(x.vlr_custo) ? 0  : x.vlr_custo  )					  ,2,'.','');
+						dataPrc[i].vlr_custo =  (empty(x.vlr_custo) ? 0  : x.vlr_custo);
 						dataPrc[i].perc_imposto_compra =  0 ;
 						dataPrc[i].perc_desconto_compra =  0 ;
-						dataPrc[i].perc_venda_atacado =  numberFormat( ( empty(x.perc_venda_atacado) ? 0  : x.perc_venda_atacado  )       * 100 ,2,'.','');
-						dataPrc[i].perc_venda_varejo =  numberFormat( ( empty(x.perc_venda_varejo) ? 0  : x.perc_venda_varejo  )        * 100 ,2,'.','');
-						dataPrc[i].perc_venda_intermediario =  numberFormat( ( empty(x.perc_venda_intermediario) ? 0  : x.perc_venda_intermediario  ) * 100 ,2,'.','');
-						dataPrc[i].valor_desconto_cliente =  numberFormat( ( empty(x.valor_desconto_cliente) ? 0  : x.valor_desconto_cliente  )   * 100 ,2,'.','');
+						dataPrc[i].perc_venda_atacado = (empty(x.perc_venda_atacado) ? 0  : x.perc_venda_atacado) * 100;
+						dataPrc[i].perc_venda_varejo = (empty(x.perc_venda_varejo) ? 0  : x.perc_venda_varejo) * 100;
+						dataPrc[i].perc_venda_intermediario = (empty(x.perc_venda_intermediario) ? 0  : x.perc_venda_intermediario) * 100;
+						dataPrc[i].valor_desconto_cliente = (empty(x.valor_desconto_cliente) ? 0  : x.valor_desconto_cliente) * 100;
 					});
 					ng.produto.precos = dataPrc ;
 					$.each(ng.produto.precos,function(i,x){
 						ng.calcularAllMargens(x);
 					});
-					console.log(ng.produto);
 				})
 				.error(function(dataPrc, statusPrc) {
-					console.log('Erro ao buscar os preços');
+					
 				});
 			})
 			.error(function(data, status, headers, config) {
@@ -1141,7 +1168,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				if(v.valor_campo == 1)
 					produto.campo_extra_selected = i ;
 			});
-			console.log(produto);
 		})
 		.error(function(data, status, headers, config) {
 	
@@ -1177,7 +1203,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		$.each(ng.empreendimentosAssociados,function(i,v){
 			ng.tamanho.empreendimentos.push(v.id_empreendimento);
 		});
-		//console.log(ng.tamanho);return;
+		//return;
 		aj.post(baseUrlApi()+"tamanho",ng.tamanho)
 		.success(function(data, status, headers, config) {
 			btn.button('reset');
@@ -1377,7 +1403,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		$.each(ng.empreendimentosAssociados,function(i,v){
 			ng.cor_produto.empreendimentos.push(v.id_empreendimento);
 		});
-		//console.log(ng.cor_produto);return;
+		//return;
 		aj.post(baseUrlApi()+"cor_produto",ng.cor_produto)
 		.success(function(data, status, headers, config) {
 			btn.button('reset');
@@ -1589,7 +1615,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				});
 			})
 			.error(function(dataPrc, statusPrc) {
-				console.log('Erro ao buscar os preços');
+				
 			});
 		}
 	}
@@ -1608,7 +1634,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 	}
 
 	ng.delCombinacao = function(index){
-		console.log(index);
 		ng.produto.combinacoes.splice(index,1);
 	}
 
@@ -1744,7 +1769,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		}
 	}
 	ng.treeviewConstruct = function(data){
-		console.log(data);
 			$checkableTree = $('#treeview-modulos').treeview({
 	          data: data,
 	          showIcon: false,
@@ -1781,8 +1805,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
               }
             ]
           );
-
-	       console.log(a);
 	}
 
 	ng.checkedTreeview = function(categorias){
@@ -1910,8 +1932,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.mensagens('alert-danger','<strong>'+ data +'</strong>');
 	}
 	ng.loadDepositos(0,10,true);
-	ng.loadFabricantes();
 	ng.loadImportadores();
+	ng.loadFabricantes();
 	ng.loadCategorias();
 	ng.loadTamanhos();
 	ng.loadCores();

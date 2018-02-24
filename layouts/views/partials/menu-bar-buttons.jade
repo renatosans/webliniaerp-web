@@ -1,0 +1,13 @@
+.pull-right(ng-controller="MasterController")
+	a.btn.btn-sm(data-toggle="tooltip" title="Configurações" data-placement="bottom" href="empreendimento_config.php")
+		i.fa.fa-cog
+	a.btn.btn-sm(data-toggle="tooltip" title="Tranferências" data-placement="bottom" href="pedido_transferencia.php")
+		i.fa.fa-arrows-h
+	a.btn.btn-sm(data-toggle="tooltip" title="Controle de Mesas" data-placement="bottom" href="controle-mesas.php")
+		i.fa.fa-table
+	a.btn.btn-sm(data-toggle="tooltip" title="Frente de Caixa (PDV)" data-placement="bottom" href="pdv.php")
+		i.fa.fa-desktop
+	a.btn.btn-sm(ng-click="openModalMeusEmpreendimentos()" data-toggle="tooltip" title="Trocar Empreendimento" data-placement="bottom")
+		i.fa.fa-building-o
+	a.btn.btn-sm.logoutConfirm_open(href="#logoutConfirm" data-toggle="tooltip" title="Sair do Sistema" data-placement="bottom")
+		i.fa.fa-power-off

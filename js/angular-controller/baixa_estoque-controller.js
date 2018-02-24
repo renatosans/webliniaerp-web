@@ -129,6 +129,7 @@ app.controller('BaixaEstoqueController', function($scope, $http, $window, $dialo
 			.success(function(data, status, headers, config) {
 				ng.produtos           = data.produtos ;
 				ng.paginacao_produtos = data.paginacao;
+				
 			})
 			.error(function(data, status, headers, config) {
 				ng.produtos = [];

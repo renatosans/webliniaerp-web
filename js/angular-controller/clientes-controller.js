@@ -207,7 +207,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		aj.get(baseUrlApi()+"cidades/"+ng.cliente.id_estado)
 		.success(function(data, status, headers, config) {
 			ng.cliente.id_cidade = angular.copy(id_cidade);
-			console.log(ng.cliente.id_cidade);
+			
 			ng.cidades = data;
 			setTimeout(function(){$("select").trigger("chosen:updated");},300);
 			if(nome_cidade != null){
@@ -280,7 +280,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 
 	ng.changeDetalhesCC = function(status){
 		ng.ccDetalhes = status ;
-		console.log(ng.ccDetalhes);
+		
 	}
 
 
@@ -305,7 +305,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 				ng.clientes = [];
 				ng.paginacao.itens = data.paginacao;
 				$.each(data.usuarios,function(i, item){
-					//console.log(( empty(item.id_como_encontrou) && !empty(item.como_entrou_outros)));
+					
 					item.id_como_encontrou = item.id_como_encontrou == null && (empty(item.id_como_encontrou) && !empty(item.como_entrou_outros)) ? 'outros' : item.id_como_encontrou ; 
 					ng.clientes.push(item);
 				});
@@ -350,7 +350,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 
 		id = id.substr(0,id.lastIndexOf(','));
 
-		//console.log(id,id_index);
+		
 		
 
 		aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ ng.userLogged.id_empreendimento+"?usu->id[exp]=IN("+id+")")
@@ -372,7 +372,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 
 	ng.salvar = function(event) {
 		ng.removeError();
-		//console.log(ng.cliente);
+		
 		var cliente = angular.copy(ng.cliente);
 		var btn = $(event.target) ;
 		if(!(btn.is(':button')))
@@ -407,7 +407,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 			if(treeview.length > 0){
 				$.each(treeview, function(i,v){
 					if(v.id_modulo == 38){
-						console.log(v);
+						
 					}
 					if(v.state.checked){
 						usuarioModulos.push({
@@ -556,6 +556,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		$('a',$('#tab-cliente .tab-bar li').eq(0)).tab('show');
 		ng.load_empreendimentos = true ;
 		ng.cliente = angular.copy(item);
+		ng.cliente.id_como_encontrou = (!empty(ng.cliente.id_como_encontrou)) ? String(ng.cliente.id_como_encontrou) : null;
 
 		if(ng.cliente.flg_tipo=='cliente' && ng.cliente.tipo_cadastro=='pf') ng.cliente.cliente_tipo_cadastro = 'cliente_pf';
 		else if(ng.cliente.flg_tipo=='cliente' && ng.cliente.tipo_cadastro=='pj') ng.cliente.cliente_tipo_cadastro = 'cliente_pj';
@@ -784,7 +785,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
    					ng.pagamentosCliente.pagamentos = [] ;
             });
 
-          console.log(ng.pagamentosCliente);
+          
 	}
 	ng.loadRegimeCliente = function (cod_cliente) {
 		aj.get(baseUrlApi()+"regime_especial/cliente/get/"+cod_cliente)
@@ -946,7 +947,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		.success(function(data, status, headers, config) {
 			var menu = ng.menuConstruct(data);
 			ng.treeviewConstruct(menu);
-			//console.log(menu);
+			
 		})
 		.error(function(data, status, headers, config) {
 			if(status == 404){

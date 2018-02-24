@@ -17,9 +17,11 @@ function printDiv(id, pg) {
 
     printWindow.document.write(contentToPrint);
 
-    printWindow.window.print();
-    printWindow.document.close();
-    printWindow.focus();
+    setTimeout(function() {
+        printWindow.window.print();
+        printWindow.document.close();
+        printWindow.focus();
+    }, 100000);
 }
 
 function formatDate(dta) {

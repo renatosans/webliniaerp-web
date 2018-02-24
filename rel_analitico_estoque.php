@@ -27,6 +27,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -234,22 +237,22 @@
 									<th class="text-middle text-center" colspan="6">Estimativa Venda</th>
 								</tr>
 								<tr>
-									<th colspan="2" class="text-center">Atacado</th>
-									<th colspan="2" class="text-center">Intermediário</th>
-									<th colspan="2" class="text-center">Varejo</th>
+									<th colspan="2" class="text-center" ng-if="existeTabelaPreco('atacado')">Atacado</th>
+									<th colspan="2" class="text-center" ng-if="existeTabelaPreco('intermediario')">Intermediário</th>
+									<th colspan="2" class="text-center" ng-if="existeTabelaPreco('varejo')">Varejo</th>
 								</tr>
 								<tr>
 									<th class="text-center">Unitário</th>
 									<th class="text-center">Total</th>
 
-									<th class="text-center">Unitário</th>
-									<th class="text-center">Total</th>
+									<th class="text-center" ng-if="existeTabelaPreco('atacado')">Unitário</th>
+									<th class="text-center" ng-if="existeTabelaPreco('atacado')">Total</th>
 
-									<th class="text-center">Unitário</th>
-									<th class="text-center">Total</th>
+									<th class="text-center" ng-if="existeTabelaPreco('intermediario')">Unitário</th>
+									<th class="text-center" ng-if="existeTabelaPreco('intermediario')">Total</th>
 
-									<th class="text-center">Unitário</th>
-									<th class="text-center">Total</th>
+									<th class="text-center" ng-if="existeTabelaPreco('varejo')">Unitário</th>
+									<th class="text-center" ng-if="existeTabelaPreco('varejo')">Total</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -261,17 +264,17 @@
 									<td class="text-middle text-center">{{ item.dta_validade | dateFormat: 'date' }}</td>
 									<td class="text-middle text-center">{{ item.qtd_item }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_real | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_total | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_real | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_custo_total | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_total_venda_atacado | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_total_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_total_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
-									<td class="text-middle text-right" style="min-width: 100px;">R$ {{ item.vlr_total_venda_varejo | numberFormat: 2 : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-middle text-right" style="min-width: 100px;" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_total_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</td>
 								</tr>
 							</tbody>
 							<tfoot>
@@ -279,13 +282,13 @@
 									<td class="text-right text-bold" colspan="5">Totais</td>
 									<td class="text-center text-bold">{{ qtd_estoque_total }}</td>
 									<td></td>
-									<td class="text-right text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
-									<td></td>
-									<td class="text-right text-bold">R$ {{ vlr_total_venda_atacado | numberFormat: 2 : ',' : '.'}}</td>
-									<td></td>
-									<td class="text-right text-bold">R$ {{ vlr_total_venda_intermediario | numberFormat: 2 : ',' : '.'}}</td>
-									<td></td>
-									<td class="text-right text-bold">R$ {{ vlr_total_venda_varejo | numberFormat: 2 : ',' : '.'}}</td>
+									<td class="text-right text-bold">R$ {{ vlr_custo_total | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
+									<td ng-if="existeTabelaPreco('atacado')"></td>
+									<td class="text-right text-bold" ng-if="existeTabelaPreco('atacado')">R$ {{ vlr_total_venda_atacado | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
+									<td ng-if="existeTabelaPreco('intermediario')"></td>
+									<td class="text-right text-bold" ng-if="existeTabelaPreco('intermediario')">R$ {{ vlr_total_venda_intermediario | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
+									<td ng-if="existeTabelaPreco('varejo')"></td>
+									<td class="text-right text-bold" ng-if="existeTabelaPreco('varejo')">R$ {{ vlr_total_venda_varejo | numberFormat: config.qtd_casas_decimais : ',' : '.'}}</td>
 								</tr>
 							</tfoot>
 						</table>
@@ -366,6 +369,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

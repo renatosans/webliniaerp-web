@@ -6,8 +6,8 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 	ng.itensPorPagina 	= 10;
 	ng.vendas 		   	= null;
 	ng.paginacao 	   	= {};
-	ng.busca			= {}
-	ng.busca.vendedores  = '';
+	ng.busca			= {};
+	ng.busca_modal		= {};
 
 	ng.doExportExcel = function(id_table){
     	$('#'+ id_table).tableExport({
@@ -22,7 +22,6 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 	}
 
 	ng.showProdutos = function(){
-   		ng.busca.produtos = "" ;
    		ng.loadProdutos(0,10);
    		$('#list_produtos').modal('show');
    	}
@@ -33,8 +32,8 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 
 		var query_string = "?group=&emp->id_empreendimento="+ng.userLogged.id_empreendimento;
 
-		if(ng.busca.produtos != ""){
-			query_string += "&("+$.param({'prd->nome':{exp:"like'%"+ng.busca.produtos+"%' OR fab.nome_fabricante like'%"+ng.busca.produtos+"%'"}})+")";
+		if(!empty(ng.busca_modal.produtos)){
+			query_string += "&("+$.param({'prd->nome':{exp:"like'%"+ng.busca_modal.produtos+"%' OR fab.nome_fabricante like'%"+ng.busca_modal.produtos+"%'"}})+")";
 		}
 
 		ng.produtos = [];
@@ -49,13 +48,14 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 	}
 
 	ng.addProduto = function(item){
-		ng.produto = item ;
+		ng.busca.produto = item;
 		$('#list_produtos').modal('hide');
 	}
 
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
+		 ng.busca = {};
 		 ng.vendedor = null;
 		 ng.produto = null;
 		 ng.vendas = null;
@@ -72,39 +72,68 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 		ng.msg_error = null;
 	}
 
-	ng.loadVendas = function(offset,limit) {
-		
-		var dtaInicial  = $("#dtaInicial").val();
-		var dtaFinal    = $("#dtaFinal").val();
-
-		if(empty(dtaInicial)){
-			alert('Você deve preencher a data inicial');
+	ng.loadVendas = function() {
+		if(empty(ng.busca.dta)){
+			alert('Você deve preencher o campo Data');
 			return;
 		}
 
-		if(empty(dtaFinal)){
-			alert('Você deve preencher a data final');
-			return;
-		}
+		var queryString = "?a->id_empreendimento="+ng.userLogged.id_empreendimento;
+			queryString += "&"+$.param({'a->dta_venda':{exp:"like "+"'%"+ moment(ng.busca.dta, 'DD/MM/YYYY').format('YYYY-MM-DD')+"%'"}});
 
-		var queryString = "?ven->id_empreendimento="+ng.userLogged.id_empreendimento;
-			queryString += "&"+$.param({'ven->dta_venda':{exp:"BETWEEN '"+ moment(dtaInicial, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 00:00:00' AND '"+ moment(dtaFinal, 'DD/MM/YYYY').format('YYYY-MM-DD') +" 23:59:59'"}});
+		if(!empty(ng.busca.vendedor))
+			queryString += "&a->id_usuario=" + ng.busca.vendedor.id;
 
-		if(!empty(ng.vendedor))
-			queryString += "&ven->id_usuario=" + ng.vendedor.id;
+		if(!empty(ng.busca.produto))
+			queryString += "&a->id_produto=" + ng.busca.produto.id_produto;
 
-		if(!empty(ng.produto))
-			queryString += "&itv->id_produto=" + ng.produto.id_produto;
+		if(ng.busca.op_valor == "between"){
+			if(empty(ng.busca.valor_fim)){
+					$(".valor_fim").addClass("has-error");
+
+					var formControl = $(".valor_fim")
+						.attr("data-toggle", "tooltip")
+						.attr("data-placement", "bottom")
+						.attr("title", 'Escolha o valor final')
+						.attr("data-original-title", 'Escolha o valor final');
+					formControl.tooltip();
+					return;
+			}else if(empty(ng.busca.valor_inicio)){
+				ng.busca.valor_inicio = 0;
+				queryString +="&" + $.param({num_percentual_desconto:{exp:"between "+ng.busca.valor_inicio+" AND "+ng.busca.valor_fim+""}}) ;
+			}else
+				queryString +="&" + $.param({num_percentual_desconto:{exp:"between "+ng.busca.valor_inicio+" AND "+ng.busca.valor_fim+""}}) ;
+		}else if(ng.busca.op_valor == "=")
+			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"CAST(num_percentual_desconto AS CHAR) ="+ng.busca.valor_fim+"" }}) ;
+		else if(ng.busca.op_valor == "<")
+			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"num_percentual_desconto  <'"+ng.busca.valor_fim+"'" }})  ;
+		else if(ng.busca.op_valor == ">")
+			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"num_percentual_desconto  >'"+ng.busca.valor_fim+"'" }})  ;
+		else if(ng.busca.op_valor == "<=")
+			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"(num_percentual_desconto  < '"+ng.busca.valor_fim+"' OR CAST(num_percentual_desconto AS CHAR) = '"+ng.busca.valor_fim+"')" }})  ;
+		else if(ng.busca.op_valor == ">=")
+			queryString += "&" + $.param({num_percentual_desconto:{literal_exp:"(num_percentual_desconto  >='"+ng.busca.valor_fim+"'  OR CAST(num_percentual_desconto AS CHAR) = '"+ng.busca.valor_fim+"')" }})  ;
 
 		$("#modal-aguarde").modal('show');
 
 		ng.vendas = [];
 
-		aj.get(baseUrlApi()+"relatorio/vendas/diario/vendedor/"+offset+'/'+limit+queryString)
+		aj.get(baseUrlApi()+"relatorio/vendas/diario/vendedor/"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data.vendas;
-				ng.paginacao.vendas = data.paginacao ;
 				$("#modal-aguarde").modal('hide');
+				ng.vlr_custo_total = 0;
+				ng.vlr_real_item_total = 0;
+				ng.vlr_venda_item_total = 0;
+				ng.vlr_subtotal_item_total = 0;
+				$.each(ng.vendas, function(index, item) {
+					if(item.qtd > 0){
+						ng.vlr_custo_total += item.vlr_custo;
+						ng.vlr_real_item_total += item.vlr_real_item;
+						ng.vlr_venda_item_total += item.vlr_venda_item;
+						ng.vlr_subtotal_item_total += item.vlr_subtotal_item;
+					}
+				});
 
 			})
 			.error(function(data, status, headers, config) {
@@ -112,20 +141,16 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 				ng.vendas = null;
 				ng.status = status;
 				ng.msg_error = data;
-				ng.paginacao.vendas = null;
 			});
 	}
 
 	ng.selCliente = function(){
-		var offset = 0  ;
-    	var limit  =  10 ;;
-
-		ng.loadCliente(offset,limit);
+		ng.loadCliente(0,10);
 		$("#list_clientes").modal("show");
 	}
 
 	ng.addCliente = function(item){
-    	ng.vendedor = item;
+		ng.busca.vendedor = item;
     	$("#list_clientes").modal("hide");
 	}
 
@@ -137,8 +162,8 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 
 		query_string += "&usu->flg_tipo=usuario" ;
 
-		if(ng.busca.vendedores != ""){
-			query_string += "&" + $.param({'(usu->nome':{exp:"like'%"+ng.busca.vendedores+"%')"}});
+		if(!empty(ng.busca_modal.vendedores)){
+			query_string += "&" + $.param({'(usu->nome':{exp:"like'%"+ng.busca_modal.vendedores+"%')"}});
 		}
 		aj.get(baseUrlApi()+"usuarios/"+offset+"/"+limit+"/"+query_string)
 			.success(function(data, status, headers, config) {
@@ -157,4 +182,11 @@ app.controller('RelatorioTotalVendasVendedorDiarioController', function($scope, 
 	}
 
 	ng.reset();
+
+	$('#dtaInicial').on('change',function(event){
+		ng.busca.dta = $(this).val();
+	});
+	$('#dtaFinal').on('change',function(event){
+		ng.busca.dta_final = $(this).val();
+	});
 });

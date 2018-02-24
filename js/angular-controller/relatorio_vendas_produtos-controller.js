@@ -1,7 +1,8 @@
-app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, UserService, EmpreendimentoService) {
+app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, UserService, ConfigService, EmpreendimentoService) {
 	var ng 				= $scope;
 		aj 				= $http;
 	ng.userLogged 		= UserService.getUserLogado();
+	ng.config     = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
 	ng.itensPorPagina 	= 10;
 	ng.deposito 		= {};
@@ -12,6 +13,8 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 	ng.busca.clientes  	= '';
 	ng.cliente          = {};
 	ng.vendas 			= null;
+	ng.flg_venda_obrigatoria = 0;
+	ng.flg_cozinha = 0;
 
 	 $scope.all_countries = [{
                 "id": 28,
@@ -65,7 +68,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 
 		 aj.get(baseUrlApi()+"produto/venda/historico-margem-lucro"+ queryString)
 			.success(function(data, status, headers, config) {
-				console.log(data);
+				
 				var tbl = '<table class="table table-bordered table-condensed table-striped table-hover">' ;
 					tbl += '<tr>'+'<td class="text-right" width="70">Custo</td>'+'<td class="text-right" width="70">Margem</td>'+'<td class="text-center">QTD</td>'+'</tr>';
 				
@@ -84,7 +87,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data);		
+						
 			});
 	}
 
@@ -92,20 +95,28 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 		 $("#dtaInicial").val('');
 		 $("#dtaFinal").val('');
 		 ng.produto = {} ;
-		 ng.busca.clientes = '' ;
+		 ng.busca = {};
+		 ng.vendas = null;
+		 ng.msg_error = 'Selecione ao menos um período!';
 	}
 
 	ng.resetFilter = function() {
 		ng.reset();
-		ng.loadVendas(0,ng.itensPorPagina);
 	}
 
 	ng.aplicarFiltro = function() {
 		$("#modal-aguarde").modal('show');
-		ng.loadVendas(0,ng.itensPorPagina);
+		dtaInicial = ng.busca.dtaInicial;
+		if(empty(dtaInicial)){
+			$("#modal-aguarde").modal('hide');
+			ng.mensagens('alert-danger','<strong>Por Favor selecione a data inicial</strong>','.errorBusca');
+		}else{
+			ng.loadVendas(0,ng.itensPorPagina);
+		};
 	}
 
 	ng.loadVendas = function() {
+		ng.msg_error = null;
 		dtaInicial = ng.busca.dtaInicial;
 		dtaFinal   = ng.busca.dtaFinal;
 		var queryString = "";
@@ -127,6 +138,14 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 			queryString += queryString == "" ? "?pro->id="+ng.produto.id_produto : "&pro->id="+ng.produto.id_produto ;
 		}
 
+		if(ng.flg_venda_obrigatoria == 1){
+			queryString += " AND pro.flg_venda_obrigatoria = " + ng.flg_venda_obrigatoria;
+		}
+
+		if(ng.flg_cozinha == 1){
+			queryString += " AND pro.flg_produto_composto = " + ng.flg_cozinha;
+		}
+
 		ng.vendas = [] ;
 
 		/*if(ng.cliente.id != "" && ng.cliente.id != null){
@@ -136,8 +155,13 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 		aj.get(baseUrlApi()+"produtos/by_venda/"+ng.userLogged.id_empreendimento+"/"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data;
-				$("#modal-aguarde").modal('hide');
+				ng.loadTotais();
+				
+				angular.forEach(ng.vendas, function(item){
+					item.vlr_percentual = ((item.vlr_vendido / ng.vlr_total_vendido) * 100);
+				});
 
+				$("#modal-aguarde").modal('hide');
 			})
 			.error(function(data, status, headers, config) {
 				ng.vendas = null;
@@ -145,6 +169,17 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 				ng.msg_error = data;
 				$("#modal-aguarde").modal('hide');
 			});
+	}
+
+	ng.loadTotais = function(){
+		ng.qtd_total_vendida = 0;
+		ng.vlr_total_custo_total = 0;
+		ng.vlr_total_vendido = 0;
+		$.each(ng.vendas,function(i, item){
+			ng.qtd_total_vendida += parseInt(item.qtd_vendida,10);
+			ng.vlr_total_custo_total += parseFloat(item.vlr_custo_total);
+			ng.vlr_total_vendido += parseFloat(item.vlr_vendido);
+		});
 	}
 
 	ng.showProdutos = function(){
@@ -273,7 +308,8 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 	}
 
 	ng.reset();
-	ng.aplicarFiltro();
+
+	ng.msg_error = 'Selecione ao menos um período!';
 });
 
 app.directive('bsPopover', function () {

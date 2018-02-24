@@ -172,7 +172,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var estoques = item;
 		var index    = null ;
 		$.each(ng.carrinho,function(i,value){
-			console.log(id_produto, value.id_produto);
+			
 			if(parseInt(id_produto) == parseInt(value.id_produto)){
 				saida     = false ;
 				estoques  = value.estoques;
@@ -569,7 +569,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	        )
 			.success(function(data, status, headers, config) {
 				if (init+1 >= cont_itens){
-					//console.log(ng.out_produtos);
+					
 					if(ng.out_produtos.length > 0 || ng.out_descontos.length > 0){
 						ng.modalProgressoVenda('hide');
 						if(ng.out_produtos.length > 0)
@@ -792,7 +792,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	};
 
 	ng.gravarMovimentacoes = function(){
-			console.log(ng.pagamentos_enviar);
+			
 			var id_venda = ng.finalizarOrcamento == true ? ng.id_orcamento : ng.id_venda;
 			var id_mesa = null; 
 			if(!empty(ng.dadosOrcamento)){
@@ -948,7 +948,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 		})
 		.error(function(data, status, headers, config) {
-			console.log('erro ao consultar saldo do cliente');
+			
 		});
 	}
 	ng.changeMargemAplicada = function(obj){
@@ -1727,7 +1727,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				.attr("data-original-title", 'A escolha da forma de chequ é obrigatória');
 			formControl.tooltip();
 		}
-		console.log(ng.pagamento);
+		
 		if(ng.pagamento.valor ==  undefined || ng.pagamento.valor ==  ''){
 			error ++ ;
 			$("#pagamento_valor").addClass("has-error");
@@ -2058,7 +2058,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.totalPagamento();
 		ng.calculaTroco();
 		ng.pagamento = {} ;
-		//console.log(ng.recebidos,ng.cheques);
+		
 	}
 
 	ng.deleteRecebidos = function(index){
@@ -2909,7 +2909,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.esconder_cliente = false ;
 			}
 		}
-		console.log(busca);
+		
 		ng.produtos_auto_complete_visible = true ;
         clearInterval(interval_produto);
         if(empty(busca)){
@@ -3135,7 +3135,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.conn = new WebSocket(ng.config.patch_socket_sat);
 		ng.conn.onopen = function(e) {
 			$scope.$apply(function () { ng.status_websocket = 1 ;});
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - WebSocket conectado.');
+			
 		};
 
 		ng.conn.onclose = function(e) {
@@ -3148,7 +3148,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 
 		ng.conn.onmessage = function(e) {
-			console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Mensagem Recebida : '+e.data);
+			
 			var data = JSON.parse(e.data);
 			data.message = parseJSON(data.message);
 			switch(data.type){
@@ -3159,10 +3159,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					 	url: baseUrlApi() + "websocket/update/sessionid",async: false,type:'POST',data:{id_ws_web:data.to,id_empreendimento:ng.userLogged.id_empreendimento,pth_local:ng.pth_local},
 					 	success: function(data) {
 					 		aux = true ;
-					 		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - id_ws_web gravado com sucesso');
+					 		
 					 	},
 					 	error: function(error) {
-					 		console.log('Não foi possível gravar o id_ws_web');
+					 		
 					 		ng.status_websocket = 1 ;
 					 	}
 					 });
@@ -3176,7 +3176,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					 	}
 					 	ng.sendMessageWebSocket(mg);
 					 }else{
-					 	console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível estabelecer conexão com o APP Client');
+					 	
 					 }
 
 					if(ng.status_websocket == 2){
@@ -3258,7 +3258,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			            }
 		    		$('#dados-websocket').popover('destroy');
 		    		$('#dados-websocket').popover(config).popover();
-					console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Conexão com App client extabelecida');
+					
 					enviaTesteConexao();
 					break;
 				case 'connection_search_request':
@@ -3328,7 +3328,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.sendMessageWebSocket(mg);
 			 timeOutWaitingResponseTestConection = setTimeout(function() {
 			 	$scope.$apply(function () { ng.status_websocket = 1 ;});
-			 	console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - Não foi possível obter resposta do APP Client para o teste de conexão');
+			 	
 			 }, TimeWaitingResponseTestConection);
 		},60000);
 	}
@@ -3435,7 +3435,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		window.location=page;
 	}
 	ng.sendMessageWebSocket = function(data){
-		console.log(moment().format("YYYY-MM-DD HH:mm:ss")+' - mensagem Enviada: '+JSON.stringify(data));
+		
 		ng.conn.send(JSON.stringify(data));
 	}
 	var dadosWebSocket = {

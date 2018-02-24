@@ -162,6 +162,8 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 
 		itemPost.id_empreendimento 		= ng.userLogged.id_empreendimento;
 		itemPost.descricao_categoria 	= ng.categoria.descricao_categoria;
+		itemPost.hex_cor_box 			= ng.categoria.hex_cor_box;
+		itemPost.hex_cor_letra 			= ng.categoria.hex_cor_letra;
 		itemPost.empreendimentos 		= ng.empreendimentosAssociados;
 		itemPost.id_pai 				= empty(ng.categoria.id_pai) ? null : ng.categoria.id_pai ;
 
@@ -216,7 +218,7 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 	}
 
 	ng.integracao = function(){
-		console.log('manda v');
+		
 	}
 
 	ng.load= function() {

@@ -27,6 +27,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -175,6 +178,7 @@
 										</div>
 									</div>
 								</div>
+
 								<div class="col-lg-4">
 									<div class="form-group">
 										<label class="control-label">Depósito</label>
@@ -186,6 +190,7 @@
 										</div>
 									</div>
 								</div>
+
 								<div class="col-lg-4">
 									<div class="form-group">
 										<label class="control-label">Fabricante</label>
@@ -197,6 +202,7 @@
 										</div>
 									</div>
 								</div>
+
 								<div class="col-lg-2">
 									<div class="form-group">
 										<label class="control-label">Agrupar por:</label>
@@ -207,7 +213,6 @@
 										</select>
 									</div>
 								</div>
-							
 							</div>
 						</form>
 					</div>
@@ -223,6 +228,7 @@
 				</div>
 
 				<br>
+
 				<div class="panel panel-default">
 					<div class="panel-body" style="overflow-y: scroll; overflow-x: scroll; width: 100%; height: 300px; background-color: #fff;">
 						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == false" style="width: 1200px; font-family: monospace; font-size: 10px; margin-bottom: 0;">
@@ -236,15 +242,16 @@
 									<th width="100" class="text-center">Tamanho</th>
 									<th width="100" class="text-center">Sabor/Cor</th>
 									<th width="100" class="text-center">R$ Custo</th>
-									<th width="100" class="text-center">R$ Atacado</th>
-									<th width="100" class="text-center">R$ Interm.</th>
-									<th width="100" class="text-center">R$ Varejo</th>
+									<th width="100" class="text-center" ng-if="existeTabelaPreco('atacado')">R$ Atacado</th>
+									<th width="100" class="text-center" ng-if="existeTabelaPreco('intermediario')">R$ Interm.</th>
+									<th width="100" class="text-center" ng-if="existeTabelaPreco('varejo')">R$ Varejo</th>
 									<th width="100" class="text-center" ng-if="(grupo_busca)" >Depósito</th>
 									<th width="100" class="text-center" ng-if="grupo_tabela == 'validade'">Validade</th>
 									<th width="100" class="text-center">Estoque</th>
 									<th width="130" class="text-center">R$ Subtotal</th>
 								</tr>
 							</thead>
+							
 							<tbody>
 								<tr ng-if="produtos.length == 0 && produtos != null">
 									<td class="text-center" colspan="14">
@@ -267,81 +274,85 @@
 									<td class="text-center">{{ item.peso }}</td>
 									<td class="text-center">{{ item.sabor }}</td>
 									
-									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right">R$ {{ item.vlr_venda_atacado | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right">R$ {{ item.vlr_venda_intermediario | numberFormat : 2 : ',' : '.' }}</td>
-									<td class="text-right">R$ {{ item.vlr_venda_varejo | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right">R$ {{ item.vlr_custo_real | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
+									<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
 
 									<td class="text-center" ng-if="(grupo_busca)">{{ (grupo_tabela == 'validade' || grupo_tabela == 'deposito' || busca_deposito) &&  item.nome_deposito  || 'Todos' }}</td>
 									<td class="text-center" ng-if="grupo_tabela == 'validade'">{{ item.dta_validade != '2099-12-31' && (item.dta_validade | dateFormat:'date') || ' ' }}</td>
 
 									<td class="text-center">{{ item.qtd_item }}</td>
-									<td class="text-right ">R$ {{ (item.vlr_custo_real * item.qtd_item) | numberFormat : 2 : ',' : '.' }}</td>
+									<td class="text-right ">R$ {{ (item.vlr_custo_real * item.qtd_item) | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</td>
 								</tr>
 							</tbody>
+							
 							<tfoot>
 								<tr>
 									<td class="text-right text-bold" colspan="2">QUANTIDADE DE PRODUTOS</td>
 									<td class="text-left text-bold">{{ total_produtos_estoque }}</td>
-									<td class="text-right text-bold" colspan="9">TOTAIS</td>
+									<td class="text-right text-bold" colspan="{{ formataColspan() }}">TOTAIS</td>
 									<td class="text-center text-bold">{{ qtd_total_estoque }}</td>
-									<td class="text-right text-bold">R$ {{ vlr_total_estoque | numberFormat : 2 : ',' : '.'  }}</td>
+									<td class="text-right text-bold">R$ {{ vlr_total_estoque | numberFormat : config.qtd_casas_decimais : ',' : '.'  }}</td>
 								</tr>
 							</tfoot>
 						</table>
+
 						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == 'produto' ">
-								<thead>
-									<tr>
-										<th class="text-right" >Depósito</th>
-										<th width="100" class="text-center">Estoque</th>
-									</tr>
-								</thead>
-								<tbody ng-repeat="(key, value) in produtos">
-									<tr   class="info text-left">
-										<td colspan="2" >{{ key+" | "+value.nome}} {{ value.nome_fabricante != ""  &&  "| "+value.nome_fabricante || "" }} {{ value.peso != ""  &&  "| "+value.peso || "" }} </td>
-									</tr>
-									<tr ng-repeat="produto in value">
-										<td class="text-right">{{ produto.nome_deposito }}</td>
-										<td class="text-right">{{ produto.qtd_item }}</td>
-									</tr>
-								</tbody>
+							<thead>
+								<tr>
+									<th class="text-right" >Depósito</th>
+									<th width="100" class="text-center">Estoque</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="(key, value) in produtos">
+								<tr   class="info text-left">
+									<td colspan="2" >{{ key+" | "+value.nome}} {{ value.nome_fabricante != ""  &&  "| "+value.nome_fabricante || "" }} {{ value.peso != ""  &&  "| "+value.peso || "" }} </td>
+								</tr>
+								<tr ng-repeat="produto in value">
+									<td class="text-right">{{ produto.nome_deposito }}</td>
+									<td class="text-right">{{ produto.qtd_item }}</td>
+								</tr>
+							</tbody>
 						</table>
 
 						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="agrupar == 'deposito' ">
-								<thead>
-									<tr>
-										<th class="text-right" >produto</th>
-										<th width="200" class="text-center">Fabricante</th>
-										<th width="100" class="text-center">Tamanho</th>
-										<th width="100" class="text-center">Estoque</th>
-									</tr>
-								</thead>
-								<tbody ng-repeat="(key, value) in produtos">
-									<tr   class="info text-left">
-										<td colspan="4" >{{ key }}</td>
-									</tr>
-									<tr ng-repeat="produto in value">
-										<td class="text-right">{{ produto.nome }}</td>
-										<td class="text-right">{{ produto.nome_fabricante }}</td>
-										<td class="text-right">{{ produto.peso }}</td>
-										<td class="text-right">{{ produto.qtd_item }}</td>
-									</tr>
-								</tbody>
+							<thead>
+								<tr>
+									<th class="text-right" >Produto</th>
+									<th width="200" class="text-center">Fabricante</th>
+									<th width="100" class="text-center">Tamanho</th>
+									<th width="100" class="text-center">Estoque</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="(key, value) in produtos">
+								<tr   class="info text-left">
+									<td colspan="4" >{{ key }}</td>
+								</tr>
+								<tr ng-repeat="produto in value">
+									<td class="text-right">{{ produto.nome }}</td>
+									<td class="text-right">{{ produto.nome_fabricante }}</td>
+									<td class="text-right">{{ produto.peso }}</td>
+									<td class="text-right">{{ produto.qtd_item }}</td>
+								</tr>
+							</tbody>
 						</table>
 					</div>
 				</div>
+
 				<div class="pull-right hidden-print">
-						<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.produtos.length > 1">
-							<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
-								<a href="" h ng-click="loadProdutos(item.offset,item.limit)">{{ item.index }}</a>
-							</li>
-						</ul>
+					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.produtos.length > 1">
+						<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
+							<a href="" ng-click="loadProdutos(item.offset,item.limit)">{{ item.index }}</a>
+						</li>
+					</ul>
 				</div>
 				</div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->
 
+	<!-- /Modal Aguarde-->
 	<div class="modal fade" id="modal-aguarde">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -356,209 +367,210 @@
 	</div><!-- /.modal -->
 
 	<!-- /Modal Produtos-->
-		<div class="modal fade" id="list_produtos" style="display:none">
-  			<div class="modal-dialog modal-lg">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Produtos</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.produto_modal" ng-keyup="loadProdutosModal(0,10)" ng-enter="loadProdutosModal(0,10)" type="text" class="form-control input-sm">
+	<div class="modal fade" id="list_produtos" style="display:none">
+			<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+  				<div class="modal-header">
+    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4>Produtos</span></h4>
+  				</div>
+			    <div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group">
+					            <input ng-model="busca.produto_modal" ng-keyup="loadProdutosModal(0,10)" ng-enter="loadProdutosModal(0,10)" type="text" class="form-control input-sm">
 
-						            <div class="input-group-btn">
-						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutosModal(0,10)">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
+					            <div class="input-group-btn">
+					            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
+					            		ng-click="loadProdutosModal(0,10)">
+					            		<i class="fa fa-search"></i> Buscar
+					            	</button>
+					            </div> <!-- /input-group-btn -->
+					        </div> <!-- /input-group -->
+						</div><!-- /.col -->
+					</div>
 
-						<br>
+					<br>
 
-						<div class="row">
-							<div class="col-md-12">
-								<div class="alert alert-produtos" style="display:none"></div>
-						   		<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(produtos_modal.length != 0)">
-										<tr>
-											<th>#</th>
-											<th>Nome</th>
-											<th>Fabricante</th>
-											<th>Tamanho</th>
-											<th>Sabor/Cor</th>
-											<th width="80"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(produtos_modal.length == 0)">
-											<td colspan="3">Não a resultados para a busca</td>
-										</tr>
-										<tr ng-repeat="item in produtos_modal">
-											<td>{{ item.id_produto }}</td>
-											<td>{{ item.nome }}</td>
-											<td>{{ item.nome_fabricante }}</td>
-											<td>{{ item.peso }}</td>
-											<td>{{ item.sabor }}</td>			
-											<td>
-											<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
-												<i class="fa fa-check-square-o"></i> Selecionar
-											</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-					    <div class="row">
-					    	<div class="col-md-12">
-								<div class="input-group pull-right">
-						             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.produtos_modal.length > 1">
-										<li ng-repeat="item in paginacao.produtos_modal" ng-class="{'active': item.current}">
-											<a href="" ng-click="loadProdutosModal(item.offset,item.limit)">{{ item.index }}</a>
-										</li>
-									</ul>
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="alert alert-produtos" style="display:none"></div>
+					   		<table class="table table-bordered table-condensed table-striped table-hover">
+								<thead ng-show="(produtos_modal.length != 0)">
+									<tr>
+										<th>#</th>
+										<th>Nome</th>
+										<th>Fabricante</th>
+										<th>Tamanho</th>
+										<th>Sabor/Cor</th>
+										<th width="80"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-show="(produtos_modal.length == 0)">
+										<td colspan="3">Não a resultados para a busca</td>
+									</tr>
+									<tr ng-repeat="item in produtos_modal">
+										<td>{{ item.id_produto }}</td>
+										<td>{{ item.nome }}</td>
+										<td>{{ item.nome_fabricante }}</td>
+										<td>{{ item.peso }}</td>
+										<td>{{ item.sabor }}</td>			
+										<td>
+										<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
+											<i class="fa fa-check-square-o"></i> Selecionar
+										</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<!-- /.modal -->
-		<!-- /Modal depositos-->
-		<div class="modal fade" id="modal-depositos" style="display:none">
-  			<div class="modal-dialog">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Depositos</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.depositos" ng-keyup="loadDepositos(0,10)" ng-enter="loadDepositos(0,10)" type="text" class="form-control input-sm">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadDepositos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
 
-						<br/>
-
-				   		<div class="row">
-				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(depositos.length != 0)">
-										<tr>
-											<th colspan="2">Nome</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(depositos.length == 0)">
-											<td colspan="3">{{ busca_vazia.depositos  && 'Não há resultado para a busca' || 'Não há Depositos cadastrados' }}</td>
-										</tr>
-										<tr ng-repeat="item in depositos">
-											<td>{{ item.nme_deposito }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addDeposito(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-				   			</div>
-				   		</div>
-
-				   		<div class="row">
-					    	<div class="col-sm-12">
-					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.depositos.length > 1">
-									<li ng-repeat="item in paginacao.depositos" ng-class="{'active': item.current}">
-										<a href="" h ng-click="loadDepositos(item.offset,item.limit)">{{ item.index }}</a>
+				    <div class="row">
+				    	<div class="col-md-12">
+							<div class="input-group pull-right">
+					             <ul class="pagination pagination-xs m-top-none" ng-show="paginacao.produtos_modal.length > 1">
+									<li ng-repeat="item in paginacao.produtos_modal" ng-class="{'active': item.current}">
+										<a href="" ng-click="loadProdutosModal(item.offset,item.limit)">{{ item.index }}</a>
 									</li>
 								</ul>
-					    	</div>
+					        </div> <!-- /input-group -->
+						</div><!-- /.col -->
+					</div>
+				</div>
+		  	</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+	
+	<!-- /Modal Depositos-->
+	<div class="modal fade" id="modal-depositos" style="display:none">
+			<div class="modal-dialog">
+			<div class="modal-content">
+  				<div class="modal-header">
+    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4>Depositos</span></h4>
+  				</div>
+			    <div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group">
+					            <input ng-model="busca.depositos" ng-keyup="loadDepositos(0,10)" ng-enter="loadDepositos(0,10)" type="text" class="form-control input-sm">
+					            <div class="input-group-btn">
+					            	<button ng-click="loadDepositos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+					            		<i class="fa fa-search"></i> Buscar
+					            	</button>
+					            </div> <!-- /input-group-btn -->
+					        </div> <!-- /input-group -->
+						</div><!-- /.col -->
+					</div>
+
+					<br/>
+
+			   		<div class="row">
+			   			<div class="col-sm-12">
+			   				<table class="table table-bordered table-condensed table-striped table-hover">
+								<thead ng-show="(depositos.length != 0)">
+									<tr>
+										<th colspan="2">Nome</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-show="(depositos.length == 0)">
+										<td colspan="3">{{ busca_vazia.depositos  && 'Não há resultado para a busca' || 'Não há Depositos cadastrados' }}</td>
+									</tr>
+									<tr ng-repeat="item in depositos">
+										<td>{{ item.nme_deposito }}</td>
+										<td width="50" align="center">
+											<button type="button" class="btn btn-xs btn-success" ng-click="addDeposito(item)">
+												<i class="fa fa-check-square-o"></i> Selecionar
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+			   			</div>
+			   		</div>
+
+			   		<div class="row">
+				    	<div class="col-sm-12">
+				    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.depositos.length > 1">
+								<li ng-repeat="item in paginacao.depositos" ng-class="{'active': item.current}">
+									<a href="" h ng-click="loadDepositos(item.offset,item.limit)">{{ item.index }}</a>
+								</li>
+							</ul>
 				    	</div>
-				    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<!-- /.modal -->
+			    	</div>
+			    </div>
+		  	</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
 
-		<!-- /Modal fabricantes-->
-		<div class="modal fade" id="modal-fabricantes" style="display:none">
-  			<div class="modal-dialog">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Fabricantes</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.fabricantes" ng-keyup= "loadFabricantes(0,10)" ng-enter="loadFabricantes(0,10)" type="text" class="form-control input-sm">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadFabricantes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
+	<!-- /Modal Fabricantes-->
+	<div class="modal fade" id="modal-fabricantes" style="display:none">
+			<div class="modal-dialog">
+			<div class="modal-content">
+  				<div class="modal-header">
+    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4>Fabricantes</span></h4>
+  				</div>
+			    <div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group">
+					            <input ng-model="busca.fabricantes" ng-keyup= "loadFabricantes(0,10)" ng-enter="loadFabricantes(0,10)" type="text" class="form-control input-sm">
+					            <div class="input-group-btn">
+					            	<button ng-click="loadFabricantes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+					            		<i class="fa fa-search"></i> Buscar
+					            	</button>
+					            </div> <!-- /input-group-btn -->
+					        </div> <!-- /input-group -->
+						</div><!-- /.col -->
+					</div>
 
-						<br/>
+					<br/>
 
-				   		<div class="row">
-				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(fabricantes.length != 0)">
-										<tr>
-											<th colspan="2">Fabricante</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(fabricantes.length == 0)">
-											<td colspan="3">{{ busca_vazia.fabricantes  && 'Não há resultado para a busca' || 'Não há Fabricantes cadastrados' }}</td>
-										</tr>
-										<tr ng-repeat="item in fabricantes">
-											<td>{{ item.nome_fabricante }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addFabricante(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-				   			</div>
-				   		</div>
+			   		<div class="row">
+			   			<div class="col-sm-12">
+			   				<table class="table table-bordered table-condensed table-striped table-hover">
+								<thead ng-show="(fabricantes.length != 0)">
+									<tr>
+										<th colspan="2">Fabricante</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-show="(fabricantes.length == 0)">
+										<td colspan="3">{{ busca_vazia.fabricantes  && 'Não há resultado para a busca' || 'Não há Fabricantes cadastrados' }}</td>
+									</tr>
+									<tr ng-repeat="item in fabricantes">
+										<td>{{ item.nome_fabricante }}</td>
+										<td width="50" align="center">
+											<button type="button" class="btn btn-xs btn-success" ng-click="addFabricante(item)">
+												<i class="fa fa-check-square-o"></i> Selecionar
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+			   			</div>
+			   		</div>
 
-				   		<div class="row">
-					    	<div class="col-sm-12">
-					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.fabricantes.length > 1">
-									<li ng-repeat="item in paginacao.fabricantes" ng-class="{'active': item.current}">
-										<a href="" h ng-click="loadFabricantes(item.offset,item.limit)">{{ item.index }}</a>
-									</li>
-								</ul>
-					    	</div>
+			   		<div class="row">
+				    	<div class="col-sm-12">
+				    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.fabricantes.length > 1">
+								<li ng-repeat="item in paginacao.fabricantes" ng-class="{'active': item.current}">
+									<a href="" h ng-click="loadFabricantes(item.offset,item.limit)">{{ item.index }}</a>
+								</li>
+							</ul>
 				    	</div>
-				    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<!-- /.modal -->
+			    	</div>
+			    </div>
+		  	</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
 
 	<a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
 
@@ -606,6 +618,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

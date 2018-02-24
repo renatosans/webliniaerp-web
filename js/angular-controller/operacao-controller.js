@@ -52,7 +52,7 @@ app.controller('OperacaoController', function($scope, $http, $window, $dialogs, 
 	}
 
 	ng.reset = function() {
-		console.log('sdsad');
+		
 		ng.operacao = operacao ;
 		ng.editing 	= false;
 		$($(".has-error").find(".form-control")).tooltip('destroy');

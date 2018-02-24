@@ -86,6 +86,12 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		{value: 0, name: 'desconto', 				label: 'Desconto'}
 	];
 
+	ng.tabela_de_vendas = [
+		{value: 0, name: 'atacado', 				label: 'Atacado'},
+		{value: 0, name: 'intermediario', 			label: 'Intermediário'},
+		{value: 0, name: 'varejo', 					label: 'Varejo'}
+	];
+
 	ng.colunas_ordenacao_produtos = [
 		{value: 'id_produto', label: 'ID do Produto'},
 		{value: 'nome_produto', label: 'Nome do Produto'},
@@ -110,6 +116,9 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 	if(typeof parseJSON(ng.cfg.colunas_pesquisa_produto) == 'object')
 		ng.colunas_pesquisa_produto = parseJSON(ng.cfg.colunas_pesquisa_produto);
+
+	if(typeof parseJSON(ng.cfg.tabela_de_vendas) == 'object')
+		ng.tabela_de_vendas = parseJSON(ng.cfg.tabela_de_vendas);
 
 	if(typeof parseJSON(ng.cfg.campos_ordenacao_produtos) == 'object')
 		ng.campos_ordenacao_produtos = parseJSON(ng.cfg.campos_ordenacao_produtos);
@@ -606,7 +615,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	}
 
 	ng.escolherPlano = function(){
-		//console.log(ng.tipo_plano,ng.currentNode);
+		
 		if(ng.tipo_plano =='movimentacao'){
 			ng.config.nome_plano_movimentacao = ng.currentNode.dsc_plano ;
 			ng.id_plano_movimentacao_caixa    = ng.currentNode.id;
@@ -736,7 +745,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		var r  = false ;
 		aj.get(baseUrlApi()+"planoconta/"+id)
 			.success(function(data, status, headers, config) {
-				//console.log(data);
+				
 				if(tipo == 'movimentacao'){
 					ng.config.nome_plano_movimentacao = data.dsc_plano;
 					ng.id_plano_movimentacao_caixa = data.id;
@@ -793,6 +802,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item3 = {
 							nome 				:'flg_ativar_auto_complete_clientes',
 							valor 				:ng.configuracoes.flg_ativar_auto_complete_clientes , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
+		
+		if(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas != undefined){
+			var item3 = {
+							nome 				:'flg_forcar_fechamento_caixa_zero_horas',
+							valor 				:ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item3);
@@ -956,6 +974,33 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item10);
 		}
 
+		if(ng.configuracoes.id_caixa_padrao != undefined){
+			var item10 = {
+							nome 				:'id_caixa_padrao',
+							valor 				:ng.configuracoes.id_caixa_padrao , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.id_vendedor_padrao != undefined){
+			var item10 = {
+							nome 				:'id_vendedor_padrao',
+							valor 				:ng.configuracoes.id_vendedor_padrao , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
+		if(ng.configuracoes.id_maquineta_padrao != undefined){
+			var item10 = {
+							nome 				:'id_maquineta_padrao',
+							valor 				:ng.configuracoes.id_maquineta_padrao , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item10);
+		}
+
 		if(ng.configuracoes.qtd_registros_pesquisa_produtos != undefined){
 			var item2000 = {
 							nome 				:'qtd_registros_pesquisa_produtos',
@@ -981,6 +1026,16 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item5);
+		}
+
+		if(typeof ng.tabela_de_vendas == 'object'){
+			var tabela_de_vendas = JSON.stringify(angular.copy(ng.tabela_de_vendas));
+			var item11 = {
+							nome 				:'tabela_de_vendas',
+							valor 				:tabela_de_vendas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item11);
 		}
 
 		btn.button('loading');
@@ -1141,7 +1196,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		ng.edit_serie_documento_fiscal = true ;
 		ng.index_edit_serie_documento_fiscal = index ;
 		ng.serie_documento_fiscal = angular.copy(item);
-		console.log(ng.serie_documento_fiscal);
+		
 	}
 
 	var deleteSerieFiscal = [] ;
@@ -1151,7 +1206,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		else
 			ng.lista_serie_documento_fiscal[index].flg_excluido = 1 ;
 
-		console.log(deleteSerieFiscal);
+		
 	}
 
 	ng.salvarConfigFiscal = function(event){
@@ -1258,6 +1313,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item = {
 							nome 				:'qtd_dias_antecedencia_alerta_vencimento_certificado_digital',
 							valor 				:ng.configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_pagamento_pendente != undefined){
+			var item = {
+							nome 				:'flg_pagamento_pendente',
+							valor 				:ng.configuracoes.flg_pagamento_pendente , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item);
@@ -1403,6 +1467,59 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item);
 		}
+		if(ng.configuracoes.flg_controlar_comanda_cliente != undefined){
+			var item = {
+							nome 				:'flg_controlar_comanda_cliente',
+							valor 				:ng.configuracoes.flg_controlar_comanda_cliente , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_imprime_comanda_eletronica != undefined){
+			var item = {
+							nome 				:'flg_imprime_comanda_eletronica',
+							valor 				:ng.configuracoes.flg_imprime_comanda_eletronica , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_modo_selecao_produto != undefined){
+			var item = {
+							nome 				:'flg_modo_selecao_produto',
+							valor 				:ng.configuracoes.flg_modo_selecao_produto , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_modo_controle_mesas != undefined){
+			var item = {
+							nome 				:'flg_modo_controle_mesas',
+							valor 				:ng.configuracoes.flg_modo_controle_mesas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_trabalha_delivery != undefined){
+			var item = {
+							nome 				:'flg_trabalha_delivery',
+							valor 				:ng.configuracoes.flg_trabalha_delivery , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_usa_cartao_magnetico != undefined){
+			var item = {
+							nome 				:'flg_usa_cartao_magnetico',
+							valor 				:ng.configuracoes.flg_usa_cartao_magnetico , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
 
 		btn.button('loading');
 		
@@ -1518,14 +1635,14 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				btn.button('reset');
 			});
 
-		console.log(json);
+		
 	}
 
 	ng.loadPerfis = function() {
 		aj.get(baseUrlApi()+"perfis?tpue->id_empreendimento="+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				var aux = typeof parseJSON(ng.cfg.perfis_cadastro_rapido) == 'object' ?  parseJSON(ng.cfg.perfis_cadastro_rapido) : [] ;
-				console.log(aux);
+				
 				$.each(data,function(i,x){
 					index = getIndex('id',data[i].id,data);
 					if($.isNumeric(index) && !empty(aux[i])){

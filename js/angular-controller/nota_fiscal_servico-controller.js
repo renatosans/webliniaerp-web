@@ -244,7 +244,7 @@ app.controller('NotaFiscalServicoController', function($scope, $http, $window, $
 				loadServicos();
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -254,7 +254,7 @@ app.controller('NotaFiscalServicoController', function($scope, $http, $window, $
 				$scope.nf.emitente = data[0];
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -264,7 +264,7 @@ app.controller('NotaFiscalServicoController', function($scope, $http, $window, $
 				$scope.nf.tomador = data.usuarios[0];
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 
@@ -274,7 +274,7 @@ app.controller('NotaFiscalServicoController', function($scope, $http, $window, $
 				$scope.nf.ordem_servico.servicos = data;
 			})
 			.error(function(data, status, headers, config) {
-				console.log(data, status, headers, config);
+				
 			});
 	}
 

@@ -69,7 +69,7 @@ app.controller('AgendamentoConsultaController', function($scope, $http, $window,
 						   .attr("title", 'Selecione o paciente')
 						   .attr("data-original-title", 'Selecione o paciente');
 				element.tooltip({ container: "body"});*/
-	     		//console.log($('.fc-content',element));
+	     		
 
 	     	},
 			defaultDate: NOW('en'),

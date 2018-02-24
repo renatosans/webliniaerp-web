@@ -27,6 +27,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -187,7 +190,7 @@
 						<tr>
 							<th class="text-center" width="80">#</th>
 							<th class="text-center" width="80">Data</th>
-							<th class="text-center" width="80">Mesa</th>
+							<th class="text-center" width="80" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">Mesa</th>
 							<th class="text-center">Vendedor</th>
 							<th class="text-center">Cliente</th>
 							<th class="text-center" width="80">Status</th>
@@ -198,7 +201,7 @@
 						<tr bs-tooltip ng-repeat="item in vendas">
 							<td class="text-center">{{ item.id }}</td>
 							<td class="text-center">{{ item.dta_group | dateFormat : 'time' }}</td>
-							<td class="text-center">{{ item.dsc_mesa }}</td>
+							<td class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">{{ item.dsc_mesa }}</td>
 							<td>{{ item.nme_vendedor }}</td>
 							<td>{{ item.nme_cliente }}</td>
 							<td class="text-center">
@@ -291,6 +294,10 @@
 	<script src="js/moment/moment.min.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>

@@ -238,7 +238,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		var qtdTotal = 0;
 
 		$.each(ng.produto.validades, function(i, item) {
-			qtdTotal += parseInt(item.qtd,10);
+			qtdTotal += (item.qtd);
 		});
 
 		ng.produto.qtd_ivn = qtdTotal;
@@ -346,7 +346,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
     ng.atualizaQtdTotal = function(){
      	var qtd_total = 0;
      	$.each(ng.inventario.itens,function(i,item){
-     		qtd_total += parseInt(item.qtd_ivn == null || item.qtd_ivn == "" ? 0 : item.qtd_ivn);
+     		qtd_total += (item.qtd_ivn == null || item.qtd_ivn == "" ? 0 : item.qtd_ivn);
      	});
      	ng.inventario.qtd_total = qtd_total ;
      }
@@ -598,7 +598,8 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 
 		ng.inventario.itens.push(item);
 		if(autoAddQtd) {
-	    	ng.itemValidade = { validade: '', qtd: item.qtd };
+	    	ng.itemValidade = { validade: '', qtd: item.qtd, flg_unidade_fracao: item.flg_unidade_fracao};
+			
 	    	ng.addValidadeItem();
     		ng.atualizaQtdTotal();
     	}

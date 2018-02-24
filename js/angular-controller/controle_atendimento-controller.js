@@ -65,7 +65,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 		ng.profissionais = [];
-		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+" AND usu.id_perfil=1547&usu->id[exp]= NOT IN("+ng.configuracoes.id_cliente_movimentacao_caixa+","+ng.configuracoes.id_usuario_venda_vitrine+"))";
+		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+" AND usu.id_perfil=1547&usu->flg_ativo=1&usu->id[exp]= NOT IN("+ng.configuracoes.id_cliente_movimentacao_caixa+","+ng.configuracoes.id_usuario_venda_vitrine+"))";
 
 		if(ng.busca.profissionais != ""){
 			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.profissionais+"%' OR usu.apelido LIKE '%"+ng.busca.profissionais+"%')"}});
@@ -96,7 +96,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 
 	ng.addCliente = function(item){
 		ng.cliente = item;
-		console.log(ng.cliente);
+		
 		ng.cliente.acao_cliente = "update"
 		$("#list_clientes").modal("hide");
 		aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ ng.userLogged.id_empreendimento+"?usu->id="+item.id)
@@ -104,7 +104,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 				ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
 			})
 			.error(function(data, status, headers, config) {
-				console.log('erro ao consultar saldo do cliente');
+				
 			});
 	}
 
@@ -235,7 +235,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 		 		
 		 	},
 		 	error: function(data,x) {
-		 		console.log(data);
+		 		
 		 		alert('erro ao iniciar atendimento');
 		 	}
 		});
@@ -256,8 +256,8 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 		 		ng.cliente.id = data.id ;
 		 	},
 		 	error: function(data,x) {
-		 		console.log(data);
-		 		console.log(x);
+		 		
+		 		
 		 		if(data.status == 406) {
 		 			var errors = data;
 		 			var first  = null ;
@@ -319,7 +319,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 				
 			})
 			.error(function(data, status, headers, config) {
-				console.log('Erro ao salvar historico') ;
+				
 		});
 	}
 
@@ -694,7 +694,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 				vlr_total += x.valor_real_item;
 		});
 		//ng.vlrTotalCompra = numberFormat(vlr_total,2,'.','') ;
-		//console.log(vlr_total);
+		
 		return vlr_total ;
 	}
 
@@ -705,7 +705,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 				vlr_total += x.valor_real_item;
 		});
 		//ng.vlrTotalCompra = numberFormat(vlr_total,2,'.','') ;
-		//console.log(vlr_total);
+		
 		return vlr_total ;
 	}
 
@@ -897,8 +897,8 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
 			total += Number(v.valor);
 		});
 		ng.total_pg = Math.round( total * 100) /100 ;
-		console.log(ng.total_pg);
-		console.log(ng.vlrTotalCompra);
+		
+		
 	}
 
 	ng.calculaTroco = function(){
@@ -1498,7 +1498,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
         id_empreendimento : ng.userLogged.id_empreendimento,
         pagamentos:pagamentos
     }
-    console.log(post);
+    
 
     aj.post(baseUrlApi()+url,post)
         .success(function(data, status, headers, config) {
@@ -1562,7 +1562,7 @@ app.controller('ControleAtendimentoController', function($scope, $http, $window,
    					ng.pagamentosCliente.pagamentos = [] ;
             });
 
-          console.log(ng.pagamentosCliente);
+          
 	}
 	ng.abrirFichaPaciente = function(paciente,acao){
 		ng.hide_add_procedimentos = false ;

@@ -128,7 +128,7 @@ app.controller('RelatorioConsolidadoCaixa', function($scope, $http, $window, Use
 				$.each(ng.itens, function(i, item) {
 					$.each(item.totais.formas_pagamento, function(x, fp) {
 
-						console.log(fp);
+						
 						ng.total += parseFloat(fp.valor);
 						if(!empty(formas_pagamento[x]))
 							formas_pagamento[x].valor += parseFloat(fp.valor);

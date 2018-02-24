@@ -60,7 +60,7 @@ app.controller('AgendaForncedoresController', function($scope, $http, $window, $
         if(error > 0)
             return false
 
-        console.log(ng.simulador);
+        
         ng.simulador.dta_primeira_parcela      = somadias(uiDateFormat(ng.simulador.dta_faturamento,'99/99/999'),Number(ng.simulador.dias_primeira_parcela));
         ng.simulador.dta_limite_ultima_parcela = somadias(ng.simulador.dta_primeira_parcela ,Number(ng.simulador.dias_ultima_parcela));
         ng.simulador.valor_parcela             = ng.simulador.valor_pedido/Number(ng.simulador.qtd_parcelas);
@@ -83,7 +83,7 @@ app.controller('AgendaForncedoresController', function($scope, $http, $window, $
             ng.simulador_msg = "Os pagamentos marcados em vermelho excederam o limite de dias permitido";
 
         ng.simulador.pagamento_parcelado = pagamento_parcelado;
-        console.log(pagamento_parcelado);
+        
     }
 
     ng.loafConfig = function(){
@@ -408,13 +408,13 @@ app.controller('AgendaForncedoresController', function($scope, $http, $window, $
                 });
             },
 			viewRender:function( view, element ){
-				console.log(view);
+				
 			}
 		});
 
     $( "body" ).on( "click", ".fc-day-number", function() {
         var date = $(this).attr('data-date');
-        //console.log( date );
+       
     });
 
 	ng.modalConfig = function(){

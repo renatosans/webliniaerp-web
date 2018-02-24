@@ -27,6 +27,10 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Tags Input -->
+	<link href="css/ng-tags-input.min.css" rel="stylesheet"/>
+	<link href="css/ng-tags-input.bootstrap.min.css" rel="stylesheet"/>
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -143,7 +147,7 @@
 						</span>
 
 						<div class="pull-left m-left-sm">
-							<h3 class="m-bottom-xs m-top-xs">Relatório de Vendas por Fabricante</h3>
+							<h3 class="m-bottom-xs m-top-xs">Relatório de Curvas ABC</h3>
 							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
@@ -168,7 +172,7 @@
 									<div class="form-group">
 										<label class="control-label">Inicial</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" ng-model="busca.dtaInicial" class="datepicker form-control">
 											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
@@ -178,47 +182,37 @@
 									<div class="form-group">
 										<label class="control-label">Final</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" ng-model="busca.dtaFinal" class="datepicker form-control">
 											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
 								</div>
 
-								<div class="col-lg-4">
-									<div class="form-group">
-										<label class="control-label">Fabricante</label>
-										<div class="input-group">
-											<input ng-click="modalFabricantes()" type="text" class="form-control" ng-model="busca.nome_fabricante" readonly="readonly" style="cursor: pointer;"></input>
-											<span class="input-group-btn">
-												<button ng-click="modalFabricantes(0,10)" ng-click="modalFabricantes(0,10)" type="button" class="btn"><i class="fa fa-puzzle-piece"></i></button>
-											</span>
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-8">
+								<div class="col-sm-6">
 									<div class="form-group">
 										<label class="control-label">Fabricante</label>
 										<tags-input
-										 ng-model="busca.nome_fabricante"
-										 ng-focus="showCategorias()";
-										 key-press-false-tags-input-categorias
-										 placeholder="Add Categoria" >
+										 ng-model="busca.arrFabricantes"
+										 ng-focus="modalFabricantes(0,10)";
+										 key-press-false-tags-input-fabricantes
+										 placeholder="Add Fabricante" >
 										</tags-input>
 									</div>
 								</div>
+
 								<div class="col-sm-2">
 									<div class="form-group">
 										<label for="" class="control-label">Ordenar Por:</label>
 										<div class="form-group">
 											<label class="label-radio inline">
-												<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="1" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
+												<input ng-model="busca.flg_campo_ordenacao" value="qtd" name="flg_campo_ordenacao"  ng-change="aplicarFiltro()" type="radio" class="inline-radio">
 												<span class="custom-radio"></span>
-												<span>Qtd</span>
+												<span>Qtde.</span>
 											</label>
 											<label class="label-radio inline">
-												<input ng-model="configuracoes.flg_ativar_auto_complete_produtos" value="0" name="flg_ativar_auto_complete_produtos"   type="radio" class="inline-radio">
+												<input ng-model="busca.flg_campo_ordenacao" value="vlr" name="flg_campo_ordenacao" ng-change="aplicarFiltro()"  type="radio" class="inline-radio">
 												<span class="custom-radio"></span>
-												<span>Vlr</span>
+												<span>Valor</span>
 											</label>
 										</div>
 									</div>
@@ -231,7 +225,7 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
-							<button class="btn btn-sm btn-success hidden-print" ng-show="vendas.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-show="data.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
@@ -239,55 +233,78 @@
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(vendas != null)">
-					<thead>
-						<tr>
-							<th width="100" class="text-center">#</th>
-							<th width="100" class="text-center">Data Venda</th>
-							<th width="100" class="text-center">Cod. Barras</th>
-							<th width="200">Produto</th>
-							<th width="100" class="text-center">Fabricante</th>
-							<th width="100" class="text-center">Categoria</th>
-							<th width="100" class="text-center">Tamanho</th>
-							<th width="100" class="text-center">Cor/Sabor</th>
-							<th width="100" class="text-center">Qtd. Vendida</th>
-							<th width="100" class="text-center">Media Custo</th>
-							<th width="100" class="text-center">Media Desc. %</th>
-							<th width="100" class="text-center">Media Desc. R$</th>
-							<th width="100" class="text-center">Vlr. C/ Desc.</th>
-							<th width="100" class="text-center">R$ Subtotal</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="vendas.length == 0">
-							<td class="text-center" colspan="6">
-								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-repeat="item in vendas">
-							<td class="text-center">{{ item.cod_produto }}</td>
-							<td class="text-center">{{ item.dta_venda }}</td>
-							<td class="text-center">{{ item.cod_barras }}</td>
-							<td>{{ item.nme_produto }}</td>
-							<td class="text-center">{{ item.nme_fabricante }}</td>
-							<td class="text-center">{{ item.dsc_categoria }}</td>
-							<td class="text-center">{{ item.nme_tamanho }}</td>
-							<td class="text-center">{{ item.nme_cor_sabor }}</td>
-							<td class="text-center">{{ item.qtd_vendida }}</td>
-							<td class="text-center">R$ {{item.med_custo | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">R$ {{item.med_desconto_perc | numberFormat:2:',':'.'}}</td>
-							<td class="text-right">{{item.med_desconto_real | numberFormat:2:',':'.'}} %</td>
-							<td class="text-right">R$ {{item.vlr_desconto | numberFormat:2:',':'.'}}</td>
-							<td class="text-center">R$ {{item.vlr_subtotal | numberFormat:2:',':'.'}}</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="col-md-6">
+									<div class="row">
+										<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(data != null)">
+											<thead>
+												<tr>
+													<th width="100" class="text-center"></th>
+													<th width="100" class="text-center"></th>
+													<th width="100" class="text-center">Linhas</th>
+													<th width="100" class="text-center" ng-if="busca.flg_campo_ordenacao == 'qtd'">Quantidade</th>
+													<th width="100" class="text-center" ng-if="busca.flg_campo_ordenacao == 'vlr'">Valor</th>
+													<th width="100" class="text-center">Percentual</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-if="faixas_curva_abc.length == 0">
+													<td class="text-center" colspan="6">
+														<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+													</td>
+												</tr>
+												<tr ng-repeat="item in faixas_curva_abc" class="{{ item.color }}">
+													<td class="text-center">{{ item.label }}</td>
+													<td class="text-center">{{ item.valor }}%</td>
+													<td class="text-center">{{ item.qtd_linhas }}</td>
+													<td class="text-right" ng-if="busca.flg_campo_ordenacao == 'qtd'">{{ item.vlr_soma | numberFormat : 0 : ',' : '.' }}</td>
+													<td class="text-right" ng-if="busca.flg_campo_ordenacao == 'vlr'">R$ {{ item.vlr_soma | numberFormat : 2 : ',' : '.' }}</td>
+													<td class="text-center">{{ item.prc_faixa | numberFormat : 2 : ',' }} %</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<div class="row">
+										<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(data != null)">
+											<thead>
+												<tr>
+													<th class="text-left">Fabricante</th>
+													<th width="100" class="text-right" ng-if="busca.flg_campo_ordenacao == 'qtd'">Qtde. Vendida</th>
+													<th width="100" class="text-right" ng-if="busca.flg_campo_ordenacao == 'vlr'">Valor Vendido</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-if="data.length == 0">
+													<td class="text-center" colspan="6">
+														<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+													</td>
+												</tr>
+												<tr ng-repeat="item in data" class="{{ item.color }}">
+													<td class="text-left">{{ item.nome_fabricante }}</td>
+													<td class="text-right" width="100" ng-if="busca.flg_campo_ordenacao == 'qtd'">{{ item.qtd_vendida | numberFormat : 0 : ',' : '.' }}</td>
+													<td class="text-right" width="100" ng-if="busca.flg_campo_ordenacao == 'vlr'">R$ {{ item.vlr_vendido | numberFormat : 2 : ',' : '.' }}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div id="container" style="width:100%; height:400px;"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 
 				<div class="pull-right hidden-print">
-					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
-						<li ng-repeat="item in paginacao.vendas" ng-class="{'active': item.current}">
-							<a href="" h ng-click="loadVendas(item.offset,item.limit)">{{ item.index }}</a>
+					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.data.length > 1">
+						<li ng-repeat="item in paginacao.data" ng-class="{'active': item.current}">
+							<a href="" h ng-click="getData(item.offset,item.limit)">{{ item.index }}</a>
 						</li>
 					</ul>
 				</div>
@@ -347,8 +364,11 @@
 										<tr ng-repeat="item in fabricantes">
 											<td>{{ item.nome_fabricante }}</td>
 											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addFabricante(item)">
+												<button ng-if="!fabricanteIsSelected(item.id)" ng-click="selectFabricante(item)" class="btn btn-success btn-xs" type="button">
 													<i class="fa fa-check-square-o"></i> Selecionar
+												</button>
+												<button ng-if="fabricanteIsSelected(item.id)"  class="btn btn-primary btn-xs" type="button">
+													<i class="fa fa-check-square-o"></i> Selecionado
 												</button>
 											</td>
 										</tr>
@@ -416,8 +436,25 @@
 
 	<script src="js/jquery.noty.packaged.js"></script>
 
+	<!-- Tag input -->
+	<script src='js/jquery.tagsinput.min.js'></script>
+
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
+
+	<!-- UnderscoreJS -->
+	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+
+	<!-- HighCharts -->
+	<script type="text/javascript" src="bower_components/highcharts/highcharts.js"></script>
+	<script type="text/javascript" src="bower_components/highcharts/modules/exporting.js"></script>
 
 	<!-- AngularJS -->
 	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
@@ -430,6 +467,10 @@
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>
     <script src="js/dialogs.v2.min.js" type="text/javascript"></script>
     <script src="js/auto-complete/ng-sanitize.js"></script>
+	<script src="js/ng-tags-input.min.js"></script>
+	<script type="text/javascript">
+    	var addParamModule = ['ngTagsInput'] ;
+    </script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
@@ -438,10 +479,8 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('.datepicker').datepicker();
-			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
 			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
-
 			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});

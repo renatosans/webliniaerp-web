@@ -10,6 +10,8 @@
 			return 'dashboard.php';
 		elseif (in_array('pdv.php', $pages))
 			return 'pdv.php';
+		elseif (in_array('controle-mesas.php', $pages))
+			return 'controle-mesas.php';
 		elseif (in_array('produtos.php', $pages))
 			return 'produtos.php';
 		elseif (in_array('lancamentos.php', $pages))
@@ -226,8 +228,10 @@
 			$info 	 = curl_getinfo($ch);
 			curl_close ($ch);
 
-			if($info['http_code'] == 200) $saida['menu'] = json_decode($menu,true);
-			else $saida['menu'] = array();
+			if($info['http_code'] == 200)
+				$saida['menu'] = json_decode($menu,true);
+			else
+				$saida['menu'] = array();
 		}
 
 		if(isset($_SESSION['dispositivo']))

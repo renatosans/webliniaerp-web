@@ -140,6 +140,20 @@ app.service('ConfigService', function($http) {
 	}
 });
 
+app.service('TabelaPrecoService', ['ConfigService', function(ConfigService) {
+	this.existeTabelaPreco = function(id_empreendimento, nome_tabela_preco) {
+		var exists = false;
+		var arr_tabelas_preco = JSON.parse(ConfigService.getConfig(id_empreendimento).tabela_de_vendas);
+		$.each(arr_tabelas_preco, function(i, tabela) {
+			if(nome_tabela_preco == tabela.name && tabela.value == 1){
+				exists = true;
+				return false;
+			}
+		});
+		return exists;
+	}
+}]);
+
 app.service('EmpreendimentoService', function($http) {
 	var empreendimento = null ;
 	this.getDadosEmpreendimento = function(id_empreendimento) {
@@ -163,7 +177,7 @@ app.service('NFService', function($http) {
 	this.getNota = function(id_empreendimento,id_venda) {
 		var nota  = false ;;
 		 $.ajax({
-		 	url: baseUrlApi()+"nota_fiscal?cod_empreendimento="+id_empreendimento+"&cod_venda="+id_venda,
+		 	url: baseUrlApi()+"nota_fiscal?cod_empreendimento="+id_empreendimento+"&cod_venda="+id_venda+"&status[exp]=<>'cancelado'",
 		 	async: false,
 		 	success: function(dados) {
 		 		nota = dados ;

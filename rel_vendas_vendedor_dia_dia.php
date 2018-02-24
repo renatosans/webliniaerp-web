@@ -27,6 +27,9 @@
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
 
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
 	<link href="css/endless-skin.css" rel="stylesheet">
@@ -166,20 +169,10 @@
 							<div class="row">
 								<div class="col-sm-2">
 									<div class="form-group">
-										<label class="control-label">Inicial</label>
+										<label class="control-label">Data</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
-											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-sm-2">
-									<div class="form-group">
-										<label class="control-label">Final</label>
-										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
-											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
+											<input readonly="readonly" ng-model="busca.dta_inicial" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
+											<span class="input-group-addon" id="cld_data"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
 								</div>
@@ -188,7 +181,7 @@
 									<div class="form-group">
 										<label class="control-label">Vendedor</label>
 										<div class="input-group">
-											<input ng-click="selCliente()" type="text" class="form-control" ng-model="vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
+											<input ng-click="selCliente()" type="text" class="form-control" ng-value="busca.vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
 											<span class="input-group-btn">
 												<button ng-click="selCliente()" ng-click="selCliente(0,10)" type="button" class="btn"><i class="fa fa-users"></i></button>
 											</span>
@@ -200,12 +193,40 @@
 									<div class="form-group">
 										<label class="control-label">Produto</label>
 										<div class="input-group">
-											<input ng-click="showProdutos(0,10)" type="text" class="form-control" ng-model="produto.nome_produto" readonly="readonly" style="cursor: pointer;"></input>
+											<input ng-click="showProdutos(0,10)" type="text" class="form-control" ng-value="busca.produto.nome_produto" readonly="readonly" style="cursor: pointer;"></input>
 											<span class="input-group-btn">
 												<button ng-enter="showProdutos(0,10)" ng-click="showProdutos(0,10)" type="button" class="btn"><i class="fa fa-archive"></i></button>
 											</span>
 										</div>
 									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6" style="margin-bottom:8px;">
+									<div class="control-label text-center" style="font-weight: 700;background: #D6D5D5;">Faixa de desconto</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-2 valor_inicio" ng-show="busca.op_valor == 'between'" >
+									<input thousands-formatter ng-model="busca.valor_inicio" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group">
+										<select ng-model="busca.op_valor" ng-change="limparErrorValor()" class="form-control input-sm">
+											<option value=""></option>
+											<option value="between">Entre</option>
+											<option value=">">Maior</option>
+											<option value=">=">Maior igual</option>
+											<option value="<">Menor</option>
+											<option value="<=">Menor igual</option>
+											<option value="=">Igual</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-sm-2 valor_fim">
+									<input thousands-formatter ng-model="busca.valor_fim" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 						</form>
@@ -226,7 +247,7 @@
 				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(vendas != null)">
 					<thead>
 						<tr>
-							<th></th>
+							<th>#</th>
 							<th width="100" class="text-center">Data Venda</th>
 							<th width="200">Vendedor</th>
 							<th width="200">Produto</th>
@@ -236,6 +257,7 @@
 							<th width="100" class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ Custo</th>
 							<th width="100" class="text-center">R$ Real</th>
 							<th width="100" class="text-center">Desc. %</th>
+							<th width="100" class="text-center">Diferença</th>
 							<th width="100" class="text-center">Vlr. c/ Desc.</th>
 							<th width="100" class="text-center">Qtd.</th>
 							<th width="100" class="text-center">R$ Subtotal</th>
@@ -258,21 +280,26 @@
 							<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{item.vlr_custo | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.vlr_real_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">{{item.num_percentual_desconto | numberFormat:2:',':'.'}} %</td>
+							<td class="text-right">R$ {{item.vlr_real_item - item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-right">R$ {{item.vlr_venda_item | numberFormat:2:',':'.'}}</td>
 							<td class="text-center">{{ item.qtd }}</td>
 							<td class="text-center">R$ {{item.vlr_subtotal_item | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td class="text-right text-bold" colspan="7">Totais</td>
+							<td class="text-center text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold">R$ {{ vlr_real_item_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td></td>
+							<td></td>
+							<td class="text-right text-bold">R$ {{ vlr_venda_item_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td></td>
+							<td class="text-center text-bold">R$ {{ vlr_subtotal_item_total | numberFormat: 2 : ',' : '.'}}</td>
+						</tr>
+					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
-
-				<div class="pull-right hidden-print">
-					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
-						<li ng-repeat="item in paginacao.vendas" ng-class="{'active': item.current}">
-							<a href="" h ng-click="loadVendas(item.offset,item.limit)">{{ item.index }}</a>
-						</li>
-					</ul>
-				</div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->
@@ -302,7 +329,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca_modal.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
@@ -365,7 +392,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-keyup="loadProdutos(0,10)"  ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
+						            <input ng-model="busca_modal.produtos" ng-keyup="loadProdutos(0,10)"  ng-enter="loadProdutos(0,10)" type="text" class="form-control input-sm">
 
 						            <div class="input-group-btn">
 						            	<button ng-click="loadProdutos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-search"></i> Buscar</button>
@@ -469,6 +496,10 @@
 
 	<script src="js/jquery.noty.packaged.js"></script>
 
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
@@ -492,10 +523,13 @@
 		$(document).ready(function() {
 			$('.datepicker').datepicker();
 			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
-			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
+			$("#cld_data").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
 
-			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
+			$('.datepicker').on('changeDate', function(ev){
+				$(this).datepicker('hide');
+				$(this).trigger('change');
+			});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});
 	</script>

@@ -20,11 +20,17 @@
 	<!-- Pace -->
 	<link href="css/pace.css" rel="stylesheet">
 
+	<!-- Chosen -->
+	<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
+
 	<!-- Datepicker -->
 	<link href="css/datepicker.css" rel="stylesheet"/>
 
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
+
+	<!-- Bower Components -->	
+	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
 
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -190,7 +196,7 @@
 									</div>
 								</div>
 
-								<div class="col-sm-3">
+								<!--<div class="col-sm-3">
 									<div class="form-group">
 										<label for="" class="control-label">Cadastrar produtos não encontrados?</label>
 										<div class="form-group">
@@ -208,7 +214,7 @@
 											</label>
 										</div>
 									</div>
-								</div>
+								</div>-->
 
 								<div class="col-sm-4">
 									<div class="form-group">
@@ -276,23 +282,19 @@
 								</div>
 
 								<div class="col-sm-2">
-									<div class="form-group" id="vlr_total_imposto">
-										<label class="control-label">Total Imposto (R$)</label>
-										<input type="text" class="form-control" ng-model="nota.vlr_total_imposto" readonly="readonly">
-									</div>
-								</div>
-
-								<div class="col-sm-2">
 									<div class="form-group" id="vlr_frete">
-										<label class="control-label">Total Frete (R$)</label>
-										<input ng-model="nota.vlr_frete" thousands-formatter  type="text" class="form-control" ng-KeyUp="atualizaValorTotal()">
+										<label class="control-label">Total Frete</label>
+										<input type="text" class="form-control text-right" 
+											ng-KeyUp="atualizaValorTotal()"
+											ng-model="nota.vlr_frete" thousands-formatter>
 									</div>
 								</div>
 
 								<div class="col-sm-2">
 									<div class="form-group" id="vlr_total_nota_fiscal">
-										<label class="control-label">Total NF (R$)</label>
-										<input type="text" class="form-control" ng-model="nota.vlr_total_nota_fiscal" readonly="readonly">
+										<label class="control-label">Total NF</label>
+										<input type="text" class="form-control text-right" readonly="readonly"
+											value="R$ {{ nota.vlr_total_nota_fiscal | numberFormat : 2 : ',' : '.' }}">
 									</div>
 								</div>
 							</div>
@@ -321,6 +323,17 @@
 									<div class="form-group">
 										<label class="control-label"><br></label>
 										<label class="label-checkbox">
+											<input ng-model="nota.flg_especificar_natureza_itens" type="checkbox" id="toggleLine" ng-true-value="1" ng-false-value="0">
+											<span class="custom-checkbox"></span>
+											Especificar natureza dos itens
+										</label>
+									</div>
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label class="control-label"><br></label>
+										<label class="label-checkbox">
 											<input ng-model="nota.flg_alterar_valor_custo" type="checkbox" id="toggleLine" ng-true-value="1" ng-false-value="0">
 											<span class="custom-checkbox"></span>
 											Alterar valor de custo
@@ -330,14 +343,18 @@
 							</div>
 
 							<br>
-							<h5>Itens Recebidos</h5>
 
 							<div class="row">
 								<div class="col-sm-12">
 									<table class="table table-bordered table-condensed table-striped table-hover">
-										<thead ng-show="entradaEstoque.length > 0">
+										<caption>Itens recebidos</caption>
+										<thead>
 											<tr>
 												<th>Produto</th>
+												<th class="text-center"
+													ng-if="(nota.flg_especificar_natureza_itens == 1)">
+													Natureza
+												</th>
 												<th>Fabricante</th>
 												<th>Tamanho</th>
 												<th>Cor/Sabor</th>
@@ -345,14 +362,6 @@
 												<th class="text-center" width="100" 
 													ng-show="nota.flg_alterar_valor_custo == 1">
 													Custo (R$)
-												</th>
-												<th class="text-center" width="100" 
-													ng-show="nota.flg_alterar_valor_custo == 1">
-													Imp. (%)
-												</th>
-												<th class="text-center" width="100" 
-													ng-show="nota.flg_alterar_valor_custo == 1">
-													Desc. (%)
 												</th>
 												<th style="width: 120px; text-align: center;"
 													ng-show="nota.flg_alterar_valor_custo == 1">
@@ -366,59 +375,65 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr ng-hide="entradaEstoque.length > 0">
+											<tr ng-hide="nota.itens.length > 0">
 												<td colspan="10">
 													Nenhum item adicionado
 												</td>
 											</tr>
-											<tr ng-repeat="($index, item) in entradaEstoque | orderBy: 'nome_produto' : false track by $index" ng-class="{'danger': (item.flg_localizado == false)}">
-												<td style="line-height: 1.5; vertical-align: middle;">{{ item.nome_produto }}</td>
-												<td>{{ item.nome_fabricante }}</td>
-												<td>{{ item.peso }}</td>
-												<td>{{ item.sabor }}</td>
-												<td style="text-align: center;">{{ item.qtd }}</td>
-												<td style="width: 32px;">
-													<button type="button" class="btn btn-xs btn-primary" ng-click="showValidades(item)"><i class="fa fa-calendar"></i></button>
+											<tr ng-class="{'danger': (item.flg_localizado == false)}"
+												ng-repeat="($index, item) in nota.itens | orderBy: 'nome_produto' : false track by $index">
+												<td class="text-middle clearfix">
+													<span class="pull-left">#{{ item.nome_produto }} - {{ item.nome_produto }}</span>
+													<span class="pull-right">
+														<button type="button" 
+															class="btn btn-xs btn-primary" 
+															ng-click="selProduto(item)">
+															<i class="fa fa-archive"></i>
+														</button>
+													</span>
 												</td>
-												<td ng-show="nota.flg_alterar_valor_custo == 1">
-													<input type="text" class="form-control input-xs"
+												<td class="text-center text-middle" width="200"
+													ng-if="(nota.flg_especificar_natureza_itens == 1)">
+													<select chosen
+														option="plano_contas"
+														ng-model="item.id_natureza"
+														ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+													</select>
+												</td>
+												<td class="text-middle">{{ item.nome_fabricante }}</td>
+												<td class="text-middle">{{ item.peso }}</td>
+												<td class="text-middle">{{ item.sabor }}</td>
+												<td class="text-center text-middle">{{ item.qtd }}</td>
+												<td class="text-middle" style="width: 32px;">
+													<button type="button" 
+														class="btn btn-xs btn-primary" 
+														ng-click="showValidades(item)">
+														<i class="fa fa-calendar"></i>
+													</button>
+												</td>
+												<td class="text-middle" ng-show="nota.flg_alterar_valor_custo == 1">
+													<input type="text" class="form-control input-xs text-right"
 														thousands-formatter 
 														precision='{{ configuracao.qtd_casas_decimais }}' 
 														ng-model="item.custo" 
 														ng-keyup="atualizaValores();" 
 														ng-blur="atualizaValorTotal();">
 												</td>
-												<td ng-show="nota.flg_alterar_valor_custo == 1">
-													<input type="text" class="form-control input-xs"
-														thousands-formatter 
-														precision='{{ configuracao.qtd_casas_decimais }}' 
-														ng-model="item.imposto" 
-														ng-keyup="atualizaValores();" 
-														ng-blur="atualizaValorTotal();">
-												</td>
-												<td ng-show="nota.flg_alterar_valor_custo == 1">
-													<input type="text" class="form-control input-xs"
-														thousands-formatter 
-														precision='{{ configuracao.qtd_casas_decimais }}' 
-														ng-model="item.desconto" 
-														ng-keyup="atualizaValores();" 
-														ng-blur="atualizaValorTotal();">
-												</td>
-												<td style="text-align: right; line-height: 1.5; vertical-align: middle;"
+												<td class="text-middle text-right" 
 													ng-show="nota.flg_alterar_valor_custo == 1">
-													R$ {{ item.total | numberFormat:2:',':'.'}}
+													R$ {{ item.total | numberFormat : 2 : ',' : '.' }}
 												</td>
-												<td class="text-center">
+												<td class="text-middle text-center">
 													<button ng-click="deleteItem(item)" type="button" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i> Remover Item</button>
 												</td>
 											</tr>
-											<tr style="font-weight: bold;" ng-show="entradaEstoque.length > 0">
-												<td colspan="4" style="text-align: right;">TOTAIS</td>
+											<tr style="font-weight: bold;" ng-show="nota.itens.length > 0">
+												<td colspan="5" style="text-align: right;">TOTAIS</td>
 												<td style="text-align: center;">{{ qtd_total_entrada }}</td>
-												<td colspan="4" ng-show="nota.flg_alterar_valor_custo == 1"></td>
+												<td colspan="2" ng-show="nota.flg_alterar_valor_custo == 1"></td>
 												<td style="text-align: right;"
 													ng-show="nota.flg_alterar_valor_custo == 1">
-													R$ {{ valor_total_entrada | numberFormat:2:',':'.' }}
+													R$ {{ valor_total_entrada | numberFormat : 2 : ',' : '.' }}
 												</td>
 												<td colspan="{{ (nota.flg_alterar_valor_custo == 1) ? 1 : 2 }}"></td>
 											</tr>
@@ -428,12 +443,75 @@
 							</div>
 
 							<div class="row">
+								<div class="col-sm-5">
+									<table class="table table-bordered table-condensed table-striped table-hover">
+										<caption>Duplicatas</caption>
+										<thead>
+											<th class="text-center">Número</th>
+											<th class="text-center">Vencimento</th>
+											<th class="text-right">Valor</th>
+											<th class="text-center" width="30">
+												<button type="button" class="btn btn-xs btn-info" 
+													ng-click="showModalDuplicatas()">
+													<i class="fa fa-plus-circle"></i>
+												</button>
+											</th>
+										</thead>
+										<tbody>
+											<tr ng-repeat="dup in nota.duplicatas">
+												<td class="text-center">{{ dup.num_duplicata }}</td>
+												<td class="text-center">{{ dup.dta_vencimento | dateFormat: 'date' }}</td>
+												<td class="text-right">R$ {{ dup.vlr_duplicata | numberFormat : 2 : ',' : '.' }}</td>
+												<td class="text-center">
+													<button type="button" class="btn btn-xs btn-danger"
+														tooltip="Excluir duplicata" data-toggle="tooltip"
+														ng-if="(!dup.xml)">
+														<i class="fa fa-trash-o"></i>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+								<div class="col-sm-4" ng-if="(nota.duplicatas)">
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group" id="id_conta_bancaria_duplicatas">
+												<label class="control-label">Conta Bancária p/ Lançamento das Duplicatas</label>
+												<select chosen
+													option="contas_bancarias"
+													ng-model="nota.id_conta_bancaria_duplicatas"
+													ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas_bancarias">
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-12">
+											<div class="form-group" id="id_plano_contas_duplicatas">
+												<label class="control-label">Plano de Contas p/ Lançamento das Duplicatas</label>
+												<select chosen
+													option="plano_contas"
+													ng-model="nota.id_plano_contas_duplicatas"
+													ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
 								<div class="col-sm-12">
 									<div class="pull-right">
 										<button ng-click="showBoxNovo(); reset();" id="btn-limpa-form" type="submit" class="btn btn-default btn-sm">
 											<i class="fa fa-times-circle"></i> Cancelar
 										</button>
-										<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." id="btn-salvar-entrada" ng-click="salvar()" type="submit" class="btn btn-success btn-sm">
+										<button id="btn-salvar-entrada" type="submit" class="btn btn-success btn-sm"
+											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..." 
+											ng-click="salvar()">
 											<i class="fa fa-save"></i> Salvar
 										</button>
 									</div>
@@ -442,9 +520,13 @@
 						</form>
 					</div>
 				</div><!-- /panel -->
+
 				<div class="alert alert-sistema" style="display:none"></div>
+
 				<div class="panel panel-default">
-					<div class="panel-heading"><i class="fa fa-filter"></i> Opções de Filtro</div>
+					<div class="panel-heading">
+						<i class="fa fa-filter"></i> Opções de Filtro
+					</div>
 
 					<div class="panel-body">
 						<div class="row">
@@ -522,7 +604,7 @@
 						<table class="table table-bordered table-condensed table-striped table-hover">
 							<thead ng-show="ultimasEntradas.length > 0">
 								<tr>
-									<th>ID</th>
+									<th>#</th>
 									<th width="150">Data do Recebimento</th>
 									<th>Usuário</th>
 									<th>Fornecedor</th>
@@ -540,12 +622,12 @@
 									</td>
 								</tr>
 								<tr ng-repeat="item in ultimasEntradas" ng-show="ultimasEntradas.length > 0">
-									<td>#{{  item.id}}</td>
+									<td>#{{ item.id }}</td>
 									<td>{{ item.dta_entrada | dateFormat : 'date' }}</td>
 									<td>{{ item.nome_usuario }}</td>
 									<td>{{ item.nome_fornecedor }}</td>
 									<td>{{ item.num_nota_fiscal }}</td>
-									<td>{{ item.vlr_total_nota_fiscal | numberFormat:2:',':'.' }}</td>
+									<td>{{ item.vlr_total_nota_fiscal | numberFormat : 2 : ',' : '.' }}</td>
 									<td>{{ item.id_pedido_fornecedor }}</td>
 									<td>{{ item.nme_deposito }}</td>
 									<td align="center">
@@ -583,9 +665,21 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="pesquisa.produto" ng-enter="loadProdutos()" type="text" class="form-control input-sm">
+						            <input type="text" class="form-control input-sm"
+						            	ng-model="pesquisa.produto" 
+						            	ng-enter="loadProdutos()"
+						            	ng-disabled="enableNewFormProduto">
 						            <div class="input-group-btn">
-						            	<button ng-click="loadProdutos()" tabindex="-1" class="btn btn-sm btn-primary" type="button"><i class="fa fa-search"></i> Buscar</button>
+						            	<button type="button" class="btn btn-sm btn-primary" 
+						            		ng-click="loadProdutos()"
+						            		ng-disabled="enableNewFormProduto">
+						            		<i class="fa fa-search"></i> Buscar
+					            		</button>
+
+					            		<button type="button" class="btn btn-sm btn-info" 
+					            			ng-click="enableNewFormProduto = !enableNewFormProduto">
+						            		<i class="fa {{ (!enableNewFormProduto) ? 'fa-plus-circle' : 'fa-minus-circle' }} "></i> Cadastrar
+						            	</button>
 						            </div> <!-- /input-group-btn -->
 						        </div> <!-- /input-group -->
 							</div><!-- /.col -->
@@ -593,7 +687,164 @@
 
 						<br/>
 
-				   		<div class="row">
+						<div class="row" ng-show="enableNewFormProduto">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">
+										<i class="fa fa-barcode"></i> Código de Barras
+									</label>
+									<input class="form-control input-sm" ng-model="new_produto.codigo_barra"/>
+								</div>
+							</div>
+
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label class="control-label">
+										Descrição do Produto
+									</label>
+									<input class="form-control input-sm" ng-model="new_produto.nome"/>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">
+										Tamanho
+									</label>
+									<select chosen option="tamanhos"
+										ng-change="clearChosenSelect('tamanho', 'id')"
+										ng-model="new_produto.id_tamanho"
+										ng-options="tamanho.id as tamanho.nome_tamanho for tamanho in tamanhos">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">
+										Sabor/Cor
+									</label>
+									<select chosen option="cores"
+										ng-change="clearChosenSelect('cor', 'id')"
+										ng-model="new_produto.id_cor"
+										ng-options="cor.id as cor.nome_cor for cor in cores">
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" ng-show="enableNewFormProduto">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label class="control-label">
+										Fabricante
+									</label>
+									<select chosen option="fabricantes"
+										ng-change="clearChosenSelect('fabricante', 'id')"
+										ng-model="new_produto.id_fabricante"
+										ng-options="fabricante.id as fabricante.nome_fabricante for fabricante in fabricantes">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label class="control-label">
+										Categoria
+									</label>
+									<select chosen option="categorias"
+										ng-change="clearChosenSelect('categoria', 'id')"
+										ng-model="new_produto.id_categoria"
+										ng-options="categoria.id as categoria.descricao_categoria for categoria in categorias">
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" ng-show="enableNewFormProduto">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label class="control-label">
+										Forma de Aquisição
+									</label>
+									<select chosen option="formas_aquisicao"
+										ng-change="clearChosenSelect('forma_aquisicao', 'cod')"
+										ng-model="new_produto.cod_forma_aquisicao"
+										ng-options="forma_aquisicao.cod_controle_item_nfe as forma_aquisicao.nme_item for forma_aquisicao in formas_aquisicao">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label class="control-label">
+										Origem da Mercadoria
+									</label>
+									<select chosen option="origens_mercadoria"
+										ng-change="clearChosenSelect('origem_mercadoria', 'cod')"
+										ng-model="new_produto.cod_origem_mercadoria"
+										ng-options="origem_mercadoria.cod_controle_item_nfe as origem_mercadoria.nme_item for origem_mercadoria in origens_mercadoria">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label class="control-label">
+										Tipo de Tributação IPI
+									</label>
+									<select chosen option="tipos_tributacao_ipi"
+										ng-change="clearChosenSelect('tipo_tributacao_ipi', 'cod')"
+										ng-model="new_produto.cod_tipo_tributacao_ipi"
+										ng-options="tipo_tributacao_ipi.cod_controle_item_nfe as tipo_tributacao_ipi.nme_item for tipo_tributacao_ipi in tipos_tributacao_ipi">
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" ng-show="enableNewFormProduto">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label class="control-label">
+										Regra de Tributação
+									</label>
+									<select chosen option="regras_tributacao"
+										ng-change="clearChosenSelect('regra_tributos', 'cod')"
+										ng-model="new_produto.cod_regra_tributos"
+										ng-options="regra_tributos.id as regra_tributos.nome_regra_tributos for regra_tributos in regras_tributacao">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">
+										Código NCM
+									</label>
+									<input class="form-control input-sm" ng-model="new_produto.cod_ncm"/>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">
+										Código CEST
+									</label>
+									<input class="form-control input-sm" ng-model="new_produto.num_cest"/>
+								</div>
+							</div>
+
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">
+										Unidade Medida
+									</label>
+									<input class="form-control input-sm" ng-model="new_produto.dsc_unidade_medida"/>
+								</div>
+							</div>
+						</div>
+
+				   		<div class="row" ng-show="!enableNewFormProduto">
 				   			<div class="col-sm-12">
 				   				<table class="table table-bordered table-condensed table-striped table-hover">
 									<thead>
@@ -602,7 +853,7 @@
 											<th>Fabricante</th>
 											<th >Tamanho</th>
 											<th >Sabor/Cor</th>
-											<th width="80">Qtd.</th>
+											<th class="text-center" width="80">Qtd.</th>
 											<th width="80"></th>
 										</tr>
 									</thead>
@@ -613,10 +864,18 @@
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
 											<td>
+												<input type="text" class="form-control text-center input-xs" width="50"
+													onKeyPress="return SomenteNumero(event);" 
+													ng-model="item.qtd"
+													ng-disabled="isProdutoSelected(item)"
+													ng-if="item.flg_unidade_fracao != 1"/>
+
 												<input type="text" class="form-control input-xs" width="50"
 													onKeyPress="return SomenteNumero(event);" 
 													ng-model="item.qtd"
-													ng-disabled="isProdutoSelected(item)"/>
+													ng-disabled="isProdutoSelected(item)"
+													ng-if="item.flg_unidade_fracao == 1"
+													thousands-formatter precision="3"/>
 											</td>
 											<td class="text-center">
 												<button type="button"
@@ -637,7 +896,7 @@
 				   			</div>
 				   		</div>
 
-						<div class="row">
+						<div class="row" ng-show="!enableNewFormProduto">
 							<div class="col-sm-12">
 								<ul class="pagination pagination-xs m-top-none pull-right">
 									<li ng-repeat="item in paginacao.produtos" ng-class="{'active': item.current}">
@@ -646,6 +905,12 @@
 								</ul>
 							</div>
 						</div>
+				    </div>
+				    <div class="modal-footer clearfix" ng-show="enableNewFormProduto">
+				    	<button type="button" id="btn-salvar-produto" class="btn btn-primary btn-sm"
+				    		ng-click="salvarProduto()">
+				    		<i class="fa fa-save"></i> Salvar e selecionar
+			    		</button>
 				    </div>
 			  	</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -677,7 +942,8 @@
 										<div class="col-sm-2">
 											<div class="form-group" id="id_pedido_fornecedor">
 												<label class="control-label">Quantidade</label>
-												<input type="text" class="form-control" maxlength="4" ng-model="itemValidade.qtd">
+												<input type="text" class="form-control" ng-model="itemValidade.qtd" ng-if="produto.flg_unidade_fracao != 1">
+												<input type="text" class="form-control" ng-model="itemValidade.qtd" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
 											</div>
 										</div>
 
@@ -698,7 +964,7 @@
 									<thead>
 										<tr>
 											<th>Validade</th>
-											<th>Data</th>
+											<th>Quantidade</th>
 											<th style="width:80px;">Ações</th>
 										</tr>
 									</thead>
@@ -791,62 +1057,151 @@
 
 		<!-- /Modal fornecedor-->
 		<div class="modal fade" id="list_fornecedores" style="display:none">
-  			<div class="modal-dialog">
+  			<div class="modal-dialog modal-lg">
     			<div class="modal-content">
       				<div class="modal-header">
         				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Fornecedores</span></h4>
+						<h4>Fornecedores</h4>
       				</div>
 				    <div class="modal-body">
-						<div class="row">
+				    	<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.fornecedores" type="text" class="form-control input-sm">
+						            <input type="text" class="form-control input-sm" 
+						            	ng-enter="loadFornecedores(0,10)" 
+						            	ng-model="busca.fornecedores" 
+						            	ng-disabled="enableNewFormFornecedor">
 						            <div class="input-group-btn">
-						            	<button ng-click="loadFornecedores(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+						            	<button type="button" class="btn btn-sm btn-primary" 
+						            		ng-click="loadFornecedores(0,10)" 
+						            		ng-disabled="enableNewFormFornecedor">
 						            		<i class="fa fa-search"></i> Buscar
+						            	</button>
+
+						            	<button type="button" class="btn btn-sm btn-info" ng-click="enableNewFormFornecedor = !enableNewFormFornecedor">
+						            		<i class="fa {{ (!enableNewFormFornecedor) ? 'fa-plus-circle' : 'fa-minus-circle' }} "></i> Cadastrar
 						            	</button>
 						            </div> <!-- /input-group-btn -->
 						        </div> <!-- /input-group -->
 							</div><!-- /.col -->
 						</div>
-
 						<br/>
+						
+						<div class="row" ng-show="enableNewFormFornecedor">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="" class="control-label">Tipo de Cadastro</label>
+									<div class="form-group">
+										<label class="label-radio inline">
+											<input ng-model="new_fornecedor.tipo_cadastro" value="pf" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Pessoa Física</span>
+										</label>
 
-				   		<div class="row">
-				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed table-striped table-hover">
+										<label class="label-radio inline">
+											<input ng-model="new_fornecedor.tipo_cadastro" value="pj" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Pessoa Jurídica</span>
+										</label>
+									</div>
+
+									<div class="row">
+										<div class="col-lg-6" ng-if="new_fornecedor.tipo_cadastro">
+											<div id="nome_fornecedor" class="form-group">
+												<label class="control-label">{{ (new_fornecedor.tipo_cadastro == 'pj' ? 'Razão Social' : 'Nome') }}</label>
+												<input class="form-control" ng-model="new_fornecedor.nome_fornecedor">
+											</div>
+										</div>
+
+										<div class="col-sm-6" ng-if="new_fornecedor.tipo_cadastro == 'pj'">
+											<div id="nme_fantasia" class="form-group">
+												<label class="control-label">Nome Fantasia</label>
+												<input class="form-control" ng-model="new_fornecedor.nme_fantasia">
+											</div>
+										</div>
+
+										<div class="col-sm-3" ng-if="new_fornecedor.tipo_cadastro == 'pf'">
+											<div id="num_cpf" class="form-group">
+												<label class="control-label">CPF</label>
+												<input class="form-control" ui-mask="999.999.999-99" ng-model="new_fornecedor.num_cpf"/>
+											</div>
+										</div>
+
+										<div class="col-sm-3" ng-if="new_fornecedor.tipo_cadastro == 'pf'">
+											<div id="celular" class="form-group">
+												<label for="" class="control-label">Telefone</label>
+												<input type="text" ui-mask="(99) 99999999?9" class="form-control" ng-model="new_fornecedor.telefones[0].num_telefone">
+											</div>
+										</div>
+									</div>
+
+									<div class="row" ng-if="new_fornecedor.tipo_cadastro == 'pj'">
+										<div class="col-sm-3">
+											<div id="num_cnpj" class="form-group">
+												<label class="control-label">CNPJ</label>
+												<input class="form-control" ui-mask="99.999.999/9999-99" ng-model="new_fornecedor.num_cnpj">
+											</div>
+										</div>
+
+										<div class="col-sm-3">
+											<div id="num_inscricao_estadual" class="form-group">
+												<label class="control-label">I.E. </label>
+												<input class="form-control" ng-model="new_fornecedor.num_inscricao_estadual">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" ng-show="!enableNewFormFornecedor">
+							<div class="col-sm-12">
+						   		<table class="table table-bordered table-condensed table-striped table-hover">
 									<thead ng-show="(fornecedores.length != 0)">
 										<tr>
-											<th colspan="2">Nome</th>
+											<th>Razão Social</th>
+											<th>Nome/Nome Fantasia</th>
+											<th>CPF/CNPJ</th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr ng-show="(fornecedores.length == 0)">
-											<td colspan="3">Não há pedidos pendentes de recebimento</td>
+											<td colspan="5">Nenhum fornecedor encontrado</td>
 										</tr>
 										<tr ng-repeat="item in fornecedores">
 											<td>{{ item.nome_fornecedor }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addFornecedor(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
+											<td>{{ item.nme_fantasia }}</td>
+											<td>
+												<span ng-if="(item.tipo_cadastro == 'pf')">{{ item.num_cpf | cpfFormat }}</span>
+												<span ng-if="(item.tipo_cadastro == 'pj')">{{ item.num_cnpj | cnpjFormat }}</span>
+											</td>
+											<td width="80">
+												<button ng-click="addFornecedor(item)" class="btn btn-success btn-xs" type="button">
+														<i class="fa fa-check-square-o"></i> Selecionar
 												</button>
 											</td>
 										</tr>
 									</tbody>
 								</table>
-				   			</div>
-				   		</div>
+							</div>
+						</div>
 
-				   		<div class="row">
-					    	<div class="col-sm-12">
-					    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao.fornecedores.length > 1">
-									<li ng-repeat="item in paginacao.fornecedores" ng-class="{'active': item.current}">
+						<div class="row" ng-show="!enableNewFormFornecedor">
+				    		<div class="col-sm-12">
+				    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_fornecedores.length > 1">
+									<li ng-repeat="item in paginacao_fornecedores" ng-class="{'active': item.current}">
 										<a href="" h ng-click="loadFornecedores(item.offset,item.limit)">{{ item.index }}</a>
 									</li>
 								</ul>
-					    	</div>
+				    		</div>
 				    	</div>
+				    </div>
+				    <div class="modal-footer clearfix" ng-show="enableNewFormFornecedor && new_fornecedor.tipo_cadastro">
+				    	<button type="button" id="btn-salvar-fornecedor" class="btn btn-primary btn-sm"
+				    		ng-click="salvarFornecedor()">
+				    		<i class="fa fa-save"></i> Salvar e selecionar
+			    		</button>
 				    </div>
 			  	</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -900,7 +1255,7 @@
 											<td>{{ item.nome_usuario }}</td>
 											<td>{{ item.dta_pedido }}</td>
 											<td>{{ item.qtd_pedido }}</td>
-											<td>R$ {{ item.total_pedido | numberFormat:2:',':'.' }}</td>
+											<td>R$ {{ item.total_pedido | numberFormat : 2 : ',' : '.' }}</td>
 											<td>
 												<button ng-click="addPedido(item)" class="btn btn-success btn-xs" type="button">
 													<i class="fa fa-check-square-o"></i> Selecionar
@@ -1029,7 +1384,7 @@
 									<td>{{ item.nome_tamanho }}</td>
 									<td>{{ item.nome_cor }}</td>
 									<td>{{ item.qtd_item }}</td>
-									<td>R$ {{ item.vlr_custo | numberFormat:2:',':'.' }}</td>
+									<td>R$ {{ item.vlr_custo | numberFormat : 2 : ',' : '.' }}</td>
 									<td>{{ item.dta_validade | dateFormat:'date' }}</td>
 								</tr>
 							</tbody>
@@ -1048,6 +1403,49 @@
 			</div><!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
+
+		<!-- Modal Duplicatas -->
+		<div class="modal fade" id="list_duplicatas" style="display: none;">
+			<div class="modal-dialog">
+    			<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Nova Duplicata</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-4 form-group">
+								<label class="control-label">Número</label>
+								<input class="form-control input-md" type="text" ng-model="new_duplicata.num_duplicata">
+							</div>
+							<div class="col-sm-4 form-group">
+								<div class="form-group" id="dta_entrada">
+									<label class="control-label">Vencimento</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="vencimentoduplicatas" class="datepicker form-control text-center" ng-model="new_duplicata.dta_vencimento">
+										<span class="input-group-addon" id="cld_vencimento_duplicatas"><i class="fa fa-calendar"></i></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4 form-group">
+								<label class="control-label">Valor</label>
+								<input class="form-control input-md" type="text" ng-model="new_duplicata.vlr_duplicata" thousands-formatter precision="2">
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" 
+							data-dismiss="modal">
+							Cancelar
+						</button>
+						<button type="button" class="btn btn-primary" 
+							ng-click="incluirDuplicata(item)">
+							Incluir
+						</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
 
 		<input ng-model="cod_barra_busca" ng-blur="blurBuscaCodBarra(cod_barra_busca)"  class="form-control input-sm" style="position: absolute;top: -100px" id="focus" ng-enter="buscaCodBarra()"/>
 
@@ -1078,6 +1476,9 @@
 
 	<!-- Jquery -->
 	<script src="js/jquery-1.10.2.min.js"></script>
+
+	<!-- Chosen -->
+	<script src='js/chosen.jquery.min.js'></script>
 
 	<!-- Jquery Form-->
 	<script src='js/jquery.form.js'></script>
@@ -1112,6 +1513,10 @@
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
 
+	<!-- Bower Components -->	
+	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
+    <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
@@ -1132,17 +1537,21 @@
     <script src="js/ui-bootstrap-tpls-0.6.0.js" type="text/javascript"></script>
     <script src="js/dialogs.v2.min.js" type="text/javascript"></script>
     <script src="js/auto-complete/ng-sanitize.js"></script>
+    <script src="js/angular-chosen.js"></script>
+	<script type="text/javascript">
+		var addParamModule = ['angular.chosen'] ;
+	</script>
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
 	<script src="js/angular-controller/estoque-controller.js?<?php/* echo filemtime('js/angular-controller/estoque-controller.js')*/?>"></script>
-	<script type="text/javascript"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('.datepicker').datepicker();
 			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
 			$("#cld_datarecebimento").on("click", function(){ $("#datarecebimento").trigger("focus"); });
+			$("#cld_vencimento_duplicatas").on("click", function(){ $("#vencimentoduplicatas").trigger("focus"); });
 
 			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});

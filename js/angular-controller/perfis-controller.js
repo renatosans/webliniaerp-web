@@ -1,4 +1,4 @@
-app.controller('PerfisController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('PerfisController', function($scope, $http, $window, $dialogs, UserService, TabelaPrecoService){
 	var ng = $scope
 		aj = $http;
 
@@ -21,9 +21,46 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
     	}
     }
 
-    ng.chosen_perc_venda = [
-    	{dsc:'Selecione',vlr:null},{dsc:'Tabela',vlr:'vlr_custo'}, {dsc:'Atacado',vlr:'perc_venda_atacado'}, {dsc:'Intermediario',vlr:'perc_venda_intermediario'}, {dsc:'Varejo',vlr:'perc_venda_varejo'}
-    ]
+    ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
+
+	ng.createTabelasPrecoOptions = function() {
+		ng.chosen_perc_venda = [{
+			dsc: 'Selecione',
+			vlr: null
+		}, {
+			dsc: 'Tabela',
+			vlr: 'vlr_custo'
+		}];
+
+		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
+			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
+
+		if(hasAtacado) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Atacado',
+				vlr: 'perc_venda_atacado'
+			});
+		}
+
+		if(hasIntermediario) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Intermediario',
+				vlr: 'perc_venda_intermediario'
+			});
+		}
+
+		if(hasVarejo) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Varejo',
+				vlr: 'perc_venda_varejo'
+			});
+		}
+	}
+
+	ng.createTabelasPrecoOptions();
 
     ng.showBoxNovo = function(onlyShow){
     	ng.editing = !ng.editing;
@@ -120,7 +157,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 	}
 	
 	ng.treeviewConstruct = function(data){
-		console.log(data);
+		
 			$checkableTree = $('#treeview-modulos').treeview({
 	          data: data,
 	          showIcon: false,
@@ -158,7 +195,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
             ]
           );
 
-	       console.log(a);
+	       
 	}
 
 	ng.subMenuConstruct = function(arrpai,arr){
@@ -216,7 +253,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 			.success(function(data, status, headers, config) {
 				var menu = ng.menuConstruct(data);
 				ng.treeviewConstruct(menu);
-				//console.log(menu);
+				
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404){
@@ -339,7 +376,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 	}
 
 	ng.delete = function(){
-		console.log(ng.myForm.nome.$valid);
+		
 	}
 
 	ng.showEmpreendimentos = function() {
@@ -405,7 +442,7 @@ app.directive('bsTooltip', function ($timeout) {
         link: function (scope, element, attr) {
             $timeout(function () {
                 	  element.find("[data-toggle=tooltip]").tooltip();
-                	  console.log(element.find("[data-toggle=tooltip]"));
+                	  
             });
         }
     }

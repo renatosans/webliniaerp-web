@@ -1,10 +1,11 @@
-app.controller('GradeController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('GradeController', function($scope, $http, $window, $dialogs,ConfigService, UserService, TabelaPrecoService){
 
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.produto 		= {};
     ng.produtos		= [];
     ng.fabricantes	= [];
@@ -16,6 +17,10 @@ app.controller('GradeController', function($scope, $http, $window, $dialogs, Use
 
     ng.editing = false;
     ng.paginacao = {};
+    
+    ng.existeTabelaPreco = function(nome_tabela){
+			return TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, nome_tabela);
+		};
 
     ng.showBoxNovo = function(onlyShow){
     	if(onlyShow) {
@@ -106,7 +111,7 @@ app.controller('GradeController', function($scope, $http, $window, $dialogs, Use
     		query_string += "&"+$.param({'nome':{exp:"like'%"+ng.busca.produtosModal+"%' OR nome_fabricante like'%"+ng.busca.produtosModal+"%'"}});
     	}
 
-    	console.log(query_string);
+    	
 
 		ng.produtosModal = null;
 		aj.get(baseUrlApi()+"produtos/"+offset+"/"+limit+"/"+query_string)
