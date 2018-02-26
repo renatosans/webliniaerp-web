@@ -635,10 +635,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			pagamentos.push(item);
 
 			}
-
 		}
-
-
 
 		var produtos = angular.copy(ng.carrinho);
 		var venda    = {
@@ -684,9 +681,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var n_repeat 	  	  = 10 ;
 		var repeat_count      = 0  ;
 		var produtos_enviar   = [] ;
-
-
-
 
 		$.each(produtos,function(index,obj){
 			if(repeat_count >= n_repeat){
@@ -787,8 +781,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				ng.efetivarCompra();
-
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
 						ng.efetivarCompra();
@@ -806,6 +798,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
+				else
+					ng.efetivarCompra();
 			})
 			.error(function(data, status, headers, config) {
 				if(status === 404)
@@ -1932,9 +1926,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		btn_reforco.button('loading');
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
-			.success(function(data, status, headers, config) {
-				ng.efetivarReforco();
-				
+			.success(function(data, status, headers, config) {				
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
 						ng.efetivarReforco() ;
@@ -1954,6 +1946,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
+				else
+					ng.efetivarReforco();
 			})
 			.error(function(data, status, headers, config) {
 				if(status === 404)
@@ -2123,8 +2117,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				ng.efetivarSangria();
-
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
 						ng.efetivarSangria();
@@ -2144,6 +2136,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
+				else
+					ng.efetivarSangria();
 			})
 			.error(function(data, status, headers, config) {
 				if(status === 404)

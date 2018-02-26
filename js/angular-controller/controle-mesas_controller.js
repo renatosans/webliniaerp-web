@@ -813,7 +813,7 @@ app.controller('ControleMesasController', function(
 						flg_produto_composto: 	produto.flg_produto_composto,
 						dta_create: 			moment().format('YYYY-MM-DD HH:mm:ss'),
 						dta_lancamento: 		moment().format('YYYY-MM-DD HH:mm:ss'),
-						id_mesa: 				ng.mesaSelecionada.mesa.id_mesa,
+						id_mesa: 				(!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa,
 						flg_delivery: 			(produto.flg_delivery) ? 1 : 0,
 						adicionais: 			produto.adicionais_selecionados
 					});
@@ -821,8 +821,8 @@ app.controller('ControleMesasController', function(
 
 				var categorias = _.groupBy(ng.itens_pedido, 'id_categoria');
 				
-				angular.forEach(categorias, function(itens) {
-					angular.forEach(itens, function(item){
+				angular.forEach(categorias, function(itens, idx_cat) {
+					angular.forEach(itens, function(item, idx_item){
 						item.id_usuario 		= ng.userLogged.id;
 						item.id_empreendimento 	= ng.userLogged.id_empreendimento;
 						item.id_deposito 		= ng.configuracao.id_deposito_padrao;
@@ -1095,7 +1095,9 @@ app.controller('ControleMesasController', function(
 		if(!btn.is(':button')) btn = $(event.target).parent();
 		btn.button('loading');
 
-		aj.get(baseUrlApi()+"item_comanda/delete/"+ng.produto.id_item_venda+"/"+ng.mesaSelecionada.mesa.id_mesa)
+		var id_mesa = (!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa;
+
+		aj.get(baseUrlApi()+"item_comanda/delete/"+ng.produto.id_item_venda+"/"+id_mesa)
 		.success(function(data, status, headers, config) {
 			var msg = {
 					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,

@@ -1438,8 +1438,7 @@
 			</div>
 		</div>
 
-		<!-- Modal Vincular Cartão -->
-		<div class="modal fade" id="modalVincularCartao" style="display: none;">
+		<!-- Modal Vincular Cartão --> <div class="modal fade" id="modalVincularCartao" style="display: none;">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 					<div class="modal-header">

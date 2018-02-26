@@ -98,6 +98,14 @@
 				<span class="icon-bar"></span>
 			</button>
 			<ul class="nav-notification clearfix">
+				<li class="dropdown" 
+					data-toggle="tooltip" 
+					data-placement="bottom" 
+					title="Tela Inteira">
+					<a href="#" ng-click="resizeScreen()">
+						<i class="fa fa-arrows-alt"></i>
+					</a>
+				</li>
 				<?php include("alertas.php"); ?>
 				<li class="profile dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -163,15 +171,15 @@
 					 <li><i class="fa fa-home"></i> <a href="dashboard.php">Home</a></li>
 					 <li class="active"><i class="fa fa-sitemap"></i> <a href="depositos.php">Depósitos</a></li>
 					 <li class="active"><i class="fa fa-list-ol"></i> <a href="estoque.php">Controle de Estoque</a></li>
-					 <li class="active"><i class="fa fa-wrench"></i> Ordem de Produção</li>
+					 <li class="active"><i class="fa fa-wrench"></i> Ordens de Produção</li>
 				</ul>
 			</div><!-- breadcrumb -->
 
 			<div class="main-header clearfix">
 				<div class="page-title">
-					<h3 class="no-margin"><i class="fa  fa-wrench"></i> Ordem de Produção</h3>
+					<h3 class="no-margin"><i class="fa  fa-wrench"></i> Ordens de Produção</h3>
 					<br/>
-					<a class="btn btn-info" id="btn-novo" ng-disabled="editing" ng-click="showBoxNovo()"><i class="fa fa-plus-circle"></i> Nova Ordem de Produção</a>
+					<a class="btn btn-info" id="btn-novo" ng-disabled="editing" ng-click="showBoxNovo()" ng-if="(!isFullscreen)"><i class="fa fa-plus-circle"></i> Nova Ordem de Produção</a>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 
@@ -236,7 +244,7 @@
 					</div>
 				</div><!-- /panel -->
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-show="(!isFullscreen)">
 					<div class="panel-heading"><i class="fa fa-filter"></i> Opções de Filtro</div>
 					<div class="panel-body">
 						<div class="row">
@@ -311,8 +319,8 @@
 					</div>
 				</div>
 
-				<div class="panel panel-default">
-					<div class="panel-heading"><i class="fa fa-tasks"></i> Ordens de Produção</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading" ng-if="(isFullscreen)"><i class="fa fa-wrench"></i> Ordens de Produção</div>
 
 					<div class="panel-body">
 						<div class="alert alert-list-pedidos" style="display:none"  >
