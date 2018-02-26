@@ -473,6 +473,30 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_ambiente_nfe != undefined){
+			var item = {
+							nome :'flg_ambiente_nfe',
+							valor:ng.configuracoes.flg_ambiente_nfe , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.token_focus_producao != undefined){
+			var item = {
+							nome :'token_focus_producao',
+							valor:ng.configuracoes.token_focus_producao , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.token_focus_homologacao != undefined){
+			var item = {
+							nome :'token_focus_homologacao',
+							valor:ng.configuracoes.token_focus_homologacao , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
@@ -1185,30 +1209,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item = {
 							nome :'id_serie_padrao_nfe',
 							valor:ng.configuracoes.id_serie_padrao_nfe , 
-							id_empreendimento: ng.userLogged.id_empreendimento}
-			chaves.push(item);
-		}
-
-		if(ng.configuracoes.flg_ambiente_nfe != undefined){
-			var item = {
-							nome :'flg_ambiente_nfe',
-							valor:ng.configuracoes.flg_ambiente_nfe , 
-							id_empreendimento: ng.userLogged.id_empreendimento}
-			chaves.push(item);
-		}
-
-		if(ng.configuracoes.token_focus_producao != undefined){
-			var item = {
-							nome :'token_focus_producao',
-							valor:ng.configuracoes.token_focus_producao , 
-							id_empreendimento: ng.userLogged.id_empreendimento}
-			chaves.push(item);
-		}
-
-		if(ng.configuracoes.token_focus_homologacao != undefined){
-			var item = {
-							nome :'token_focus_homologacao',
-							valor:ng.configuracoes.token_focus_homologacao , 
 							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}

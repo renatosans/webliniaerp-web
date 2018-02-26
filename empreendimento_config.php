@@ -899,55 +899,122 @@
 
 							<div class="tab-pane fade" id="relatorios">
 								<div class="alert alert-config" style="display:none"></div>
+								<div class="panel-tab clearfix">
+									<ul class="tab-bar">
+										<li class="active">
+											<a href="#curva_abc" data-toggle="tab">
+												<i class="fa fa-file-text-o"></i> Curva ABC
+											</a>
+										</li>
+										<li>
+											<a href="#modelos_dre" data-toggle="tab">
+												<i class="fa fa-file-text-o"></i> DRE
+											</a>
+										</li>
+									</ul>
+								</div>
+								<br>
 
-								<fieldset>
-									<legend>Relatório Curva ABC</legend>
-									<div class="row">
-										<div class="col-sm-3">
-											<div class="form-group">
-												<label class="control-label">Faixas</label>
-												<div class="controls">
-													<table class="table table-bordered table-hover table-striped table-condensed">
-														<thead>
-															<th>Faixa</th>
-															<th width="80">Percentual</th>
-															<th class="text-center" width="40">
-																<button class="btn btn-xs btn-primary"
-																	tooltip title="Incluir campo"
-																	ng-click="addCampoCurvaABC()">
-																	<i class="fa fa-plus-circle"></i>
-																</button>
-															</th>
-														</thead>
-														<tbody>
-															<tr ng-repeat="item in faixas_curva_abc">
-																<td>
-																	<select chosen 
-																	    option="campos_curva_abc"
-																	    allow-single-deselect="true"
-																	    ng-model="item.faixa"
-																	    no-results-text="'Nenhum valor encontrado'"
-																	    ng-options="item.value as item.label for item in campos_curva_abc">
-																	</select>
-																</td>
-																<td>
-																	<input ng-model="item.valor" name="percentual_abc" thousands-formatter class="form-control input-sm">
-																</td>
-																<td class="text-center">
-																	<button class="btn btn-xs btn-danger"
-																		tooltip title="Remover campo"
-																		ng-click="delCampoCurvaABC(item)">
-																		<i class="fa fa-trash-o"></i>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="curva_abc">
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label class="control-label">Faixas</label>
+													<div class="controls">
+														<table class="table table-bordered table-hover table-striped table-condensed">
+															<thead>
+																<th>Faixa</th>
+																<th width="80">Percentual</th>
+																<th class="text-center" width="40">
+																	<button class="btn btn-xs btn-primary"
+																		tooltip title="Incluir campo"
+																		ng-click="addCampoCurvaABC()">
+																		<i class="fa fa-plus-circle"></i>
 																	</button>
-																</td>
-															</tr>
-														</tbody>
-													</table>
+																</th>
+															</thead>
+															<tbody>
+																<tr ng-repeat="item in faixas_curva_abc">
+																	<td>
+																		<select chosen 
+																		    option="campos_curva_abc"
+																		    allow-single-deselect="true"
+																		    ng-model="item.faixa"
+																		    no-results-text="'Nenhum valor encontrado'"
+																		    ng-options="item.value as item.label for item in campos_curva_abc">
+																		</select>
+																	</td>
+																	<td>
+																		<input ng-model="item.valor" name="percentual_abc" thousands-formatter class="form-control input-sm">
+																	</td>
+																	<td class="text-center">
+																		<button class="btn btn-xs btn-danger"
+																			tooltip title="Remover campo"
+																			ng-click="delCampoCurvaABC(item)">
+																			<i class="fa fa-trash-o"></i>
+																		</button>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>	
+										</div>
+									</div>
+									<div class="tab-pane fade in" id="modelos_dre">
+										<div class="col-sm-12">
+											<div class="col-sm-2">
+												<div class="form-group">
+													<label class="control-label">Tipo</label>
+													<select class="form-control">
+														<option value="TOP">Resumo</option>
+														<option value="SUM">Soma</option>
+														<option value="EXPENSE">Despesa</option>
+														<option value="REVENUE">Receita</option>
+													</select>
 												</div>
 											</div>
-										</div>	
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label class="control-label">Descrição</label>
+													<input class="form-control" type="text" name="">
+												</div>
+											</div>
+											<div class="col-sm-1">
+												<div class="form-group">
+													<label class="control-label">Associativo</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input value="0" type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Não</span>
+														</label>
+
+														<label class="label-radio inline">
+															<input value="1" type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Sim</span>
+														</label>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label class="control-label">Fórmula</label>
+													<input class="form-control" type="text" name="">
+												</div>
+											</div>
+											<div class="col-sm-1">
+												<label><br></label>
+												<div class="form-group">
+													<button class="btn btn-success">Incluir</button>
+												</div>
+											</div>
+										</div>
 									</div>
-								</fieldset>
+								</div>
 								<div class="row">
 									<div class="col-sm-12">
 										<div class="pull-right">
@@ -1267,41 +1334,6 @@
 													    ng-model="configuracoes.id_serie_padrao_nfe"
 													    ng-options="serie.id as (serie.serie_documento_fiscal+' - '+serie.dsc_modelo_documento_fiscal) for serie in lista_serie_documento_fiscal">
 													</select>
-												</div>
-											</div>
-										</div>
-
-										<div class="row">
-											<div class="col-sm-4">
-												<div class="form-group">
-													<label for="" class="control-label">Ambiente de Emissão da NF-e</label>
-													<div class="form-group">
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_ambiente_nfe" value="1" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Produção</span>
-														</label>
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_ambiente_nfe" value="0" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Homologação</span>
-														</label>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div class="row">
-											<div class="col-sm-6">
-												<div class="form-group" id="serie_documento_fiscal">
-													<label class="control-label">Token Produção</label>
-													<input type="text" ng-model="configuracoes.token_focus_producao" class="form-control input-sm">
-												</div>
-											</div>
-											<div class="col-sm-6">
-												<div class="form-group" id="serie_documento_fiscal">
-													<label class="control-label">Token Homologação</label>
-													<input type="text" ng-model="configuracoes.token_focus_homologacao" class="form-control input-sm">
 												</div>
 											</div>
 										</div>
@@ -2013,6 +2045,11 @@
 												<i class="fa fa-shopping-cart"></i> PrestaShop
 											</a>
 										</li>
+										<li>
+											<a href="#focus" data-toggle="tab">
+												<i class="fa fa-file-text-o"></i> Focus
+											</a>
+										</li>
 									</ul>
 								</div>
 
@@ -2152,6 +2189,43 @@
 															</tbody>
 														</table>
 													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade in" id="focus">
+										<br/>
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="" class="control-label">Ambiente de Emissão da NF-e</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_ambiente_nfe" value="1" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Produção</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_ambiente_nfe" value="0" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Homologação</span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group" id="serie_documento_fiscal">
+													<label class="control-label">Token Produção</label>
+													<input type="text" ng-model="configuracoes.token_focus_producao" class="form-control input-sm">
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group" id="serie_documento_fiscal">
+													<label class="control-label">Token Homologação</label>
+													<input type="text" ng-model="configuracoes.token_focus_homologacao" class="form-control input-sm">
 												</div>
 											</div>
 										</div>

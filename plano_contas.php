@@ -181,6 +181,7 @@
 									</div>
 
 									<div class="col-sm-7 well">
+
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="form-group">
@@ -202,6 +203,23 @@
 												<div class="form-group" id="dsc_plano">
 													<label class="control-label">Descrição</label>
 													<input type="text" class="form-control input-sm" ng-model="planoConta.dsc_plano">
+												</div>
+											</div>
+										</div>
+
+										<div class="row" ng-if="currentNode.children == ''">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label class="control-label">Tipo de Lançamento</label>
+													<select class="form-control" ng-change="loadModelosDRE(planoConta.flg_tipo_lancamento)" chosen allow-single-deselect="true" ng-model="planoConta.flg_tipo_lancamento" ng-options="item.value as item.dsc for item in tipo_lancamento">
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-9" ng-if="planoConta.flg_tipo_lancamento != null">
+												<div class="form-group">
+													<label class="control-label">Modelo DRE</label>
+													<select class="form-control" chosen option="modelo_dre" allow-single-deselect="true" ng-model="planoConta.id_modelo_dre" ng-options="item.id as item.descricao for item in modelo_dre">
+													</select>
 												</div>
 											</div>
 										</div>

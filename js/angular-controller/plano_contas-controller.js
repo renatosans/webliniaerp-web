@@ -9,6 +9,11 @@ app.controller('PlanoContasController', function($scope, $http, $window, $dialog
     ng.planoContas	= [];
     ng.currentNode 	= null;
     ng.editing 		= false;
+    ng.tipo_lancamento = [
+    	{ value: null		, dsc:'Selecione' },
+    	{ value:'EXPENSE'	, dsc:'Despesa' },
+    	{ value:'REVENUE'	, dsc:'Receita' }
+	];
 
 
 	ng.mensagens = function(classe , msg){
@@ -48,6 +53,19 @@ app.controller('PlanoContasController', function($scope, $http, $window, $dialog
 			});
 	}
 
+	ng.loadModelosDRE = function(item) {
+		ng.planoConta.id_modelo_dre = null;
+		var queryString = "?flg_tipo="+item+"&flg_associativo=1"+"&id_empreendimento="+ng.userLogged.id_empreendimento;
+		aj.get(baseUrlApi()+"modelo_dre/"+queryString)
+			.success(function(data, status, headers, config) {
+				ng.modelo_dre = data;
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.modelo_dre = [];
+			});
+	}
+
 	ng.salvar = function() {
 		var url  = ng.editing ? 'planocontas/update' : 'planocontas';
 		var msg  = ng.editing ? 'Plano de contas atualizado com sucesso!' : 'Plano de contas salvo com sucesso!';
@@ -55,6 +73,7 @@ app.controller('PlanoContasController', function($scope, $http, $window, $dialog
 		if(ng.currentNode != null){
 			ng.planoConta.id_plano_pai = ng.currentNode.id;
 		}
+		
 
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$($(".has-error").find("button")).tooltip('destroy');
