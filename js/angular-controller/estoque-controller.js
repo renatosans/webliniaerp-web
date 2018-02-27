@@ -237,8 +237,8 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		post_data.vlr_total_imposto 	= parseFloat((!empty(post_data.vlr_total_imposto)) ? post_data.vlr_total_imposto.replace(",", ".") : 0);
 		post_data.vlr_frete 			= parseFloat((!empty(post_data.vlr_frete)) ? post_data.vlr_frete.replace(",", ".") : 0);
 
-		$.each(post_data,function(i,x){
-			post_data[i].imposto = ($.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
+		$.each(post_data.itens,function(i,x){
+			post_data.itens[i].imposto = (!empty(x.imposto) && $.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
 		});	
 
 		$http.post(baseUrlApi()+'estoque/entrada', {nota: JSON.stringify(post_data)})

@@ -675,19 +675,40 @@
 											</div>
 										</div>
 										<div class="col-sm-6">
-											<div class="form-group">
-												<label for="" class="control-label">Forçar fechamento de caixa as 00h?</label>
-												<div class="form-group">
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="1" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Sim</span>
-													</label>
-													<label class="label-radio inline">
-														<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="0" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
-														<span class="custom-radio"></span>
-														<span>Não</span>
-													</label>
+											<div class="row">
+												<div class="col-lg-12">
+													<div class="form-group">
+														<label for="" class="control-label">Agrupar pagamentos de venda por data e forma de pagamento?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_agrupar_pagamentos_venda_data_forma_pagamento" value="1" name="flg_agrupar_pagamentos_venda_data_forma_pagamento"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_agrupar_pagamentos_venda_data_forma_pagamento" value="0" name="flg_agrupar_pagamentos_venda_data_forma_pagamento"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="" class="control-label">Forçar fechamento de caixa as 00h?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="1" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="0" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -2041,20 +2062,57 @@
 								<div class="panel-tab clearfix">
 									<ul class="tab-bar">
 										<li class="active">
-											<a href="#prestashop" data-toggle="tab">
-												<i class="fa fa-shopping-cart"></i> PrestaShop
+											<a href="#focus" data-toggle="tab">
+												<i class="fa fa-file-text-o"></i> FocusNFe
 											</a>
 										</li>
 										<li>
-											<a href="#focus" data-toggle="tab">
-												<i class="fa fa-file-text-o"></i> Focus
+											<a href="#prestashop" data-toggle="tab">
+												<i class="fa fa-shopping-cart"></i> PrestaShop
 											</a>
 										</li>
 									</ul>
 								</div>
 
 								<div class="tab-content">
-									<div class="tab-pane fade active in" id="prestashop">
+									<div class="tab-pane fade active in" id="focus">
+										<br/>
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="" class="control-label">Ambiente de Emissão da NF-e</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_ambiente_nfe" value="1" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Produção</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_ambiente_nfe" value="0" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>Homologação</span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group" id="serie_documento_fiscal">
+													<label class="control-label">Token Produção</label>
+													<input type="text" ng-model="configuracoes.token_focus_producao" class="form-control input-sm">
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group" id="serie_documento_fiscal">
+													<label class="control-label">Token Homologação</label>
+													<input type="text" ng-model="configuracoes.token_focus_homologacao" class="form-control input-sm">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade in" id="prestashop">
 										<br/>
 										<div class="row">
 											<div class="col-sm-12">
@@ -2189,43 +2247,6 @@
 															</tbody>
 														</table>
 													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="tab-pane fade in" id="focus">
-										<br/>
-										<div class="row">
-											<div class="col-sm-4">
-												<div class="form-group">
-													<label for="" class="control-label">Ambiente de Emissão da NF-e</label>
-													<div class="form-group">
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_ambiente_nfe" value="1" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Produção</span>
-														</label>
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_ambiente_nfe" value="0" name="flg_ambiente_nfe"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Homologação</span>
-														</label>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div class="row">
-											<div class="col-sm-6">
-												<div class="form-group" id="serie_documento_fiscal">
-													<label class="control-label">Token Produção</label>
-													<input type="text" ng-model="configuracoes.token_focus_producao" class="form-control input-sm">
-												</div>
-											</div>
-											<div class="col-sm-6">
-												<div class="form-group" id="serie_documento_fiscal">
-													<label class="control-label">Token Homologação</label>
-													<input type="text" ng-model="configuracoes.token_focus_homologacao" class="form-control input-sm">
 												</div>
 											</div>
 										</div>
