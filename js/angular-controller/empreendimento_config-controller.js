@@ -29,6 +29,17 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
     	{ value:'epson_tm_t20'			, dsc:'EPSON TM T20' 		}
 	];
 
+	ng.new_dre = [];
+	ng.new_dre.flg_associativo = 1;
+
+	ng.tipos_dre = [
+    	{ value: null		, dsc:'Selecione'},
+    	{ value:'TOP'		, dsc:'Resumo'},
+    	{ value:'SUM'		, dsc:'Soma'},
+    	{ value:'EXPENSE'	, dsc:'Despesa'},
+    	{ value:'REVENUE'	, dsc:'Receita'}
+	];
+
 	ng.status_venda = [
 		{
 			"id": 1,
@@ -125,6 +136,50 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 	if(typeof parseJSON(ng.cfg.faixas_curva_abc) == 'object')
 		ng.faixas_curva_abc = parseJSON(ng.cfg.faixas_curva_abc);
+
+	ng.loadModelosDRE = function() {
+		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
+		aj.get(baseUrlApi()+"modelo_dre/"+queryString)
+			.success(function(data, status, headers, config) {
+				ng.modelos_dre = data;
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
+
+	ng.saveModeloDRE = function() {
+		var url  = ng.editing ? 'modelo_dre/update/' : 'modelo_dre/save/';
+		var msg  = ng.editing ? 'Modelo DRE Atualizado com sucesso' : 'Modelo DRE salvo com sucesso!';
+		ng.new_dre.id_empreendimento = ng.userLogged.id_empreendimento;
+
+		aj.post(baseUrlApi()+url, ng.new_dre)
+			.success(function(data, status, headers, config) {
+				ng.new_dre = [];
+				ng.new_dre.flg_associativo = 1;
+				ng.editing = false;
+				ng.loadModelosDRE();
+				ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
+
+	ng.editModeloDRE = function(item) {
+		ng.editing = true;
+		ng.new_dre = angular.copy(item);
+		$('html,body').animate({scrollTop: 0 },'slow');
+	}
+
+	ng.deleteModeloDRE = function(item){
+		var msg = 'Modelo DRE excluído com sucesso!'
+		aj.get(baseUrlApi()+"modelo_dre/delete/"+item.id)
+			.success(function(data, status, headers, config) {
+				ng.loadModelosDRE();
+				ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
 
 	ng.addCampoOrdenacao = function(){
 		if(empty(ng.campos_ordenacao_produtos))
@@ -1854,5 +1909,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	ng.loadPlanoContas();
 	ng.loadPlanoContasSelect();
 	ng.loadFormasPagamento();
+	ng.loadModelosDRE();
 
 });

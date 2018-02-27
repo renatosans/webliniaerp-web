@@ -983,65 +983,97 @@
 												</div>
 											</div>	
 										</div>
-									</div>
-									<div class="tab-pane fade in" id="modelos_dre">
-										<div class="col-sm-12">
-											<div class="col-sm-2">
-												<div class="form-group">
-													<label class="control-label">Tipo</label>
-													<select class="form-control">
-														<option value="TOP">Resumo</option>
-														<option value="SUM">Soma</option>
-														<option value="EXPENSE">Despesa</option>
-														<option value="REVENUE">Receita</option>
-													</select>
-												</div>
-											</div>
-											<div class="col-sm-4">
-												<div class="form-group">
-													<label class="control-label">Descrição</label>
-													<input class="form-control" type="text" name="">
-												</div>
-											</div>
-											<div class="col-sm-1">
-												<div class="form-group">
-													<label class="control-label">Associativo</label>
-													<div class="form-group">
-														<label class="label-radio inline">
-															<input value="0" type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Não</span>
-														</label>
-
-														<label class="label-radio inline">
-															<input value="1" type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Sim</span>
-														</label>
-													</div>
-												</div>
-											</div>
-											<div class="col-sm-4">
-												<div class="form-group">
-													<label class="control-label">Fórmula</label>
-													<input class="form-control" type="text" name="">
-												</div>
-											</div>
-											<div class="col-sm-1">
-												<label><br></label>
-												<div class="form-group">
-													<button class="btn btn-success">Incluir</button>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="pull-right">
+													<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
+														<i class="fa fa-save"></i> Salvar
+													</button>
 												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-12">
-										<div class="pull-right">
-											<button data-loading-text="<i class='fa fa-refresh fa-spin></i> Aguarde, salvando..." ng-click="salvarConfig($event)" type="submit" class="btn btn-success btn-sm">
-												<i class="fa fa-save"></i> Salvar
-											</button>
+									<div class="tab-pane fade in" id="modelos_dre">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label class="control-label">Tipo</label>
+														<select class="form-control" chosen allow-single-deselect="true" ng-model="new_dre.flg_tipo" ng-options="item.value as item.dsc for item in tipos_dre"></select>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label class="control-label">Descrição</label>
+														<input class="form-control" type="text" name="" ng-model="new_dre.descricao">
+													</div>
+												</div>
+												<div class="col-sm-1">
+													<div class="form-group">
+														<label class="control-label">Associativo?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input value="1" type="radio" class="inline-radio" ng-model="new_dre.flg_associativo">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+
+															<label class="label-radio inline">
+																<input value="0" type="radio" class="inline-radio" ng-model="new_dre.flg_associativo">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label class="control-label">Fórmula</label>
+														<input class="form-control" type="text" name="" ng-model="new_dre.dsc_formula">
+													</div>
+												</div>
+												<div class="col-sm-1">
+													<label><br></label>
+													<div class="form-group">
+														<button class="btn btn-success btn-sm" ng-click="saveModeloDRE()">Salvar</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table table-bordered table-condensed table-striped table-hover">
+													<thead>
+														<tr>
+															<td class="text-bold">Tipo</td>
+															<td class="text-bold">Descrição</td>
+															<td class="text-bold text-center" width="100">Associativo?</td>
+															<td class="text-bold">Fórmula</td>
+															<td class="text-bold text-center" width="60">Ações</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="item in modelos_dre">
+															<td>
+																<span ng-if="item.flg_tipo == 'TOP'">Resumo</span>
+																<span ng-if="item.flg_tipo == 'SUM'">Soma</span>
+																<span ng-if="item.flg_tipo == 'EXPENSE'">Despesa</span>
+																<span ng-if="item.flg_tipo == 'REVENUE'">Receita</span>
+															</td>
+															<td>{{ item.descricao }}</td>
+															<td class="text-center">
+																<span ng-if="item.flg_associativo == 1">Sim</span>
+																<span ng-if="item.flg_associativo == 0">Não</span>
+															</td>
+															<td>{{ item.dsc_formula }}</td>
+															<td class="text-center">
+																<button class="btn btn-warning btn-xs" ng-click="editModeloDRE(item)"><i class="fa fa-edit"></i></button>
+																<button class="btn btn-danger btn-xs" ng-click="deleteModeloDRE(item)"><i class="fa fa-trash-o"></i></button>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
 										</div>
 									</div>
 								</div>
