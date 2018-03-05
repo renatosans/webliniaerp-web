@@ -43,6 +43,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$("#list_duplicatas").modal("hide");
 	}
 
+	ng.deleteDuplicata = function(item) {
+		ng.nota.duplicatas = _.without(ng.nota.duplicatas, item);
+	}
+
 	ng.resetModalDuplicada = function(){
 		ng.new_duplicata.num_duplicata = "";
 		ng.new_duplicata.dta_vencimento = "";

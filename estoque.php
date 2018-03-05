@@ -464,7 +464,8 @@
 												<td class="text-right">R$ {{ dup.vlr_duplicata | numberFormat : 2 : ',' : '.' }}</td>
 												<td class="text-center">
 													<button type="button" class="btn btn-xs btn-danger"
-														tooltip="Excluir duplicata" data-toggle="tooltip">
+														tooltip="Excluir duplicata" data-toggle="tooltip"
+														ng-click="deleteDuplicata(dup)">
 														<i class="fa fa-trash-o"></i>
 													</button>
 												</td>

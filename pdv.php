@@ -183,6 +183,7 @@
 						<i class="fa fa-desktop"></i>
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-primary hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -208,6 +209,7 @@
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -232,6 +234,7 @@
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -256,6 +259,7 @@
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-danger hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -284,6 +288,7 @@
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"></i>
 					</div>
 
 
@@ -334,6 +339,8 @@
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"
 							ng-click="changeFlagImprimirSATCFe()"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"
+							ng-click="changeFlagImprimirNFCe()"></i>
 						<div class="btn-group"  style="margin-left: 40px;" >
 							<i class="fa fa-user"></i> Vendedor - {{ vendedor.nome_vendedor }}
 						</div>
@@ -391,7 +398,7 @@
 			    				<div class="row" ng-repeat="(key,formas) in formas_pagamento">
 					    			<div class="col-sm-3" ng-repeat="forma in formas" >
 					    				<a id="btn-logar" class="bounceIn btn btn-block btn-default btn-sm" ng-class="{'active':frmPagIsSel(forma.id)}"  data-loading-text=" Aguarde..."
-					    					ng-click="selectChange(forma.id)"
+					    					ng-click="selectChange(forma)"
 					    					style="word-wrap: break-word; white-space: inherit; padding-left: 5px; padding-right: 5px; min-height: 92px; margin-bottom: 10px;">
 					    					<i class="fa fa-3x {{ forma.icon }}" style="margin-bottom: 5px; margin-top: 5px; "></i>
 					    					<span style="" class="clearfix">{{ forma.descricao_forma_pagamento }}</span>
