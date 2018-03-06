@@ -2048,6 +2048,24 @@
 											</div>
 										</div>
 									</div>
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="" class="control-label">Finalizar Ordem de Produção no PDV?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_finalizar_op_pdv" value="1" name="flg_finalizar_op_pdv"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_finalizar_op_pdv" value="0" name="flg_finalizar_op_pdv"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
 								</div>
 
 								<div class="row">

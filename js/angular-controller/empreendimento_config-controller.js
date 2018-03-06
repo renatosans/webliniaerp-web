@@ -392,6 +392,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(!empty(ng.configuracoes.flg_finalizar_op_pdv) || ng.configuracoes.flg_finalizar_op_pdv == 0 ){
+			var item = {
+				nome 				: 'flg_finalizar_op_pdv',
+				valor 				: ng.configuracoes.flg_finalizar_op_pdv,
+				id_empreendimento	: ng.userLogged.id_empreendimento
+			};
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
