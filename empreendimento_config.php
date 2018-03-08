@@ -1092,344 +1092,389 @@
 										<div class="alert alert-config-fiscal" style="display:none"></div>
 										<fieldset>
 											<legend>Empreendimento</legend>
-										</fieldset>
-										<div class="row">
-											<div class="col-sm-4">
-												<div class="form-group" id="regimeTributario">
-													<label class="ccontrol-label">Regime Tributario </label> 
-													<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
-												    option="regimeTributario"
-												    allow-single-deselect="true"
-												    ng-model="empreendimento.cod_regime_tributario"
-												    no-results-text="'Nenhum valor encontrado'"
-												    ng-options="regimeTributario.cod_controle_item_nfe as regimeTributario.nme_item for regimeTributario in regimeTributario">
-													</select>
-												</div>
-											</div>
-											<div class="col-sm-4">
-												<div class="form-group" id="regimePisCofins">
-													<label class="ccontrol-label">Regime Pis Cofins  </label> 
-													<select chosen ng-change="ClearChosenSelect('cod_regime_pis_cofins')"
-												    option="regimePisCofins"
-												    allow-single-deselect="true"
-												    no-results-text="'Nenhum valor encontrado'"
-												    ng-model="empreendimento.cod_regime_pis_cofins"
-												    ng-options="regime.cod_controle_item_nfe as regime.nme_item for regime in regimePisCofins">
-													</select>
-												</div>
-											</div>
-											<div class="col-sm-4">
-												<div class="form-group" id="tipoEmpresaeso">
-													<label class="ccontrol-label">Tipo da Empresa</label> 
-													<select chosen ng-change="ClearChosenSelect('cod_tipo_empresa')"
-												    option="tipoEmpresa"
-												    allow-single-deselect="true"
-												    no-results-text="'Nenhum valor encontrado'"
-												    ng-model="empreendimento.cod_tipo_empresa"
-												    ng-options="regime.cod_controle_item_nfe as regime.nme_item for regime in tipoEmpresa">
-													</select>
-												</div>
-											</div>
-										</div>
 
-										<div class="row">
-											<div class="col-sm-4">
-												<div class="form-group" id="zoneamento">
-													<label class="ccontrol-label">Zoneamento</label> 
-													<select chosen ng-change="ClearChosenSelect('cod_zoneamento')"
-												    option="zoneamentos"
-												    allow-single-deselect="true"
-												    no-results-text="'Nenhum valor encontrado'"
-												    ng-model="empreendimento.cod_zoneamento"
-												    ng-options="zoneamento.cod_zoneamento as zoneamento.dsc_zoneamento for zoneamento in zoneamentos">
-													</select>
-												</div>
-											</div>
-											<div class="col-sm-3">
-												<div class="form-group" id="vlr_custo">
-													<label class="control-label">% Crédito Simples</label>
-													<input  ng-model="empreendimento.num_percentual_credito_simples" thousands-formatter class="form-control input-sm">
-												</div>
-											</div>
-											<div class="col-sm-3">
-												<div class="form-group">
-													<label for="" class="control-label">Contribuinte ICMS?</label>
-													<div class="form-group">
-														<label class="label-radio inline">
-															<input ng-model="empreendimento.flg_contribuinte_icms" value="0" type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Não</span>
-														</label>
-
-														<label class="label-radio inline">
-															<input ng-model="empreendimento.flg_contribuinte_icms" value="1" type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Sim</span>
-														</label>
-													</div>
-												</div>
-											</div>
-											<div class="col-sm-2">
-												<div class="form-group">
-													<label for="" class="control-label">Contribuinte IPI?</label>
-													<div class="form-group">
-														<label class="label-radio inline">
-															<input ng-model="empreendimento.flg_contribuinte_ipi" value="0" type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Não</span>
-														</label>
-
-														<label class="label-radio inline">
-															<input ng-model="empreendimento.flg_contribuinte_ipi" value="1" type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Sim</span>
-														</label>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div class="row" ng-show="editing">
-											<div class="col-sm-12">
-												<div class="empreendimentos form-group" id="produto_cliente">
-													<table class="table table-bordered table-condensed table-striped table-hover">
-														<thead>
-															<tr>
-																<td colspan="3">
-																	<strong>Regime Especial</strong> <i ng-click="showModalRegimeEspecial()" style="cursor:pointer;color: #9ad268;" class="fa fa-plus-circle fa-lg"></i>
-																</td>
-															</tr>
-															<tr>
-																<td>#</td>
-																<td>Descrição</td>
-																<td width="60" align="center">
-																	
-																</td>
-															</tr>
-														</thead>
-														<tbody>
-															<tr ng-show="(empreendimento.regime_especial.length == 0 && empreendimento.regime_especial != null)">
-																<td colspan="3" align="center">Nenhum Regime Relacionado</td>
-															</tr>
-															<tr>
-																<td colspan="3" class="text-center" ng-if="empreendimento.regime_especial == null">
-																	<i class='fa fa-refresh fa-spin'></i> Carregando
-																</td>
-															</tr>
-															<tr ng-repeat="item in empreendimento.regime_especial" bs-tooltip >
-																<td>{{ item.cod_regime_especial }}</td>
-																<td>{{ item.dsc_regime_especial }}</td>
-																<td align="center">
-																	<button class="btn btn-xs btn-danger" ng-disabled="itemEditing($index)" ng-click="delRegimeEspecial($index)" tooltip="excluir" title="excluir" data-toggle="tooltip"><i class="fa fa-trash-o"></i></button>
-																</td>
-															</tr>
-														</tbody>
-													</table>
-												</div>
-											</div>
-										</div>
-
-										<div class="row">
-											<div class="col-sm-4">
-												<div class="form-group" id="regimeTributario">
-													<label class="ccontrol-label">Operação Padrão</label> 
-													<select chosen
-												    option="lista_operacao"
-												    ng-model="configuracoes.id_operacao_padrao_venda"
-												    ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
-													</select>
-												</div>
-											</div>
-
-											<div class="col-sm-2">
-												<div class="form-group" id="regimeTributario">
-													<label class="ccontrol-label">Versão Tabela IBPT</label> 
-													<select chosen
-													    option="lista_versao_ibpt"
-													    ng-model="configuracoes.num_versao_ibpt"
-													    ng-options="item.versao as item.versao for item in lista_versao_ibpt">
-													</select>
-												</div>
-											</div>
-
-											<div class="col-sm-2" ng-if="userLogged.id == 498 || userLogged.id == 222">
-												<div class="form-group">
-													<label for="" class="control-label">Pagamento Pendente?</label>
-													<div class="form-group">
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_pagamento_pendente" value="1" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Sim</span>
-														</label>
-														<label class="label-radio inline">
-															<input ng-model="configuracoes.flg_pagamento_pendente" value="0" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
-															<span class="custom-radio"></span>
-															<span>Não</span>
-														</label>
-													</div>
-												</div>
-											</div>
-
-											<div class="col-sm-2">
-												<div class="form-group">
-													<label class="control-label">Validade Certificado Digital</label> 
-													<input class="form-control input-sm" maxlength="10" ng-model="configuracoes.dta_validade_certificado_digital">
-												</div>
-											</div>
-
-											<div class="col-sm-2">
-												<div class="form-group">
-													<label class="control-label">Dias de Antecedencia Alerta</label> 
-													<input class="form-control input-sm" ng-model="configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital">
-												</div>
-											</div>
-										</div>
-
-										<div class="row">
-											<form  role="form">
-												<div class="col-sm-2">
-													<div class="form-group" id="serie_documento_fiscal">
-														<label class="control-label">Série</label>
-														<input type="text" ng-model="serie_documento_fiscal.serie_documento_fiscal" class="form-control input-sm">
-													</div>
-												</div>
-
-												<div class="col-sm-6">
-													<div class="form-group" id="num_modelo_documento_fiscal">
-														<label class="control-label">Modelo</label>
-														<select chosen
-														    option="chosen_modelo_nota_fiscal"
-														    allow-single-deselect="true"
-														    ng-model="serie_documento_fiscal.num_modelo_documento_fiscal"
-														    ng-options="modelo.num_item as modelo.descricao for modelo in chosen_modelo_nota_fiscal">
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group" id="regimeTributario">
+														<label class="ccontrol-label">Regime Tributario </label> 
+														<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
+													    option="regimeTributario"
+													    allow-single-deselect="true"
+													    ng-model="empreendimento.cod_regime_tributario"
+													    no-results-text="'Nenhum valor encontrado'"
+													    ng-options="regimeTributario.cod_controle_item_nfe as regimeTributario.nme_item for regimeTributario in regimeTributario">
 														</select>
 													</div>
 												</div>
-
-												<div class="col-sm-3" id="num_ultimo_documento_fiscal">
-													<div class="form-group">
-														<label class="control-label">Último Número Utilizado</label>
-														<input ng-model="serie_documento_fiscal.num_ultimo_documento_fiscal" type="text" class="form-control input-sm">
+												<div class="col-sm-4">
+													<div class="form-group" id="regimePisCofins">
+														<label class="ccontrol-label">Regime Pis Cofins  </label> 
+														<select chosen ng-change="ClearChosenSelect('cod_regime_pis_cofins')"
+													    option="regimePisCofins"
+													    allow-single-deselect="true"
+													    no-results-text="'Nenhum valor encontrado'"
+													    ng-model="empreendimento.cod_regime_pis_cofins"
+													    ng-options="regime.cod_controle_item_nfe as regime.nme_item for regime in regimePisCofins">
+														</select>
 													</div>
 												</div>
-
-												<div class="col-sm-1">
-													<div class="form-group">
-														<label class="control-label"><br>
-															<button  ng-if="edit_serie_documento_fiscal == false" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-																<i class="fa fa-plus-circle" ></i> Incluir
-															</button></label>
-														<button  ng-if="edit_serie_documento_fiscal" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
-															<i class="fa fa-edit"></i> Incluir Alterações
-														</button>
-													
+												<div class="col-sm-4">
+													<div class="form-group" id="tipoEmpresaeso">
+														<label class="ccontrol-label">Tipo da Empresa</label> 
+														<select chosen ng-change="ClearChosenSelect('cod_tipo_empresa')"
+													    option="tipoEmpresa"
+													    allow-single-deselect="true"
+													    no-results-text="'Nenhum valor encontrado'"
+													    ng-model="empreendimento.cod_tipo_empresa"
+													    ng-options="regime.cod_controle_item_nfe as regime.nme_item for regime in tipoEmpresa">
+														</select>
 													</div>
 												</div>
-											</form>
-										</div>
+											</div>
 
-										<div class="row">
-											<div class="col-sm-12">
-												<div class="form-group">
-													<div class="table-responsive">
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group" id="zoneamento">
+														<label class="ccontrol-label">Zoneamento</label> 
+														<select chosen ng-change="ClearChosenSelect('cod_zoneamento')"
+													    option="zoneamentos"
+													    allow-single-deselect="true"
+													    no-results-text="'Nenhum valor encontrado'"
+													    ng-model="empreendimento.cod_zoneamento"
+													    ng-options="zoneamento.cod_zoneamento as zoneamento.dsc_zoneamento for zoneamento in zoneamentos">
+														</select>
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group" id="vlr_custo">
+														<label class="control-label">% Crédito Simples</label>
+														<input  ng-model="empreendimento.num_percentual_credito_simples" thousands-formatter class="form-control input-sm">
+													</div>
+												</div>
+												<div class="col-sm-3">
+													<div class="form-group">
+														<label for="" class="control-label">Contribuinte ICMS?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="empreendimento.flg_contribuinte_icms" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+
+															<label class="label-radio inline">
+																<input ng-model="empreendimento.flg_contribuinte_icms" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label for="" class="control-label">Contribuinte IPI?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="empreendimento.flg_contribuinte_ipi" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+
+															<label class="label-radio inline">
+																<input ng-model="empreendimento.flg_contribuinte_ipi" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="row" ng-show="editing">
+												<div class="col-sm-12">
+													<div class="empreendimentos form-group" id="produto_cliente">
 														<table class="table table-bordered table-condensed table-striped table-hover">
 															<thead>
-																<th>Série</th>
-																<th>Documento</th>
-																<th width="30%">Últ. Número Utilizado</th>
-																<th width="60"></th>
+																<tr>
+																	<td colspan="3">
+																		<strong>Regime Especial</strong> <i ng-click="showModalRegimeEspecial()" style="cursor:pointer;color: #9ad268;" class="fa fa-plus-circle fa-lg"></i>
+																	</td>
+																</tr>
+																<tr>
+																	<td>#</td>
+																	<td>Descrição</td>
+																	<td width="60" align="center">
+																		
+																	</td>
+																</tr>
 															</thead>
 															<tbody>
-																<tr ng-repeat="item in lista_serie_documento_fiscal" ng-if="item.flg_excluido != 1">
-																	<td class="text-middle">{{item.serie_documento_fiscal}}</td>
-																	<td class="text-middle">{{item.num_modelo_documento_fiscal}} - {{item.dsc_modelo_documento_fiscal}}</td>
-																	<td class="text-middle">{{item.num_ultimo_documento_fiscal}}</td>
-																	<td class="text-center text-middle">
-																		<button ng-disabled="index_edit_serie_documento_fiscal == $index" ng-click="editSerieDocumentoFiscal($index,item)" type="button" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></button>
-																		<button ng-disabled="index_edit_serie_documento_fiscal == $index" ng-click="delSerieDocumentoFiscal($index)" type="button" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
-																	</td>
+																<tr ng-show="(empreendimento.regime_especial.length == 0 && empreendimento.regime_especial != null)">
+																	<td colspan="3" align="center">Nenhum Regime Relacionado</td>
 																</tr>
 																<tr>
-																	<td colspan="4" class="text-center" ng-if="lista_serie_documento_fiscal.length == 0">
-																		Nenhum item encontrado
+																	<td colspan="3" class="text-center" ng-if="empreendimento.regime_especial == null">
+																		<i class='fa fa-refresh fa-spin'></i> Carregando
 																	</td>
 																</tr>
-																<tr>
-																	<td colspan="4" class="text-center" ng-if="lista_serie_documento_fiscal.length == null">
-																		<i class='fa fa-refresh fa-spin'></i> Carregando...
+																<tr ng-repeat="item in empreendimento.regime_especial" bs-tooltip >
+																	<td>{{ item.cod_regime_especial }}</td>
+																	<td>{{ item.dsc_regime_especial }}</td>
+																	<td align="center">
+																		<button class="btn btn-xs btn-danger" ng-disabled="itemEditing($index)" ng-click="delRegimeEspecial($index)" tooltip="excluir" title="excluir" data-toggle="tooltip"><i class="fa fa-trash-o"></i></button>
 																	</td>
 																</tr>
-																
 															</tbody>
 														</table>
 													</div>
 												</div>
 											</div>
-										</div>
 
-										<div class="row">
-											<div class="col-sm-6">
-												<div class="form-group">
-													<label class="ccontrol-label">Modelo Documento/Série Padrão p/ NFC-e</label> 
-													<select chosen
-													    option="lista_serie_documento_fiscal"
-													    ng-model="configuracoes.id_serie_padrao_nfce"
-													    ng-options="serie.id as (serie.serie_documento_fiscal+' - '+serie.dsc_modelo_documento_fiscal) for serie in lista_serie_documento_fiscal">
-													</select>
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group" id="regimeTributario">
+														<label class="ccontrol-label">Operação Padrão</label> 
+														<select chosen
+													    option="lista_operacao"
+													    ng-model="configuracoes.id_operacao_padrao_venda"
+													    ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
+														</select>
+													</div>
+												</div>
+
+												<div class="col-sm-2">
+													<div class="form-group" id="regimeTributario">
+														<label class="ccontrol-label">Versão Tabela IBPT</label> 
+														<select chosen
+														    option="lista_versao_ibpt"
+														    ng-model="configuracoes.num_versao_ibpt"
+														    ng-options="item.versao as item.versao for item in lista_versao_ibpt">
+														</select>
+													</div>
+												</div>
+
+												<div class="col-sm-2" ng-if="userLogged.id == 498 || userLogged.id == 222">
+													<div class="form-group">
+														<label for="" class="control-label">Pagamento Pendente?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_pagamento_pendente" value="1" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_pagamento_pendente" value="0" name="flg_pagamento_pendente"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label class="control-label">Validade Certificado Digital</label> 
+														<input class="form-control input-sm" maxlength="10" ng-model="configuracoes.dta_validade_certificado_digital">
+													</div>
+												</div>
+
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label class="control-label">Dias de Antecedencia Alerta</label> 
+														<input class="form-control input-sm" ng-model="configuracoes.qtd_dias_antecedencia_alerta_vencimento_certificado_digital">
+													</div>
 												</div>
 											</div>
 
-											<div class="col-sm-6">
-												<div class="form-group">
-													<label class="ccontrol-label">Modelo Documento/Série Padrão p/ NF-e</label> 
-													<select chosen
-													    option="lista_serie_documento_fiscal"
-													    ng-model="configuracoes.id_serie_padrao_nfe"
-													    ng-options="serie.id as (serie.serie_documento_fiscal+' - '+serie.dsc_modelo_documento_fiscal) for serie in lista_serie_documento_fiscal">
-													</select>
+											<div class="row">
+												<form role="form">
+													<div class="col-sm-2">
+														<div class="form-group" id="serie_documento_fiscal">
+															<label class="control-label">Série</label>
+															<input type="text" ng-model="serie_documento_fiscal.serie_documento_fiscal" class="form-control input-sm">
+														</div>
+													</div>
+
+													<div class="col-sm-6">
+														<div class="form-group" id="num_modelo_documento_fiscal">
+															<label class="control-label">Modelo</label>
+															<select chosen
+															    option="chosen_modelo_nota_fiscal"
+															    allow-single-deselect="true"
+															    ng-model="serie_documento_fiscal.num_modelo_documento_fiscal"
+															    ng-options="modelo.num_item as modelo.descricao for modelo in chosen_modelo_nota_fiscal">
+															</select>
+														</div>
+													</div>
+
+													<div class="col-sm-3" id="num_ultimo_documento_fiscal">
+														<div class="form-group">
+															<label class="control-label">Último Número Utilizado</label>
+															<input ng-model="serie_documento_fiscal.num_ultimo_documento_fiscal" type="text" class="form-control input-sm">
+														</div>
+													</div>
+
+													<div class="col-sm-1">
+														<div class="form-group">
+															<label class="control-label"><br>
+																<button  ng-if="(!edit_serie_documento_fiscal)" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+																	<i class="fa fa-plus-circle" ></i> Incluir
+																</button>
+																<button ng-if="(edit_serie_documento_fiscal)" ng-click="incluirSerieDocumentoFiscal($event)" type="button" class="btn btn-sm btn-primary" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+																	<i class="fa fa-edit"></i> Incluir Alterações
+																</button>
+															</label>
+														</div>
+													</div>
+												</form>
+											</div>
+
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<div class="table-responsive">
+															<table class="table table-bordered table-condensed table-striped table-hover">
+																<thead>
+																	<th>Série</th>
+																	<th>Documento</th>
+																	<th width="30%">Últ. Número Utilizado</th>
+																	<th width="60"></th>
+																</thead>
+																<tbody>
+																	<tr ng-repeat="item in lista_serie_documento_fiscal" ng-if="item.flg_excluido != 1">
+																		<td class="text-middle">{{item.serie_documento_fiscal}}</td>
+																		<td class="text-middle">{{item.num_modelo_documento_fiscal}} - {{item.dsc_modelo_documento_fiscal}}</td>
+																		<td class="text-middle">{{item.num_ultimo_documento_fiscal}}</td>
+																		<td class="text-center text-middle">
+																			<button ng-disabled="index_edit_serie_documento_fiscal == $index" ng-click="editSerieDocumentoFiscal($index,item)" type="button" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></button>
+																			<button ng-disabled="index_edit_serie_documento_fiscal == $index" ng-click="delSerieDocumentoFiscal($index)" type="button" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+																		</td>
+																	</tr>
+																	<tr>
+																		<td colspan="4" class="text-center" ng-if="lista_serie_documento_fiscal.length == 0">
+																			Nenhum item encontrado
+																		</td>
+																	</tr>
+																	<tr>
+																		<td colspan="4" class="text-center" ng-if="lista_serie_documento_fiscal.length == null">
+																			<i class='fa fa-refresh fa-spin'></i> Carregando...
+																		</td>
+																	</tr>
+																	
+																</tbody>
+															</table>
+														</div>
+													</div>
 												</div>
 											</div>
-										</div>
 
-										<fieldset>
-											<legend>SAT</legend>
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label class="ccontrol-label">Modelo Documento/Série Padrão p/ NFC-e</label> 
+														<select chosen
+														    option="lista_serie_documento_fiscal"
+														    ng-model="configuracoes.id_serie_padrao_nfce"
+														    ng-options="serie.id as (serie.serie_documento_fiscal+' - '+serie.dsc_modelo_documento_fiscal) for serie in lista_serie_documento_fiscal">
+														</select>
+													</div>
+												</div>
+
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label class="ccontrol-label">Modelo Documento/Série Padrão p/ NF-e</label> 
+														<select chosen
+														    option="lista_serie_documento_fiscal"
+														    ng-model="configuracoes.id_serie_padrao_nfe"
+														    ng-options="serie.id as (serie.serie_documento_fiscal+' - '+serie.dsc_modelo_documento_fiscal) for serie in lista_serie_documento_fiscal">
+														</select>
+													</div>
+												</div>
+											</div>
 										</fieldset>
 
 										<div class="row">
-									
-											<div class="col-sm-4">
-												<div class="form-group" id="patch_socket_sat"  >
-													<label class="control-label">URL WebSocket</label>
-													<input ng-model="configuracoes.patch_socket_sat"  type="text" class="form-control input-sm parsley-validated">
-												</div>
-											</div>
-											<div class="col-sm-3">
-												<div class="form-group" id="num_cnpj_sw"  >
-													<label class="control-label">CNPJ Software House</label>
-													<input ng-model="configuracoes.num_cnpj_sw"  type="text" class="form-control input-sm parsley-validated">
+											<div class="col-xs-3">
+												<div class="form-group">
+													<label for="" class="control-label">Modelo Doc. Fiscal Consumidor:</label>
+													<div class="form-group">
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_tipo_documento_fiscal_consumidor" value="SAT" name="flg_tipo_documento_fiscal_consumidor"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>SAT CF-e</span>
+														</label>
+														<label class="label-radio inline">
+															<input ng-model="configuracoes.flg_tipo_documento_fiscal_consumidor" value="NFCe" name="flg_tipo_documento_fiscal_consumidor"   type="radio" class="inline-radio">
+															<span class="custom-radio"></span>
+															<span>NFC-e</span>
+														</label>
+													</div>
 												</div>
 											</div>
 										</div>
-									<div class="row">
-										<div class="col-sm-7" id="txt_sign_ac">
-											<div class="form-group">
-											  <label for="txt_sign_ac">Assinatura AC (Hash Base64):</label>
-											  <textarea class="form-control" rows="5" ng-model="configuracoes.txt_sign_ac"></textarea>
+
+										<div class="row">
+											<div class="col-xs-6" ng-show="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')">
+												<fieldset>
+													<legend>Configurações SAT CF-e</legend>
+													
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group" id="patch_socket_sat"  >
+																<label class="control-label">URL WebSocket</label>
+																<input ng-model="configuracoes.patch_socket_sat"  type="text" class="form-control input-sm parsley-validated">
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group" id="num_cnpj_sw"  >
+																<label class="control-label">CNPJ Software House</label>
+																<input ng-model="configuracoes.num_cnpj_sw"  type="text" class="form-control input-sm parsley-validated">
+															</div>
+														</div>
+													</div>
+													
+													<div class="row">
+														<div class="col-sm-12" id="txt_sign_ac">
+															<div class="form-group">
+															  <label for="txt_sign_ac">Assinatura AC (Hash Base64):</label>
+															  <textarea class="form-control" rows="5" ng-model="configuracoes.txt_sign_ac"></textarea>
+															</div>
+														</div>
+													</div>
+												</fieldset>
+											</div>
+											<div class="col-xs-6" ng-show="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')">
+												<fieldset>
+													<legend>Configurações NFC-e</legend>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group" id="id_token_nfce"  >
+																<label class="control-label">ID Token</label>
+																<input ng-model="configuracoes.id_token_nfce" type="text" class="form-control input-sm parsley-validated">
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group" id="id_csc_nfce"  >
+																<label class="control-label">CSC Token</label>
+																<input ng-model="configuracoes.id_csc_nfce"  type="text" class="form-control input-sm parsley-validated">
+															</div>
+														</div>
+													</div>
+												</fieldset>
 											</div>
 										</div>
-									</div>
 
 										<div class="row">
 											<div class="col-sm-12">
 												<div class="pull-right">
-													<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfigFiscal($event)" type="submit" class="btn btn-success btn-sm">
+													<button type="submit" class="btn btn-success btn-sm"
+														data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." 
+														ng-click="salvarConfigFiscal($event)">
 														<i class="fa fa-save"></i> Salvar
 													</button>
 												</div>
 											</div>
 										</div>
 									</div>
-
 
 									<div class="tab-pane fade" id="nfe">
 										<br/>

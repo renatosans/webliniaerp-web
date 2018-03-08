@@ -1339,6 +1339,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item);
 		}
+		
+		if(ng.configuracoes.flg_tipo_documento_fiscal_consumidor != undefined){
+			var item = {
+							nome 				:'flg_tipo_documento_fiscal_consumidor',
+							valor 				:ng.configuracoes.flg_tipo_documento_fiscal_consumidor , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
 
 		btn.button('loading');
 		if(empty(ng.lista_serie_documento_fiscal)){

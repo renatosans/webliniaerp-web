@@ -745,8 +745,19 @@
 												<div class="col-sm-2">
 													<div class="form-group" id="qtd_minima_estoque">
 														<label class="control-label">Profundidade do pacote</label>
-														<input ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" thousands-formatter precision="6" ng-model="produto.profundidade_pacote" type="text" class="form-control input-sm">
+														<input ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" thousands-formatter precision="6" 
+															ng-model="produto.profundidade_pacote" type="text" class="form-control input-sm">
 													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group" id="peso">
+														<label class="control-label">Natureza</label>
+														<select chosen
+															option="plano_contas"
+															ng-model="produto.id_natureza"
+															ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+														</select>
+													</div>													
 												</div>
 											</div>
 											<div class="row">

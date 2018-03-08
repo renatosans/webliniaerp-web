@@ -174,7 +174,7 @@
 							<div class="row">
 								<div class="col-sm-2">
 									<div class="form-group">
-										<label class="control-label">Inicial</label>
+										<label class="control-label">Data Inicial</label>
 										<div class="input-group">
 											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
 											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
@@ -182,9 +182,16 @@
 									</div>
 								</div>
 
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label class="control-label">Hora Inicial</label>
+										<input type="time" id="hraInicial" class="form-control">
+									</div>
+								</div>
+
 								<div class="col-sm-2">
 									<div class="form-group">
-										<label class="control-label">Final</label>
+										<label class="control-label">Data Final</label>
 										<div class="input-group">
 											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
 											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
@@ -192,6 +199,15 @@
 									</div>
 								</div>
 
+								<div class="col-lg-2">
+									<div class="form-group">
+										<label class="control-label">Hora Final</label>
+										<input type="time" id="hraFinal" class="form-control">
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
 								<div class="col-lg-3">
 									<div class="form-group">
 										<label class="control-label">Controle de Datas:</label>
@@ -215,9 +231,21 @@
 											<option value="3">Dinheiro</option>
 											<option value="8">Transferência Bancária</option>
 											<option value="7">Vale-Troca</option>
+											<option value="10">Voucher</option>
 										</select>
 									</div>
 								</div>
+
+								<div class="col-lg-3" ng-if="((busca_aux.id_forma_pagamento == 6) || (busca_aux.id_forma_pagamento == 5) || busca_aux.id_forma_pagamento == 10)">
+									<div class="form-group">
+										<label class="control-label">Bandeira:</label>
+										<select class="form-control" option="bandeiras"
+											ng-model="busca_aux.id_bandeira" 
+											ng-options="bandeira.id as bandeira.nome for bandeira in bandeiras">
+										</select>
+									</div>
+								</div>
+
 								<div class="col-lg-2">
 									<div class="form-group">
 										<label class="control-label">Status:</label>
@@ -298,18 +326,18 @@
 
 
 								<td ng-if="item.id_forma_pagamento == 6 && item.id_venda != null && busca.tipoData != 'lan' ">
-								 ven.:#{{ item.id_venda }} <b>( Pago em : C.C - {{ item.current_parcela }}/{{ item.total_parcelas }} para {{ item.data_pagamento | dateFormat:'date' }} )</b>
+								 ven.:#{{ item.id_venda }} <b>( Pago em : C.C. ({{ item.nome_bandeira }}) - {{ item.current_parcela }}/{{ item.total_parcelas }} para {{ item.data_pagamento | dateFormat:'date' }} )</b>
 								</td>
 
 								<td ng-if="item.id_forma_pagamento == 6 && item.id_venda == null && busca.tipoData != 'lan' ">
-									<b>Pag. em : C.C - {{ item.current_parcela }}/{{ item.total_parcelas }} para {{ item.data_pagamento | dateFormat:'date' }}</b>
+									<b>Pag. em : C.C. ({{ item.nome_bandeira }}) - {{ item.current_parcela }}/{{ item.total_parcelas }} para {{ item.data_pagamento | dateFormat:'date' }}</b>
 								</td>
 
 								<td ng-if="item.id_forma_pagamento == 6 && item.id_venda != null && busca.tipoData == 'lan' ">
-								 ven.:#{{ item.id_venda }} <b>( Pago em : C.C - {{ item.parcelas.length }} X R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }} )</b>
+								 ven.:#{{ item.id_venda }} <b>( Pago em : C.C. ({{ item.nome_bandeira }}) - {{ item.parcelas.length }} X R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }} )</b>
 								</td>
 								<td ng-if="item.id_forma_pagamento == 6 && item.id_venda == null && busca.tipoData == 'lan' ">
-									<b>Pag. em : C.C - {{ item.parcelas.length }} X R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</b>
+									<b>Pag. em : C.C. ({{ item.nome_bandeira }}) - {{ item.parcelas.length }} X R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</b>
 								</td>
 
 							

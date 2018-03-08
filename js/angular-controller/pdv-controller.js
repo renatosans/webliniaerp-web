@@ -1,4 +1,4 @@
-app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService) {
+app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService,$sce) {
 	var ng = $scope,
 		aj = $http;
 	ng.mostrar_validades 	= false ;
@@ -1223,6 +1223,69 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.caixa_aberto.flg_imprimir_nfce = 1;
 	}
 
+	ng.trustSrc = function(src) {
+		return $sce.trustAsResourceUrl(src);
+	}
+
+	ng.printDANFENFCe = function() {
+		window.open($scope.nfce_data.caminho_danfe);
+	}
+
+	ng.processNFCe = function(id_venda, cod_nota_fiscal) {
+		$('#modal-vendas-reenviar-sat').modal('hide');
+		$('#modal-erro-nfce').modal('hide');
+
+		ng.showModalSatCfe('Aguarde, emitindo NFC-e...');
+		
+		var calcular_post_data = { 
+			id_empreendimento : ng.userLogged.id_empreendimento,
+			id_venda          : id_venda,
+			cod_operacao      : ng.caixa_aberto.cod_operacao_padrao_sat_cfe
+		};
+		aj.post(baseUrlApi()+'nfe/calcular', calcular_post_data)
+			.success(function(data, status, headers) {
+				if(!empty(cod_nota_fiscal))
+					data.dados_emissao.cod_nota_fiscal = cod_nota_fiscal;
+
+				data.cod_operacao 		= ng.caixa_aberto.cod_operacao_padrao_sat_cfe;
+				data.id_empreendimento 	= ng.userLogged.id_empreendimento;
+				var processar_nfce_post = {
+					nota: JSON.stringify(data)
+				};
+				aj.post(baseUrlApi()+'nfe/send/NFCe', processar_nfce_post)
+					.success(function(data, status, headers) {
+						ng.resetPdv('inicial',true);
+						$('#modal-sat-cfe').modal('hide');
+						$scope.nfce_data = JSON.parse(data.nota_data);
+						$('#modal-danfe-nfce').modal('show');
+					})
+					.error(function(data, status, headers, config) {
+						ng.resetPdv('inicial',true);
+						$('#modal-sat-cfe').modal('hide');
+						
+						if(!empty(data.erros)) {
+							$scope.erros_nfce = data.erros;
+						}
+						
+						if(!empty(data.body)) {
+							$scope.erros_nfce = [{mensagem: JSON.parse(data.body).mensagem_sefaz}];
+						}
+
+						if(!empty(data.nota_data)) {
+							var nota_data = JSON.parse(data.nota_data);
+							ng.id_venda = nota_data.cod_venda;
+							ng.cod_nota_fiscal = nota_data.cod_nota_fiscal;
+						}
+
+						$('#modal-erro-nfce').modal('show');
+					});
+			})
+			.error(function(data, status, headers, config) {
+				$('#modal-sat-cfe').modal('hide');
+				$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
+			});
+	}
+
 	ng.gravarMovimentacoes = function(){
 			
 			var id_venda = ng.finalizarOrcamento == true ? ng.id_orcamento : ng.id_venda;
@@ -1250,49 +1313,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 				if(Number(ng.caixa_aberto.flg_imprimir_nfce) == 1){
 					$('#modal_progresso_venda').modal('hide');
-					ng.showModalSatCfe('Aguarde, emitindo NFC-e...');
-					var post = { 
-						id_empreendimento : ng.userLogged.id_empreendimento,
-						id_venda          : ng.id_venda,
-						cod_operacao      : ng.caixa_aberto.cod_operacao_padrao_sat_cfe
-					};
-
-					aj.post(baseUrlApi()+'nfe/calcular', post)
-						.success(function(data, status, headers) {
-							data.cod_operacao 				= ng.caixa_aberto.cod_operacao_padrao_sat_cfe;
-							data.id_empreendimento 			= ng.userLogged.id_empreendimento;
-							
-							if(empty(data.transportadora))
-								data.transportadora = {};
-							data.transportadora.modalidade_frete = 9; // Sem frete
-							
-							data.dados_emissao.data_emissao = moment().format("YYYY/MM/DD HH:mm:ss");
-							data.formas_pagamento = [];
-
-							angular.forEach(ng.recebidos, function(fp){
-								data.formas_pagamento.push({
-									forma_pagamento: fp.cod_governo,
-									valor_pagamento: fp.valor_pagamento,
-									tipo_integracao: 2,
-									cnpj_credenciadora: null,
-									bandeira_operadora: null,
-									numero_autorizacao: null,
-									valor_troco: (fp.id_forma_pagamento == 3) ? ng.troco : null,
-								});
-							});
-
-							aj.post(baseUrlApi()+'nfe/send/NFCe', {nota: JSON.stringify(data)})
-								.success(function(data, status, headers) {
-									console.log(data);
-								})
-								.error(function(data, status, headers, config) {
-									console.log(data);
-								});
-						})
-						.error(function(data, status, headers, config) {
-							$('#modal-sat-cfe').modal('hide');
-							$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
-						});
+					ng.processNFCe(ng.id_venda);
 				}
 				else if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
 					if(empty(ng.caixa_open.id_ws_dsk)){
@@ -2750,7 +2771,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								proprietario_conta_transferencia : ng.pagamento.proprietario_conta_transferencia,
 								id_conta_transferencia_destino   : ng.pagamento.id_conta_transferencia_destino,
 								id_banco                         : ng.pagamento.id_banco,
-								cod_governo 					 : (!empty(ng.pagamento.cod_governo)) ? ng.pagamento.cod_governo : null
+								cod_governo_bandeira			 : (!empty(ng.pagamento.id_bandeira)) ? (_.findWhere(ng.bandeiras, {id: Number(ng.pagamento.id_bandeira)}).cod_governo) : null,
+								cod_governo_forma_pagamento		 : (!empty(ng.pagamento.cod_governo_forma_pagamento)) ? ng.pagamento.cod_governo_forma_pagamento : null
 						   };
 			}else{
 				var item = {
@@ -2760,7 +2782,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
 								id_vale_troca     				 : ng.pagamento.id_vale_troca,
-								cod_governo 					 : (!empty(ng.pagamento.cod_governo)) ? ng.pagamento.cod_governo : null
+								cod_governo_bandeira			 : (!empty(ng.pagamento.id_bandeira)) ? (_.findWhere(ng.bandeiras, {id: Number(ng.pagamento.id_bandeira)}).cod_governo) : null,
+								cod_governo_forma_pagamento		 : (!empty(ng.pagamento.cod_governo_forma_pagamento)) ? ng.pagamento.cod_governo_forma_pagamento : null
 						   };
 			}
 
@@ -3497,7 +3520,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 	ng.selectChange = function(forma_pagamento){
 		ng.pagamento.id_forma_pagamento = Number(forma_pagamento.id);
-		ng.pagamento.cod_governo = forma_pagamento.cod_governo;
+		ng.pagamento.cod_governo_forma_pagamento = forma_pagamento.cod_governo;
 
 		if(ng.maquinetas.length == 1)
 			ng.pagamento.id_maquineta = ng.maquinetas[0].id_maquineta;
@@ -4083,12 +4106,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					post.xml_envio_base64 = retornoClient.xmlEnvio;
 					post.dados_emissao.cod_nota_fiscal = ng.cod_nota_fiscal_reenviar_sat ;
 					aj.post(baseUrlApi()+"nfe/gravarDadosSat",post)
-					.success(function(data, status, headers, config) {
-						ng.resetPdv('venda',true);
-					})
-					.error(function(data, status, headers, config) {
-						ng.resetPdv('venda',true);
-					});
+						.success(function(data, status, headers, config) {
+							ng.resetPdv('inicial',true);
+						})
+						.error(function(data, status, headers, config) {
+							ng.resetPdv('inicial',true);
+						});
 					break;
 				case 'satcfe_error':
 					$scope.$apply(function () {
@@ -4239,32 +4262,40 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.paginacao.vendas_reenviar_sat = [];
 		ng.vendas_reenviar_sat = null;
 		
-		query = 'SELECT GROUP_CONCAT(id_venda) AS in_venda FROM'+
-				'('+
-					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
-					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
-					'INNER JOIN tbl_abertura_caixa AS tac ON tac.id = tmc.id_abertura_caixa '+
-					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
-		   query += (!empty(ng.busca.vendas_sat)) ? ' AND tmc.id_venda = ' + ng.busca.vendas_sat + ' ' : '';
-		   query += 'GROUP BY tmc.id_venda '+
-					'ORDER BY tmc.id_venda DESC '+
-				') AS tb ';
-		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
-		.success(function(data, status, headers, config) {
-			aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+data.in_venda+")")
+		query = 'SELECT ven.id as id_venda, tnf.cod_nota_fiscal '+
+				'FROM tbl_vendas AS ven '+
+				'LEFT JOIN tbl_nota_fiscal AS tnf ON tnf.cod_venda = ven.id '+
+				'WHERE ven.id_empreendimento = '+ ng.userLogged.id_empreendimento +' ';
+		if(ng.caixa_aberto.flg_imprimir_sat_cfe)
+			query += 'AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
+		else if(ng.caixa_aberto.flg_imprimir_nfce)
+			query += 'AND (tnf.cod_venda IS NULL OR (tnf.flg_nfce = 1 AND tnf.chave_nfe IS NULL)) ';
+
+		if(!empty(ng.busca.vendas_sat))
+			query += ' AND ven.id = ' + ng.busca.vendas_sat + ' ';
+
+		query += 'GROUP BY ven.id ORDER BY ven.id DESC';
+
+		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=true")
 			.success(function(data, status, headers, config) {
-				ng.vendas_reenviar_sat = data.vendas;
-				ng.paginacao.vendas_reenviar_sat = data.paginacao ;
+				var vendas_sem_cfe = data;
+				var in_venda = data.map(function(elem){return elem.id_venda}).join(",");
+				aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+ in_venda +")")
+					.success(function(data, status, headers, config) {
+						angular.forEach(data.vendas, function(venda){
+							venda.cod_nota_fiscal = _.findWhere(vendas_sem_cfe, {id_venda: venda.id.toString()}).cod_nota_fiscal;
+						});
+						ng.vendas_reenviar_sat = data.vendas;
+						ng.paginacao.vendas_reenviar_sat = data.paginacao;
+					})
+					.error(function(data, status, headers, config) {
+						ng.paginacao.vendas_reenviar_sat = [];
+						ng.vendas_reenviar_sat = [];
+					});
 			})
 			.error(function(data, status, headers, config) {
-				ng.paginacao.vendas_reenviar_sat = [];
-				ng.vendas_reenviar_sat = [];
+				
 			});
-		})
-		.error(function(data, status, headers, config) {
-			
-		});
 	}
 	ng.process_reeviar_sat = false ;
 	ng.cod_nota_fiscal_reenviar_sat = null ;

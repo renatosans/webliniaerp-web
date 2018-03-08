@@ -242,23 +242,20 @@
 										</select>
 									</div>
 								</div>
-
-								<div class="col-sm-2">
-									<div class="form-group" id="flg_imprimir_ncfe">
+								<div class="col-sm-2" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')">
+									<div class="form-group" id="flg_imprimir_nfce">
 										<label for="" class="control-label">Emitir NFC-e?</label>
 										<div class="form-group">
 											<label class="label-radio inline">
 												<input type="radio" class="inline-radio" value="0"
-													ng-disabled="(conta.flg_imprimir_ncfe == 1)"
-													ng-model="conta.flg_imprimir_ncfe">
+													ng-model="conta.flg_imprimir_nfce">
 												<span class="custom-radio"></span>
 												<span>Não</span>
 											</label>
 
 											<label class="label-radio inline">
 												<input type="radio" class="inline-radio" value="1"
-													ng-disabled="(conta.flg_imprimir_ncfe == 1)"
-													ng-model="conta.flg_imprimir_ncfe">
+													ng-model="conta.flg_imprimir_nfce">
 												<span class="custom-radio"></span>
 												<span>Sim</span>
 											</label>
@@ -266,13 +263,12 @@
 									</div>
 								</div>
 
-								<div class="col-sm-2">
+								<div class="col-sm-2" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')">
 									<div class="form-group" id="flg_imprimir_sat_cfe">
 										<label for="" class="control-label">Emitir SAT CF-e?</label>
 										<div class="form-group">
 											<label class="label-radio inline">
 												<input type="radio" class="inline-radio" value="0"
-													ng-disabled="(conta.flg_imprimir_ncfe == 1)"
 													ng-model="conta.flg_imprimir_sat_cfe">
 												<span class="custom-radio"></span>
 												<span>Não</span>
@@ -280,7 +276,6 @@
 
 											<label class="label-radio inline">
 												<input type="radio" class="inline-radio" value="1"
-													ng-disabled="(conta.flg_imprimir_ncfe == 1)"
 													ng-model="conta.flg_imprimir_sat_cfe">
 												<span class="custom-radio"></span>
 												<span>Sim</span>
@@ -294,7 +289,7 @@
 										<label class="control-label">Operação Padrão</label>
 										<select chosen option="lista_operacao"
 									    	ng-model="conta.cod_operacao_padrao_sat_cfe"
-											ng-disabled="(conta.flg_imprimir_ncfe == 0 && conta.flg_imprimir_sat_cfe == 0)"
+											ng-disabled="(conta.flg_imprimir_nfce == 0 && conta.flg_imprimir_sat_cfe == 0)"
 									    	ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
 										</select>
 									</div>

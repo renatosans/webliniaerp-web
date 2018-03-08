@@ -557,6 +557,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 		ng.produto.qtd = qtdTotal;
 		ng.atualizaValores();
+		$("#list_validades").modal('hide');
 	}
 
 	ng.deleteValidadeItem = function(index) {
@@ -821,9 +822,15 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		aj.get(baseUrlApi()+"nfe/controles/null/"+ctr)
 			.success(function(data, status, headers, config) {
 				ng[key] = ng[key].concat(data);
+				setTimeout(function(){
+					$scope.$apply();
+				}, 10);
 			})
 			.error(function(data, status, headers, config) {
 				ng[key] = [];
+				setTimeout(function(){
+					$scope.$apply();
+				}, 10);
 			});
 	}
 
@@ -854,13 +861,15 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				else {
 					ng.addProduto({
 						id_produto: 		data.id,
+						id_natureza: 		ng.new_produto.id_natureza,
 						nome_fabricante: 	(!empty(ng.new_produto.id_fabricante)) ? _.findWhere(ng.fabricantes, { id: ng.new_produto.id_fabricante }).nome_fabricante : null,
 						nome_produto: 		ng.new_produto.nome,
 						codigo_barra: 		ng.new_produto.codigo_barra,
+						flg_unidade_fracao: ng.new_produto.flg_unidade_fracao,
 						peso: 				(!empty(ng.new_produto.id_tamanho)) ? _.findWhere(ng.tamanhos, { id: ng.new_produto.id_tamanho }).nome_tamanho : null,
 						sabor: 				(!empty(ng.new_produto.id_cor)) ? _.findWhere(ng.cores, { id: ng.new_produto.id_cor }).nome_cor : null,
 						qtd: 				1,
-						validades: 			[{ qtd: 1 }],
+						validades: 			[],
 						custo: 				0,
 						flg_localizado: 	true
 					});
@@ -1053,6 +1062,12 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 	/* inicio - funções gerais */
 
+	ng.loadItens = function() {
+		ng.loadControleNfe('forma_aquisicao','formas_aquisicao');
+		ng.loadControleNfe('origem_mercadoria','origens_mercadoria');
+		ng.loadControleNfe('tipo_tributacao_ipi','tipos_tributacao_ipi');
+	}
+
 	ng.clearForm = function(){
 		ng.nota.itens = [] ;
 		$('#pagamentoData').val('');
@@ -1144,8 +1159,5 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.loadFabricantes();
 	ng.loadCategorias();
 	ng.loadContasBancarias();
-	ng.loadControleNfe('forma_aquisicao','formas_aquisicao');
-	ng.loadControleNfe('origem_mercadoria','origens_mercadoria');
-	ng.loadControleNfe('tipo_tributacao_ipi','tipos_tributacao_ipi');
 	ng.loadPlanoContas();
 });

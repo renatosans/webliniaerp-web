@@ -13,9 +13,16 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
     ng.conta                        = {} ;
     ng.movimentacao 				= {};
     ng.movimentacoes 				= null;
-    var params      = getUrlVars();
 
-    
+    var params = getUrlVars();
+
+    ng.loadBandeiras = function() {
+		ng.bandeiras = [{id:'', nome: ''}];
+		aj.get(baseUrlApi()+"bandeiras")
+			.success(function(data, status, headers, config) {
+				ng.bandeiras = data;
+			});
+	}
 
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
@@ -88,8 +95,9 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 	ng.total_desconto_taxa_maquineta_debito = 0 ;
 	ng.total_desconto_taxa_maquineta_credito = 0;
 
-	ng.totais = {total:0} ;
-	ng.ccDetalhes = false ;
+	ng.totais = { total: 0};
+	ng.ccDetalhes = false;
+
 	ng.resetFilter =function(){
 		$("#dtaInicial").val('');
 		$("#dtaFinal").val('');
@@ -98,6 +106,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		ng.msg_error = null;
 		ng.movimentacoes = null;
 	}
+
 	ng.loadMovimentacoes= function() {
 		ng.msg_error = null;
 		ng.movimentacoes = [] ;
@@ -105,32 +114,38 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		ng.total_desconto_taxa_maquineta = 0 ;
 		ng.total_desconto_taxa_maquineta_debito = 0 ;
 		ng.total_desconto_taxa_maquineta_credito = 0;
+		
 		query_string = "?tpv->id_empreendimento="+ng.userLogged.id_empreendimento ;
+		
 		var dtaInicial =  empty($("#dtaInicial").val()) ? "" : formatDate($("#dtaInicial").val()) ;
 		var dtaFinal   =  empty($("#dtaFinal").val())   ? "" : formatDate($("#dtaFinal").val()) ;
+		var hraInicial  = empty($("#hraInicial").val()) ? '00:00:00' : $("#hraInicial").val();
+		var hraFinal  = empty($("#hraFinal").val()) ? '23:59:59' : $("#hraFinal").val();
+
 		ng.busca = angular.copy(ng.busca_aux);
+
 		if(ng.busca.tipoData == "lan"){
 			query_string += "&tpv->id_parcelamento[exp]=IS NULL";
 			query_string += !empty(dtaInicial) && empty(dtaFinal)  ?  "&date_format(tcpv->dta_pagamento,'%Y-%m-%d')[exp]=>='"+dtaInicial+"'" : ""  ;
 			query_string += !empty(dtaFinal) && empty(dtaInicial)  ?  "&date_format(tcpv->dta_pagamento,'%Y-%m-%d')[exp]=<='"+dtaFinal+"'" : ""  ;
-			query_string += !empty(dtaInicial) && !empty(dtaFinal)  ? "&"+$.param({'tcpv->dta_pagamento':{exp:"between '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59'"}}) : ""  ;
+			query_string += !empty(dtaInicial) && !empty(dtaFinal)  ? "&"+$.param({'tcpv->dta_pagamento':{exp:"between '"+dtaInicial+" "+ hraInicial +"' AND '"+dtaFinal+" "+ hraFinal +"'"}}) : ""  ;
 		}else if(ng.busca.tipoData == "pag"){
 			query_string += !empty(dtaInicial) && empty(dtaFinal)  ?  "&date_format(tpv->data_pagamento,'%Y-%m-%d')[exp]=>='"+dtaInicial+"'" : ""  ;
 			query_string += !empty(dtaFinal) && empty(dtaInicial)  ?  "&date_format(tpv->data_pagamento,'%Y-%m-%d')[exp]=<='"+dtaFinal+"'" : ""  ;
-			query_string += !empty(dtaInicial) && !empty(dtaFinal)  ? "&"+$.param({'tpv->data_pagamento':{exp:"between '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59'"}}) : ""  ;
+			query_string += !empty(dtaInicial) && !empty(dtaFinal)  ? "&"+$.param({'tpv->data_pagamento':{exp:"between '"+dtaInicial+" "+ hraInicial +"' AND '"+dtaFinal+" "+ hraFinal +"'"}}) : ""  ;
 		}else{
 			query_string += !empty(dtaInicial) && empty(dtaFinal)  ?  "&(date_format(tcpv->dta_pagamento,'%Y-%m-%d')[exp]=>='"+dtaInicial+"' OR tpv.data_pagamento >='"+dtaInicial+"')" : ""  ;
 			query_string += !empty(dtaFinal) && empty(dtaInicial)  ?  "&(date_format(tcpv->dta_pagamento,'%Y-%m-%d')[exp]=<='"+dtaFinal+"'  OR tpv.data_pagamento <='"+dtaFinal+"')" : ""  ;
-			query_string += !empty(dtaInicial) && !empty(dtaFinal)  ? "&("+$.param({'tcpv->dta_pagamento':{exp:"between '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59' OR tpv.data_pagamento between '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59')"}}) : ""  ;
+			query_string += !empty(dtaInicial) && !empty(dtaFinal)  ? "&("+$.param({'tcpv->dta_pagamento':{exp:"between '"+dtaInicial+" "+ hraInicial +"' AND '"+dtaFinal+" "+ hraFinal +"' OR tpv.data_pagamento between '"+dtaInicial+" "+ hraInicial +"' AND '"+dtaFinal+" "+ hraFinal +"')"}}) : ""  ;
 		}
 
 		if(ng.busca.cliente != "")
 				query_string += "&("+$.param({'tu->nome':{exp:"like '%"+ng.busca.cliente+"%' "}})+")";
 		
-		query_string += !empty(ng.busca.id_forma_pagamento)  ?  "&tpv->id_forma_pagamento="+ng.busca.id_forma_pagamento : ""  ;
+		query_string += !empty(ng.busca.id_forma_pagamento) ? "&tpv->id_forma_pagamento="+ng.busca.id_forma_pagamento : ""  ;
+		query_string += !empty(ng.busca.id_bandeira) ? "&tpv->id_bandeira="+ng.busca.id_bandeira : "";
 
 		query_string += !empty(ng.busca.status_pagamento,false)  ?  "&tpv->status_pagamento="+ng.busca.status_pagamento : ""  ;
-
 
 		aj.get(baseUrlApi()+"relatorio/pagamentos"+query_string)
 			.success(function(data, status, headers, config) {
@@ -179,10 +194,6 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		
 	}
 
-
-
-
-
 	ng.mensagens = function(classe , msg, alertClass){
 		alertClass = alertClass != null  ?  alertClass:'.alert-sistema' ;
 		$(alertClass).fadeIn().addClass(classe).html(msg);
@@ -191,14 +202,9 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		},5000);
 	}
 
-
 	function defaulErrorHandler(data, status, headers, config) {
 		ng.mensagens('alert-danger','<strong>'+ data +'</strong>');
 	}
 
-	$("#dtaInicial").val(NOW());
-	$("#dtaFinal").val(NOW());
-	ng.loadMovimentacoes();
-
-
+	ng.loadBandeiras();
 });

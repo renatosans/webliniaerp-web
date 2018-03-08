@@ -674,7 +674,7 @@
 					            		</button>
 
 					            		<button type="button" class="btn btn-sm btn-info" 
-					            			ng-click="enableNewFormProduto = !enableNewFormProduto">
+					            			ng-click="enableNewFormProduto = !enableNewFormProduto; loadItens()">
 						            		<i class="fa {{ (!enableNewFormProduto) ? 'fa-plus-circle' : 'fa-minus-circle' }} "></i> Cadastrar
 						            	</button>
 						            </div> <!-- /input-group-btn -->
@@ -708,7 +708,7 @@
 									<label class="control-label">
 										Tamanho
 									</label>
-									<select chosen option="tamanhos"
+									<select class="form-control" option="tamanhos"
 										ng-change="clearChosenSelect('tamanho', 'id')"
 										ng-model="new_produto.id_tamanho"
 										ng-options="tamanho.id as tamanho.nome_tamanho for tamanho in tamanhos">
@@ -721,7 +721,7 @@
 									<label class="control-label">
 										Sabor/Cor
 									</label>
-									<select chosen option="cores"
+									<select class="form-control" option="cores"
 										ng-change="clearChosenSelect('cor', 'id')"
 										ng-model="new_produto.id_cor"
 										ng-options="cor.id as cor.nome_cor for cor in cores">
@@ -736,7 +736,7 @@
 									<label class="control-label">
 										Fabricante
 									</label>
-									<select chosen option="fabricantes"
+									<select class="form-control" option="fabricantes"
 										ng-change="clearChosenSelect('fabricante', 'id')"
 										ng-model="new_produto.id_fabricante"
 										ng-options="fabricante.id as fabricante.nome_fabricante for fabricante in fabricantes">
@@ -749,11 +749,29 @@
 									<label class="control-label">
 										Categoria
 									</label>
-									<select chosen option="categorias"
+									<select class="form-control" option="categorias"
 										ng-change="clearChosenSelect('categoria', 'id')"
 										ng-model="new_produto.id_categoria"
 										ng-options="categoria.id as categoria.descricao_categoria for categoria in categorias">
 									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label for="" class="control-label">Unidade de Medida</label>
+									<div class="form-group">
+										<label class="label-radio inline">
+											<input ng-model="new_produto.flg_unidade_fracao"  name="unidade_fracao" value="0" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Unidade</span>
+										</label>
+										<label class="label-radio inline">
+											<input ng-model="new_produto.flg_unidade_fracao"  name="unidade_fracao" value="1" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Fração</span>
+										</label>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -764,7 +782,7 @@
 									<label class="control-label">
 										Forma de Aquisição
 									</label>
-									<select chosen option="formas_aquisicao"
+									<select class="form-control" option="formas_aquisicao"
 										ng-change="clearChosenSelect('forma_aquisicao', 'cod')"
 										ng-model="new_produto.cod_forma_aquisicao"
 										ng-options="forma_aquisicao.cod_controle_item_nfe as forma_aquisicao.nme_item for forma_aquisicao in formas_aquisicao">
@@ -777,7 +795,7 @@
 									<label class="control-label">
 										Origem da Mercadoria
 									</label>
-									<select chosen option="origens_mercadoria"
+									<select class="form-control" option="origens_mercadoria"
 										ng-change="clearChosenSelect('origem_mercadoria', 'cod')"
 										ng-model="new_produto.cod_origem_mercadoria"
 										ng-options="origem_mercadoria.cod_controle_item_nfe as origem_mercadoria.nme_item for origem_mercadoria in origens_mercadoria">
@@ -790,7 +808,7 @@
 									<label class="control-label">
 										Tipo de Tributação IPI
 									</label>
-									<select chosen option="tipos_tributacao_ipi"
+									<select class="form-control" option="tipos_tributacao_ipi"
 										ng-change="clearChosenSelect('tipo_tributacao_ipi', 'cod')"
 										ng-model="new_produto.cod_tipo_tributacao_ipi"
 										ng-options="tipo_tributacao_ipi.cod_controle_item_nfe as tipo_tributacao_ipi.nme_item for tipo_tributacao_ipi in tipos_tributacao_ipi">
@@ -805,7 +823,7 @@
 									<label class="control-label">
 										Regra de Tributação
 									</label>
-									<select chosen option="regras_tributacao"
+									<select class="form-control" option="regras_tributacao"
 										ng-change="clearChosenSelect('regra_tributos', 'cod')"
 										ng-model="new_produto.cod_regra_tributos"
 										ng-options="regra_tributos.id as regra_tributos.nome_regra_tributos for regra_tributos in regras_tributacao">
@@ -837,6 +855,21 @@
 										Unidade Medida
 									</label>
 									<input class="form-control input-sm" ng-model="new_produto.dsc_unidade_medida"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" ng-show="enableNewFormProduto">
+							<div class="col-sm-5">
+								<div class="form-group">
+									<label class="control-label">
+										Natureza
+									</label>
+									<select chosen
+										option="plano_contas"
+										ng-model="new_produto.id_natureza"
+										ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+									</select>
 								</div>
 							</div>
 						</div>
@@ -932,7 +965,7 @@
 										<div class="col-sm-4">
 											<div class="form-group" id="nme_fornecedor">
 												<label class="control-label">Validade (Mês/Ano)</label>
-												<input type="text" class="form-control" ui-mask="99/9999" ng-model="itemValidade.validade" ng-blur="validarDataValidade(itemValidade.validade)">
+												<input type="text" class="form-control" ui-mask="99/9999" ng-model="itemValidade.validade" ng-blur="validarDataValidade(itemValidade.validade);">
 											</div>
 										</div>
 
@@ -967,8 +1000,13 @@
 									</thead>
 									<tbody>
 										<tr ng-repeat="item in produto.validades">
-											<td>{{ item.validade | dateFormat:'date-m/y'}}</td>
-											<td>{{ item.qtd }}</td>
+											<td>
+												<input type="text" class="form-control" ui-mask="99/9999" ng-model="item.validade" ng-blur="validarDataValidade(itemValidade.validade)">
+											</td>
+											<td>
+												<input type="text" class="form-control" ng-model="item.qtd" ng-if="produto.flg_unidade_fracao != 1">
+												<input type="text" class="form-control" ng-model="item.qtd" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
+											</td>
 											<td align="center">
 												<button type="button" class="btn btn-xs btn-danger" ng-click="deleteValidadeItem($index)"><i class="fa fa-trash-o"></i></button>
 											</td>
@@ -977,6 +1015,15 @@
 								</table>
 				   			</div>
 				   		</div>
+				    </div>
+				    <div class="modal-footer clearfix">
+				    	<div class="pull-right">
+				    		<button type="button" 
+				    			class="btn btn-sm btn-info form-control" 
+				    			ng-click="atualizaQtdValidadeItens()">
+				    			<i class="fa fa-refresh"></i> Atualizar quantidades
+			    			</button>
+				    	</div>
 				    </div>
 			  	</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->

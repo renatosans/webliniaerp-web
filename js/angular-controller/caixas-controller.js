@@ -1,4 +1,4 @@
-app.controller('CaixasController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('CaixasController', function($scope, $http, $window, $dialogs, UserService, ConfigService){
 
 	var ng = $scope
 		aj = $http;
@@ -15,6 +15,7 @@ app.controller('CaixasController', function($scope, $http, $window, $dialogs, Us
     	{ value:'bematech_mp_4200_th'	, dsc:'BEMATECH MP-4200 TH' },
     	{ value:'epson_tm_t20'			, dsc:'EPSON TM T20' 		}
 	];
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 
     ng.editing = false;
 

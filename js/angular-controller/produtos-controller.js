@@ -105,6 +105,26 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		}
 	}
 
+	ng.loadPlanoContas = function() {
+		ng.plano_contas = [{id:"",dsc_completa:"--- Selecione ---"}];
+		aj.get(baseUrlApi()+"planocontas?tpc->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				$.each(data, function(i, item){
+					data[i].cod_plano 			= (!empty(item.cod_plano)) ? parseInt(item.cod_plano, 10) : null;
+					data[i].cod_plano_pai 		= (!empty(item.cod_plano_pai)) ? parseInt(item.cod_plano_pai, 10) : null;
+					data[i].id 					= (!empty(item.id)) ? parseInt(item.id, 10) : null;
+					data[i].id_empreendimento 	= (!empty(item.id_empreendimento)) ? parseInt(item.id_empreendimento, 10) : null;
+					data[i].id_plano_pai 		= (!empty(item.id_plano_pai)) ? parseInt(item.id_plano_pai, 10) : null;
+				});
+				ng.roleList = data;
+				ng.plano_contas = ng.plano_contas.concat(data);
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404)
+					ng.roleList = [];
+			});
+	}
+
 	ng.isNumeric = function(n){
 		return $.isNumeric(n) ;
 	}
@@ -1944,5 +1964,5 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 	ng.loadControleNfe('tipo_tributacao_ipi','chosen_tipo_tributacao_ipi');
 	ng.loadEspecialazacaoNcm();
 	ng.loadRegraTributos();
-	
+	ng.loadPlanoContas();
 });
