@@ -1286,6 +1286,35 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			});
 	}
 
+	ng.cancelNFCe = function(cod_nota_fiscal, btn_index) {
+		$('#btn-cancel-nfce-'+ btn_index).button('loading');
+		var cancel_nfce_post = {
+			id_empreendimento: ng.userLogged.id_empreendimento,
+			justificativa: 'Cancelamento de venda pelo PDV.'
+		};
+		aj.post(baseUrlApi()+'nfce/'+ cod_nota_fiscal +'/cancelar', cancel_nfce_post)
+			.success(function(data, status, headers) {
+				ng.resetPdv('inicial',true);
+				$('#btn-cancel-nfce-'+ btn_index).button('reset');
+				alert('NFC-e cancelado com sucesso!');
+			})
+			.error(function(data, status, headers, config) {
+				$('#btn-cancel-nfce-'+ btn_index).button('reset');
+				ng.resetPdv('inicial',true);
+				$('#modal-sat-cfe').modal('hide');
+				
+				if(!empty(data.erros)) {
+					$scope.erros_nfce = data.erros;
+				}
+				
+				if(!empty(data.body)) {
+					$scope.erros_nfce = [{mensagem: JSON.parse(data.body).mensagem}];
+				}
+
+				$('#modal-erro-nfce').modal('show');
+			});
+	}
+
 	ng.gravarMovimentacoes = function(){
 			
 			var id_venda = ng.finalizarOrcamento == true ? ng.id_orcamento : ng.id_venda;
@@ -4367,13 +4396,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.loadVendasCancelarSat = function(offset, limit){
-		var dta_inicial = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-		var dta_final = moment().format('YYYY-MM-DD HH:mm:ss');
-
 		var query_string  = "?tnf->cod_empreendimento="+ ng.userLogged.id_empreendimento;
 			query_string += "&tnf->status=autorizado";
+
+		if(ng.configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT') {
+			var dta_inicial = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+			var dta_final = moment().format('YYYY-MM-DD HH:mm:ss');
+			query_string += "&tnf->data_processado_sat[exp]=BETWEEN '"+ dta_inicial +"' AND '"+ dta_final +"'";
 			query_string += "&tnf->flg_sat=1";
-			// query_string += "&tnf->data_processado_sat[exp]=BETWEEN '"+ dta_inicial +"' AND '"+ dta_final +"'";
+		}
+		else if(ng.configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe') {
+			query_string += "&tnf->flg_nfce=1";
+		}
 
 		ng.vendas_cancelar_sat = [];
 		aj.get(baseUrlApi()+"nota_fiscal/sat/"+ offset +"/"+limit +"/"+ query_string)

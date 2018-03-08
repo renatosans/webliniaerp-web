@@ -369,7 +369,14 @@
 										<span ng-if="(caixa_aberto.flg_imprimir_nfce)">NFC-e</span>
 									</a>
 								</li>
-								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalCancelarCupomSat()"><i class="fa fa-times-circle"></i> Cancelar Cupom SAT</a></li>
+								<li ng-show="(caixa_aberto.flg_imprimir_sat_cfe == 1 || caixa_aberto.flg_imprimir_nfce == 1)">
+									<a href="#" ng-click="modalCancelarCupomSat()">
+										<i class="fa fa-times-circle"></i> 
+										Cancelar Cupom
+										<span ng-if="(caixa_aberto.flg_imprimir_sat_cfe)">SAT</span>
+										<span ng-if="(caixa_aberto.flg_imprimir_nfce)">NFC-e</span>
+									</a>
+								</li>
 								<li ng-show="caixa_aberto"><a href="#" ng-click="showModalReimpressaoCNF()"><i class="fa fa-file-text-o"></i> Re-imprimir Cupom Não Fiscal</a></li>
 								<li ng-show="finalizarOrcamento == false"><a href="#" ng-click="pagamentoFulso()"><i class="fa fa-money"></i> Pagamento</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="resizeScreen()"><i class="fa fa-arrows-alt"></i>Tela Inteira</a></li>
@@ -2720,7 +2727,9 @@
 			    		<button type="button" class="btn btn-md btn-default" data-dismiss="modal">
 			    			Fechar
 			    		</button>
-			    		<button type="button" class="btn btn-md btn-primary" ng-click="processNFCe(id_venda, cod_nota_fiscal)">
+			    		<button type="button" class="btn btn-md btn-primary" 
+			    			ng-if="(id_venda && cod_nota_fiscal)"
+			    			ng-click="processNFCe(id_venda, cod_nota_fiscal)">
 			    			<i class="fa fa-refresh"></i> Reprocessar Cupom NFC-e
 			    		</button>
 			    	</div>
@@ -3044,9 +3053,16 @@
 											<td class="text-right">R$ {{ item.vlr_total_venda | numberFormat:2:',':'.' }}</td>
 											<td>
 												<button type="button" class="btn btn-danger btn-xs"
-													data-loading-text='<i class="fa fa-refresh fa-spin"></i>' 
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i> Aguarde...' 
+													ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"
 													ng-click="cancelarSat(item)" >
-													<i class="fa fa-times-circle"></i> Cancelar SAT
+													<i class="fa fa-times-circle"></i> Cancelar SAT CF-e
+												</button>
+												<button type="button" id="btn-cancel-nfce-{{ $index }}" class="btn btn-danger btn-xs"
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i> Aguarde...' 
+													ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"
+													ng-click="cancelNFCe(item.cod_nota_fiscal, $index)" >
+													<i class="fa fa-times-circle"></i> Cancelar NFC-e
 												</button>
 											</td>
 										</tr>
