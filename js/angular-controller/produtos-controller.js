@@ -493,6 +493,22 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		 		produto.id= data.id ;
 		 		produto.local_new_image = !empty(data.local_new_image) ?  data.local_new_image : null ; 
 		 		PrestaShop.send('post',baseUrlApi()+"prestashop/produto/",produto);
+
+		 		if (empty(produto.fotos)) {
+		 			produto.fotos = ng.produto.fotos;
+		 		}
+
+		 		angular.forEach(produto.fotos, function(item, index){
+					item.id_produto = produto.id;
+				});
+
+		 		aj.post(baseUrlApi()+"produto/save/foto",{data: JSON.stringify(produto.fotos)})
+					.success(function(data, status, headers, config) {
+						console.log('Sucesso ao subir fotos');
+					})
+					.error(function(data, status, headers, config) {
+						console.log('Erro ao subir fotos');
+					});
 		 	},
 		 	error:function(data){
 		 		 btn.button('reset');
@@ -521,6 +537,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.checando_categorias = true ;
 		ng.editing = true ;
 		ng.produto = angular.copy(item);
+
+		ng.loadFotosProduto(ng.produto.id);
 
 		var indexCombinacao = getIndex('id_combinacao',ng.produto.id,ng.produto.combinacoes);
 		if(indexCombinacao==null){
@@ -1945,8 +1963,69 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		 }, 3000);
 	}
 
+	setTimeout(function(){
+	  $('.btn-upload input[type="file"]').on('change', function(){
+		var file = this.files[0]; // get selected file
+		var reader = new FileReader();
 
+		ng.fileModel = $(this).data().model; // get attribute model name
 
+		if(empty(ng.produto)){
+			ng.produto = {};
+		}
+		
+		if(empty(ng.produto.fotos)){
+			ng.produto.fotos = [];		
+		}
+
+		if(empty(ng.produto[ng.fileModel])) // validate if is empty
+			ng.produto[ng.fileModel] = {}; // create as object
+
+		// detect file type
+		var type = file.type.substring(file.type.indexOf('/')+1, file.type.length);
+		if(empty(type)){
+			type = file.name.substring((file.name.lastIndexOf('.')+1), file.name.length);
+		}
+		
+		ng.produto[ng.fileModel].name = file.name; // file name
+		ng.produto[ng.fileModel].type = type; // file type
+		ng.produto[ng.fileModel].size = (file.size / 1024); // file size
+
+		// adjust file size string name
+		if(ng.produto[ng.fileModel].size < 1024)
+			ng.produto[ng.fileModel].size = numberFormat(ng.produto[ng.fileModel].size, 2, ',', '.') + ' KB';
+		else if(ng.produto[ng.fileModel].size > 1024)
+			ng.produto[ng.fileModel].size = numberFormat(ng.produto[ng.fileModel].size, 2, ',', '.') + ' MB';
+
+		// after loading file...
+		reader.onload = function (e) {
+			ng.produto[ng.fileModel].path = e.target.result; // get base64 string of file
+			ng.produto[ng.fileModel].flg_excluir = false;
+			ng.produto.fotos.push(ng.produto[ng.fileModel]);
+			ng.produto[ng.fileModel] = null;
+		  	setTimeout(function(){
+				ng.$apply(); // apply changes in the screen
+			},1);
+		}
+
+		if(!empty(file))
+			reader.readAsDataURL(file);
+		});
+	}, 10);
+
+	ng.loadFotosProduto = function(id_produto){
+		aj.get(baseUrlApi()+"produto/fotos/"+id_produto)
+			.success(function(data, status, headers, config) {
+				ng.produto.fotos = data;
+				angular.forEach(ng.produto.fotos, function(item, index){
+					item.path_nova = item.path.substring(item.path.indexOf('assets'), item.path.length);
+					item.flg_excluir = false;
+				});
+			})
+			.error(function(data, status, headers, config) {
+				console.log('erro ao carregar fotos');
+			});
+	}
 
 	function defaulErrorHandler(data, status, headers, config) {
 		ng.mensagens('alert-danger','<strong>'+ data +'</strong>');
