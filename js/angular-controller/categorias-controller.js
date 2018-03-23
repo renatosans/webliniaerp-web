@@ -204,14 +204,14 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 
 		if(!empty(ng.categoria.pth_thumbnail)){
 			ng.categoria.thumbnail = {
-				path: ng.categoria.pth_thumbnail.replace('/var/www/html/webliniaerp-web/', ''),
+				path: ng.categoria.pth_thumbnail.substring(ng.categoria.pth_thumbnail.indexOf('assets'), ng.categoria.pth_thumbnail.length),
 				updated: false
 			};
 		}
 
 		if(!empty(ng.categoria.pth_banner)){
 			ng.categoria.banner = {
-				path: ng.categoria.pth_banner.replace('/var/www/html/webliniaerp-web/', ''),
+				path: ng.categoria.pth_banner.substring(ng.categoria.pth_banner.indexOf('assets'), ng.categoria.pth_banner.length),
 				updated: false
 			};
 		}
