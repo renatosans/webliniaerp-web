@@ -190,6 +190,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 		 }
 
 		 cliente.status = 1 ;
+		 cliente.flg_cadastro_externo = 1 ;
 		 
 		 if(cliente.dta_nacimento != null && cliente.dta_nacimento.length == 8 ){
 		 	var data = cliente.dta_nacimento;
