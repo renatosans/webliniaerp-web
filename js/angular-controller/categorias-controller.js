@@ -241,7 +241,7 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 	}
 
 	ng.load= function() {
-		var query_string = "?tce->id_empreendimento="+ng.userLogged.id_empreendimento;
+		var query_string = "?cat->flg_excluido=0&tce->id_empreendimento="+ng.userLogged.id_empreendimento;
 		aj.get(baseUrlApi()+"categorias/treeview"+ query_string)
 			.success(function(data, status, headers, config) {
 				ng.categorias = ng.montarTabelaCategria([],data,0);

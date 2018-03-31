@@ -298,7 +298,7 @@
 																		<td>{{ item.peso }}</td>
 																		<td>{{ item.sabor }}</td>
 																		<td class="text-right" width="70">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-																		<td width="80">
+																		<td width="100">
 																			<input type="text" class="form-control input-xs text-center"
 																				onKeyPress="return SomenteNumero(event);" 
 																				ng-model="item.qtd" 
@@ -306,7 +306,7 @@
 																				ng-if="item.flg_unidade_fracao != 1"/>
 
 																			<input type="text" class="form-control input-xs text-center"
-																				thousands-formatter precision="3"
+																				thousands-formatter precision="5"
 																				onKeyPress="return SomenteNumero(event);" 
 																				ng-model="item.qtd" 
 																				ng-keyup="calVlrCustoInsumos()" 
@@ -393,6 +393,7 @@
 															<th class="text-center" rowspan="2" style="line-height: 46px">Custo </th>
 															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('atacado')">Venda (Atacado)</th>
 															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('intermediario')">Venda (Intermediário)</th>
+															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('intermediario_ii')">Venda (Intermediário II)</th>
 															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('varejo')">Venda (Varejo)</th>
 														</tr>
 														<tr>
@@ -400,6 +401,8 @@
 															<td class="text-center" ng-if="existeTabelaPreco('atacado')">R$</td>
 															<td class="text-center" ng-if="existeTabelaPreco('intermediario')">%</td>
 															<td class="text-center" ng-if="existeTabelaPreco('intermediario')">R$</td>
+															<td class="text-center" ng-if="existeTabelaPreco('intermediario_ii')">%</td>
+															<td class="text-center" ng-if="existeTabelaPreco('intermediario_ii')">R$</td>
 															<td class="text-center" ng-if="existeTabelaPreco('varejo')">%</td>
 															<td class="text-center" ng-if="existeTabelaPreco('varejo')">R$</td>
 														</tr>
@@ -440,6 +443,14 @@
 															<td ng-if="existeTabelaPreco('intermediario')">
 																<input ng-model="preco.valor_venda_intermediario" ng-keyup="calculaMargens('intermediario','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
+
+															<td ng-if="existeTabelaPreco('intermediario_ii')">
+																<input ng-model="preco.perc_venda_intermediario_ii" ng-keyup="calculaMargens('intermediario_ii','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'    type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+															</td>
+															<td ng-if="existeTabelaPreco('intermediario_ii')">
+																<input ng-model="preco.valor_venda_intermediario_ii" ng-keyup="calculaMargens('intermediario_ii','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+															</td>
+
 															<td ng-if="existeTabelaPreco('varejo')">
 																<input ng-if="existeTabelaPreco('varejo')" ng-model="preco.perc_venda_varejo" ng-keyup="calculaMargens('varejo','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
@@ -1150,6 +1161,7 @@
 											<th class="text-center" width="60">Estoque</th>
 											<th class="text-center" width="100" ng-if="existeTabelaPreco('atacado')">Vlr. Atacado</th>
 											<th class="text-center" width="100" ng-if="existeTabelaPreco('intermediario')">Vlr. Intermediário</th>
+											<th class="text-center" width="100" ng-if="existeTabelaPreco('intermediario_ii')">Vlr. Intermediário II</th>
 											<th class="text-center" width="100" ng-if="existeTabelaPreco('varejo')">Vlr. Varejo</th>
 											<th width="80" style="text-align: center;">Opções</th>
 										</tr>
@@ -1185,6 +1197,7 @@
 											<td class="text-center"><a href="#"  ng-click="qtdDepostito(item,$event)">{{ configuracao.id_produto_debito_anterior_cliente == item.id_produto && ' ' || item.qtd_item }}</a></td>
 											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario_ii')">R$ {{ item.vlr_venda_intermediario_ii | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td align="center">
 												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')">

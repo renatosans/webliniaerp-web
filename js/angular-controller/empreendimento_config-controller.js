@@ -100,6 +100,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	ng.tabela_de_vendas = [
 		{value: 0, name: 'atacado', 				label: 'Atacado'},
 		{value: 0, name: 'intermediario', 			label: 'Intermediário'},
+		{value: 0, name: 'intermediario_ii', 		label: 'Intermediário II'},
 		{value: 0, name: 'varejo', 					label: 'Varejo'}
 	];
 

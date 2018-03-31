@@ -54,7 +54,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.promessas_pagamento      = [{status_pagamento:0,data_pagamento:null,valor_pagamento:0}] ;
 	ng.dsc_formas_pagamento     = [] ;
 	ng.dadosOrcamento           = null ;
-	ng.margemAplicada           = {atacado:false,intermediario:false,varejo:true,parceiro:false} ;
+	ng.margemAplicada           = {atacado:false,intermediario:false,intermediario_ii:false,varejo:true,parceiro:false} ;
 
 	ng.dados_venda = {};
 	ng.formas_pagamento = [
@@ -80,12 +80,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.selectMargemAplicadaInicial = function(){
 		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
 			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasIntermediarioII = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario_ii'),
 			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
 
 		if(hasVarejo) {
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: true,
 				parceiro: false
 			};
@@ -93,6 +95,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: true,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: false,
 				parceiro: false
 			};
@@ -100,12 +103,22 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: true,
+				intermediario_ii: false,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(hasIntermediarioII) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				intermediario_ii: true,
 				varejo: false,
 				parceiro: false
 			};
 		} else {
 			ng.margemAplicada = {
 				atacado: false,
+				intermediario: false,
 				intermediario: false,
 				varejo: false,
 				parceiro: true
@@ -232,11 +245,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 						ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 						ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_intermediario_ii = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 						ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 
 						var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
 						ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
 						ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+						ng.produto_taxa_servico.margem_intermediario_ii 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
 						ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
 
 						ng.produto_taxa_servico.valor_desconto_real = 0;
@@ -357,6 +372,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			produto.vlr_real       		 = produto.vlr_venda_intermediario;
 			produto.perc_margem_aplicada = produto.margem_intermediario;
 			ng.margem_aplicada_venda 	 = 'intermediario';
+		}
+		else if(ng.margemAplicada.intermediario_ii){
+			produto.vlr_unitario		 = produto.vlr_venda_intermediario_ii;
+			produto.vlr_real       		 = produto.vlr_venda_intermediario_ii;
+			produto.perc_margem_aplicada = produto.margem_intermediario_ii;
+			ng.margem_aplicada_venda 	 = 'intermediario_ii';
 		}
 		else if(ng.margemAplicada.parceiro){
 			produto.vlr_unitario    	 = produto.vlr_custo_real;
@@ -1516,12 +1537,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.setMargemAplicada = function(){
 		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
 			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasIntermediarioII = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario_ii'),
 			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
 
 		if(ng.cliente.perc_venda == "perc_venda_varejo" && hasVarejo) {
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: true,
 				parceiro: false
 			};
@@ -1529,6 +1552,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: true,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: false,
 				parceiro: false
 			};
@@ -1536,6 +1560,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: true,
+				intermediario_ii: false,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(ng.cliente.perc_venda == "perc_venda_intermediario_ii" && hasIntermediario) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				intermediario_ii: true,
 				varejo: false,
 				parceiro: false
 			};
@@ -1543,6 +1576,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: false,
 				parceiro: true
 			};
@@ -1572,6 +1606,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					produto.vlr_real       		 = produto.vlr_venda_intermediario;
 					produto.perc_margem_aplicada = produto.margem_intermediario;	
 					ng.margem_aplicada_venda 	 = 'intermediario';
+				}else if(ng.margemAplicada.intermediario_ii){
+					produto.vlr_unitario		 = produto.vlr_venda_intermediario_ii;
+					produto.vlr_real       		 = produto.vlr_venda_intermediario_ii;
+					produto.perc_margem_aplicada = produto.margem_intermediario_ii;	
+					ng.margem_aplicada_venda 	 = 'intermediario_ii';
 				}else if(ng.margemAplicada.parceiro){
 					produto.vlr_unitario    	 = produto.vlr_custo_real;
 					produto.vlr_real       		 = produto.vlr_custo_real;
@@ -1702,6 +1741,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						prd_modal.vlr_real = prd_modal.vlr_venda_varejo;
 					else if(ng.margemAplicada.intermediario)
 						prd_modal.vlr_real = prd_modal.vlr_venda_intermediario;
+					else if(ng.margemAplicada.intermediario_ii)
+						prd_modal.vlr_real = prd_modal.vlr_venda_intermediario_ii;
 					else if(ng.margemAplicada.parceiro)
 						prd_modal.vlr_real = prd_modal.vlr_custo_real;
 					else
@@ -1828,6 +1869,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								data.produtos[0].vlr_custo = aux_custo ;
 								data.produtos[0].vlr_custo_real = aux_custo ;
 								data.produtos[0].vlr_venda_intermediario = Number(ng.vlr_produto_pesado.valor) ;
+
+								var aux_gramas = (Number(ng.vlr_produto_pesado.valor) / Number(data.produtos[0].vlr_venda_intermediario_ii)) ;
+								var aux_custo  = aux_gramas * data.produtos[0].vlr_custo_real ;
+								data.produtos[0].vlr_custo = aux_custo ;
+								data.produtos[0].vlr_custo_real = aux_custo ;
+								data.produtos[0].vlr_venda_intermediario_ii = Number(ng.vlr_produto_pesado.valor) ;
 							}
 							ng.incluirCarrinho(data.produtos[0]);
 							if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra) && ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra == 1) {
@@ -1866,6 +1913,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 			item.vlr_venda_atacado = item.vlr_venda_atacado;
 			item.vlr_venda_intermediario = item.vlr_venda_intermediario;
+			item.vlr_venda_intermediario_ii = item.vlr_venda_intermediario_ii;
 			item.vlr_venda_varejo = item.vlr_venda_varejo;
 
 			ng.incluirCarrinho(angular.copy(item), 'UPDATE');
