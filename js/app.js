@@ -939,13 +939,13 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 
 	ng.cadastro_externo = 0;
 	ng.loadCadastroExterno= function(){
-		aj.get(baseUrlApi()+"cliente/externo?id_empreendimento="+ng.userLogged.id_empreendimento+"&flg_cadastro_externo=1")
+		aj.get(baseUrlApi()+"cliente/externo?usu->id_empreendimento="+ng.userLogged.id_empreendimento+"&usu->flg_cadastro_externo=1"+"&aut->login[exp]=is null")
 			.success(function(data, status, headers, config){
-				ng.cadastro_externo = data.total_cadastro_externo;
-				if(ng.cadastro_externo > 0) {
+				ng.cadastro_externo = data;
+				if(ng.cadastro_externo.length > 0) {
 					ng.alertas.push({
 						type: 'warning',
-						message: "Você tem "+ ng.cadastro_externo +" novo(s) cliente(s)!",
+						message: "Você tem "+ ng.cadastro_externo.length +" novo(s) cliente(s)!",
 						link: "clientes.php?novos=1"
 					});
 				}				

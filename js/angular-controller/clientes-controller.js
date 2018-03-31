@@ -319,7 +319,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		}
 		if (params != null) {
 			if(params.novos == 1){
-				query_string += "&"+"usu->flg_cadastro_externo=1";	
+				query_string += "&usu->flg_cadastro_externo=1&aut->login[exp]=is null";	
 			}
 		}
 		
@@ -411,7 +411,6 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 
 		 cliente.id_empreendimento = ng.userLogged.id_empreendimento;
 		 cliente.status = 1 ;
-		 cliente.flg_cadastro_externo = 0;
 
 		  if(cliente.dta_nacimento != null && cliente.dta_nacimento.length == 8 ){
 		 	var data = cliente.dta_nacimento;
