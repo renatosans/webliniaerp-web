@@ -2112,6 +2112,48 @@
 										</div>
 									</div>
 								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="row">
+											<div class="col-sm-10">
+												<div class="form-group">
+													<label class="control-label">Motivo para Baixa Manual de Estoque</label>
+													<input class="form-control input-sm" type="text" name="dsc_motivo" id="dsc_motivo" ng-model="motivo.dsc_motivo">
+												</div>
+											</div>
+											<div class="col-sm-2">
+												<div class="form-group">
+													<div class="controls">
+														<label class="control-label">&nbsp;</label>
+													</div>
+													<button class="btn btn-success btn-sm" type="submit" ng-click="saveMotivoBaixaManual()"><i class="fa fa-save"> Salvar</i></button>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table table-bordered table-hover table-striped table-condensed">
+													<thead>
+														<tr>
+															<td class="text-bold text-center">Motivo</td>
+															<td class="text-bold text-center" width="70">Ações</td>
+														</tr>
+													</thead>
+													<tbody>
+														<tr ng-repeat="item in motivos">
+															<td>{{ item.dsc_motivo }}</td>
+															<td class="text-center">
+																<button class="btn btn-xs btn-warning" ng-click="editMotivoBaixaManual(item)"><i class="fa fa-edit"></i></button>
+																<button class="btn btn-xs btn-danger" ng-click="deleteMotivoBaixaManual(item)"><i class="fa fa-trash-o"></i></button>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
 
 								<div class="row">
 									<div class="col-sm-12">
