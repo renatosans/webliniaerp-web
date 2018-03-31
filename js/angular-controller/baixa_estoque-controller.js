@@ -12,6 +12,16 @@ app.controller('BaixaEstoqueController', function($scope, $http, $window, $dialo
 
     ng.editing = false;
 
+    ng.loadMotivosBaixaManual = function(){
+		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
+		aj.get(baseUrlApi()+"motivo_baixa_manual_estoque"+queryString)
+			.success(function(data, status, headers, config) {
+				ng.motivos = data;
+			})
+			.error(function(data, status, headers, config) {
+			});		
+	}
+
     ng.isNumeric = function(vlr){
     	return $.isNumeric(vlr);
     }
@@ -207,7 +217,9 @@ app.controller('BaixaEstoqueController', function($scope, $http, $window, $dialo
 			id_deposito 		: ng.estoqueSaida.id_deposito,
 			id_profissional 	: ng.estoqueSaida.id_profissional,
 			id_usuario 			: ng.userLogged.id,
-			produtos 			: produtos 
+			produtos 			: produtos,
+			id_motivo			: ng.estoqueSaida.id_motivo,
+			descricao			: ng.estoqueSaida.descricao
 		}
 		aj.post(baseUrlApi()+"clinica/produto/baixa",post)
 		.success(function(data, status, headers, config) {
@@ -233,6 +245,7 @@ app.controller('BaixaEstoqueController', function($scope, $http, $window, $dialo
 	}
 
 	ng.loadDepositos();
+	ng.loadMotivosBaixaManual();
 });
 
 

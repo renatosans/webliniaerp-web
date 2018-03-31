@@ -172,43 +172,74 @@
 
 					<div class="panel-body">
 						<div class="row">
-							<div class="col-lg-4">
-								<div class="form-group">
-									<label class="control-label">Descrição</label>
-									<input type="text" class="form-control" 
-										ng-model="categoria.descricao_categoria">
+							<div class="col-sm-6">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="control-label">Descrição</label>
+											<input type="text" class="form-control" 
+												ng-model="categoria.descricao_categoria">
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="control-label">Categoria Superior</label>
+											<select chosen 
+												option="categoriasChosen"
+												ng-model="categoria.id_pai">
+												<option value="{{campo.id}}"
+													ng-repeat="campo in categoriasChosen" 
+													ng-bind-html="(campo.nivel+campo.descricao_categoria)">
+												</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="control-label">Cor (Box)</label>
+											<input colorpicker type="text" class="form-control" 
+												ng-model="categoria.hex_cor_box" />
+										</div>
+									</div>
+									
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="control-label">Cor (Letra)</label>
+											<input colorpicker type="text" class="form-control" 
+												ng-model="categoria.hex_cor_letra" />
+										</div>
+									</div>
 								</div>
 							</div>
-
-							<div class="col-lg-4">
-								<div class="form-group">
-									<label class="control-label">Categoria Superior</label>
-									<select chosen 
-										option="categoriasChosen"
-										ng-model="categoria.id_pai">
-										<option value="{{campo.id}}"
-											ng-repeat="campo in categoriasChosen" 
-											ng-bind-html="(campo.nivel+campo.descricao_categoria)">
-										</option>
-									</select>
+							<div class="col-sm-6">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="row">
+											<button class="btn btn-default btn-upload">
+												<i class="fa fa-paper-clip"></i> Selecione a imagem de miniatura da categoria
+												<input type="file" data-model="thumbnail"></input>
+											</button>
+										</div>
+										<div class="row">
+											<img src="{{ categoria.thumbnail.path }}" class="img-responsive img-thumbnail" style="max-width: 200px">
+										</div>
+									</div>
 								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-lg-2">
-								<div class="form-group">
-									<label class="control-label">Cor (Box)</label>
-									<input colorpicker type="text" class="form-control" 
-										ng-model="categoria.hex_cor_box" />
-								</div>
-							</div>
-							
-							<div class="col-lg-2">
-								<div class="form-group">
-									<label class="control-label">Cor (Letra)</label>
-									<input colorpicker type="text" class="form-control" 
-										ng-model="categoria.hex_cor_letra" />
+								<br>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="row">
+											<button class="btn btn-default btn-upload">
+												<i class="fa fa-paper-clip"></i> Selecione a imagem de banner da categoria
+												<input type="file" data-model="banner"></input>
+											</button>
+										</div>
+										<div class="row">
+											<img src="{{ categoria.banner.path }}" class="img-responsive img-thumbnail" style="max-width: 97%">
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>

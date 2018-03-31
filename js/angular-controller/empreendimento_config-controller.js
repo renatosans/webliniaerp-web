@@ -1912,6 +1912,54 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		});
 	}
 
+	ng.saveMotivoBaixaManual = function(){
+		if (!empty(ng.motivo.dsc_motivo)) {
+			var url  = ng.editingBM ? 'motivo_baixa_manual_estoque/update/' : 'motivo_baixa_manual_estoque/save/';
+			var msg  = ng.editingBM ? 'Motivo Atualizado com sucesso' : 'Motivo salvo com sucesso!';
+
+			ng.motivo.id_empreendimento = ng.userLogged.id_empreendimento;
+			ng.motivo.flg_excluido = 0;
+			aj.post(baseUrlApi()+url, ng.motivo)
+				.success(function(data, status, headers, config) {
+					ng.motivo = [];
+					ng.editingBM = false;
+					ng.loadMotivosBaixaManual();
+					ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+				})
+				.error(function(data, status, headers, config) {
+				});
+		}
+	}
+
+	ng.editMotivoBaixaManual = function(item) {
+		ng.editingBM = true;
+		ng.motivo = angular.copy(item);
+		$('html,body').animate({scrollTop: 300 },'slow');
+	}
+
+	ng.loadMotivosBaixaManual = function(){
+		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
+		queryString += "&flg_excluido=0";
+		aj.get(baseUrlApi()+"motivo_baixa_manual_estoque"+queryString)
+			.success(function(data, status, headers, config) {
+				ng.motivos = data;
+			})
+			.error(function(data, status, headers, config) {
+			});		
+	}
+
+	ng.deleteMotivoBaixaManual = function(item){
+		var msg = 'Motivo excluído com sucesso!'
+		item.flg_excluido = 1;
+		aj.post(baseUrlApi()+"motivo_baixa_manual_estoque/update/", item)
+			.success(function(data, status, headers, config) {
+				ng.loadMotivosBaixaManual();
+				ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
+
 	ng.existsAtualizacaoEmMassa();
 	ng.loadPerfis();
 	ng.loadEmpreendimento(ng.userLogged.id_empreendimento);
@@ -1929,5 +1977,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	ng.loadPlanoContasSelect();
 	ng.loadFormasPagamento();
 	ng.loadModelosDRE();
+	ng.loadMotivosBaixaManual();
 
 });

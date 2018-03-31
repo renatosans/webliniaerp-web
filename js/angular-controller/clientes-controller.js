@@ -18,6 +18,24 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
     ng.estadoSelecionado = {};
     ng.emptyBusca   = {};
 
+    function getUrlVars() {
+		if(window.location.href.indexOf('?') != -1) {
+			var vars = {}, hash;
+			var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+			for(var i = 0; i < hashes.length; i++)
+			{
+				hash = hashes[i].split('=');
+				vars[hash[0]] = hash[1];
+			}
+
+			return vars;
+		}
+		else
+			return null;
+	}
+
+	var params = getUrlVars();
+
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 	}
@@ -299,7 +317,12 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		if(ng.busca.tipo_cliente != 'ambos') {
 			query_string += "&"+$.param({"(1":{exp:"=1 AND (CASE WHEN tpf.usuarios_id is NULL THEN 'pj' WHEN tpj.cnpj is NULL THEN 'pf' END) = '"+ ng.busca.tipo_cliente +"' AND (usu.nome like'%"+ng.busca.clientes+"%' OR apelido like '%"+ng.busca.clientes+"%' OR nome_fantasia like '%"+ng.busca.clientes+"%' OR cnpj like '%"+ng.busca.clientes+"%'))"}})+"";
 		}
-
+		if (params != null) {
+			if(params.novos == 1){
+				query_string += "&"+"usu->flg_cadastro_externo=1";	
+			}
+		}
+		
 		aj.get(baseUrlApi()+"usuarios/"+ offset +"/"+ limit +"/"+query_string)
 			.success(function(data, status, headers, config) {
 				ng.clientes = [];
@@ -388,6 +411,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 
 		 cliente.id_empreendimento = ng.userLogged.id_empreendimento;
 		 cliente.status = 1 ;
+		 cliente.flg_cadastro_externo = 0;
 
 		  if(cliente.dta_nacimento != null && cliente.dta_nacimento.length == 8 ){
 		 	var data = cliente.dta_nacimento;

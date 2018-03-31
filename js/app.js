@@ -937,6 +937,24 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 		}, 2000);
 	}
 
+	ng.cadastro_externo = 0;
+	ng.loadCadastroExterno= function(){
+		aj.get(baseUrlApi()+"cliente/externo?id_empreendimento="+ng.userLogged.id_empreendimento+"&flg_cadastro_externo=1")
+			.success(function(data, status, headers, config){
+				ng.cadastro_externo = data.total_cadastro_externo;
+				if(ng.cadastro_externo > 0) {
+					ng.alertas.push({
+						type: 'warning',
+						message: "Você tem "+ ng.cadastro_externo +" novo(s) cliente(s)!",
+						link: "clientes.php?novos=1"
+					});
+				}				
+			})
+			.error(function(data, status, headers, config){
+				ng.cadastro_externo = 0 ;
+			})
+	}
+
 	ng.loadCountOrcamentos = function(first_date,last_date) {
 		var vlrTotalVendasPeriodoComparativo = 0 ;
 		aj.get(baseUrlApi()+"count_orcamentos/dashboard?id_empreendimento="+ng.userLogged.id_empreendimento)
@@ -1099,6 +1117,7 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 	ng.loadProdutosEstoqueMinimo();
 	ng.loadPedidosTransferenciaRecebido();
 	ng.loadPedidosTransferenciaTransporte();
+	ng.loadCadastroExterno();
 });
 
 app.directive('bsTooltip', function ($timeout) {

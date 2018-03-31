@@ -665,7 +665,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			post.produtos = ng.formatPostValidades() ;
 		}
 
-		aj.post(baseUrlApi()+url,post)
+		aj.post(baseUrlApi()+url,{ form_data: JSON.stringify(post)})
 		.success(function(data, status, headers, config) {
 			btn.button('reset'); 
 			ng.transferencia = angular.copy(transferenciaTO);

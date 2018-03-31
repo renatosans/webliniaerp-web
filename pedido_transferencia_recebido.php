@@ -292,7 +292,6 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
-														<pre>{{ item.qtd_transferida }}</pre>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao != 1"/>
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
@@ -573,7 +572,6 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
-														<pre>{{ item.qtd_transferida }}</pre>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao != 1"/>
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/></td>

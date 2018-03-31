@@ -4,15 +4,15 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 
 	ng.baseUrl 		= baseUrl();
 	ng.userLogged 	= UserService.getUserLogado();
-    ng.categorias	= [];
-    ng.paginacao = { itens: [] } ;
+	ng.categorias	= [];
+	ng.paginacao = { itens: [] } ;
 
-    ng.editing = false;
+	ng.editing = false;
 
-    ng.showBoxNovo = function(onlyShow){
-    	ng.editing = !ng.editing;
+	ng.showBoxNovo = function(onlyShow){
+		ng.editing = !ng.editing;
 
-    	if(onlyShow) {
+		if(onlyShow) {
 			$('i','#btn-novo').removeClass("fa-plus-circle").addClass("fa-minus-circle");
 			$('#box-novo').show();
 		}
@@ -52,14 +52,14 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 
 	ng.loadAllEmpreendimentos = function(offset, limit) {
 		offset = offset == null ? 0  : offset;
-    	limit  = limit  == null ? 20 : limit;
+		limit  = limit  == null ? 20 : limit;
 
-    	var query_string = "?id_usuario="+ng.userLogged.id;
-    	if(ng.busca.empreendimento != ""){
-    		query_string += "&" +$.param({nome_empreendimento:{exp:"like'%"+ng.busca.empreendimento+"%'"}});
-    	}
+		var query_string = "?id_usuario="+ng.userLogged.id;
+		if(ng.busca.empreendimento != ""){
+			query_string += "&" +$.param({nome_empreendimento:{exp:"like'%"+ng.busca.empreendimento+"%'"}});
+		}
 
-    	ng.empreendimentos = [];
+		ng.empreendimentos = [];
 		aj.get(baseUrlApi()+"empreendimentos/"+offset+"/"+limit+"/"+query_string)
 			.success(function(data, status, headers, config) {
 				ng.empreendimentos = data.empreendimentos;
@@ -160,6 +160,10 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 			url += '/update';
 		}
 
+		itemPost.pth_thumbnail			= ng.categoria.pth_thumbnail;
+		itemPost.thumbnail				= ng.categoria.thumbnail;
+		itemPost.banner					= ng.categoria.banner;
+		itemPost.pth_banner				= ng.categoria.pth_banner;
 		itemPost.id_empreendimento 		= ng.userLogged.id_empreendimento;
 		itemPost.descricao_categoria 	= ng.categoria.descricao_categoria;
 		itemPost.hex_cor_box 			= ng.categoria.hex_cor_box;
@@ -167,7 +171,7 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 		itemPost.empreendimentos 		= ng.empreendimentosAssociados;
 		itemPost.id_pai 				= empty(ng.categoria.id_pai) ? null : ng.categoria.id_pai ;
 
-		aj.post(baseUrlApi()+url, itemPost)
+		aj.post(baseUrlApi()+url, {data: JSON.stringify(itemPost)})
 			.success(function(data, status, headers, config) {
 				if( empty(ng.categoria.id) )
 					itemPost.id = data.categoria.id
@@ -197,6 +201,21 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 
 	ng.editar = function(item) {
 		ng.categoria = angular.copy(item);
+
+		if(!empty(ng.categoria.pth_thumbnail)){
+			ng.categoria.thumbnail = {
+				path: ng.categoria.pth_thumbnail.substring(ng.categoria.pth_thumbnail.indexOf('assets'), ng.categoria.pth_thumbnail.length),
+				updated: false
+			};
+		}
+
+		if(!empty(ng.categoria.pth_banner)){
+			ng.categoria.banner = {
+				path: ng.categoria.pth_banner.substring(ng.categoria.pth_banner.indexOf('assets'), ng.categoria.pth_banner.length),
+				updated: false
+			};
+		}
+
 		ng.categoria.id_pai = empty(ng.categoria.id_pai) ? null : ""+ng.categoria.id_pai;
 		ng.showBoxNovo(true);
 		ng.loadEmpreendimentosByCategoria();
@@ -261,4 +280,48 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 	}
 
 	ng.load(0,10);
+
+	setTimeout(function(){
+	  $('.btn-upload input[type="file"]').on('change', function(){
+		var file = this.files[0]; // get selected file
+		var reader = new FileReader();
+
+		ng.fileModel = $(this).data().model; // get attribute model name
+
+		if(empty(ng.categoria)){
+			ng.categoria = {};
+		}
+
+		if(empty(ng.categoria[ng.fileModel])) // validate if is empty
+			ng.categoria[ng.fileModel] = {}; // create as object
+
+		// detect file type
+		var type = file.type.substring(file.type.indexOf('/')+1, file.type.length);
+		if(empty(type)){
+			type = file.name.substring((file.name.lastIndexOf('.')+1), file.name.length);
+		}
+		
+		ng.categoria[ng.fileModel].name = file.name; // file name
+		ng.categoria[ng.fileModel].type = type; // file type
+		ng.categoria[ng.fileModel].size = (file.size / 1024); // file size
+
+		// adjust file size string name
+		if(ng.categoria[ng.fileModel].size < 1024)
+			ng.categoria[ng.fileModel].size = numberFormat(ng.categoria[ng.fileModel].size, 2, ',', '.') + ' KB';
+		else if(ng.categoria[ng.fileModel].size > 1024)
+			ng.categoria[ng.fileModel].size = numberFormat(ng.categoria[ng.fileModel].size, 2, ',', '.') + ' MB';
+
+		// after loading file...
+		reader.onload = function (e) {
+			ng.categoria[ng.fileModel].path = e.target.result; // get base64 string of file
+			ng.categoria[ng.fileModel].updated = true;
+		  	setTimeout(function(){
+				ng.$apply(); // apply changes in the screen
+			},1);
+		}
+
+		if(!empty(file))
+			reader.readAsDataURL(file);
+		});
+	}, 10);
 });

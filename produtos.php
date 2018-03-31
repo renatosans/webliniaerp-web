@@ -828,6 +828,25 @@
 													</div>
 												</div>
 											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<button class="btn btn-default btn-upload">
+														<i class="fa fa-paper-clip"></i> Selecione mais imagens para o produto
+														<input type="file" data-model="thumbnail">
+													</button>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<ul class="list-inline">
+														<li ng-repeat="item in produto.fotos | filter:{flg_excluir:false}">
+															<img ng-if="(item.path_nova)" src="{{ item.path_nova }}" class="img-responsive img-thumbnail" style="max-width: 200px">
+															<img ng-if="(!item.path_nova)" src="{{ item.path }}" class="img-responsive img-thumbnail" style="max-width: 200px">
+															<button class="btn btn-danger btn-xs" ng-click="item.flg_excluir = true"><i class="fa fa-trash-o"></i></button>
+														</li>
+													</ul>
+												</div>
+											</div>
 											<!--<div class="row">
 												<div class="col-sm-12">
 													<div class="form-group" id="descricao">
