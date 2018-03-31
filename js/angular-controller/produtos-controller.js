@@ -28,6 +28,8 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 					valor_venda_varejo:0,
 					perc_venda_intermediario:0,
 					valor_venda_intermediario:0,
+					perc_venda_intermediario_ii:0,
+					valor_venda_intermediario_ii:0,
 					vlr_custo:0
 		},
 		precos : [{
@@ -38,6 +40,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 					perc_desconto_compra: 0,
 					perc_venda_atacado: 0,
 					perc_venda_intermediario: 0,
+					perc_venda_intermediario_ii: 0,
 					perc_venda_varejo: 0
 		}],
 		combinacoes : [],
@@ -218,7 +221,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 10 : limit;
 
-		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&pro->flg_produto_composto=0";
+		var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento;
 
 		query_string += ng.editing ? '&pro->id[exp]=<> '+ng.produto.id : '' ;
 
@@ -407,6 +410,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			produto.precos[i].valor_desconto_cliente    = (prc.valor_desconto_cliente / 100);
 			produto.precos[i].perc_venda_atacado       	= (prc.perc_venda_atacado / 100);
 			produto.precos[i].perc_venda_intermediario 	= (prc.perc_venda_intermediario / 100);
+			produto.precos[i].perc_venda_intermediario_ii 	= (prc.perc_venda_intermediario_ii / 100);
 			produto.precos[i].perc_venda_varejo        	= (prc.perc_venda_varejo / 100);
 		});
 
@@ -679,10 +683,12 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			preco.perc_venda_atacado = 0 ;
 			preco.perc_venda_varejo = 0 ;
 			preco.perc_venda_intermediario = 0 ;
+			preco.perc_venda_intermediario_ii = 0 ;
 		}
 		ng.calculaMargens('atacado','margem',preco);
 		ng.calculaMargens('varejo','margem',preco);
 		ng.calculaMargens('intermediario','margem',preco);
+		ng.calculaMargens('intermediario_ii','margem',preco);
 
 	}
 	
@@ -706,7 +712,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				preco.valor_venda_atacado = 0;
 			else
 				preco.valor_venda_atacado = valor_custo_real + (valor_custo_real*perc_venda_atacado) ;
-
 		}else if(tipo_perfil == "atacado" && tipo_valor == "valor"){
 			var valor_atacado = preco.valor_venda_atacado ;
 			if(valor_atacado > valor_custo_real){
@@ -720,7 +725,6 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				preco.valor_venda_varejo = 0;
 			else
 				preco.valor_venda_varejo = valor_custo_real + (valor_custo_real*perc_venda_varejo) ;
-
 		}else if(tipo_perfil == "varejo" && tipo_valor == "valor"){
 			var valor_varejo = preco.valor_venda_varejo ;
 			if(valor_varejo > valor_custo_real){
@@ -728,13 +732,12 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				preco.perc_venda_varejo = (ex * 100)/valor_custo_real;
 			}else
 				preco.perc_venda_varejo = 0;
-		}if(tipo_perfil == "intermediario" && tipo_valor == "margem"){
+		}else if(tipo_perfil == "intermediario" && tipo_valor == "margem"){
 			var perc_venda_intermediario = preco.perc_venda_intermediario / 100;
 			if(isNaN(Number(perc_venda_intermediario)) || perc_venda_intermediario == 0)
 				preco.valor_venda_intermediario = 0;
 			else
 				preco.valor_venda_intermediario = valor_custo_real + (valor_custo_real*perc_venda_intermediario) ;
-
 		}else if(tipo_perfil == "intermediario" && tipo_valor == "valor"){
 			var valor_intermediario = preco.valor_venda_intermediario ;
 			if(valor_intermediario > valor_custo_real){
@@ -742,6 +745,19 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				preco.perc_venda_intermediario = (ex * 100)/valor_custo_real;
 			}else
 				preco.perc_venda_intermediario = 0;
+		}else if(tipo_perfil == "intermediario_ii" && tipo_valor == "margem"){
+			var perc_venda_intermediario_ii = preco.perc_venda_intermediario_ii / 100;
+			if(isNaN(Number(perc_venda_intermediario_ii)) || perc_venda_intermediario_ii == 0)
+				preco.valor_venda_intermediario_ii = 0;
+			else
+				preco.valor_venda_intermediario_ii = valor_custo_real + (valor_custo_real*perc_venda_intermediario_ii) ;
+		}else if(tipo_perfil == "intermediario_ii" && tipo_valor == "valor"){
+			var valor_intermediario_ii = preco.valor_venda_intermediario_ii ;
+			if(valor_intermediario_ii > valor_custo_real){
+				var ex = (valor_custo_real - valor_intermediario_ii) * (-1);
+				preco.perc_venda_intermediario_ii = (ex * 100)/valor_custo_real;
+			}else
+				preco.perc_venda_intermediario_ii = 0;
 		}
 	}
 
@@ -994,6 +1010,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 						dataPrc[i].perc_venda_atacado = (empty(x.perc_venda_atacado) ? 0  : x.perc_venda_atacado) * 100;
 						dataPrc[i].perc_venda_varejo = (empty(x.perc_venda_varejo) ? 0  : x.perc_venda_varejo) * 100;
 						dataPrc[i].perc_venda_intermediario = (empty(x.perc_venda_intermediario) ? 0  : x.perc_venda_intermediario) * 100;
+						dataPrc[i].perc_venda_intermediario_ii = (empty(x.perc_venda_intermediario_ii) ? 0  : x.perc_venda_intermediario_ii) * 100;
 						dataPrc[i].valor_desconto_cliente = (empty(x.valor_desconto_cliente) ? 0  : x.valor_desconto_cliente) * 100;
 					});
 					ng.produto.precos = dataPrc ;
@@ -1053,6 +1070,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 			perc_desconto_compra: 0,
 			perc_venda_atacado: 0,
 			perc_venda_intermediario: 0,
+			perc_venda_intermediario_ii: 0,
 			perc_venda_varejo: 0
 		});
 		ng.empreendimentosAssociados.push(empreendimento);
@@ -1082,7 +1100,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 						perc_imposto_compra: 0,
 						perc_desconto_compra: 0,
 						perc_venda_atacado: 0,
-						perc_venda_intermediario: 0,
+						perc_venda_intermediario_ii: 0,
 						perc_venda_varejo: 0
 					});
 					if(Number(ng.produto.flg_produto_composto) == 1){
@@ -1581,7 +1599,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 				perc_imposto_compra: 0,
 				perc_desconto_compra: 0,
 				perc_venda_atacado: 0,
-				perc_venda_intermediario: 0,
+				perc_venda_intermediario_ii: 0,
 				perc_venda_varejo: 0
 			});
 		});
@@ -1627,6 +1645,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 					dataPrc[i].perc_venda_atacado =  numberFormat( ( empty(x.perc_venda_atacado) ? 0  : x.perc_venda_atacado  )       * 100 ,2,'.','');
 					dataPrc[i].perc_venda_varejo =  numberFormat( ( empty(x.perc_venda_varejo) ? 0  : x.perc_venda_varejo  )        * 100 ,2,'.','');
 					dataPrc[i].perc_venda_intermediario =  numberFormat( ( empty(x.perc_venda_intermediario) ? 0  : x.perc_venda_intermediario  ) * 100 ,2,'.','');
+					dataPrc[i].perc_venda_intermediario_ii =  numberFormat( ( empty(x.perc_venda_intermediario_ii) ? 0  : x.perc_venda_intermediario_ii  ) * 100 ,2,'.','');
 					dataPrc[i].valor_desconto_cliente =  numberFormat( ( empty(x.valor_desconto_cliente) ? 0  : x.valor_desconto_cliente  )   * 100 ,2,'.','');
 				});
 				ng.combinacao.precos = dataPrc ;
