@@ -1945,6 +1945,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				ng.motivos = data;
 			})
 			.error(function(data, status, headers, config) {
+				ng.motivos = [];
 			});		
 	}
 
