@@ -293,8 +293,8 @@
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
-															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao != 1"/>
-															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
+															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao != 1" ng-blur="verificaQtdMultiplo()"/>
+															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao == 1" ng-blur="verificaQtdMultiplo()" thousands-formatter precision="3"/>
 														</td>
 														<td id="td-prd-deposito-saida-{{ item.id }}">
 															<select chosen ng-change="loadestoque(item)" 
@@ -573,8 +573,8 @@
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
-															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao != 1"/>
-															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/></td>
+															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao != 1" ng-blur="verificaQtdMultiplo()"/>
+															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao == 1" ng-blur="verificaQtdMultiplo()" thousands-formatter precision="3"/></td>
 														<td id="td-prd-deposito-saida-{{ item.id }}">
 															<select chosen ng-change="loadestoque(item)" 
 														    option="depositos_chosen"
@@ -1083,8 +1083,8 @@
 											<td>{{ item.sabor }}</td>
 											<td>{{ item.qtd_item }}</td>
 											<td  width="100">
-												<input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd_pedida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao != 1"/>
-												<input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd_pedida" type="text" class="form-control text-center input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
+												<input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd_pedida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao != 1" ng-blur="verificaQtdMultiplo()"/>
+												<input onKeyPress="return SomenteNumero(event);" ng-model="item.qtd_pedida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao == 1" ng-blur="verificaQtdMultiplo()" thousands-formatter precision="3"/>
 											</td>
 											<td width="50" align="center">
 												<button ng-show="!produtoSelected(item.id)" type="button" class="btn btn-xs btn-success" ng-click="addProduto(item)">

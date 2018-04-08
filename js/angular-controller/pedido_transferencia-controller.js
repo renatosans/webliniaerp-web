@@ -11,6 +11,8 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
     ng.busca        = {usuario_pedido:{},empreendimento_busca:{}} ;
     ng.filtro = {};
 
+    var flg_error = 0;
+
     ng.etapas = [
     	{id: null , nme_etapa: "Selecione", flg_oculto_empreendimento: false},
     	{id: 1 , nme_etapa: "Solicitação", flg_oculto_empreendimento: false},
@@ -242,7 +244,32 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		$('#foco').focus()
 	}
 
+	ng.verificaQtdMultiplo = function(){
+		if (ng.transferencia.produtos.length != 0) {
+			angular.forEach(ng.transferencia.produtos, function(item, index){
+				if (item.qtd_multiplo_transferencia != "" || item.qtd_multiplo_transferencia != null) {
+					if ((item.qtd_pedida % item.qtd_multiplo_transferencia) > 0) {
+						$("#produtos").addClass("has-error");
+						var formControl = $('#produtos .input-group')
+							.attr("data-toggle", "tooltip")
+							.attr("data-placement", "top")
+							.attr("title", 'Apenas solicitação em multiplo de: ' + item.qtd_multiplo_transferencia)
+						formControl.tooltip();
+						flg_error = 1;
+					} else{
+						$($(".has-error").find(".form-control")).tooltip('destroy');
+						$(".has-error").removeClass("has-error");
+						flg_error = 0;
+					}
+				}
+			});
+		}
+	}
+
 	ng.salvarTransferencia = function(id_status_transferencia,event){
+		if (flg_error == 1) {
+			return false;
+		}
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$(".has-error").removeClass("has-error");
 		var btn = $(event.target);
@@ -278,7 +305,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 				formControl.tooltip('show');
 			} 
 			error ++ ;
-		}	
+		}
 
 		$.each(ng.transferencia.produtos,function(key,item){
 			if(!($.isNumeric(item.qtd_pedida))){

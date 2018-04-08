@@ -527,6 +527,12 @@
 														</div>
 													</div>
 												</div>
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label class="control-label">Qtd. Multipla</label>
+														<input ng-model="produto.qtd_multiplo_transferencia" type="text" class="form-control input-xs" onkeypress="return SomenteNumero(event);">
+													</div>
+												</div>
 											</div>
 											<div ng-if="funcioalidadeAuthorized('alterar_quantidade')" class="row">
 												<div class="col-sm-3" id="inventario_novo_deposito">
