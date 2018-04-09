@@ -31,7 +31,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		{nome:"Boleto Bancário",id:4},
 		{nome:"Cartão de Débito",id:5},
 		{nome:"Cartão de Crédito",id:6},
-		{nome:"Transferência",id:8}
+		{nome:"Transferência",id:8},
+		{nome:"Promessa de Pagamento",id:9}
 	  ]
     ng.editing 					= false;
     ng.cliente          		= {} ;
@@ -335,6 +336,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		aj.get(baseUrlApi()+"lancamentos/financeiros"+queryString)
 			.success(function(data, status, headers, config) {
+				ng.msg_error = null;
 				ng.pagamentos           = data.pagamentos;
 				ng.paginacao.pagamentos = data.paginacao;
 
@@ -390,14 +392,14 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	}
 	ng.loadSaldoAnterior = function(dataInicial){
 		
-		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_despesa/"+ng.userLogged.id_empreendimento+"/"+dataInicial)
+		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_despesa/"+ng.userLogged.id_empreendimento+"/"+dataInicial+"/"+ng.busca.dsc_conta_bancaria)
 			.success(function(data, status, headers, config){
 				ng.saldo_anterior_despesa = data;
 			})
 			.error(function(data, status, headers, config) {
 
 			});
-		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_receita/"+ng.userLogged.id_empreendimento+"/"+dataInicial)
+		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_receita/"+ng.userLogged.id_empreendimento+"/"+dataInicial+"/"+ng.busca.dsc_conta_bancaria)
 			.success(function(data, status, headers, config){
 				ng.saldo_anterior_receita = data;
 			})
@@ -450,7 +452,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.pagamento 	= null;
 		ng.cheques	 	= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
 		ng.boletos	 	= [{id_banco:null,num_conta_corrente:null,doc_boleto:null,num_boleto:null}];
-		
+		ng.msg_error = "Faça um filtro para obter resultados";
+		ng.pagamentos = [];
 		ng.loadPlanoContas();
 		
 		$("#pagamentoData").val('');
@@ -1731,22 +1734,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.busca_avancada = !ng.busca_avancada ;
 	}
 
-	var dtaAtual = new Date();
-
-	var actualMonth = parseInt(dtaAtual.getMonth() + 1);
-	if(actualMonth < 10)
-		actualMonth = "0" + actualMonth;
-
-	var actualYear = dtaAtual.getFullYear();
-
-	var lastDay = parseInt(ultimoDiaDoMes(new Date()));
-	if(lastDay < 10)
-		lastDay = "0" + lastDay;
-
-	$("#dtaInicial").val( "01/"+actualMonth+"/"+actualYear );
-	$("#dtaFinal").val( lastDay+"/"+actualMonth+"/"+actualYear );
-	$(".data-cc").val('11-10-2010');
-
 	ng.configuracao = null ;
 	ng.loadConfig = function(){
 		var error = 0 ;
@@ -1761,7 +1748,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			});
 	}
 
-	ng.load(0,20);
+	ng.msg_error = "Faça um filtro para obter resultados";
+
 	ng.loadPlanoContas();
 	ng.loadContas();
 	ng.loadBancos();

@@ -818,8 +818,8 @@
 							<div class="alert alert-delete" style="display:none"></div>
 						</div>
 					</div>
-
-					<div class="row">
+					<span ng-if="(msg_error)" class="alert alert-warning }}">{{ msg_error }}</span>
+					<div class="row" ng-show="(pagamentos != null)">
 						<div class="col-sm-12">
 							<div class="form-group" id="container-tabela" style="overflow: auto">
 								<table id="tabela-lancamentos" class="table table-condensed table-bordered table-hover table-sm">
