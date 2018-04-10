@@ -606,6 +606,40 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="row">
+									<div class="col-sm-12">
+										<button type="button" class="btn btn-sm btn-default" ng-click="detalhar = !detalhar">
+											Detalhar 
+											<i ng-if="detalhar==false" class="fa fa-sort-down"></i>
+											<i ng-if="detalhar==true" class="fa fa-sort-up"></i>
+										</button>
+										<br/><br/>
+										<table ng-if="detalhar==true" class="table table-bordered table-condensed table-striped table-hover">
+											<thead>
+												<tr>
+													<td colspan="2"><i class="fa fa-list-ol	"></i> Detalhamento</td>
+													<td width="60" align="center">
+														<button class="btn btn-xs btn-primary" ng-click="showModalDetalhamento()"><i class="fa fa-plus-circle"></i></button>
+													</td>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-show="(pagamento.detalhamento.length == 0) || (pagamento.detalhamento.length == undefined)">
+													<td colspan="3" align="center">Nenhum detalhamento lançado</td>
+												</tr>
+												<tr ng-repeat="item in pagamento.detalhamento">
+													<td>{{ item.nome_plano_conta }}</td>
+													<td>{{ item.valor | numberFormat:2:',':'.' }}</td>
+													<td align="center">
+														<button class="btn btn-xs btn-danger" ng-click="delDetalhamento($index)"><i class="fa fa-trash-o"></i></button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+
 					    		<div class="row">
 					    			<div class="col-sm-12 text-center">
 					    				<label class="control-label">&nbsp</label>
@@ -2003,6 +2037,88 @@
 			<!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<!-- /Modal Processando Pagamento-->
+		<div class="modal fade" id="modal_add_detalhamento" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+      					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Detalhar Valor - {{ pagamento.valor | numberFormat:2:',':'.' }} </h4>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="alert alert-detalhamento alert-warning"  ng-show="mensagem_detalhamento != ''" ng-bind-html="mensagem_detalhamento">
+		
+				    	</div>
+				    	<div class="row">
+				    		<div class="col-sm-8">
+									<div class="form-group">
+										<label class="ccontrol-label">Plano de conta </label> 
+										<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
+										option="plano_contas"
+										ng-model="novo_detalhamento.id_plano_conta"
+										ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-3">
+								<label class="control-label">Valor</label>
+								<div class="form-group ">
+									<input ng-model="novo_detalhamento.valor" thousands-formatter type="text" class="form-control text-right" />
+								</div>
+							</div>
+				    	</div>
+				    </div>
+				    <div class="modal-footer">
+		    	<button type="button" id="btn-salvar-detalhe-pagamento" class="btn btn-primary btn-sm"
+		    		ng-click="addDetalhePagamento(true)">
+		    		<i class="fa fa-save"></i> Salvar e ficar
+	    		</button>
+	    		<button type="button" id="btn-salvar-detalhe-pagamento" class="btn btn-primary btn-sm"
+		    		ng-click="addDetalhePagamento()">
+		    		<i class="fa fa-save"></i> Salvar
+	    		</button>
+		    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		<!-- Footer
 		================================================== -->
