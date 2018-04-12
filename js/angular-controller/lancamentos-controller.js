@@ -3,6 +3,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	var ng = $scope
 		aj = $http;
 
+	ng.detalhar = false ;
 	ng.baseUrl 					= baseUrl();
 	ng.userLogged 				= UserService.getUserLogado();
 	ng.configuracoes	 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
@@ -1749,6 +1750,43 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	}
 
 	ng.msg_error = "Faça um filtro para obter resultados";
+
+
+
+
+
+
+	ng.showModalDetalhamento = function(){
+		$('#modal_add_detalhamento').modal('show');
+	}
+
+	ng.novo_detalhamento = {} ;
+	ng.pagamento.detalhamento = [] ;
+	ng.mensagem_detalhamento = '' ;
+	ng.addDetalhePagamento = function(stay){
+		ng.mensagem_detalhamento = '' ;
+		var item = angular.copy(ng.novo_detalhamento);
+		if(empty(item.id_plano_conta)){
+			ng.mensagem_detalhamento = 'Selecione um  plano de conta';
+		}
+		if(empty(item.valor)){
+			if(ng.mensagem_detalhamento != '') ng.mensagem_detalhamento +='<br/>' ;
+			ng.mensagem_detalhamento += 'Informe o valor';
+		}
+		if(ng.mensagem_detalhamento != '') return ;
+		ng.pagamento.detalhamento.push(item);
+		$.each(ng.plano_contas,function(i,v){
+			if(Number(item.id_plano_conta) == Number(v.id)) item.nome_plano_conta = v.dsc_completa ;
+		});
+		ng.novo_detalhamento = {} ;
+		if(stay != true) $('#modal_add_detalhamento').modal('hide');
+
+	}
+
+	ng.delDetalhamento = function($index){
+		ng.pagamento.detalhamento.splice($index,1);
+	}
+
 
 	ng.loadPlanoContas();
 	ng.loadContas();

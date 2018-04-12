@@ -1661,6 +1661,34 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		
 	}
 
+	ng.salvarConfigMaquientas = function(event){
+		var btn = $(event.target);
+		if(!(btn.is(':button')))
+			btn = $(btn.parent('button'));
+		var chaves = [];
+
+		var taxa_maquineta_por_bandeira = Number(ng.configuracoes.taxa_maquineta_por_bandeira) == 1 ? 1 : 0 ;
+
+		var item = {
+			nome 				:'taxa_maquineta_por_bandeira',
+			valor 				: taxa_maquineta_por_bandeira , 
+			id_empreendimento	:ng.userLogged.id_empreendimento
+		}
+		chaves.push(item);
+	
+		btn.button('loading');
+		aj.post(baseUrlApi()+"configuracao/save/",{ chaves:chaves, pth_local: ng.config.pth_local} )
+			.success(function(data, status, headers, config) {
+				btn.button('reset');
+				ng.mensagens('alert-success', 'Configurações atualizadas com sucesso','.alert-config-maquinetas');
+				ng.loadConfig();
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+			});
+		
+	}
+
 	ng.loadPerfis = function() {
 		aj.get(baseUrlApi()+"perfis?tpue->id_empreendimento="+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
