@@ -80,7 +80,7 @@
 					<div class="row m-bottom-md">
 						<div class="col-sm-4">
 							<div class="form-group">
-								<label class="control-label">Busca:</label>
+								<label class="control-label">Nome:</label>
 								<input type="text" ng-model="busca.nome" ng-enter="loadGrade(0,12)" class="form-control">
 							</div>
 						</div>
@@ -107,15 +107,18 @@
 
 						<div class="col-sm-2">
 							<div class="form-group">
-								<label class="control-label">&nbsp;</label>
-								<button type="button" class="btn btn-primary btn-block" ng-click="loadGrade(0,12)"><i class="fa fa-search"></i> Pesquisar</button>
+								<div class="controls">
+									<label class="control-label">&nbsp;</label>
+								</div>
+								<button type="button" class="btn btn-primary btn-sm" ng-click="loadGrade(0,12)"><i class="fa fa-search"></i> Pesquisar</button>
+								<button type="button" class="btn btn-default btn-sm" ng-click="resetFilter()"><i class="fa fa-close-o"></i> Limpar</button>
 							</div>
 						</div>
 					</div>
 					<div ng-show="errorBusca" class="row recent-work" style="text-align: center;min-height: 300px;">
 						<h4>Nenhum produto foi encontrado para sua busca.</h4>
 					</div>
-					<div ng-show="grade.length == 0" class="row recent-work" style="text-align: center;min-height: 300px;">
+					<div ng-show="(grade.length == '' && errorBusca == false)" class="row recent-work" style="text-align: center;min-height: 300px;">
 						<h4>Buscando ...</h4>
 					</div>
 					<div class="row recent-work" ng-repeat="(key, value) in grade">
@@ -123,7 +126,8 @@
 							<div class="detail pull-left relative">
 								<a style="cursor:pointer" class="hoverBorder" ng-click="semEstoque(item)">
 									<span class="hoverBorderWrapper">
-									<img width="263" height="263" src="<?php echo URL_BASE ?>/assets/imagens/produtos/{{ item.img }}" alt="portfolio">
+									<img width="263" height="263" ng-if="(item.img == null || item.img == '')" src="http://via.placeholder.com/730x730" alt="portfolio">
+									<img width="263" height="263" ng-if="!(item.img == null || item.img == '')" src="http://webliniaerp.com.br/assets/imagens/produtos/{{ item.img }}" alt="portfolio">
 										<span class="hoverBorderInner"></span>
 										<span ng-if="(item.qtd_item - item.qtd_reservada) > 0"  ng-click="showModalDesejo(item)" class="readMore">+ Detalhes</span>
 										<span ng-if="(item.qtd_item - item.qtd_reservada) <= 0" ng-click="showModalDesejo(item)" class="readMore" style="background:#DB5959">solicite já!</span>
@@ -132,7 +136,7 @@
 								<div class="seperator"></div>
 								<p>
 									<a style="cursor:pointer" class="hoverBorder" href="<?php echo URL_BASE.NICKNAME?>/detalhes?produto={{item.id_produto}}" >
-										<h4>{{ item.nome_produto }} - {{ item.peso }}</h4>
+										<h4>{{ item.nome_produto }} - {{ item.peso }} - {{ item.sabor }}</h4>
 									</a>
 									<small>{{ item.descricao }}</small>
 									<h4 class="text-danger">R$ {{ item.valor_produto | numberFormat:2:',':'.' }}</h4>
