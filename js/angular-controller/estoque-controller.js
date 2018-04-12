@@ -6,7 +6,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.baseUrl 						= baseUrl();
 	ng.userLogged 					= UserService.getUserLogado();
 	ng.configuracao 				= ConfigService.getConfig(ng.userLogged.id_empreendimento);
-	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [] };
+	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', pdf: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 	ng.ultimasEntradas 				= [];
 	ng.editing 						= false;
 	ng.paginacao 					= {};
@@ -23,13 +23,19 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
     ng.paginacao_pedidos 			= {};
     ng.pesquisa 					= { produto: "", fornecedores: "" };
     ng.fornecedor 					= {};
-    ng.nota.flg_alterar_valor_custo = 0;
     ng.busca_cod_barra 				= false;
 
 	$("#arquivo-nota").change(function() {
 		var filename = $(this).val().split('\\').pop();
 		$(this).parent().find('span').attr('data-title',filename);
 		$(this).parent().find('label').attr('data-title','Trocar XML');
+		$(this).parent().find('label').addClass('selected');
+	});
+
+	$("#pdf-nota").change(function() {
+		var filename = $(this).val().split('\\').pop();
+		$(this).parent().find('span').attr('data-title',filename);
+		$(this).parent().find('label').attr('data-title','Trocar PDF');
 		$(this).parent().find('label').addClass('selected');
 	});
 
@@ -54,7 +60,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.reset = function() {
-		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0};
+		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', pdf: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 		ng.valor_total_entrada 	= 0 ;
 		ng.qtd_total_entrada 	= 0 ;
 		ng.produto 				= {};
@@ -932,6 +938,9 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
     }
 
     ng.addProduto = function(item, autoAddQtd){
+    	if (ng.nota.itens == "") {
+    		ng.nota.itens = [];
+    	}
     	if( empty(ng.itemDePara) ) {
 			autoAddQtd = (autoAddQtd == false) ? false : true;
 
@@ -1152,6 +1161,50 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				ng.contas_bancarias = null;
 			});
 	}
+
+	setTimeout(function(){
+	  $('.btn-upload input[type="file"]').on('change', function(){
+		var file = this.files[0]; // get selected file
+		var reader = new FileReader();
+
+		ng.fileModel = $(this).data().model; // get attribute model name
+
+		if(empty(ng.nota)){
+			ng.nota = { vlr_total_imposto : '', xml_nfe: '', pdf: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
+		}
+
+		if(empty(ng.nota[ng.fileModel])) // validate if is empty
+			ng.nota[ng.fileModel] = {}; // create as object
+
+		// detect file type
+		var type = file.type.substring(file.type.indexOf('/')+1, file.type.length);
+		if(empty(type)){
+			type = file.name.substring((file.name.lastIndexOf('.')+1), file.name.length);
+		}
+		
+		ng.nota[ng.fileModel].name = file.name; // file name
+		ng.nota[ng.fileModel].type = type; // file type
+		ng.nota[ng.fileModel].size = (file.size / 1024); // file size
+
+		// adjust file size string name
+		if(ng.nota[ng.fileModel].size < 1024)
+			ng.nota[ng.fileModel].size = numberFormat(ng.nota[ng.fileModel].size, 2, ',', '.') + ' KB';
+		else if(ng.nota[ng.fileModel].size > 1024)
+			ng.nota[ng.fileModel].size = numberFormat(ng.nota[ng.fileModel].size, 2, ',', '.') + ' MB';
+
+		// after loading file...
+		reader.onload = function (e) {
+			ng.nota[ng.fileModel].path = e.target.result; // get base64 string of file
+			ng.nota[ng.fileModel].updated = true;
+		  	setTimeout(function(){
+				ng.$apply(); // apply changes in the screen
+			},1);
+		}
+
+		if(!empty(file))
+			reader.readAsDataURL(file);
+		});
+	}, 10);
 
 	ng.loadEntradas(0,10);
 	ng.loadCores();
