@@ -1,23 +1,6 @@
-ALTER TABLE `tbl_taxa_maquineta`
-	ADD COLUMN `id_bandeira` INT(11) NULL DEFAULT NULL AFTER `id_maquineta`,
-	ADD CONSTRAINT `fk_tbl_taxa_maquineta_tbl_bandeira` FOREIGN KEY (`id_bandeira`) REFERENCES `tbl_bandeiras` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-ALTER TABLE `tbl_taxa_maquineta`
-	ADD COLUMN `prc_taxa_debito` FLOAT NULL DEFAULT NULL AFTER `prc_taxa`;
+ALTER TABLE `tbl_pagamentos_venda`
+	ADD COLUMN `id_pagamento_detalhamento` INT(11) NULL DEFAULT NULL AFTER `id_parcelamento`;
 
 
-Alterações API 
-
-	modified:   controller/MaquinetaController.php
-    modified:   controller/VendaController.php
-    modified:   dao/MaquinetaDao.php
-    modified:   dao/TaxaMaquinetaDao.php
-    modified:   model/TaxaMaquinetaTO.php
-
-Alterações web
-	modified:   empreendimento_config.php
-    modified:   js/angular-controller/empreendimento_config-controller.js
-    modified:   js/angular-controller/maquinetas-controller.js
-    modified:   maquinetas.php
-
-
+modified:   js/angular-controller/lancamentos-controller.js
+modified:   lancamentos.php
