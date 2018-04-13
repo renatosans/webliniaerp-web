@@ -58,7 +58,8 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="detail pull-left relative">
-						<img src="<?php echo URL_BASE ?>/assets/imagens/produtos/{{produto.img}}"> <!--750x730-->
+						<img ng-if="(produto.img == null || produto.img == '')" src="http://via.placeholder.com/730x730" alt="portfolio">
+						<img ng-if="!(produto.img == null || produto.img == '')" src="http://webliniaerp.com.br/assets/imagens/produtos/{{ produto.img }}" alt="portfolio">
 						<div class="ribbon-wrapper" style="width: 100px;height: 100px;" ng-if="(produto.qtd_item - produto.qtd_reservada) <= 0">
 							<div style="width: 134px;" class="ribbon-inner shadow-pulse bg-danger">
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Esgotado
@@ -77,6 +78,12 @@
 					<div class="row" ng-show="(produto.nome_fabricante)">
 						<div class="col-sm-12">
 							<h5>Fabricante: {{ produto.nome_fabricante }}</h5>
+						</div>
+					</div>
+
+					<div class="row" ng-show="(produto.nome_fabricante)">
+						<div class="col-sm-12">
+							<h5>Cor/Sabor: {{ produto.sabor }}</h5>
 						</div>
 					</div>
 

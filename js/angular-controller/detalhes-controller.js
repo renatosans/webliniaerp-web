@@ -24,8 +24,10 @@ app.controller('DetalhesController', function($scope, $http, $window, $dialogs, 
 					data.valor_produto	= data.vlr_venda_varejo;
 				}else if(ng.userLogged.perc_venda == "perc_venda_intermediario"){
 					data.valor_produto	= data.vlr_venda_intermediario;
+				}else if(ng.userLogged.perc_venda == "perc_venda_intermediario_ii"){
+					data.valor_produto	= data.vlr_venda_intermediario_ii;
 				}else{
-					data.valor_produto = data.vlr_venda_atacado;
+					data.valor_produto = data.vlr_venda_varejo;
 				}
 
 				if(data.img == null){
@@ -43,7 +45,7 @@ app.controller('DetalhesController', function($scope, $http, $window, $dialogs, 
 	ng.addCarrinho = function() {
 		var produto = {
 			id_produto      : ng.produto.id_produto,
-			nome 			: ng.produto.nome,
+			nome 			: ng.produto.nome_produto,
 			img  			: ng.produto.img,
 			nome_fabricante : ng.produto.nome_fabricante,
 			peso 			: ng.produto.peso,
