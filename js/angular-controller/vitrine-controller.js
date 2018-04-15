@@ -24,6 +24,12 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 		
 		ng.grade = [];
 		ng.errorBusca = false ;
+
+		if(ng.configuracoes.flg_exibir_produtos_sem_estoque == 0){
+			var url = "estoque_produtos/1/"
+		}else{
+			url = "estoque_produtos/null/"
+		}
 		
 		var arr = [];
 		
@@ -32,11 +38,6 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 		if(!empty(ng.configuracoes.flg_deposito_padrao_vitrine) && ng.configuracoes.flg_deposito_padrao_vitrine == 1) {
 			if(!empty(ng.configuracoes.id_deposito_padrao)) {
 				var sem_estoque_str = "";
-
-				if(!empty(ng.configuracoes.flg_exibir_produtos_sem_estoque) && ng.configuracoes.flg_exibir_produtos_sem_estoque == 1)
-					sem_estoque_str = " OR tde.id_deposito IS NULL";
-
-				query_string += "&"+$.param({'(tde->id_deposito=':{exp: ng.configuracoes.id_deposito_padrao + sem_estoque_str +")"}});
 			}
 		}
 
@@ -53,7 +54,7 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 		}
 
 		//aj.get(baseUrlApi()+"grade/"+offset+"/"+limit+"/?grd->id_empreendimento="+ng.userLogged.id_empreendimento+query_string)
-		aj.get(baseUrlApi()+"estoque_produtos/null/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
+		aj.get(baseUrlApi()+url+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC, tt.nome_tamanho ASC, tcp.nome_cor ASC")
 			.success(function(data, status, headers, config) {	
 				$.each(data.produtos,function(index,value){
 					if(ng.userLogged.perc_venda == "perc_venda_atacado"){
@@ -62,10 +63,10 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 						value.valor_produto	= value.vlr_venda_varejo;
 					}else if(ng.userLogged.perc_venda == "perc_venda_intermediario"){
 						value.valor_produto	= value.vlr_venda_intermediario;
-					}
-
-					if(value.img == null){
-						value.img = "assets/imagens/produtos/730x730.gif";
+					}else if(ng.userLogged.perc_venda == "perc_venda_intermediario_ii"){
+						value.valor_produto	= value.vlr_venda_intermediario_ii;
+					}else{
+						value.valor_produto = value.vlr_venda_varejo;
 					}
 					
 					arr.push(value);
@@ -181,6 +182,13 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 		setTimeout(function(){
 			$(alertClass).fadeOut('slow');
 		},5000);
+	}
+
+	ng.resetFilter = function () {
+		ng.busca.nome = "";
+		ng.busca.id_categoria = "";
+		ng.busca.id_fabricante = "";
+		ng.loadGrade(0,12);
 	}
 			
 	ng.loadConfig();

@@ -81,20 +81,23 @@
 						</tr>
 						<thead>
 							<tr ng-show="carrinho.length > 0">
-								<th class="text-center">#</th>
+								<th class="text-center" width="70">#</th>
 								<th class="text-center" colspan="2">Produto</th>
-								<th class="text-center">Fabricante</th>
-								<th class="text-center">Tamanho</th>
-								<th class="text-center">R$ Unitário</th>
+								<th class="text-center" width="170">Fabricante</th>
+								<th class="text-center" width="100">Tamanho</th>
+								<th class="text-center" width="100">R$ Unitário</th>
 								<th class="text-center">Qtd.</th>
-								<th class="text-center">R$ Subtotal</th>
+								<th class="text-center" width="100">R$ Subtotal</th>
 								<th class="text-center" width="30"></th>
 							</tr>
 						</thead>
 						<tbody class="dados">
 							<tr ng-repeat="item in carrinho" id="{{ item.id_produto }}" class="tr_produtos_carrinho">
 								<td class="text-center">{{item.id_produto}}</td>
-								<td class="text-center" width="61"><img src="<?php echo URL_BASE ?>{{ item.img }}"></td>
+								<td class="text-center" width="60" height="60">
+									<img ng-if="(item.img == null || item.img == '')" src="http://via.placeholder.com/730x730" alt="portfolio">
+									<img ng-if="!(item.img == null || item.img == '')" src="http://webliniaerp.com.br/assets/imagens/produtos/{{ item.img }}" alt="portfolio">
+								</td>
 								<td>{{item.nome}}</td>
 								<td>{{item.nome_fabricante}}</td>
 								<td class="text-center">{{item.peso}}</td>
@@ -104,7 +107,7 @@
 								</td>
 								<td class="text-right">R$ {{ item.qtd == '' && item.valor_produto || item.qtd * item.valor_produto | numberFormat:2:',':'.' }}</td>
 								<td class="text-center">
-									<button type="button" ng-click="delCarrinho(item.id_produto)" class="btn btn-danger">
+									<button type="button" ng-click="delCarrinho(item.id_produto)" class="btn btn-danger btn-xs">
 										<i class="fa fa-trash-o"></i> Remover
 									</button>
 								</td>

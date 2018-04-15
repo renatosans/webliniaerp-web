@@ -31,6 +31,8 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
     ];
     ng.teste="jheizer";
 
+    var flg_error = 0;
+
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
     	val = FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
     	
@@ -358,7 +360,32 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		});
 	}
 
+	ng.verificaQtdMultiplo = function(){
+		if (ng.transferencia.produtos.length != 0) {
+			angular.forEach(ng.transferencia.produtos, function(item, index){
+				if (item.qtd_multiplo_transferencia != "" || item.qtd_multiplo_transferencia != null) {
+					if ((item.qtd_transferida % item.qtd_multiplo_transferencia) > 0) {
+						$("#produtos").addClass("has-error");
+						var formControl = $('#produtos .input-group')
+							.attr("data-toggle", "tooltip")
+							.attr("data-placement", "top")
+							.attr("title", 'Apenas envio em multiplo de: ' + item.qtd_multiplo_transferencia)
+						formControl.tooltip();
+						flg_error = 1;
+					} else{
+						$($(".has-error").find(".form-control")).tooltip('destroy');
+						$(".has-error").removeClass("has-error");
+						flg_error = 0;
+					}
+				}
+			});
+		}
+	}
+
 	ng.salvarTransferencia = function(){
+		if (flg_error == 1) {
+			return false;
+		}
 		var btn = $('#salvar-transferencia') ;
 		btn.button('loading');
 		$('.tr-out-estoque').find('input').tooltip('destroy');
@@ -581,6 +608,9 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 	}
 
 	ng.salvarNovaTransferencia = function(id_status_transferencia,event){
+		if (flg_error == 1) {
+			return false;
+		}
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$(".has-error").removeClass("has-error");
 		var btn = $(event.target);

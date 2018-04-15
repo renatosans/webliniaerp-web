@@ -195,6 +195,40 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label class="control-label"><br/></label>
+										<div class="controls">
+											<button id="loadXMLButton" type="button" class="btn btn-sm btn-info" 
+												ng-click="loadDataFromXML()" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Aguarde, carregando...">
+												<i class="fa fa-file-code-o"></i> Carregar dados a partir do XML da NF-e
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="controls">
+													<label class="control-label">&nbsp;</label>
+												</div>
+												<div>
+													<button class="btn btn-default btn-upload btn-sm">
+														<i class="fa fa-pdf-o"></i> Importar PDF
+														<input type="file" data-model="pdf" accept=".pdf"></input>
+													</button>
+												</div>
+											</div>
+											<div class="col-sm-8">
+												<div class="controls">
+													<label class="control-label">&nbsp;</label>
+												</div>
+												<p>{{ nota.pdf.name }}</p>
+											</div>
+										</div>
+									</div>
+								</div>
 
 								<!--<div class="col-sm-3">
 									<div class="form-group">
@@ -216,17 +250,6 @@
 									</div>
 								</div>-->
 
-								<div class="col-sm-4">
-									<div class="form-group">
-										<label class="control-label"><br/></label>
-										<div class="controls">
-											<button id="loadXMLButton" type="button" class="btn btn-sm btn-info" 
-												ng-click="loadDataFromXML()" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Aguarde, carregando...">
-												<i class="fa fa-file-code-o"></i> Carregar dados a partir do XML da NF-e
-											</button>
-										</div>
-									</div>
-								</div>
 							</div>
 						</form>
 						
