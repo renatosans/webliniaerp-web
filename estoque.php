@@ -163,6 +163,7 @@
 					<a href="inventario.php" class="btn btn-primary"><i class="fa fa-tags"></i> Inventário</a>
 					<a href="baixa_estoque.php" class="btn btn-primary"><i class="fa fa-caret-square-o-down"></i> Baixa Manual</a>
 					<a href="pedido_transferencia.php" class="btn btn-primary"><i class="fa fa-arrows-h"></i> Transferência</a> 
+					<a href="posicao_estoque.php" class="btn btn-primary"><i class="fa fa-caret-square-o-down"></i> Posição de Estoque</a>
 					<a href="ordem_producao.php" class="btn btn-primary"><i class="fa fa-wrench"></i> Ordem de Produção</a>
 					<a href="zera-estoque.php" class="btn btn-danger"><i class="fa fa-trash-o"></i> Limpeza de Estoque</a>
 				</div><!-- /page-title -->
