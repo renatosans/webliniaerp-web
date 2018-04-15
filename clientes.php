@@ -136,7 +136,7 @@
 
 				<!--<div class="search-block">
 					<div class="input-group">
-						<input type="text" class="form-control input-sm" placeholder="search here...">
+						<input autocomplete="off" type="text" class="form-control input-sm" placeholder="search here...">
 						<span class="input-group-btn">
 							<button class="btn btn-default btn-sm" type="button"><i class="fa fa-search"></i></button>
 						</span>
@@ -182,7 +182,7 @@
 						</ul>
 					</div>
 					<div class="panel-body" id="tab-cliente-body">
-						<form role="form">
+						<form role="form" autocomplete="off">
 							<div class="tab-content">
 								<div class="tab-pane in active" id="informacoes_basicas">
 									<div class="row">
@@ -191,19 +191,19 @@
 												<label for="" class="control-label">Tipo de Cadastro</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pf')" value="cliente_pf" type="radio" class="inline-radio"/>
+														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pf')" value="cliente_pf" type="radio" class="inline-radio"/>
 														<span class="custom-radio"></span>
 														<span>Cliente - Pessoa Física</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pj')" value="cliente_pj" type="radio" class="inline-radio"/>
+														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pj')" value="cliente_pj" type="radio" class="inline-radio"/>
 														<span class="custom-radio"></span>
 														<span>Cliente - Pessoa Jurídica</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.cliente_tipo_cadastro" 
+														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" 
 															ng-click="setTipoCadastro('usuario','pf')" 
 															value="usuario_pf" type="radio" class="inline-radio"/>
 														<span class="custom-radio"></span>
@@ -218,14 +218,14 @@
 										<div class="col-sm-2">
 											<div id="cpf" class="form-group">
 												<label class="control-label">CPF</label>
-												<input class="form-control input-sm" ui-mask="999.999.999-99" ng-model="cliente.cpf" />
+												<input autocomplete="off" class="form-control input-sm" ui-mask="999.999.999-99" ng-model="cliente.cpf" />
 											</div>
 										</div>
 										
 										<div class="col-sm-2">
 											<div id="rg" class="form-group">
 												<label class="control-label">RG</label>
-												<input class="form-control input-sm"  ng-model="cliente.rg" />
+												<input autocomplete="off" class="form-control input-sm"  ng-model="cliente.rg" />
 											</div>
 										</div>
 									</div>
@@ -234,21 +234,21 @@
 										<div class="col-sm-6">
 											<div id="nome" class="form-group">
 												<label for="nome" class="control-label">Nome <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input type="text" class="form-control input-sm" id="nome" ng-model="cliente.nome">
+												<input autocomplete="off" type="text" class="form-control input-sm" id="nome" ng-model="cliente.nome">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="dta_nacimento" class="form-group">
 												<label class="control-label">Data de Nacimento</label>
-												<input class="form-control input-sm" ui-mask="99/99/9999" id="dta_nacimento" ng-model="cliente.dta_nacimento">
+												<input autocomplete="off" class="form-control input-sm" ui-mask="99/99/9999" id="dta_nacimento" ng-model="cliente.dta_nacimento">
 											</div>
 										</div>
 
 										<div class="col-sm-4">
 											<div id="apelido" class="form-group">
 												<label for="apelido" class="control-label">Apelido</label>
-												<input type="text" class="form-control input-sm" id="apelido" ng-model="cliente.apelido">
+												<input autocomplete="off" type="text" class="form-control input-sm" id="apelido" ng-model="cliente.apelido">
 											</div>
 										</div>
 									</div>
@@ -257,20 +257,20 @@
 										<div class="col-sm-2">
 											<div id="cnpj" class="form-group">
 												<label class="control-label">CNPJ <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input class="form-control input-sm" ui-mask="99.999.999/9999-99" ng-model="cliente.cnpj">
+												<input autocomplete="off" class="form-control input-sm" ui-mask="99.999.999/9999-99" ng-model="cliente.cnpj">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="inscricao_estadual" class="form-group">
 												<label class="control-label">I.E.</label>
-												<input class="form-control input-sm" ng-model="cliente.inscricao_estadual">
+												<input autocomplete="off" class="form-control input-sm" ng-model="cliente.inscricao_estadual">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="inscricao_estadual" class="form-group">
 												<label class="control-label">I.M.</label>
-												<input class="form-control input-sm" ng-model="cliente.num_inscricao_municipal">
+												<input autocomplete="off" class="form-control input-sm" ng-model="cliente.num_inscricao_municipal">
 											</div>
 										</div>
 									</div>
@@ -279,14 +279,14 @@
 										<div class="col-sm-6">
 											<div id="razao_social" class="form-group">
 												<label class="control-label">Razão Social  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input placeholder="" class="form-control input-sm" ng-model="cliente.razao_social">
+												<input autocomplete="off" placeholder="" class="form-control input-sm" ng-model="cliente.razao_social">
 											</div>
 										</div>
 
 										<div class="col-sm-6">
 											<div id="nome_fantasia" class="form-group">
 												<label class="control-label">Nome Fantasia  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input class="form-control input-sm" ng-model="cliente.nome_fantasia">
+												<input autocomplete="off" class="form-control input-sm" ng-model="cliente.nome_fantasia">
 											</div>
 										</div>
 									</div>
@@ -295,28 +295,28 @@
 										<div class="col-sm-2">
 											<div id="tel_fixo" class="form-group">
 												<label for="" class="control-label">Telefone Fixo</label>
-												<input type="text" ui-mask="(99) 99999999" class="form-control input-sm" ng-model="cliente.tel_fixo">
+												<input autocomplete="off" type="text" ui-mask="(99) 99999999" class="form-control input-sm" ng-model="cliente.tel_fixo">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="celular" class="form-group">
 												<label for="" class="control-label">Celular </label>
-												<input type="text" ui-mask="(99) 99999999?9" class="form-control input-sm" ng-model="cliente.celular">
+												<input autocomplete="off" type="text" ui-mask="(99) 99999999?9" class="form-control input-sm" ng-model="cliente.celular">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="nextel" class="form-group">
 												<label for="" class="control-label">ID Nextel</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.nextel">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.nextel">
 											</div>
 										</div>
 
 										<div class="col-sm-4">
 											<div id="email" class="form-group">
 												<label for="" class="control-label">End. Email </label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.email">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.email">
 											</div>
 										</div>
 									</div>
@@ -325,21 +325,21 @@
 										<div class="col-sm-2">
 											<div id="cep" class="form-group">
 												<label class="control-label">CEP</label>
-												<input type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="cliente.cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)">
+												<input autocomplete="off" type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="cliente.cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)">
 											</div>
 										</div>
 
 										<div class="col-sm-8">
 											<div id="endereco" class="form-group">
 												<label class="control-label">Endereço</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.endereco">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.endereco">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="numero" class="form-group">
 												<label class="control-label">No.</label>
-												<input id="num_logradouro" type="text" class="form-control input-sm" ng-model="cliente.numero" ng-blur="consultaLatLog()">
+												<input autocomplete="off" id="num_logradouro" type="text" class="form-control input-sm" ng-model="cliente.numero" ng-blur="consultaLatLog()">
 											</div>
 										</div>
 									</div>
@@ -348,14 +348,14 @@
 										<div class="col-sm-6">
 											<div id="bairro" class="form-group">
 												<label class="control-label">Bairro</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.bairro">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.bairro">
 											</div>
 										</div>
 
 										<div class="col-sm-6">
 											<div id="complemento" class="form-group">
 												<label class="control-label">Complemento:</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.end_complemento">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.end_complemento">
 											</div>
 										</div>
 									</div>
@@ -364,14 +364,14 @@
 										<div class="col-sm-2">
 											<div id="latitude" class="form-group">
 												<label class="control-label">Latitude</label>
-												<input type="text" class="form-control input-sm" readonly="readonly"
+												<input autocomplete="off" type="text" class="form-control input-sm" readonly="readonly"
 													ng-model="cliente.num_latitude">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="longitude" class="form-group">
 												<label class="control-label">Longitude</label>
-												<input type="text" class="form-control input-sm" readonly="readonly"
+												<input autocomplete="off" type="text" class="form-control input-sm" readonly="readonly"
 													ng-model="cliente.num_longitude">
 											</div>
 										</div>
@@ -381,13 +381,13 @@
 										<div class="col-sm-4">
 											<div id="ponto_referencia" class="form-group">
 												<label class="control-label">Ponto Referência</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.ponto_referencia">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.ponto_referencia">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="regiao" class="form-group">
 												<label class="control-label">Região</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.regiao">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.regiao">
 											</div>
 										</div>
 
@@ -415,13 +415,13 @@
 												<label class="control-label">Indicação?</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.indicacao" value="1" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.indicacao" value="1" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Sim</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.indicacao" value="0" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.indicacao" value="0" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Não</span>
 													</label>
@@ -431,7 +431,7 @@
 										<div class="col-sm-3" ng-if="cliente.indicacao == 1">
 											<div id="indicado_por_quem" class="form-group">
 												<label class="control-label">Indicado por Quem?</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.indicado_por_quem">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.indicado_por_quem">
 											</div>
 										</div>
 
@@ -445,14 +445,14 @@
 										<div class="col-sm-4" ng-show="cliente.id_como_encontrou == 'outros' ">
 											<div id="como_entrou_outros" class="form-group">
 												<label class="control-label">Descreva</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.como_entrou_outros">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.como_entrou_outros">
 											</div>
 										</div>
 
 										<div class="col-sm-4">
 											<div id="id_finalidade" class="form-group">
 												<label class="control-label">Finalidade</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.dsc_finalidade">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.dsc_finalidade">
 												<!--<select class="form-control input-sm" ng-model="cliente.id_finalidade" ng-options="a.id as a.nome for a in finalidades"></select>-->
 											</div>
 										</div>
@@ -460,7 +460,7 @@
 										<div class="col-sm-2">
 											<div id="id_finalidade" class="form-group">
 												<label class="control-label">ID Externo</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.id_externo">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.id_externo">
 											</div>
 										</div>
 									</div>
@@ -470,13 +470,13 @@
 												<label for="" class="control-label">Newsletter?</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.email_marketing" value="1" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.email_marketing" value="1" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Sim</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.email_marketing" value="0" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.email_marketing" value="0" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Não</span>
 													</label>
@@ -517,20 +517,20 @@
 										<div class="col-sm-2">
 											<div id="agencia" class="form-group">
 												<label class="control-label">Agência</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.agencia">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.agencia">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="conta" class="form-group">
 												<label class="control-label">C/C</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.conta">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.conta">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="cliente_desde" class="form-group">
 												<label for="cliente_desde" class="control-label">Cliente Desde</label>
-												<input type="text" class="form-control input-sm" ui-mask="99/9999" ng-model="cliente.cliente_desde">
+												<input autocomplete="off" type="text" class="form-control input-sm" ui-mask="99/9999" ng-model="cliente.cliente_desde">
 											</div>
 										</div>
 									</div>	
@@ -540,7 +540,7 @@
 									<div class="col-sm-3">
 									<label class="control-label">Vendedor Responsável</label>
 										<div class="input-group">
-											<input ng-model="cliente.nme_vendedor_responsavel" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
+											<input autocomplete="off" ng-model="cliente.nme_vendedor_responsavel" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
 											<span class="input-group-btn">
 												<button ng-click="selUsuario('vendedor')"  type="button" class="btn"><i class="fa fa-user-md"></i></button>
 											</span>
@@ -640,13 +640,13 @@
 												<label for="" class="control-label">Contribuinte ICMS</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_contribuinte_icms" value="0" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_contribuinte_icms" value="0" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Não</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_contribuinte_icms" value="1" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_contribuinte_icms" value="1" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Sim</span>
 													</label>
@@ -658,13 +658,13 @@
 												<label for="" class="control-label">Isento da I.E.</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_isento_inscricao_estadual" value="0" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_isento_inscricao_estadual" value="0" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Não</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_isento_inscricao_estadual" value="1" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_isento_inscricao_estadual" value="1" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Sim</span>
 													</label>
@@ -676,13 +676,13 @@
 												<label for="" class="control-label">Contribuinte IPI</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_contribuinte_ipi" value="0" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_contribuinte_ipi" value="0" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Não</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_contribuinte_ipi" value="1" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_contribuinte_ipi" value="1" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Sim</span>
 													</label>
@@ -695,7 +695,7 @@
 											<div class="form-group">
 												<div id="inscricao_estadual_st" class="form-group">
 													<label class="control-label">I.E. ST</label>
-													<input class="form-control input-sm" ng-model="cliente.inscricao_estadual_st">
+													<input autocomplete="off" class="form-control input-sm" ng-model="cliente.inscricao_estadual_st">
 												</div>
 											</div>
 										</div>
@@ -753,13 +753,13 @@
 										<div class="col-sm-2">
 											<div id="login" class="form-group">
 												<label class="control-label">Login</label>
-												<input type="text" class="form-control input-sm" ng-model="cliente.login">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.login">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="senha" class="form-group">
 												<label class="control-label">Senha</label>
-												<input class="form-control input-sm" type="password" id="input_senha" ng-model="cliente.senha">
+												<input autocomplete="off" class="form-control input-sm" type="password" id="input_senha" ng-model="cliente.senha">
 												
 											</div>
 										</div>
@@ -768,7 +768,7 @@
 												<label class="control-label"></label>
 												<div class="checkbox" style="padding-left: 0px;">
 												    <label class="label-checkbox">
-														<input type="checkbox" onclick="if($(this).is(':checked')){$('#input_senha').attr('type','text')}else{$('#input_senha').attr('type','password')}">
+														<input autocomplete="off" type="checkbox" onclick="if($(this).is(':checked')){$('#input_senha').attr('type','text')}else{$('#input_senha').attr('type','password')}">
 														<span class="custom-checkbox"></span>
 														 Mostrar senha<br>
 													</label>
@@ -781,13 +781,13 @@
 														 Bloquear Usuário?<br></label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_ativo" value="1" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_ativo" value="1" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Não</span>
 													</label>
 
 													<label class="label-radio inline">
-														<input ng-model="cliente.flg_ativo" value="0" type="radio" class="inline-radio">
+														<input autocomplete="off" ng-model="cliente.flg_ativo" value="0" type="radio" class="inline-radio">
 														<span class="custom-radio"></span>
 														<span>Sim</span>
 													</label>
@@ -935,19 +935,19 @@
 							<div class="col-sm-3 col-lg-2">
 								<div class="form-group" style="padding-top:7px; margin-bottom:0px;">
 									<label class="label-radio inline">
-										<input  ng-click="busca.tipo_cliente = 'pf'" name="changeDetalhesCC" ng-checked="(busca.tipo_cliente == 'pf')" type="radio" class="inline-radio">
+										<input autocomplete="off"  ng-click="busca.tipo_cliente = 'pf'" name="changeDetalhesCC" ng-checked="(busca.tipo_cliente == 'pf')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
 										<span>PF</span>
 									</label>
 
 									<label class="label-radio inline">
-										<input  ng-click="busca.tipo_cliente = 'pj'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'pj')" type="radio" class="inline-radio">
+										<input autocomplete="off"  ng-click="busca.tipo_cliente = 'pj'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'pj')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
 										<span>PJ</span>
 									</label>
 
 									<label class="label-radio inline">
-										<input  ng-click="busca.tipo_cliente = 'ambos'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'ambos')" type="radio" class="inline-radio">
+										<input autocomplete="off"  ng-click="busca.tipo_cliente = 'ambos'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'ambos')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
 										<span>Ambos</span>
 									</label>
@@ -956,7 +956,7 @@
 
 							<div class="col-sm-9 col-lg-10">
 								<div class="input-group">
-						            <input type="text" class="form-control"
+						            <input autocomplete="off" type="text" class="form-control"
 						            	ng-enter="loadClientes(0,10)" ng-model="busca.clientes">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadClientes(0,10)" tabindex="-1" class="btn btn-primary" type="button">
@@ -1094,7 +1094,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.empreendimento" type="text" class="form-control input-sm">
+						            <input autocomplete="off" ng-model="busca.empreendimento" type="text" class="form-control input-sm">
 						            <div class="input-group-btn">
 						            	<button ng-click="loadRegimeEspecial(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
@@ -1160,7 +1160,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.usuarios"   type="text" class="form-control input-sm"
+						            <input autocomplete="off" ng-model="busca.usuarios"   type="text" class="form-control input-sm"
 						            	ng-enter="loadUsuarios(0,10,busca.tipo_usuario)"
 						            	ng-model="loadUsuarios(0,10,busca.tipo_usuario)"
 						            	ng-keyup="loadUsuarios(0,10,busca.tipo_usuario)"
