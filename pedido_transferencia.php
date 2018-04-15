@@ -208,6 +208,7 @@
 						 <br/>
 						<div class="row">
 							<div class="col-sm-12">
+								<!--<pre>{{ transferencia.produtos | json }}</pre>-->
 								<div class="form-group" id="produtos">
 										<table ng-if="transferencia.flg_controle_validade!=1" class="table table-bordered table-condensed table-striped table-hover">
 											<thead>
@@ -277,8 +278,8 @@
 														</div>
 													</td>
 													<td ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4" width="75" id="td-trasnferencia-qtd-pedida-{{ item.id_produto }}">
-														<input onKeyPress="return SomenteNumero(event);"  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" ng-if="item.flg_unidade_fracao != 1"/>
-														<input onKeyPress="return SomenteNumero(event);"  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
+														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao != 1"/>
+														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
 													</td>
 													<td class="text-center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">{{ item.qtd_pedida }}</td>
 													<td class="text-center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">{{ item.qtd_transferida }}</td>
@@ -362,8 +363,8 @@
 														</div>
 													</td>
 													<td ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4" width="75" id="td-trasnferencia-qtd-pedida-{{ item.id_produto }}">
-														<input onKeyPress="return SomenteNumero(event);"  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" ng-if="item.flg_unidade_fracao != 1"/>
-														<input onKeyPress="return SomenteNumero(event);"  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
+														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao != 1"/>
+														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
 													</td>
 													<td class="text-center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">{{ item.qtd_pedida }}</td>
 													<td class="text-center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 && item.dta_validade != '2099-12-31'">{{ item.dta_validade | date }}</td>
@@ -720,8 +721,8 @@
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
 											<td  width="50">
-												<input  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" ng-if="item.flg_unidade_fracao != 1"/>
-												<input  ng-model="item.qtd_pedida" type="text" class="form-control input-xs" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
+												<input  ng-model="item.qtd_pedida" ng-blur="verificaQtdMultiplo()" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao != 1"/>
+												<input  ng-model="item.qtd_pedida" ng-blur="verificaQtdMultiplo()" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
 											</td>
 											<td width="50" align="center">
 												<button ng-show="!produtoSelected(item.id)" type="button" id="selecionar" class="btn btn-xs btn-success" ng-click="addProduto(item)">

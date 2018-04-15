@@ -486,32 +486,33 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		 		angular.forEach(produto.fotos, function(item, index){
 					item.id_produto = produto.id;
 				});
-
-		 		aj.post(baseUrlApi()+"produto/save/foto",{data: JSON.stringify(produto.fotos)})
-					.success(function(data, status, headers, config) {
-						$('#formProdutos')[0].reset();
-				 		btn.button('reset');
-				 		$('.upload-file label span').eq(0).attr('data-title','');
-				 		$('.upload-file label span').eq(1).attr('data-title','');
-				 		if(ng.editing)
-				 			ng.loadProdutos(currentPaginacao.offset,currentPaginacao.limit);
-				 		else
-				 			ng.loadProdutos(0,10);
-				 		ng.showBoxNovo();
-				 		ng.mensagens('alert-success','<strong>'+msg+'</strong>');
-				 		ng.produto = {fornecedores:[]} ;
-				 		ng.insumos = [] ;
-				 		
-				 		ng.editing = false;
-				 		btn.button('reset');
-				 		ng.reset();
-				 		$('html,body').animate({scrollTop: 0},'slow');
-				 		
-				 		PrestaShop.send('post',baseUrlApi()+"prestashop/produto/",produto);
-					})
-					.error(function(data, status, headers, config) {
-						console.log('Erro ao subir fotos');
-					});
+		 		if (produto.fotos != "" || produto.fotos != null) {
+			 		aj.post(baseUrlApi()+"produto/save/foto",{data: JSON.stringify(produto.fotos)})
+						.success(function(data, status, headers, config) {
+							$('#formProdutos')[0].reset();
+					 		btn.button('reset');
+					 		$('.upload-file label span').eq(0).attr('data-title','');
+					 		$('.upload-file label span').eq(1).attr('data-title','');
+					 		if(ng.editing)
+					 			ng.loadProdutos(currentPaginacao.offset,currentPaginacao.limit);
+					 		else
+					 			ng.loadProdutos(0,10);
+					 		ng.showBoxNovo();
+					 		ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+					 		ng.produto = {fornecedores:[]} ;
+					 		ng.insumos = [] ;
+					 		
+					 		ng.editing = false;
+					 		btn.button('reset');
+					 		ng.reset();
+					 		$('html,body').animate({scrollTop: 0},'slow');
+					 		
+					 		PrestaShop.send('post',baseUrlApi()+"prestashop/produto/",produto);
+						})
+						.error(function(data, status, headers, config) {
+							console.log('Erro ao subir fotos');
+						});
+		 		}
 		 	},
 		 	error:function(data){
 		 		 btn.button('reset');

@@ -3,6 +3,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	var ng = $scope
 		aj = $http;
 
+	ng.detalhar = false ;
 	ng.baseUrl 					= baseUrl();
 	ng.userLogged 				= UserService.getUserLogado();
 	ng.configuracoes	 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
@@ -31,7 +32,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		{nome:"Boleto Bancário",id:4},
 		{nome:"Cartão de Débito",id:5},
 		{nome:"Cartão de Crédito",id:6},
-		{nome:"Transferência",id:8}
+		{nome:"Transferência",id:8},
+		{nome:"Promessa de Pagamento",id:9}
 	  ]
     ng.editing 					= false;
     ng.cliente          		= {} ;
@@ -335,6 +337,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 
 		aj.get(baseUrlApi()+"lancamentos/financeiros"+queryString)
 			.success(function(data, status, headers, config) {
+				ng.msg_error = null;
 				ng.pagamentos           = data.pagamentos;
 				ng.paginacao.pagamentos = data.paginacao;
 
@@ -390,14 +393,14 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	}
 	ng.loadSaldoAnterior = function(dataInicial){
 		
-		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_despesa/"+ng.userLogged.id_empreendimento+"/"+dataInicial)
+		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_despesa/"+ng.userLogged.id_empreendimento+"/"+dataInicial+"/"+ng.busca.dsc_conta_bancaria)
 			.success(function(data, status, headers, config){
 				ng.saldo_anterior_despesa = data;
 			})
 			.error(function(data, status, headers, config) {
 
 			});
-		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_receita/"+ng.userLogged.id_empreendimento+"/"+dataInicial)
+		aj.get(baseUrlApi()+"lancamentos/saldo_anterior_receita/"+ng.userLogged.id_empreendimento+"/"+dataInicial+"/"+ng.busca.dsc_conta_bancaria)
 			.success(function(data, status, headers, config){
 				ng.saldo_anterior_receita = data;
 			})
@@ -450,7 +453,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.pagamento 	= null;
 		ng.cheques	 	= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
 		ng.boletos	 	= [{id_banco:null,num_conta_corrente:null,doc_boleto:null,num_boleto:null}];
-		
+		ng.msg_error = "Faça um filtro para obter resultados";
+		ng.pagamentos = [];
 		ng.loadPlanoContas();
 		
 		$("#pagamentoData").val('');
@@ -1301,6 +1305,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					return;
 				}
 			});
+
+			item.detalhamento = angular.copy(ng.pagamento.detalhamento);
 			ng.recebidos.push(item);
 		}
 		ng.totalPagamento();
@@ -1375,6 +1381,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				var arr_date 		 	  = next_date.split('/');
 				var next_date_dia_init    = parseInt(arr_date[0]) ;
 
+				ClassDet = new Detalhamento();
+
 				for(var count = 0 ; count < parcelas ; count ++){
 					var item 			 = angular.copy(v);
 					item.valor_pagamento = valor_parcelas ;
@@ -1402,13 +1410,17 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 							next_date_mes = next_date_mes+1;
 					}
 					next_date = next_date_dia+"/"+next_date_mes+"/"+next_date_ano ;
-					
+
+					item.detalhamento = ClassDet.distribuir(v.detalhamento,parcelas,count+1);
 
 					itens_prc.push(item);
 				}
 
 				pagamentos.push({id_forma_pagamento : v.id_forma_pagamento ,id_tipo_movimentacao: 3, parcelas:itens_prc});
 			}else if(Number(v.id_forma_pagamento) == 2){
+				ClassDet = new Detalhamento();
+				var total_pagamento_cheque = getIndex('id_forma_pagamento',2,ng.recebidos);
+				total_pagamento_cheque = ng.recebidos[total_pagamento_cheque].valor ;
 				$.each(ng.pg_cheques,function(i_cheque, v_cheque){
 					v.id_banco 				= v_cheque.id_banco ;
 					v.num_conta_corrente 	= v_cheque.num_conta_corrente ;
@@ -1417,9 +1429,13 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					v.data_pagamento 		= v_cheque.data_pagamento ;
 					v.valor_pagamento 		= v_cheque.valor_pagamento ;
 					v_push = angular.copy(v);
+					v_push.detalhamento = ClassDet.distribuir(v.detalhamento,ng.pg_cheques.length,i_cheque+1,total_pagamento_cheque,v_cheque.valor_pagamento);
 					pagamentos.push(v_push);
 				});
 			}else if(Number(v.id_forma_pagamento) == 4){
+				ClassDet = new Detalhamento();
+				var total_pagamento_boleto = getIndex('id_forma_pagamento',4,ng.recebidos);
+				total_pagamento_boleto = ng.recebidos[total_pagamento_cheque].valor ;	
 				$.each(ng.pg_boletos,function(i_boleto, v_boleto){
 					v.id_banco 				= v_boleto.id_banco ;
 					v.data_pagamento 		= v_boleto.data_pagamento ;
@@ -1428,6 +1444,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					v.num_boleto            = v_boleto.num_boleto ;
 					v.status                = v_boleto.status_pagamento ;
 					v_push = angular.copy(v);
+					v_push.detalhamento = ClassDet.distribuir(v.detalhamento,ng.pg_boletos.length,i_boleto+1,total_pagamento_boleto,v_boleto.valor_pagamento);
 					pagamentos.push(v_push);
 				});
 			}else {
@@ -1451,7 +1468,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 						}
 		}
 
-		
+		$('button').button('reset');
+
 
 		aj.post(baseUrlApi()+url, dados)
 			.success(function(data, status, headers, config) {
@@ -1731,22 +1749,6 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.busca_avancada = !ng.busca_avancada ;
 	}
 
-	var dtaAtual = new Date();
-
-	var actualMonth = parseInt(dtaAtual.getMonth() + 1);
-	if(actualMonth < 10)
-		actualMonth = "0" + actualMonth;
-
-	var actualYear = dtaAtual.getFullYear();
-
-	var lastDay = parseInt(ultimoDiaDoMes(new Date()));
-	if(lastDay < 10)
-		lastDay = "0" + lastDay;
-
-	$("#dtaInicial").val( "01/"+actualMonth+"/"+actualYear );
-	$("#dtaFinal").val( lastDay+"/"+actualMonth+"/"+actualYear );
-	$(".data-cc").val('11-10-2010');
-
 	ng.configuracao = null ;
 	ng.loadConfig = function(){
 		var error = 0 ;
@@ -1761,7 +1763,98 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			});
 	}
 
-	ng.load(0,20);
+	ng.msg_error = "Faça um filtro para obter resultados";
+
+
+	ng.distriuDetalhamento = function(detalhamento,n_parcelas,n_pacela_atual,vlr_total_pg,vlr_parcela){
+		n_parcelas = Number(n_parcelas),n_pacela_atual = Number(n_pacela_atual),vlr_total_pg = Number(vlr_total_pg),vlr_parcela = Number(vlr_parcela) ;
+		var round = function(total){
+			return Math.round( total * 100) /100
+		}
+		var item_detalhado = [] ;
+
+		if(!vlr_total_pg){
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item/n_parcelas );
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: vlr_item,
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			if(n_pacela_atual == n_parcelas){
+				$.each(item_detalhado,function(x,y){
+					if(y.valor*n_parcelas > y.total){
+						var r = round((y.valor*n_parcelas) - y.total) ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor-r) ;
+					}else if(y.valor*n_parcelas < y.total){
+						var r = round(y.total - (y.valor*n_parcelas))  ;	
+						item_detalhado[x].valor += round(item_detalhado[x].valor+r) ;
+					}
+
+				});
+			}
+
+			$.each(item_detalhado,function(x,y){  delete item_detalhado[x].total });
+
+			return item_detalhado ;
+		}else{
+
+			var representa = round((vlr_parcela * 100) / vlr_total_pg) ;
+			representa = round(representa/100);
+
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item*representa );
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: vlr_item,
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			return item_detalhado ;
+		}	
+	}
+
+
+
+	ng.showModalDetalhamento = function(){
+		$('#modal_add_detalhamento').modal('show');
+	}
+
+	ng.novo_detalhamento = {} ;
+	ng.pagamento.detalhamento = [] ;
+	ng.mensagem_detalhamento = '' ;
+	ng.addDetalhePagamento = function(stay){
+		ng.mensagem_detalhamento = '' ;
+		var item = angular.copy(ng.novo_detalhamento);
+		if(empty(item.id_plano_conta)){
+			ng.mensagem_detalhamento = 'Selecione um  plano de conta';
+		}
+		if(empty(item.valor)){
+			if(ng.mensagem_detalhamento != '') ng.mensagem_detalhamento +='<br/>' ;
+			ng.mensagem_detalhamento += 'Informe o valor';
+		}
+		if(ng.mensagem_detalhamento != '') return ;
+		ng.pagamento.detalhamento.push(item);
+		$.each(ng.plano_contas,function(i,v){
+			if(Number(item.id_plano_conta) == Number(v.id)) item.nome_plano_conta = v.dsc_completa ;
+		});
+		ng.novo_detalhamento = {} ;
+		if(stay != true) $('#modal_add_detalhamento').modal('hide');
+
+	}
+
+	ng.delDetalhamento = function($index){
+		ng.pagamento.detalhamento.splice($index,1);
+	}
+
+
 	ng.loadPlanoContas();
 	ng.loadContas();
 	ng.loadBancos();
@@ -1770,3 +1863,89 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	ng.loadPerfil();
 
 });
+
+var Detalhamento = function(){
+	var arr_parc = [] ;
+	this.getParcelas = function(){
+		return arr_parc; 
+	}
+	this.distribuir = function(detalhamento,n_parcelas,n_pacela_atual,vlr_total_pg,vlr_parcela){
+		n_parcelas = Number(n_parcelas),n_pacela_atual = Number(n_pacela_atual),vlr_total_pg = Number(vlr_total_pg),vlr_parcela = Number(vlr_parcela) ;
+		var round = function(total){
+			return Math.round( total * 100) /100
+		}
+		var item_detalhado = [] ;
+
+		if(!vlr_total_pg){
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item/n_parcelas );
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: vlr_item,
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			if(n_pacela_atual == n_parcelas){
+				$.each(item_detalhado,function(x,y){
+					if(y.valor*n_parcelas > y.total){
+						var r = round((y.valor*n_parcelas) - y.total) ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor-r) ;
+					}else if(y.valor*n_parcelas < y.total){
+						var r = round(y.total - (y.valor*n_parcelas))  ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor+r) ;
+					}
+
+				});
+			}
+
+			$.each(item_detalhado,function(x,y){
+			  delete item_detalhado[x].total ;
+			  item_detalhado[x].valor = round(item_detalhado[x].valor);
+			});
+
+			return item_detalhado ;
+		}else{
+			var representa = round((vlr_parcela * 100) / vlr_total_pg) ;
+			representa = round(representa/100);
+
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item*representa );
+				if(arr_parc[i] == undefined) arr_parc[i] = [] ;
+				arr_parc[i].push(round(vlr_item));
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: round(vlr_item),
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			if(n_pacela_atual == n_parcelas){
+				$.each(item_detalhado,function(x,y){
+					var valor_total_parcelas = round(arr_parc[x].reduce((a, b) => a + b)) ;
+					if(valor_total_parcelas > y.total){
+						var r = round((valor_total_parcelas) - y.total) ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor-r) ;
+						arr_parc[x][arr_parc[x].length-1] = round(item_detalhado[x].valor) ;
+					}else if(valor_total_parcelas < y.total){
+						var r = round(y.total - (valor_total_parcelas))  ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor+r) ;
+						arr_parc[x][arr_parc[x].length-1] = round(item_detalhado[x].valor) ;
+					}
+
+				});
+			}
+
+			$.each(item_detalhado,function(x,y){
+			  delete item_detalhado[x].total ;
+			  item_detalhado[x].valor = round(item_detalhado[x].valor);
+			});
+
+			return item_detalhado ;
+		}	
+	}
+}
