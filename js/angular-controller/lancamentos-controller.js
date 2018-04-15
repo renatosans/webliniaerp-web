@@ -1305,6 +1305,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					return;
 				}
 			});
+
+			item.detalhamento = angular.copy(ng.pagamento.detalhamento);
 			ng.recebidos.push(item);
 		}
 		ng.totalPagamento();
@@ -1379,6 +1381,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				var arr_date 		 	  = next_date.split('/');
 				var next_date_dia_init    = parseInt(arr_date[0]) ;
 
+				ClassDet = new Detalhamento();
+
 				for(var count = 0 ; count < parcelas ; count ++){
 					var item 			 = angular.copy(v);
 					item.valor_pagamento = valor_parcelas ;
@@ -1406,13 +1410,17 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 							next_date_mes = next_date_mes+1;
 					}
 					next_date = next_date_dia+"/"+next_date_mes+"/"+next_date_ano ;
-					
+
+					item.detalhamento = ClassDet.distribuir(v.detalhamento,parcelas,count+1);
 
 					itens_prc.push(item);
 				}
 
 				pagamentos.push({id_forma_pagamento : v.id_forma_pagamento ,id_tipo_movimentacao: 3, parcelas:itens_prc});
 			}else if(Number(v.id_forma_pagamento) == 2){
+				ClassDet = new Detalhamento();
+				var total_pagamento_cheque = getIndex('id_forma_pagamento',2,ng.recebidos);
+				total_pagamento_cheque = ng.recebidos[total_pagamento_cheque].valor ;
 				$.each(ng.pg_cheques,function(i_cheque, v_cheque){
 					v.id_banco 				= v_cheque.id_banco ;
 					v.num_conta_corrente 	= v_cheque.num_conta_corrente ;
@@ -1421,9 +1429,13 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					v.data_pagamento 		= v_cheque.data_pagamento ;
 					v.valor_pagamento 		= v_cheque.valor_pagamento ;
 					v_push = angular.copy(v);
+					v_push.detalhamento = ClassDet.distribuir(v.detalhamento,ng.pg_cheques.length,i_cheque+1,total_pagamento_cheque,v_cheque.valor_pagamento);
 					pagamentos.push(v_push);
 				});
 			}else if(Number(v.id_forma_pagamento) == 4){
+				ClassDet = new Detalhamento();
+				var total_pagamento_boleto = getIndex('id_forma_pagamento',4,ng.recebidos);
+				total_pagamento_boleto = ng.recebidos[total_pagamento_cheque].valor ;	
 				$.each(ng.pg_boletos,function(i_boleto, v_boleto){
 					v.id_banco 				= v_boleto.id_banco ;
 					v.data_pagamento 		= v_boleto.data_pagamento ;
@@ -1432,6 +1444,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					v.num_boleto            = v_boleto.num_boleto ;
 					v.status                = v_boleto.status_pagamento ;
 					v_push = angular.copy(v);
+					v_push.detalhamento = ClassDet.distribuir(v.detalhamento,ng.pg_boletos.length,i_boleto+1,total_pagamento_boleto,v_boleto.valor_pagamento);
 					pagamentos.push(v_push);
 				});
 			}else {
@@ -1455,7 +1468,8 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 						}
 		}
 
-		
+		$('button').button('reset');
+
 
 		aj.post(baseUrlApi()+url, dados)
 			.success(function(data, status, headers, config) {
@@ -1752,7 +1766,60 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	ng.msg_error = "Faça um filtro para obter resultados";
 
 
+	ng.distriuDetalhamento = function(detalhamento,n_parcelas,n_pacela_atual,vlr_total_pg,vlr_parcela){
+		n_parcelas = Number(n_parcelas),n_pacela_atual = Number(n_pacela_atual),vlr_total_pg = Number(vlr_total_pg),vlr_parcela = Number(vlr_parcela) ;
+		var round = function(total){
+			return Math.round( total * 100) /100
+		}
+		var item_detalhado = [] ;
 
+		if(!vlr_total_pg){
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item/n_parcelas );
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: vlr_item,
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			if(n_pacela_atual == n_parcelas){
+				$.each(item_detalhado,function(x,y){
+					if(y.valor*n_parcelas > y.total){
+						var r = round((y.valor*n_parcelas) - y.total) ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor-r) ;
+					}else if(y.valor*n_parcelas < y.total){
+						var r = round(y.total - (y.valor*n_parcelas))  ;	
+						item_detalhado[x].valor += round(item_detalhado[x].valor+r) ;
+					}
+
+				});
+			}
+
+			$.each(item_detalhado,function(x,y){  delete item_detalhado[x].total });
+
+			return item_detalhado ;
+		}else{
+
+			var representa = round((vlr_parcela * 100) / vlr_total_pg) ;
+			representa = round(representa/100);
+
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item*representa );
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: vlr_item,
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			return item_detalhado ;
+		}	
+	}
 
 
 
@@ -1796,3 +1863,89 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	ng.loadPerfil();
 
 });
+
+var Detalhamento = function(){
+	var arr_parc = [] ;
+	this.getParcelas = function(){
+		return arr_parc; 
+	}
+	this.distribuir = function(detalhamento,n_parcelas,n_pacela_atual,vlr_total_pg,vlr_parcela){
+		n_parcelas = Number(n_parcelas),n_pacela_atual = Number(n_pacela_atual),vlr_total_pg = Number(vlr_total_pg),vlr_parcela = Number(vlr_parcela) ;
+		var round = function(total){
+			return Math.round( total * 100) /100
+		}
+		var item_detalhado = [] ;
+
+		if(!vlr_total_pg){
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item/n_parcelas );
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: vlr_item,
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			if(n_pacela_atual == n_parcelas){
+				$.each(item_detalhado,function(x,y){
+					if(y.valor*n_parcelas > y.total){
+						var r = round((y.valor*n_parcelas) - y.total) ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor-r) ;
+					}else if(y.valor*n_parcelas < y.total){
+						var r = round(y.total - (y.valor*n_parcelas))  ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor+r) ;
+					}
+
+				});
+			}
+
+			$.each(item_detalhado,function(x,y){
+			  delete item_detalhado[x].total ;
+			  item_detalhado[x].valor = round(item_detalhado[x].valor);
+			});
+
+			return item_detalhado ;
+		}else{
+			var representa = round((vlr_parcela * 100) / vlr_total_pg) ;
+			representa = round(representa/100);
+
+			$.each(detalhamento,function(i,v){
+				vlr_total_item = Number(v.valor) ;
+				vlr_item = round( vlr_total_item*representa );
+				if(arr_parc[i] == undefined) arr_parc[i] = [] ;
+				arr_parc[i].push(round(vlr_item));
+				item = {
+					id_plano_conta  : v.id_plano_conta,
+					valor 			: round(vlr_item),
+					total 			: vlr_total_item
+				}
+				item_detalhado.push(item);
+			});
+
+			if(n_pacela_atual == n_parcelas){
+				$.each(item_detalhado,function(x,y){
+					var valor_total_parcelas = round(arr_parc[x].reduce((a, b) => a + b)) ;
+					if(valor_total_parcelas > y.total){
+						var r = round((valor_total_parcelas) - y.total) ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor-r) ;
+						arr_parc[x][arr_parc[x].length-1] = round(item_detalhado[x].valor) ;
+					}else if(valor_total_parcelas < y.total){
+						var r = round(y.total - (valor_total_parcelas))  ;	
+						item_detalhado[x].valor = round(item_detalhado[x].valor+r) ;
+						arr_parc[x][arr_parc[x].length-1] = round(item_detalhado[x].valor) ;
+					}
+
+				});
+			}
+
+			$.each(item_detalhado,function(x,y){
+			  delete item_detalhado[x].total ;
+			  item_detalhado[x].valor = round(item_detalhado[x].valor);
+			});
+
+			return item_detalhado ;
+		}	
+	}
+}

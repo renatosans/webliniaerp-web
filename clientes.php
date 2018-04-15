@@ -61,7 +61,7 @@
 
 		@media screen and (min-width: 768px) {
 
-			#list_proodutos.modal-dialog  {width:900px;}
+			#list_produtos.modal-dialog  {width:900px;}
 
 		}
 
@@ -184,7 +184,7 @@
 					<div class="panel-body" id="tab-cliente-body">
 						<form role="form">
 							<div class="tab-content">
-								<div class="tab-pane fade in active" id="informacoes_basicas">
+								<div class="tab-pane in active" id="informacoes_basicas">
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="form-group">
@@ -201,8 +201,11 @@
 														<span class="custom-radio"></span>
 														<span>Cliente - Pessoa Jurídica</span>
 													</label>
+
 													<label class="label-radio inline">
-														<input ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('usuario','pf')" value="usuario_pf" type="radio" class="inline-radio"/>
+														<input ng-model="cliente.cliente_tipo_cadastro" 
+															ng-click="setTipoCadastro('usuario','pf')" 
+															value="usuario_pf" type="radio" class="inline-radio"/>
 														<span class="custom-radio"></span>
 														<span>Usuário do Sistema</span>
 													</label>
@@ -210,6 +213,23 @@
 											</div>
 										</div>
 									</div>
+
+									<div class="row" ng-if="cliente.flg_tipo == 'cliente' && cliente.tipo_cadastro == 'pf'">
+										<div class="col-sm-2">
+											<div id="cpf" class="form-group">
+												<label class="control-label">CPF</label>
+												<input class="form-control input-sm" ui-mask="999.999.999-99" ng-model="cliente.cpf" />
+											</div>
+										</div>
+										
+										<div class="col-sm-2">
+											<div id="rg" class="form-group">
+												<label class="control-label">RG</label>
+												<input class="form-control input-sm"  ng-model="cliente.rg" />
+											</div>
+										</div>
+									</div>
+
 									<div class="row" ng-if="cliente.tipo_cadastro == 'pf'">
 										<div class="col-sm-6">
 											<div id="nome" class="form-group">
@@ -232,39 +252,11 @@
 											</div>
 										</div>
 									</div>
-									<div class="row" ng-if="cliente.tipo_cadastro == 'pf'">
-										<div class="col-sm-2">
-											<div id="rg" class="form-group">
-												<label class="control-label">RG</label>
-												<input class="form-control input-sm"  ng-model="cliente.rg" />
-											</div>
-										</div>
 
-										<div class="col-sm-2">
-											<div id="cpf" class="form-group">
-												<label class="control-label">CPF</label>
-												<input class="form-control input-sm" ui-mask="999.999.999-99" ng-model="cliente.cpf" />
-											</div>
-										</div>
-									</div>
 									<div class="row" ng-if="cliente.tipo_cadastro == 'pj'">
-										<div class="col-lg-3">
-											<div id="razao_social" class="form-group">
-												<label class="control-label">Razão Social  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input placeholder="" class="form-control input-sm" ng-model="cliente.razao_social">
-											</div>
-										</div>
-
-										<div class="col-sm-3">
-											<div id="nome_fantasia" class="form-group">
-												<label class="control-label">Nome Fantasia  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input class="form-control input-sm" ng-model="cliente.nome_fantasia">
-											</div>
-										</div>
-
 										<div class="col-sm-2">
 											<div id="cnpj" class="form-group">
-												<label class="control-label">CNPJ  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
+												<label class="control-label">CNPJ <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
 												<input class="form-control input-sm" ui-mask="99.999.999/9999-99" ng-model="cliente.cnpj">
 											</div>
 										</div>
@@ -282,6 +274,23 @@
 											</div>
 										</div>
 									</div>
+
+									<div class="row" ng-if="cliente.tipo_cadastro == 'pj'">
+										<div class="col-sm-6">
+											<div id="razao_social" class="form-group">
+												<label class="control-label">Razão Social  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
+												<input placeholder="" class="form-control input-sm" ng-model="cliente.razao_social">
+											</div>
+										</div>
+
+										<div class="col-sm-6">
+											<div id="nome_fantasia" class="form-group">
+												<label class="control-label">Nome Fantasia  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
+												<input class="form-control input-sm" ng-model="cliente.nome_fantasia">
+											</div>
+										</div>
+									</div>
+
 									<div class="row">
 										<div class="col-sm-2">
 											<div id="tel_fixo" class="form-group">
@@ -311,6 +320,7 @@
 											</div>
 										</div>
 									</div>
+
 									<div class="row">
 										<div class="col-sm-2">
 											<div id="cep" class="form-group">
@@ -319,35 +329,54 @@
 											</div>
 										</div>
 
-										<div class="col-sm-7">
+										<div class="col-sm-8">
 											<div id="endereco" class="form-group">
 												<label class="control-label">Endereço</label>
 												<input type="text" class="form-control input-sm" ng-model="cliente.endereco">
 											</div>
 										</div>
 
-										<div class="col-sm-1">
+										<div class="col-sm-2">
 											<div id="numero" class="form-group">
 												<label class="control-label">No.</label>
 												<input id="num_logradouro" type="text" class="form-control input-sm" ng-model="cliente.numero" ng-blur="consultaLatLog()">
 											</div>
 										</div>
+									</div>
 
-										<div class="col-sm-2">
+									<div class="row">
+										<div class="col-sm-6">
 											<div id="bairro" class="form-group">
 												<label class="control-label">Bairro</label>
 												<input type="text" class="form-control input-sm" ng-model="cliente.bairro">
 											</div>
 										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-12">
+
+										<div class="col-sm-6">
 											<div id="complemento" class="form-group">
 												<label class="control-label">Complemento:</label>
 												<input type="text" class="form-control input-sm" ng-model="cliente.end_complemento">
 											</div>
 										</div>
 									</div>
+
+									<div class="row">
+										<div class="col-sm-2">
+											<div id="latitude" class="form-group">
+												<label class="control-label">Latitude</label>
+												<input type="text" class="form-control input-sm" readonly="readonly"
+													ng-model="cliente.num_latitude">
+											</div>
+										</div>
+										<div class="col-sm-2">
+											<div id="longitude" class="form-group">
+												<label class="control-label">Longitude</label>
+												<input type="text" class="form-control input-sm" readonly="readonly"
+													ng-model="cliente.num_longitude">
+											</div>
+										</div>
+									</div>
+
 									<div class="row">
 										<div class="col-sm-4">
 											<div id="ponto_referencia" class="form-group">
@@ -378,7 +407,8 @@
 										</div>
 									</div>			
 								</div>
-								<div class="tab-pane fade" id="informacoes_complementares">
+
+								<div class="tab-pane" id="informacoes_complementares">
 									<div class="row">
 										<div class="col-sm-2">
 											<div id="indicacao" class="form-group">
@@ -521,7 +551,8 @@
 										<textarea class="form-control" rows="5" ng-model="cliente.txt_historico_acionamentos"></textarea>
 									</div>
 								</div>
-								<div class="tab-pane fade" id="empreendimentos">
+
+								<div class="tab-pane" id="empreendimentos">
 									<div class="row">
 										<div class="col-sm-12">
 											<div class="form-group" id="empreendimentos">
@@ -551,7 +582,8 @@
 										</div>
 									</div>
 								</div>
-								<div class="tab-pane fade" id="dados_fiscais">
+
+								<div class="tab-pane" id="dados_fiscais">
 									<div class="row">
 										<div class="col-sm-4">
 											<div class="form-group" id="regimeTributario">
@@ -709,7 +741,8 @@
 												</div>
 									</div>
 								</div>
-								<div class="tab-pane fade" id="dados_acesso">
+
+								<div class="tab-pane" id="dados_acesso">
 									<div class="row">
 										<div class="col-sm-3">
 											<div id="id_perfil" class="form-group">
@@ -780,7 +813,8 @@
 										</div>
 									</div>
 								</div>
-								<div class="tab-pane fade" id="atendimentos">
+
+								<div class="tab-pane" id="atendimentos">
 									<div class="row">
 										<div class="col-sm-12">
 											<table class="table table-bordered table-hover table-striped table-condensed">
@@ -826,7 +860,8 @@
 										</div>
 									</div>
 								</div>
-								<div class="tab-pane fade" id="pagamentos">
+
+								<div class="tab-pane" id="pagamentos">
 									<div class="row">
 										<div class="col-sm-12">
 											<table class="table table-bordered table-hover table-striped table-condensed">
@@ -887,7 +922,9 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<i class="fa fa-tasks"></i> Clientes Cadastrados
-						<a href="util/export.php?c=usuarios&id_empreendimento={{ userLogged.id_empreendimento }}" target="_blank" ng-if="funcioalidadeAuthorized('ver_botao_exportar')" class="btn btn-xs btn-success pull-right"  type="button">
+						<a href="util/export.php?c=usuarios&id_empreendimento={{ userLogged.id_empreendimento }}" 
+							target="_blank" class="btn btn-xs btn-success pull-right"
+							ng-if="funcioalidadeAuthorized('ver_botao_exportar_cliente')">
 							<i class="fa fa-download"></i>
 							Exportar
 						</a>
@@ -895,18 +932,18 @@
 
 					<div class="panel-body">
 						<div class="row">
-							<div class="col-lg-4">
+							<div class="col-sm-3 col-lg-2">
 								<div class="form-group" style="padding-top:7px; margin-bottom:0px;">
 									<label class="label-radio inline">
 										<input  ng-click="busca.tipo_cliente = 'pf'" name="changeDetalhesCC" ng-checked="(busca.tipo_cliente == 'pf')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
-										<span>Pessoa Física</span>
+										<span>PF</span>
 									</label>
 
 									<label class="label-radio inline">
 										<input  ng-click="busca.tipo_cliente = 'pj'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'pj')" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
-										<span>Pessoa Jurídica</span>
+										<span>PJ</span>
 									</label>
 
 									<label class="label-radio inline">
@@ -916,21 +953,18 @@
 									</label>
 								</div>
 							</div>
-							<div class="col-sm-7">
+
+							<div class="col-sm-9 col-lg-10">
 								<div class="input-group">
-						            <input ng-model="busca.clientes"  type="text" class="form-control input-sm"
-						            	ng-enter="loadClientes(0,10)" 
-						            	ng-keyup="loadClientes(0,10)"
-						            >
+						            <input type="text" class="form-control"
+						            	ng-enter="loadClientes(0,10)" ng-model="busca.clientes">
 						            <div class="input-group-btn">
-						            	<button ng-click="loadClientes(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+						            	<button ng-click="loadClientes(0,10)" tabindex="-1" class="btn btn-primary" type="button">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
+						            	<button type="button" class="btn btn-default" ng-click="busca.clientes='';busca.tipo_cliente = 'ambos'; loadClientes(0,10); ">Limpar</button>
 						            </div>
 						        </div>
-							</div>
-							<div class="col-sm-1">
-								<button type="button" class="btn btn-sm btn-default" ng-click="busca.clientes='';busca.tipo_cliente = 'ambos'; loadClientes(0,10); ">Limpar</button>
 							</div>
 						</div>
 
@@ -953,46 +987,79 @@
 										<tr>
 											<th class="text-center" width="50">#</th>
 											<th class="text-center" width="80">Data Cadastro</th>
-											<th class="text-center" width="100">Saldo</th>
+											<th class="text-center" width="100"
+												ng-if="funcioalidadeAuthorized('ver_saldo_devedor_cliente')">
+												Saldo
+											</th>
 											<th class="text-center" style="min-width: 150px;">Nome</th>
 											<th class="text-center" width="130">Apelido</th>
 											<th class="text-center">Perfil</th>
-											<th class="text-center" style="min-width: 100px;">Telefone</th>
-											<th class="text-center" style="min-width: 100px;">Celular</th>
-											<th class="text-center" style="min-width: 100px;">Nextel</th>
-											<th class="text-center" width="70">Status</th>
-											<th width="80" style="text-align: center;">Opções</th>
+											<th class="text-center" style="min-width: 100px;">Telefones</th>
+											<th class="text-center" width="50">Status</th>
+											<th width="100" style="text-align: center;">Opções</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr ng-repeat="item in clientes">
-											<td class="text-center">{{ item.id }}</td>
-											<td class="text-center">{{ item.dta_cadastro | dateFormat:'date' }}</td>
-											<td class="text-center" ng-if="item.vlr_saldo_devedor == undefined">
-												<p class="label"><i class="fa fa-refresh fa-spin"></i> Carregando ...</p>
+											<td class="text-middle text-center">{{ item.id }}</td>
+											<td class="text-middle text-center">{{ item.dta_cadastro | dateFormat:'date' }}</td>
+											<td class="text-middle text-center"
+												ng-if="funcioalidadeAuthorized('ver_saldo_devedor_cliente') && (item.vlr_saldo_devedor == undefined)">
+												<p class="label">
+													<i class="fa fa-refresh fa-spin"></i> Carregando ...
+												</p>
 											</td>
-											<td class="text-right" ng-if="item.vlr_saldo_devedor != undefined">
-												<span class="label label-money-blue" ng-if="item.vlr_saldo_devedor == 0">R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}</span>
-												<span class="label label-success" ng-if="item.vlr_saldo_devedor > 0">R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}</span>
-												<span class="label label-danger" ng-if="item.vlr_saldo_devedor < 0">R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}</span>
+											<td class=" text-middletext-right"
+												ng-if="funcioalidadeAuthorized('ver_saldo_devedor_cliente') && (item.vlr_saldo_devedor != undefined)">
+												<span class="label label-money-blue" ng-if="item.vlr_saldo_devedor == 0">
+													R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}
+												</span>
+												<span class="label label-success" ng-if="item.vlr_saldo_devedor > 0">
+													R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}
+												</span>
+												<span class="label label-danger" ng-if="item.vlr_saldo_devedor < 0">
+													R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}
+												</span>
 											</td>
-											<td ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
-											<td ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
-											<td control-size-string content="{{ item.apelido | uppercase }}" size="14"></td>
-											<td class="text-center">{{ item.nome_perfil | uppercase }}</td>
-											<td class="text-center">{{ item.tel_fixo | phoneFormat }}</td>
-											<td class="text-center">{{ item.celular | phoneFormat }}</td>
-											<td class="text-center">{{ item.nextel }}</td>
-											<td class="text-center">
-												<span class="label label-success" ng-if="item.acesso_restrito == true">Liberado</span>
-												<span class="label label-danger" ng-if="item.acesso_restrito == false">Bloqueado</span>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
+											<td class="text-middle" control-size-string content="{{ item.apelido | uppercase }}" size="14" ></td>
+											<td class="text-middle text-center">{{ item.nome_perfil | uppercase }}</td>
+											<td class="text-middle text-center">
+												<span class="clearfix">{{ item.tel_fixo | phoneFormat }}</span>
+												<span class="clearfix">{{ item.celular | phoneFormat }}</span>
+												<span class="clearfix">{{ item.nextel }}</span>
 											</td>
-											<td align="center">
-												<button type="button" ng-click="editar(item)" tooltip="Editar" class="btn btn-xs btn-warning" data-toggle="tooltip">
+											<td class="text-middle text-center">
+												<span class="label label-success" ng-if="item.acesso_restrito == true"
+													data-toggle="tooltip" tooltip="Liberado">
+													<i class="fa fa-unlock"></i>
+												</span>
+												<span class="label label-danger" ng-if="item.acesso_restrito == false"
+													data-toggle="tooltip" tooltip="Bloqueado">
+													<i class="fa fa-lock"></i>
+												</span>
+											</td>
+											<td class="text-middle text-center">
+												<button type="button" ng-click="editar(item)" 
+													data-toggle="tooltip" tooltip="Editar"
+													ng-if="funcioalidadeAuthorized('ver_botao_editar_cliente')"
+													class="btn btn-md btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>
-												<button type="button" ng-click="delete(item)" tooltip="Excluir" class="btn btn-xs btn-danger delete" data-toggle="tooltip">
+
+												<button type="button" ng-click="delete(item)" 
+													data-toggle="tooltip" tooltip="Excluir"
+													ng-if="funcioalidadeAuthorized('ver_botao_excluir_cliente')"
+													class="btn btn-md btn-danger delete">
 													<i class="fa fa-trash-o"></i>
+												</button>
+
+												<button type="button" class="btn btn-md btn-info"
+													data-toggle="tooltip" tooltip="Marcar Presença"
+													ng-if="funcioalidadeAuthorized('ver_botao_marcar_presenca_cliente')"
+													ng-click="marcarVisitaCliente(item)">
+													<i class="fa fa-street-view"></i>
 												</button>
 											</td>
 										</tr>
@@ -1266,7 +1333,7 @@
 	<script src="js/extras.js"></script>
 
 	<!-- Google Maps API -->
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyANVfzQYwKLB7LJuKBi4_aoCj9n52ZYi-U"></script>
 
 	<script src="js/bootstrap-treeview.js"></script>
 	<script src="js/jquery.noty.packaged.js"></script>

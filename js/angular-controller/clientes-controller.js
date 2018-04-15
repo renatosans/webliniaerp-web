@@ -124,19 +124,20 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 	}
 
 	ng.consultaLatLog = function() {
-		/*
 		var address = ng.cliente.endereco + ", " + ng.cliente.numero + ", " + ng.cliente.cep.substr(0,5) + "-" + ng.cliente.cep.substr(5,ng.cliente.cep.length);
 
 		var geocoder = new google.maps.Geocoder();
 		geocoder.geocode({'address': address}, function(results, status) {
 			if(results.length == 1) {
-				ng.cliente.num_latitude = results[0].geometry.location.k;
-				ng.cliente.num_longitude = results[0].geometry.location.B;
+				ng.cliente.num_latitude = results[0].geometry.location.lat();
+				ng.cliente.num_longitude = results[0].geometry.location.lng();
+				setTimeout(function(){
+					$scope.$apply();
+				},1);
 			} else {
 				//alert("Endereço inválido!");
 			}
 		});
-		*/
 	}
 
 	ng.mensagens = function(classe , msg){
@@ -333,6 +334,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 					ng.clientes.push(item);
 				});
 				ng.loadSaldoDevedorClientes();
+				$('[data-toggle="tooltip"]').tooltip();
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404)
@@ -616,6 +618,25 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 			aj.get(baseUrlApi()+"cliente/delete/"+item.id)
 				.success(function(data, status, headers, config) {
 					ng.mensagens('alert-success','<strong>Cliente excluido com sucesso</strong>');
+					ng.reset();
+					ng.loadClientes(0,10);
+				})
+				.error(defaulErrorHandler);
+		}, undefined);
+	}
+
+	ng.marcarVisitaCliente = function(cliente){
+		var post_data = {
+			cliente: cliente,
+			vendedor: ng.userLogged
+		};
+
+		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Confirma a presença deste cliente?</strong>');
+
+		dlg.result.then(function(btn){
+			aj.post(baseUrlApi()+"cliente/"+ cliente.id +"/marcar-visita", {data: JSON.stringify(post_data)})
+				.success(function(data, status, headers, config) {
+					ng.mensagens('alert-success','<strong>Presença gravada com sucessso!</strong>');
 					ng.reset();
 					ng.loadClientes(0,10);
 				})
@@ -1097,4 +1118,5 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 	ng.loadControleNfe('regime_tributario','regimeTributario');
 	ng.loadControleNfe('regime_tributario_pis_cofins','regimePisCofins');
 	ng.loadControleNfe('tipo_empresa','tipoEmpresa');
+	$('#sizeToggle').trigger("click");
 });

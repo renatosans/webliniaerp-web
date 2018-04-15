@@ -39,6 +39,10 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 
 		ng.opcao_selecionada = ng.opcoes_filtro_pesquisa[4];
 
+		ng.drillDownReport = function(report_name) {
+			window.location.href = report_name+'.php';
+		}
+
 		ng.calcula_periodo_filtro = function(){
 			if(ng.opcao_selecionada.value === 0) { // mês atual
 				$("#dtaInicial").val(getFirstDateOfMonthString());

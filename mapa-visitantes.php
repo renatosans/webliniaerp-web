@@ -1,6 +1,6 @@
 <?php
-	include_once "util/login/restrito.php";
-	restrito();
+	// include_once "util/login/restrito.php";
+	// restrito();
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app="HageERP">
@@ -61,6 +61,19 @@
 
 		#map_canvas img {
 			max-width: none;
+		}
+
+		.panel-stat3 {
+			padding: 20px;
+		}
+
+		.panel-inverse {
+			border-color: #000;
+		}
+
+		.panel-inverse>.panel-heading {
+			background-color: #000;
+			border-color: #000;
 		}
 	</style>
   </head>
@@ -152,7 +165,7 @@
 			<div class="padding-md">
 				<div class="alert alert-sistema" style="display:none"></div>
 
-				<div class="panel panel-primary">
+				<div class="panel panel-inverse">
 					<div class="panel-heading">
 						<i class="fa fa-map-marker"></i> Mapa de Clientes
 						<ul class="tool-bar">
@@ -162,7 +175,90 @@
 						</ul>
 					</div>
 					<div class="panel-body">
-						<div id="map_canvas" style="width: 100%; height: 600px"></div>
+						<div class="row">
+							<div class="col-sm-9">
+								<div id="map_canvas" style="width: 100%; height: 550px"></div>
+							</div>
+							<div class="col-sm-3">
+								<div class="row">
+									<div class="col-lg-6 col-lg-offset-3">
+										<img src="assets/imagens/logos/{{ userLogged.nme_logo }}">
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="panel-stat3 bg-primary fadeInUp animation-delay4">
+											<h1 class="m-top-none">{{ qtd_clientes_total | numberFormat : 0 : ',' : '.' }}</h1>
+											<h6>Total de Clientes</h6>
+											<div class="stat-icon">
+												<i class="fa fa-users fa-2x"></i>
+											</div>
+											<!-- <div class="refresh-button">
+												<i class="fa fa-refresh"></i>
+											</div>-->
+											<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamentoClinicas == 'loading'}">
+												<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+											</div> 
+										</div>
+									</div><!-- /.col -->
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="panel-stat3 bg-success fadeInUp animation-delay3">
+											<h1 class="m-top-none">{{ qtd_visitantes_total | numberFormat : 0 : ',' : '.' }}</h1>
+											<h6>Total de Visitantes</h6>
+											<div class="stat-icon">
+												<i class="fa fa-map-marker fa-2x"></i>
+											</div>
+											<!-- <div class="refresh-button">
+												<i class="fa fa-refresh"></i>
+											</div>-->
+											<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamentoClinicas == 'loading'}">
+												<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+											</div> 
+										</div>
+									</div><!-- /.col -->
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="panel-stat3 bg-info fadeInUp animation-delay2">
+											<h1 class="m-top-none">{{ qtd_visitantes_hoje | numberFormat : 0 : ',' : '.' }}</h1>
+											<h6>Visitantes Hoje</h6>
+											<div class="stat-icon">
+												<i class="fa fa-map-marker fa-2x"></i>
+											</div>
+											<!-- <div class="refresh-button">
+												<i class="fa fa-refresh"></i>
+											</div>-->
+											<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamentoClinicas == 'loading'}">
+												<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+											</div> 
+										</div>
+									</div><!-- /.col -->
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="panel-stat3 bg-warning fadeInUp animation-delay1">
+											<h1 class="m-top-none">{{ qtd_novos_cadastros | numberFormat : 0 : ',' : '.' }}</h1>
+											<h6>Novos Clientes Cadastrados</h6>
+											<div class="stat-icon">
+												<i class="fa fa-plus-circle fa-2x"></i>
+											</div>
+											<!-- <div class="refresh-button">
+												<i class="fa fa-refresh"></i>
+											</div>-->
+											<div class="loading-overlay" ng-class="{'active':total.vlrTotalFaturamentoClinicas == 'loading'}">
+												<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+											</div> 
+										</div>
+									</div><!-- /.col -->
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -227,6 +323,9 @@
 	<script src="bower_components/noty/lib/noty.min.js" type="text/javascript"></script>
     <script src="bower_components/mojs/build/mo.min.js" type="text/javascript"></script>
 
+    <!-- UnderscoreJS -->
+	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
@@ -245,7 +344,7 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/mapa-controller.js"></script>
+	<script src="js/angular-controller/mapa-visitantes-controller.js"></script>
 	<script type="text/javascript"></script>>
 	<?php include("google_analytics.php"); ?>
   </body>

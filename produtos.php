@@ -197,7 +197,7 @@
 									<div class="tab-content">
 										<div class="tab-pane fade in active" id="informacoes_basicas">
 											<div class="row">
-												<div class="col-sm-3">
+												<div class="col-sm-2">
 													<div class="form-group">
 														<label for="" class="control-label">Tipo do produto</label>
 														<div class="form-group">
@@ -206,10 +206,23 @@
 																<span class="custom-radio"></span>
 																<span>Normal</span>
 															</label>
+															<div class="clearfix"></div>
 															<label class="label-radio inline">
 																<input ng-model="produto.flg_produto_composto" ng-click="changeTipoProduto('flg_produto_composto','tipo')" name="tipo_produto" value="1" type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
 																<span>Composto</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-3" ng-if="(produto.flg_produto_composto == null || produto.flg_produto_composto == 0)">
+													<div class="form-group">
+														<label for="" class="control-label">Subtipo do Produto</label>
+														<div class="controls">
+															<label class="label-checkbox">
+																<input type="checkbox" ng-model="produto.flg_materia_prima"  ng-true-value="1" ng-false-value="0">
+																<span class="custom-checkbox"></span>
+																Matéria Prima
 															</label>
 														</div>
 													</div>
