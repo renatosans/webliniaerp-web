@@ -509,6 +509,17 @@ app.controller('ControleMesasController', function(
 		ng.busca.numero_comanda = "";
 	}
 
+	ng.loadComandaByNumCartao = function(){
+		ng.comandaSelecionada = null;
+		aj.get(baseUrlApi()+'comanda/cartao-fisico/' + ng.busca.numero_comanda +'?tv->flg_excluido=0&tv->venda_confirmada=0&tv->id_empreendimento='+ ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.abrirDetalhesComanda(data.comanda.id);
+			})
+			.error(function(data, status, headers, config) {
+				$dialogs.notify('Desculpe!','<strong>Não foi possível localizar uma comanda com o código informado!</strong>');			
+			}); 
+	}
+
 	ng.loadComandaById = function(){
 		ng.comandaSelecionada = null;
 		aj.get(baseUrlApi()+'comanda/' + ng.busca.numero_comanda)

@@ -338,7 +338,13 @@
 										<input id="txt_numero_comanda" 
 											class="form-control" type="number" 
 											placeholder="digite o número da comanda e pressione ENTER" 
-											ng-enter="loadComandaById()" ng-model="busca.numero_comanda">
+											ng-enter="loadComandaById()" ng-model="busca.numero_comanda"
+											ng-if="(configuracao.flg_usa_cartao_magnetico == 0)">
+										<input id="txt_numero_comanda" 
+											class="form-control" type="number" 
+											placeholder="digite o número da comanda e pressione ENTER" 
+											ng-enter="loadComandaByNumCartao()" ng-model="busca.numero_comanda"
+											ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">
 									</div>
 								</div>
 							</div>
