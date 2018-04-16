@@ -233,6 +233,7 @@
 															Valor de Custo
 														</th>
 														
+														<th rowspan="2" class="text-center" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Qtd.Multipla</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Qtd.Pedida</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ;width:100px" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Qtd.Transferida</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} " ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Qtd.Recebida</th>
@@ -277,6 +278,8 @@
 															</label>
 														</div>
 													</td>
+													<td class="text-center" ng-if="(item.qtd_multiplo_transferencia)">{{ item.qtd_multiplo_transferencia }}</td>
+													<td class="text-center" ng-if="(item.qtd_multiplo_transferencia == null || item.qtd_multiplo_transferencia == 0 )">Un.</td>
 													<td ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4" width="75" id="td-trasnferencia-qtd-pedida-{{ item.id_produto }}">
 														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao != 1"/>
 														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
@@ -321,6 +324,7 @@
 															ng-if="showProductCost(transferencia)">
 															Valor de Custo
 														</th>
+														<th rowspan="2" class="text-center" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Qtd.Multipla</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ">Qtd.Pedida</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ;text-align:center" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Validade</th>
 														<th rowspan="2" style=" {{ (isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3) && 'line-height: 40px' || '' }} ;width:100px" ng-if="isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3">Qtd. trans.</th>
@@ -362,6 +366,8 @@
 															</label>
 														</div>
 													</td>
+													<td class="text-center" ng-if="(item.qtd_multiplo_transferencia)">{{ item.qtd_multiplo_transferencia }}</td>
+													<td class="text-center" ng-if="(item.qtd_multiplo_transferencia == null || item.qtd_multiplo_transferencia == 0 )">Un.</td>
 													<td ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4" width="75" id="td-trasnferencia-qtd-pedida-{{ item.id_produto }}">
 														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao != 1"/>
 														<input onKeyPress="return SomenteNumero(event);" ng-blur="verificaQtdMultiplo()" ng-model="item.qtd_pedida" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
@@ -703,6 +709,7 @@
 											<th >Fabricante</th>
 											<th >Tamanho</th>
 											<th >Sabor/Cor</th>
+											<th class="text-center">Qtd. Multipla</th>
 											<th >Quantidade</th>
 											<th >Ações</th>
 										</tr>
@@ -720,6 +727,8 @@
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
+											<td class="text-center" ng-if="(item.qtd_multiplo_transferencia)">{{ item.qtd_multiplo_transferencia }}</td>
+											<td class="text-center" ng-if="(item.qtd_multiplo_transferencia == null || item.qtd_multiplo_transferencia == 0 )">Un.</td>
 											<td  width="50">
 												<input  ng-model="item.qtd_pedida" ng-blur="verificaQtdMultiplo()" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao != 1"/>
 												<input  ng-model="item.qtd_pedida" ng-blur="verificaQtdMultiplo()" type="text" class="form-control input-xs input-group" ng-if="item.flg_unidade_fracao == 1" thousands-formatter precision="3"/>
