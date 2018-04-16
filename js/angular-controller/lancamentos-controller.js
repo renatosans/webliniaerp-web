@@ -1840,6 +1840,16 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			if(ng.mensagem_detalhamento != '') ng.mensagem_detalhamento +='<br/>' ;
 			ng.mensagem_detalhamento += 'Informe o valor';
 		}
+
+		var valor_detalhado = Number(item.valor) ;
+		$.each(ng.pagamento.detalhamento,function(i,v){ valor_detalhado += Number(v.valor) });
+		valor_detalhado = Math.round( valor_detalhado * 100) /100 
+
+		if( !$.isNumeric(ng.pagamento.valor) || (Number(ng.pagamento.valor) < Number(valor_detalhado) ) ){
+			if(ng.mensagem_detalhamento != '') ng.mensagem_detalhamento +='<br/>' ;
+			ng.mensagem_detalhamento += 'O valores detalhados são maiores que o pagamento';
+		}
+
 		if(ng.mensagem_detalhamento != '') return ;
 		ng.pagamento.detalhamento.push(item);
 		$.each(ng.plano_contas,function(i,v){
