@@ -248,6 +248,7 @@
 															</div>	
 														</th>
 														<th class="text-center" >Qtd.Pedida</th>
+														<th class="text-center">Qtd. Multipla</th>
 														<th>Qtd. Transferir</th>
 														<th width="250">
 															Selecione o depósito de saída
@@ -292,6 +293,7 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
+														<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao != 1" ng-blur="verificaQtdMultiplo()"/>
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao == 1" ng-blur="verificaQtdMultiplo()" thousands-formatter precision="3"/>
@@ -362,6 +364,7 @@
 															</div>	
 														</th>
 														<th class="text-center" >Qtd.Pedida</th>
+														<th class="text-center">Qtd. Multipla</th>
 														<th>Qtd. transferir</th>
 														<!--<th width="250">
 															Depósito
@@ -406,6 +409,7 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
+														<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<div class="input-group" id="dtaInicialDiv">
 															<input ng-disabled="true" onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-value="somarQtd(item)"  type="text" class="form-control input-sm" />
@@ -528,6 +532,7 @@
 															</div>	
 														</th>
 														<th class="text-center" >Qtd.Pedida</th>
+														<th class="text-center">Qtd. Multipla</th>
 														<th>Qtd. Transferir</th>
 														<th width="250">
 															Selecione o depósito de saída
@@ -572,6 +577,7 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
+														<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao != 1" ng-blur="verificaQtdMultiplo()"/>
 															<input onKeyPress="return SomenteNumero(event);" style="width: 75px"  ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs input-group" ng-if="item.flg_unidade_fracao == 1" ng-blur="verificaQtdMultiplo()" thousands-formatter precision="3"/></td>
@@ -640,6 +646,7 @@
 															</div>	
 														</th>
 														<th class="text-center" >Qtd.Pedida</th>
+														<th class="text-center">Qtd. Multipla</th>
 														<th>Qtd. Transferir</th>
 														<!--<th width="250">
 															Depósito
@@ -684,6 +691,7 @@
 															</div>													
 														</td>
 														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
+														<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
 														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
 															<div class="input-group" id="dtaInicialDiv">
 															<input ng-disabled="true" onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-value="somarQtd(item)"  type="text" class="form-control input-sm" />
