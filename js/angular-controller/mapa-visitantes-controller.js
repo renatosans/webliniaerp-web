@@ -61,6 +61,10 @@ app.controller('MapaController', function($scope, $http, $window, $dialogs, User
 				ng.clientes = data.usuarios;
 				ng.getVisitantesTotal();
 				ng.getVisitantesHoje();
+
+				angular.forEach(ng.clientes, function(cliente){
+					showAddress(cliente);
+				});
 			})
 			.error(function(data, status, headers, config) {
 				arr = null;
