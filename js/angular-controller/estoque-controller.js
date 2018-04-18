@@ -44,8 +44,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			item = {
 				path: item.pth_pdf.substring(item.pth_pdf.indexOf('assets'), item.pth_pdf.length)
 			};
+			$window.open(baseUrl()+item.path)
+		} else {
+			return false;
 		}
-		$window.open(baseUrl()+item.path)
 	}
 
 	ng.incluirDuplicata = function(item){
