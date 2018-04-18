@@ -1046,6 +1046,7 @@
 												<table class="table table-bordered table-condensed table-striped table-hover">
 													<thead>
 														<tr>
+															<td class="text-bold">#</td>
 															<td class="text-bold">Tipo</td>
 															<td class="text-bold">Descrição</td>
 															<td class="text-bold text-center" width="100">Associativo?</td>
@@ -1055,6 +1056,7 @@
 													</thead>
 													<tbody>
 														<tr ng-repeat="item in modelos_dre">
+															<td class="text-center">{{ item.id }}</td>
 															<td>
 																<span ng-if="item.flg_tipo == 'TOP'">Resumo</span>
 																<span ng-if="item.flg_tipo == 'SUM'">Soma</span>

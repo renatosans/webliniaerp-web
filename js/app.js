@@ -1131,6 +1131,10 @@ app.directive('bsTooltip', function ($timeout) {
     }
 });
 
+app.config(['$httpProvider', function($httpProvider) {
+	$httpProvider.defaults.useXDomain = true;
+	delete $httpProvider.defaults.headers.common['X-Requested-With'];
+}]);
 
 /*app.factory('httpRequestInterceptor',function () {
   var user = angular.fromJson(sessionStorage.user);

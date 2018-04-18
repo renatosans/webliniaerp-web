@@ -156,20 +156,10 @@
 				</ul>
 			</div><!-- breadcrumb -->
 
-			<div class="main-header clearfix">
-				<div class="page-title">
-					<h3 class="no-margin"><i class="fa fa-users"></i> Clientes/Usuários</h3>
-					<br/>
-					<a class="btn btn-info" id="btn-novo"  ng-click="showBoxNovo()"><i class="fa fa-plus-circle"></i> Novo Cliente/Usuário</a>
-					<a href="desejos_clientes.php" ng-if="userLogged.id_empreendimento != 75" class="btn btn-primary"><i class="fa fa-clipboard"></i> Desejos</a>
-					<a href="extrato.php" class="btn btn-success"><i class="fa fa-clipboard"></i> Extrato</a>
-				</div><!-- /page-title -->
-			</div><!-- /main-header -->
-
 			<div class="padding-md">
 				<div class="alert alert-sistema" style="display:none"></div>
-				<div class="panel panel-default" id="box-novo" style="display:none">
-					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Novo Cliente/Usuário</div>
+				<div class="panel panel-default" id="box-novo">
+					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Cadastro de Clientes</div>
 					<div class="panel-tab clearfix" id="tab-cliente">
 						<ul class="tab-bar">
 							<li class="active"><a href="#informacoes_basicas" data-toggle="tab"><i class="fa fa-user"></i> Informações Básicas</a></li>
@@ -181,7 +171,7 @@
 							<li><a href="#pagamentos" ng-if="userLogged.id_empreendimento == 75" ng-click="loadPagamentosPaciente()" data-toggle="tab"><i class="fa fa-list-alt"></i> Pagamentos</a></li>
 						</ul>
 					</div>
-					<div class="panel-body" id="tab-cliente-body">
+					<div class="panel-body" id="tab-cliente-body" ng-init="setTipoCadastro('cliente','pj');">
 						<form role="form" autocomplete="off">
 							<div class="tab-content">
 								<div class="tab-pane in active" id="informacoes_basicas">
@@ -191,24 +181,24 @@
 												<label for="" class="control-label">Tipo de Cadastro</label>
 												<div class="form-group">
 													<label class="label-radio inline">
-														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pf')" value="cliente_pf" type="radio" class="inline-radio"/>
-														<span class="custom-radio"></span>
-														<span>Cliente - Pessoa Física</span>
-													</label>
-
-													<label class="label-radio inline">
 														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pj')" value="cliente_pj" type="radio" class="inline-radio"/>
 														<span class="custom-radio"></span>
 														<span>Cliente - Pessoa Jurídica</span>
 													</label>
 
 													<label class="label-radio inline">
+														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" ng-click="setTipoCadastro('cliente','pf')" value="cliente_pf" type="radio" class="inline-radio"/>
+														<span class="custom-radio"></span>
+														<span>Cliente - Pessoa Física</span>
+													</label>
+
+													<!-- <label class="label-radio inline">
 														<input autocomplete="off" ng-model="cliente.cliente_tipo_cadastro" 
 															ng-click="setTipoCadastro('usuario','pf')" 
 															value="usuario_pf" type="radio" class="inline-radio"/>
 														<span class="custom-radio"></span>
 														<span>Usuário do Sistema</span>
-													</label>
+													</label> -->
 												</div>
 											</div>
 										</div>
@@ -217,15 +207,21 @@
 									<div class="row" ng-if="cliente.flg_tipo == 'cliente' && cliente.tipo_cadastro == 'pf'">
 										<div class="col-sm-2">
 											<div id="cpf" class="form-group">
-												<label class="control-label">CPF</label>
-												<input autocomplete="off" class="form-control input-sm" ui-mask="999.999.999-99" ng-model="cliente.cpf" />
+												<label class="control-label">
+													CPF
+													<span><i class="fa fa-spin fa-spinner" ng-if="(loading_info)"></i></span>
+												</label>
+												<input autocomplete="off" class="form-control" 
+													ui-mask="999.999.999-99" 
+													ng-model="cliente.cpf" 
+													ng-blur="findClientByCNPJ()"/>
 											</div>
 										</div>
 										
 										<div class="col-sm-2">
 											<div id="rg" class="form-group">
 												<label class="control-label">RG</label>
-												<input autocomplete="off" class="form-control input-sm"  ng-model="cliente.rg" />
+												<input autocomplete="off" class="form-control"  ng-model="cliente.rg" />
 											</div>
 										</div>
 									</div>
@@ -234,21 +230,21 @@
 										<div class="col-sm-6">
 											<div id="nome" class="form-group">
 												<label for="nome" class="control-label">Nome <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input autocomplete="off" type="text" class="form-control input-sm" id="nome" ng-model="cliente.nome">
+												<input autocomplete="off" type="text" class="form-control" id="nome" ng-model="cliente.nome">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="dta_nacimento" class="form-group">
 												<label class="control-label">Data de Nacimento</label>
-												<input autocomplete="off" class="form-control input-sm" ui-mask="99/99/9999" id="dta_nacimento" ng-model="cliente.dta_nacimento">
+												<input autocomplete="off" class="form-control" ui-mask="99/99/9999" id="dta_nacimento" ng-model="cliente.dta_nacimento">
 											</div>
 										</div>
 
 										<div class="col-sm-4">
 											<div id="apelido" class="form-group">
 												<label for="apelido" class="control-label">Apelido</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" id="apelido" ng-model="cliente.apelido">
+												<input autocomplete="off" type="text" class="form-control" id="apelido" ng-model="cliente.apelido">
 											</div>
 										</div>
 									</div>
@@ -256,21 +252,27 @@
 									<div class="row" ng-if="cliente.tipo_cadastro == 'pj'">
 										<div class="col-sm-2">
 											<div id="cnpj" class="form-group">
-												<label class="control-label">CNPJ <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input autocomplete="off" class="form-control input-sm" ui-mask="99.999.999/9999-99" ng-model="cliente.cnpj">
+												<label class="control-label">
+													CNPJ <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i>
+													<span><i class="fa fa-spin fa-spinner" ng-if="(loading_info)"></i></span>
+												</label>
+												<input autocomplete="off" class="form-control" 
+													ui-mask="99.999.999/9999-99" 
+													ng-model="cliente.cnpj"
+													ng-blur="findClientByCNPJ()">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="inscricao_estadual" class="form-group">
 												<label class="control-label">I.E.</label>
-												<input autocomplete="off" class="form-control input-sm" ng-model="cliente.inscricao_estadual">
+												<input autocomplete="off" class="form-control" ng-model="cliente.inscricao_estadual">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="inscricao_estadual" class="form-group">
 												<label class="control-label">I.M.</label>
-												<input autocomplete="off" class="form-control input-sm" ng-model="cliente.num_inscricao_municipal">
+												<input autocomplete="off" class="form-control" ng-model="cliente.num_inscricao_municipal">
 											</div>
 										</div>
 									</div>
@@ -279,14 +281,14 @@
 										<div class="col-sm-6">
 											<div id="razao_social" class="form-group">
 												<label class="control-label">Razão Social  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input autocomplete="off" placeholder="" class="form-control input-sm" ng-model="cliente.razao_social">
+												<input autocomplete="off" placeholder="" class="form-control" ng-model="cliente.razao_social">
 											</div>
 										</div>
 
 										<div class="col-sm-6">
 											<div id="nome_fantasia" class="form-group">
-												<label class="control-label">Nome Fantasia  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<input autocomplete="off" class="form-control input-sm" ng-model="cliente.nome_fantasia">
+												<label class="control-label">Nome Fantasia</label>
+												<input autocomplete="off" class="form-control" ng-model="cliente.nome_fantasia">
 											</div>
 										</div>
 									</div>
@@ -295,28 +297,28 @@
 										<div class="col-sm-2">
 											<div id="tel_fixo" class="form-group">
 												<label for="" class="control-label">Telefone Fixo</label>
-												<input autocomplete="off" type="text" ui-mask="(99) 99999999" class="form-control input-sm" ng-model="cliente.tel_fixo">
+												<input autocomplete="off" type="text" ui-mask="(99) 99999999" class="form-control" ng-model="cliente.tel_fixo">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="celular" class="form-group">
 												<label for="" class="control-label">Celular </label>
-												<input autocomplete="off" type="text" ui-mask="(99) 99999999?9" class="form-control input-sm" ng-model="cliente.celular">
+												<input autocomplete="off" type="text" ui-mask="(99) 99999999?9" class="form-control" ng-model="cliente.celular">
 											</div>
 										</div>
 
-										<div class="col-sm-2">
+										<div class="col-sm-4">
 											<div id="nextel" class="form-group">
-												<label for="" class="control-label">ID Nextel</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.nextel">
+												<label for="" class="control-label">Pessoa/Contato</label>
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.pessoa_contato">
 											</div>
 										</div>
 
 										<div class="col-sm-4">
 											<div id="email" class="form-group">
 												<label for="" class="control-label">End. Email </label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.email">
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.email">
 											</div>
 										</div>
 									</div>
@@ -325,21 +327,21 @@
 										<div class="col-sm-2">
 											<div id="cep" class="form-group">
 												<label class="control-label">CEP</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ui-mask="99999-999" ng-model="cliente.cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)">
+												<input autocomplete="off" type="text" class="form-control" ui-mask="99999-999" ng-model="cliente.cep" ng-keyUp="validCep(cliente.cep)" ng-blur="validCep(cliente.cep)">
 											</div>
 										</div>
 
 										<div class="col-sm-8">
 											<div id="endereco" class="form-group">
 												<label class="control-label">Endereço</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.endereco">
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.endereco">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="numero" class="form-group">
 												<label class="control-label">No.</label>
-												<input autocomplete="off" id="num_logradouro" type="text" class="form-control input-sm" ng-model="cliente.numero" ng-blur="consultaLatLog()">
+												<input autocomplete="off" id="num_logradouro" type="text" class="form-control" ng-model="cliente.numero" ng-blur="consultaLatLog()">
 											</div>
 										</div>
 									</div>
@@ -348,14 +350,14 @@
 										<div class="col-sm-6">
 											<div id="bairro" class="form-group">
 												<label class="control-label">Bairro</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.bairro">
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.bairro">
 											</div>
 										</div>
 
 										<div class="col-sm-6">
 											<div id="complemento" class="form-group">
 												<label class="control-label">Complemento:</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.end_complemento">
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.end_complemento">
 											</div>
 										</div>
 									</div>
@@ -364,15 +366,25 @@
 										<div class="col-sm-2">
 											<div id="latitude" class="form-group">
 												<label class="control-label">Latitude</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" readonly="readonly"
+												<input autocomplete="off" type="text" class="form-control" readonly="readonly"
 													ng-model="cliente.num_latitude">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="longitude" class="form-group">
 												<label class="control-label">Longitude</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" readonly="readonly"
+												<input autocomplete="off" type="text" class="form-control" readonly="readonly"
 													ng-model="cliente.num_longitude">
+											</div>
+										</div>
+
+										<div class="col-sm-3">
+											<label class="control-label">Vendedor Responsável</label>
+											<div class="input-group">
+												<input autocomplete="off" ng-model="cliente.nme_vendedor_responsavel" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
+												<span class="input-group-btn">
+													<button ng-click="selUsuario('vendedor')"  type="button" class="btn"><i class="fa fa-user-md"></i></button>
+												</span>
 											</div>
 										</div>
 									</div>
@@ -381,20 +393,20 @@
 										<div class="col-sm-4">
 											<div id="ponto_referencia" class="form-group">
 												<label class="control-label">Ponto Referência</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.ponto_referencia">
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.ponto_referencia">
 											</div>
 										</div>
 										<div class="col-sm-2">
 											<div id="regiao" class="form-group">
 												<label class="control-label">Região</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.regiao">
+												<input autocomplete="off" type="text" class="form-control" ng-model="cliente.regiao">
 											</div>
 										</div>
 
 										<div class="col-sm-2">
 											<div id="id_estado" class="form-group">
 												<label class="control-label">Estado</label>
-												<select chosen id="id_select_estado" class="form-control input-sm" readonly="readonly" ng-model="cliente.id_estado" ng-options="item.id as item.nome for item in estados" ng-change="cliente.id_cidade=null;loadCidadesByEstado()"></select>
+												<select chosen id="id_select_estado" class="form-control" readonly="readonly" ng-model="cliente.id_estado" ng-options="item.id as item.nome for item in estados" ng-change="cliente.id_cidade=null;loadCidadesByEstado()"></select>
 											</div>
 										</div>
 
@@ -402,10 +414,10 @@
 										<div class="col-sm-4">
 											<div id="id_cidade" class="form-group">
 												<label class="control-label">Cidade</label>
-												<select chosen class="form-control input-sm" readonly="readonly" ng-model="cliente.id_cidade" ng-options="a.id as a.nome for a in cidades"></select>
+												<select chosen class="form-control" readonly="readonly" ng-model="cliente.id_cidade" ng-options="a.id as a.nome for a in cidades"></select>
 											</div>
 										</div>
-									</div>			
+									</div>	
 								</div>
 
 								<div class="tab-pane" id="informacoes_complementares">
@@ -538,7 +550,7 @@
 										<i class="fa fa-dollar"></i> Cobrança
 									</div>
 									<div class="col-sm-3">
-									<label class="control-label">Vendedor Responsável</label>
+										<label class="control-label">Vendedor Responsável</label>
 										<div class="input-group">
 											<input autocomplete="off" ng-model="cliente.nme_vendedor_responsavel" ng-click="selUsuario('vendedor')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
 											<span class="input-group-btn">
@@ -747,7 +759,10 @@
 										<div class="col-sm-3">
 											<div id="id_perfil" class="form-group">
 												<label class="control-label">Perfil  <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i></label>
-												<select chosen class="form-control input-sm" ng-model="cliente.id_perfil" ng-options="a.id as a.nome for a in perfis"  ng-change="loadModulosByPerfil(cliente.id_perfil)" ></select>
+												<select chosen class="form-control input-sm" 
+													ng-model="cliente.id_perfil" ng-options="a.id as a.nome for a in perfis"
+													ng-change="loadModulosByPerfil(cliente.id_perfil)">
+												</select>
 											</div>
 										</div>
 										<div class="col-sm-2">
@@ -904,174 +919,35 @@
 					</div>
 					<div class="panel-footer">
 						<div class="row">
-								<div class="col-sm-12">
-									<div class="form-group">
-										<div class="pull-right">
-											<button ng-click="showBoxNovo(); reset();" type="submit" class="btn btn-danger btn-sm">
-												<i class="fa fa-times-circle"></i> Cancelar
-											</button>
-											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." id="btn_salvar" ng-click="salvar($event)" type="submit" class="btn btn-success btn-sm">
-												<i class="fa fa-save"></i> Salvar
-											</button>
-										</div>
+								<div class="col-sm-6">
+									<p class="alert alert-warning" ng-if="new_cliente">
+										<i class="fa fa-warning"></i> Cliente não cadastrado. A presença será confirmada após salvar os dados.
+									</p>
+								</div>
+								<div class="col-sm-6">
+									<div class="pull-right">
+										<button type="button" class="btn btn-md btn-info"
+											ng-if="(cliente.id)"
+											ng-click="marcarVisitaCliente(cliente)">
+											<i class="fa fa-street-view"></i> Marcar Presença
+										</button>
+
+										<button type="button" class="btn btn-danger btn-md"
+											ng-click="reset(); setTipoCadastro('cliente','pj');">
+											<i class="fa fa-times-circle"></i> Cancelar
+										</button>
+
+										<button type="submit" id="btn_salvar" class="btn btn-success btn-md"
+											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." 
+											ng-click="salvar($event)">
+											<i class="fa fa-save"></i> Salvar
+										</button>
 									</div>
 								</div>
 							</div>
 						</div>
 				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<i class="fa fa-tasks"></i> Clientes Cadastrados
-						<a href="util/export.php?c=usuarios&id_empreendimento={{ userLogged.id_empreendimento }}" 
-							target="_blank" class="btn btn-xs btn-success pull-right"
-							ng-if="funcioalidadeAuthorized('ver_botao_exportar_cliente')">
-							<i class="fa fa-download"></i>
-							Exportar
-						</a>
-					</div>
-
-					<div class="panel-body">
-						<div class="row">
-							<div class="col-sm-3 col-lg-2">
-								<div class="form-group" style="padding-top:7px; margin-bottom:0px;">
-									<label class="label-radio inline">
-										<input autocomplete="off"  ng-click="busca.tipo_cliente = 'pf'" name="changeDetalhesCC" ng-checked="(busca.tipo_cliente == 'pf')" type="radio" class="inline-radio">
-										<span class="custom-radio"></span>
-										<span>PF</span>
-									</label>
-
-									<label class="label-radio inline">
-										<input autocomplete="off"  ng-click="busca.tipo_cliente = 'pj'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'pj')" type="radio" class="inline-radio">
-										<span class="custom-radio"></span>
-										<span>PJ</span>
-									</label>
-
-									<label class="label-radio inline">
-										<input autocomplete="off"  ng-click="busca.tipo_cliente = 'ambos'" name="changeDetalhesCC"  ng-checked="(busca.tipo_cliente == 'ambos')" type="radio" class="inline-radio">
-										<span class="custom-radio"></span>
-										<span>Ambos</span>
-									</label>
-								</div>
-							</div>
-
-							<div class="col-sm-9 col-lg-10">
-								<div class="input-group">
-						            <input autocomplete="off" type="text" class="form-control"
-						            	ng-enter="loadClientes(0,10)" ng-model="busca.clientes">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadClientes(0,10)" tabindex="-1" class="btn btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            	<button type="button" class="btn btn-default" ng-click="busca.clientes='';busca.tipo_cliente = 'ambos'; loadClientes(0,10); ">Limpar</button>
-						            </div>
-						        </div>
-							</div>
-						</div>
-
-						<br>
-
-						<div class="row">
-							<div class="col-sm-12 table-responsive">
-								<table class="table table-bordered table-condensed table-striped table-hover">
-									<tr ng-if="clientes != false && (clientes.length <= 0 || clientes == null)">
-										<th class="text-center" colspan="10" style="text-align:center">
-											<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando listagem de clientes ...
-										</th>
-									</tr>
-									<tr ng-if="clientes == false">
-										<th class="text-center" colspan="10" style="text-align:center">
-											Não a resultados para a busca
-										</th>
-									</tr>
-									<thead>
-										<tr>
-											<th class="text-center" width="50">#</th>
-											<th class="text-center" width="80">Data Cadastro</th>
-											<th class="text-center" width="100"
-												ng-if="funcioalidadeAuthorized('ver_saldo_devedor_cliente')">
-												Saldo
-											</th>
-											<th class="text-center" style="min-width: 150px;">Nome</th>
-											<th class="text-center" width="130">Apelido</th>
-											<th class="text-center">Perfil</th>
-											<th class="text-center" style="min-width: 100px;">Telefones</th>
-											<th class="text-center" width="50">Status</th>
-											<th width="100" style="text-align: center;">Opções</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="item in clientes">
-											<td class="text-middle text-center">{{ item.id }}</td>
-											<td class="text-middle text-center">{{ item.dta_cadastro | dateFormat:'date' }}</td>
-											<td class="text-middle text-center"
-												ng-if="funcioalidadeAuthorized('ver_saldo_devedor_cliente') && (item.vlr_saldo_devedor == undefined)">
-												<p class="label">
-													<i class="fa fa-refresh fa-spin"></i> Carregando ...
-												</p>
-											</td>
-											<td class=" text-middletext-right"
-												ng-if="funcioalidadeAuthorized('ver_saldo_devedor_cliente') && (item.vlr_saldo_devedor != undefined)">
-												<span class="label label-money-blue" ng-if="item.vlr_saldo_devedor == 0">
-													R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}
-												</span>
-												<span class="label label-success" ng-if="item.vlr_saldo_devedor > 0">
-													R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}
-												</span>
-												<span class="label label-danger" ng-if="item.vlr_saldo_devedor < 0">
-													R$ {{ item.vlr_saldo_devedor | numberFormat: 2 : ',' : '.' }}
-												</span>
-											</td>
-											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
-											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
-											<td class="text-middle" control-size-string content="{{ item.apelido | uppercase }}" size="14" ></td>
-											<td class="text-middle text-center">{{ item.nome_perfil | uppercase }}</td>
-											<td class="text-middle text-center">
-												<span class="clearfix">{{ item.tel_fixo | phoneFormat }}</span>
-												<span class="clearfix">{{ item.celular | phoneFormat }}</span>
-												<span class="clearfix">{{ item.nextel }}</span>
-											</td>
-											<td class="text-middle text-center">
-												<span class="label label-success" ng-if="item.acesso_restrito == true"
-													data-toggle="tooltip" tooltip="Liberado">
-													<i class="fa fa-unlock"></i>
-												</span>
-												<span class="label label-danger" ng-if="item.acesso_restrito == false"
-													data-toggle="tooltip" tooltip="Bloqueado">
-													<i class="fa fa-lock"></i>
-												</span>
-											</td>
-											<td class="text-middle text-center">
-												<button type="button" ng-click="editar(item)" 
-													data-toggle="tooltip" tooltip="Editar"
-													ng-if="funcioalidadeAuthorized('ver_botao_editar_cliente')"
-													class="btn btn-md btn-warning">
-													<i class="fa fa-edit"></i>
-												</button>
-
-												<button type="button" ng-click="delete(item)" 
-													data-toggle="tooltip" tooltip="Excluir"
-													ng-if="funcioalidadeAuthorized('ver_botao_excluir_cliente')"
-													class="btn btn-md btn-danger delete">
-													<i class="fa fa-trash-o"></i>
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-
-					<div class="panel-footer clearfix">
-						<div class="pull-right">
-							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.itens.length > 1">
-								<li ng-repeat="item in paginacao.itens" ng-class="{'active': item.current}">
-									<a href="" h ng-click="loadClientes(item.offset,item.limit)">{{ item.index }}</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
+				
 			</div>
 		</div><!-- /main-container -->
 
@@ -1324,6 +1200,9 @@
 
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
+
+	<!-- UnderscoreJS -->
+	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 
 	<!-- Google Maps API -->
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyANVfzQYwKLB7LJuKBi4_aoCj9n52ZYi-U"></script>

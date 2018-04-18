@@ -61,6 +61,10 @@ app.controller('MapaController', function($scope, $http, $window, $dialogs, User
 				ng.clientes = data.usuarios;
 				ng.getVisitantesTotal();
 				ng.getVisitantesHoje();
+
+				angular.forEach(ng.clientes, function(cliente){
+					showAddress(cliente);
+				});
 			})
 			.error(function(data, status, headers, config) {
 				arr = null;
@@ -74,11 +78,11 @@ app.controller('MapaController', function($scope, $http, $window, $dialogs, User
 
 		aj.get(req_url)
 			.success(function(visitas, status, headers, config) {
+				ng.qtd_visitantes_total = visitas.length;
 				angular.forEach(ng.clientes, function(cliente){
 					var visita = _.findWhere(visitas, {id_cliente: cliente.id_cliente});
 					
 					if(!empty(visita)){
-						ng.qtd_visitantes_total++;
 						cliente.flg_visitou = true;
 					}
 					else
@@ -103,11 +107,7 @@ app.controller('MapaController', function($scope, $http, $window, $dialogs, User
 
 		aj.get(req_url)
 			.success(function(visitas, status, headers, config) {
-				angular.forEach(ng.clientes, function(cliente){
-					var visita = _.findWhere(visitas, {id_cliente: cliente.id_cliente});
-					if(!empty(visita))
-						ng.qtd_visitantes_hoje++;
-				});
+				ng.qtd_visitantes_hoje = visitas.length;
 			})
 			.error(function(data, status, headers, config) {
 				console.log(data);
