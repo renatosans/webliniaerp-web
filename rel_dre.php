@@ -218,8 +218,8 @@
 					<thead>
 						<tr ng-if="dre.length != null && dre.length > 0">
 							<!--<th width="100" class="hidden-print text-center">ID</th> -->
-							<th class="text-left" width="80">TIPO</th>
-							<th>DESCRIÇÃO</th>
+							<!--<th class="text-left" width="80">TIPO</th>-->
+							<th >DESCRIÇÃO</th>
 							<!--<th width="80" class="text-center">ASSOCIATIVO</th>-->
 							<!--<th width="200" class="text-center">FORMULA</th>-->
 							<th width="120" class="text-center">VALOR</th>
@@ -234,18 +234,38 @@
 						<tr ng-repeat="item in dre">
 							<!--<td class="text-center">{{ item.id }}</td>-->
 
-							<td class="text-left" ng-if="item.flg_tipo == 'TOP'"><b>RESUMO</b></td>
+							<!--<td class="text-left" ng-if="item.flg_tipo == 'TOP'"><b>RESUMO</b></td>
 							<td class="text-left" ng-if="item.flg_tipo == 'SUM'"><b>SOMA</b></td>
 							<td class="text-left" ng-if="item.flg_tipo == 'EXPENSE'"><b>DESPESA</b></td>
-							<td class="text-left" ng-if="item.flg_tipo == 'REVENUE'"><b>RECEITA</b></td>
+							<td class="text-left" ng-if="item.flg_tipo == 'REVENUE'"><b>RECEITA</b></td>-->
 
-							<td class="text-left">{{ item.descricao }}</td>
+							<td 
+
+							style="
+
+								{{ (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;' || ''  }}
+
+							" 
+
+							class="text-left">{{ item.descricao }}</td>
 							<!--<td class="text-center">{{ item.flg_associativo }}</td>-->
 
 							<!--<td class="text-left" ng-if="item.flg_associativo == 0">={{ item.dsc_formula }}</td>-->
 							<!--<td class="text-left" ng-if="item.flg_associativo == 1"></td>-->
 
-							<td class="text-right">{{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
+							<td 
+							style="
+
+								{{ (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;' || ''  }}
+								{{ (item.flg_tipo == 'REVENUE') && 'color: blue;' || ''  }}
+								{{ (item.flg_tipo == 'EXPENSE') && 'color: red;' || ''  }}
+
+								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado < 0 ) && 'color: red;' || ''  }}
+								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado > 0 ) && 'color: green;' || ''  }}
+
+
+							" 
+							class="text-right">{{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
 						</tr>
 					</tbody>
 				</table>
