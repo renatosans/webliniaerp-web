@@ -360,30 +360,35 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		});
 	}
 
-	ng.verificaQtdMultiplo = function(){
-		if (ng.transferencia.produtos.length != 0) {
-			angular.forEach(ng.transferencia.produtos, function(item, index){
-				if (item.qtd_multiplo_transferencia != "" || item.qtd_multiplo_transferencia != null) {
-					if ((item.qtd_transferida % item.qtd_multiplo_transferencia) > 0) {
-						$("#produtos").addClass("has-error");
-						var formControl = $('#produtos .input-group')
-							.attr("data-toggle", "tooltip")
-							.attr("data-placement", "top")
-							.attr("title", 'Apenas envio em multiplo de: ' + item.qtd_multiplo_transferencia)
-						formControl.tooltip();
-						flg_error = 1;
-					} else{
-						$($(".has-error").find(".form-control")).tooltip('destroy');
-						$(".has-error").removeClass("has-error");
-						flg_error = 0;
-					}
-				}
-			});
+	ng.verificaQtdMultiplo = function(container, index, item){
+		if (item.qtd_multiplo_transferencia != "" || item.qtd_multiplo_transferencia != null) {
+			if ((item.qtd_transferida % item.qtd_multiplo_transferencia) > 0) {
+				var element = '#'+ container +' #produtos #txt-qtd-multiplo-'+ index;
+				$(element).closest('.form-group').addClass('has-error');
+				var formControl = $(element)
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", 'Apenas solicitação em multiplo de: ' + item.qtd_multiplo_transferencia)
+				formControl.tooltip();
+				item.flg_error = 1;
+			} else{
+				var element = '#'+ container +' #produtos #txt-qtd-multiplo-'+ index;
+				$(element).tooltip('destroy');
+				$(element).closest('.form-group').removeClass("has-error");
+				item.flg_error = 0;
+			}
 		}
 	}
 
 	ng.salvarTransferencia = function(){
-		if (flg_error == 1) {
+		var flg_error_save = false
+		angular.forEach(ng.transferencia.produtos, function(produto){
+			if (produto.flg_error == 1) {
+				alert("Por favor, verifique se existe algum produto com quantidade multipla");
+				flg_error_save = true
+			}
+		});
+		if (flg_error_save) {
 			return false;
 		}
 		var btn = $('#salvar-transferencia') ;
