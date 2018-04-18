@@ -454,7 +454,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.cheques	 	= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
 		ng.boletos	 	= [{id_banco:null,num_conta_corrente:null,doc_boleto:null,num_boleto:null}];
 		ng.msg_error = "Faça um filtro para obter resultados";
-		ng.pagamentos = [];
+		ng.pagamentos = {detalhamento:[]};
 		ng.loadPlanoContas();
 		
 		$("#pagamentoData").val('');
