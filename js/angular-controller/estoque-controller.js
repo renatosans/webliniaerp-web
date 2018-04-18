@@ -39,6 +39,17 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$(this).parent().find('label').addClass('selected');
 	});
 
+	ng.showPDF = function(item){
+		if(!empty(item.pth_pdf)){
+			item = {
+				path: item.pth_pdf.substring(item.pth_pdf.indexOf('assets'), item.pth_pdf.length)
+			};
+			$window.open(baseUrl()+item.path)
+		} else {
+			return false;
+		}
+	}
+
 	ng.incluirDuplicata = function(item){
 		ng.new_duplicata.xml = false;
 		ng.new_duplicata.dta_vencimento = (!empty($("#vencimentoduplicatas").val())) ? formatDate($("#vencimentoduplicatas").val()) : null;
