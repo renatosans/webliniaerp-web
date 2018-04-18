@@ -247,7 +247,12 @@
 
 							" 
 
-							class="text-left">{{ item.descricao }}</td>
+							class="text-left">
+								<span ng-if="(item.flg_tipo == 'EXPENSE')">(-)</span>
+								<span ng-if="(item.flg_tipo == 'REVENUE')">(+)</span>
+								<span ng-if="(item.flg_tipo == 'SUM')">(=)</span>
+								{{ item.descricao }}
+							</td>
 							<!--<td class="text-center">{{ item.flg_associativo }}</td>-->
 
 							<!--<td class="text-left" ng-if="item.flg_associativo == 0">={{ item.dsc_formula }}</td>-->
@@ -265,7 +270,7 @@
 
 
 							" 
-							class="text-right">{{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
+							class="text-right">R$ {{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
 						</tr>
 					</tbody>
 				</table>
