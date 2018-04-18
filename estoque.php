@@ -633,7 +633,7 @@
 									<th>Total NF-e</th>
 									<th width="100">Pedido</th>
 									<th>Depósito</th>
-									<th width="80" style="text-align: center;">Detalhes</th>
+									<th width="80" style="text-align: center;">Ações</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -654,6 +654,9 @@
 									<td align="center">
 										<button type="button" ng-click="showDetalhes(item)" tooltip="Detalhes" class="btn btn-xs btn-info" data-toggle="tooltip">
 											<i class="fa fa-tasks"></i>
+										</button>
+										<button type="button" ng-click="showPDF(item)" tooltip="Detalhes" class="btn btn-xs btn-primary" data-toggle="tooltip">
+											<i class="fa fa-file-pdf-o"></i>
 										</button>
 									</td>
 								</tr>
