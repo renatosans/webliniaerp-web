@@ -13,6 +13,10 @@ modified:   model/PagamentoClienteTO.php
 
 
 
+INSERT INTO `tbl_modulo` (`nme_modulo`, `tlt_modulo`, `url_modulo`) VALUES ('Relatório DRE', 'Relatório DRE', 'rel_dre.php');
+
+
+
 SELECT * FROM tbl_pagamentos_venda  AS tpv
 WHERE tpv.id_controle_pagamento = 10462458 AND tpv.id_empreendimento = 6
 ORDER BY id DESC ;
