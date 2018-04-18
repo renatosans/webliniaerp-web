@@ -1,6 +1,6 @@
 <?php
-	// include_once "util/login/restrito.php";
-	// restrito();
+	include_once "util/login/restrito.php";
+	restrito();
 ?>
 <!DOCTYPE html>
 <html lang="en" ng-app="HageERP">
