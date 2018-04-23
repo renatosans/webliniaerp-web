@@ -4,6 +4,7 @@ app.controller('ControleMesasController', function(
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
+	ng.id_modulo = FuncionalidadeService.getIdModulo();
 	ng.allCozinhas = CozinhaService.getAllCozinhas(ng.userLogged.id_empreendimento);
 	ng.cozinhasDisponiveis = CozinhaService.getCozinhasAtivas(ng.userLogged.id_empreendimento);
 	ng.configuracao  = ConfigService.getConfig(ng.userLogged.id_empreendimento);
@@ -190,7 +191,8 @@ app.controller('ControleMesasController', function(
 	}
 
 	ng.cancelarComanda = function(id_comanda) {
-		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja excluir este orçamento?</strong>');
+		$('#autorizacao').modal('hide');
+		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja excluir esta comanda?</strong>');
 
 		dlg.result.then(function(btn){
 			aj.get(baseUrlApi()+"orcamento/delete/"+id_comanda+"/"+ng.userLogged.id_empreendimento+"/"+ng.userLogged.id)
@@ -1101,28 +1103,63 @@ app.controller('ControleMesasController', function(
 		});
 	}
 
-	ng.excluirItemComanda = function(event){
-		var btn = $(event.target);
-		if(!btn.is(':button')) btn = $(event.target).parent();
-		btn.button('loading');
+	ng.verificaUsuario = function(){
+		ng.usuario.id_empreendimento = ng.userLogged.id_empreendimento;
+		ng.usuario.id_modulo = ng.id_modulo;
+		ng.usuario.cod_funcionalidade = "excluir_item_comanda";
+		aj.post(baseUrlApi()+"funcionalidade/autorizacao", { data: JSON.stringify( ng.usuario ) })
+			.success(function(data, status, headers, config){
+				if (ng.tipo_selecionado == 'item_comanda')
+					ng.excluirItem(data.id_usuario);
+				else if (ng.tipo_selecionado == 'comanda')
+					ng.cancelarComanda(ng.id_comanda_selecionada);
 
-		var id_mesa = (!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa;
+			})
+			.error(function(data, status, headers, config){
+				ng.msg_autorizacao = data;
+			})
+	}
 
-		aj.get(baseUrlApi()+"item_comanda/delete/"+ng.produto.id_item_venda+"/"+id_mesa)
+	ng.excluirItem = function(id_usuario){
+		var post_data = {
+			id_item 			: ng.produto.id_item_venda,
+			id_mesa 			: (!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa,
+			id_usuario 			: id_usuario,
+			id_empreendimento 	: ng.userLogged.id_empreendimento
+		};
+
+		aj.post(baseUrlApi()+"item_comanda/delete", {data: JSON.stringify(post_data)})
 		.success(function(data, status, headers, config) {
 			var msg = {
 					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
 					message : JSON.stringify({index_mesa:ng.indexMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
 				}
 			ng.sendMessageWebSocket(msg);
-			btn.button('reset');
 			ng.produto = {} ;
 			ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+			$('#autorizacao').modal('hide');
 		})
 		.error(function(data, status, headers, config) {
-			btn.button('reset');
 			$dialogs.notify('Atenção!','<strong>Erro ao excluir produto</strong>');
 		});
+	}
+
+	ng.verificaChaveAutorizacao = function(id_comanda_selecionada, tipo){
+		ng.msg_autorizacao = null;
+		ng.tipo_selecionado = tipo;
+		ng.id_comanda_selecionada = id_comanda_selecionada;
+		if (ng.tipo_selecionado == 'item_comanda') {
+			if (ng.configuracao.flg_autorizar_exclusao_sem_admin_controle_mesas == 0)
+				$('#autorizacao').modal('show');
+			else
+				ng.excluirItem(ng.userLogged.id);
+
+		} else if (ng.tipo_selecionado == 'comanda') {
+			if (ng.configuracao.flg_autorizar_exclusao_sem_admin_controle_mesas == 0)
+				$('#autorizacao').modal('show');
+			else
+				ng.cancelarComanda(ng.id_comanda_selecionada);
+		}
 	}
 
 	ng.vlrTotalItensComanda = function(){

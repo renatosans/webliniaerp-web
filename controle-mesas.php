@@ -748,7 +748,7 @@
 											Trocar de Mesa
 										</button>
 										<button type="button" class="btn btn-sm btn-danger"
-											ng-click="cancelarComanda(comandaSelecionada.comanda.id)">
+											ng-click="verificaChaveAutorizacao(comandaSelecionada.comanda.id, 'comanda')">
 											<i class="fa fa-times-circle"></i>
 											Cancelar Comanda
 										</button>
@@ -880,7 +880,7 @@
 											</button>
 											<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')" -->
 											<button type="button" class="btn btn-danger btn-block" 
-												ng-click="excluirItemComanda($event)" 
+												ng-click="verificaChaveAutorizacao(null, 'item_comanda')" 
 												ng-if="(produto.id_item_venda)"
 												data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 												<i class="fa fa-trash-o"></i> Excluir Item
@@ -896,7 +896,7 @@
 											<div class="pull-right">
 												<!--ng-if="EditProduto && funcioalidadeAuthorized('excluir_item_comanda')"-->
 												<button type="button" class="btn btn-danger"
-													ng-click="excluirItemComanda($event)" 
+													ng-click="verificaChaveAutorizacao(null, 'item_comanda')" 
 													ng-if="(produto.id_item_venda)"
 													data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 													<i class="fa fa-trash-o"></i>&nbsp;Excluir Item
@@ -1246,6 +1246,52 @@
 		</div><!-- /main-container -->
 
 		<!--MODAIS-->
+
+		<!-- Modal Autorização Exclusão -->
+		<div class="modal fade" id="autorizacao" style="display:none">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Autorizar</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="alert alert-danger" ng-if="(msg_autorizacao)">{{ msg_autorizacao }}</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Login:</label>
+									<input type="text" class="form-control" name="login" ng-model="usuario.login">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Senha:</label>
+									<input type="password" class="form-control" name="senha" ng-model="usuario.senha">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer clearfix">
+						<div class="pull-right">
+							<button class="btn btn-default btn-sm" data-dismiss="modal">
+								Cancelar
+							</button>
+							<button class="btn btn-success btn-sm" ng-click="verificaUsuario()">
+								<i class="fa fa-unlock"></i> Autorizar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Fim Modal -->
 
 		<!-- /Modal Produtos-->
 		<div class="modal fade" id="list_produtos" style="display:none">

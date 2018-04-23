@@ -115,6 +115,10 @@ div[data-tree-model] li .selected {
 	overflow: hidden;
 }
 
+.input-group-btn .btn {
+	border: 1px solid #cccccc;
+}
+
 .btn-status {
 	width: 85px;
 }

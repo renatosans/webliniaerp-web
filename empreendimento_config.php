@@ -711,6 +711,23 @@
 														</div>
 													</div>
 												</div>
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="" class="control-label">Autorizar exclusão de item sem administrador?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_autorizar_exclusao_sem_admin_pdv" value="1" name="flg_autorizar_exclusao_sem_admin_pdv"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_autorizar_exclusao_sem_admin_pdv" value="0" name="flg_autorizar_exclusao_sem_admin_pdv"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -1046,6 +1063,7 @@
 												<table class="table table-bordered table-condensed table-striped table-hover">
 													<thead>
 														<tr>
+															<td class="text-bold">#</td>
 															<td class="text-bold">Tipo</td>
 															<td class="text-bold">Descrição</td>
 															<td class="text-bold text-center" width="100">Associativo?</td>
@@ -1055,6 +1073,7 @@
 													</thead>
 													<tbody>
 														<tr ng-repeat="item in modelos_dre">
+															<td class="text-center">{{ item.id }}</td>
 															<td>
 																<span ng-if="item.flg_tipo == 'TOP'">Resumo</span>
 																<span ng-if="item.flg_tipo == 'SUM'">Soma</span>
@@ -1782,33 +1801,34 @@
 								<div class="row">
 									<div class="col-sm-4">
 										<div class="form-group">
-											<label class="control-label">Modelo de Impressora</label>
-											<select chosen
-										    	option="impressoras"
-										    	ng-model="configuracoes.printer_model_op"
-										    	ng-options="item.value as item.dsc for item in impressoras">
-											</select>
-										</div>
-									</div>
-
-									<div class="col-sm-2">
-										<div class="form-group">
-											<label class="control-label">% Taxa de serviço</label>
-											<input ng-model="configuracoes.prc_taxa_servico" name="prc_taxa_servico" thousands-formatter class="form-control input-sm">
-										</div>
-									</div>
-
-									<div class="col-sm-2">
-										<div class="form-group">
-											<label class="control-label">ID Produto Taxa Serviço</label>
-											<input ng-model="configuracoes.id_produto_taxa_servico" name="id_produto_taxa_servico" class="form-control input-sm">
+											<label for="" class="control-label">Autorizar exclusão de item sem administrador?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input type="radio"
+														class="inline-radio"
+														ng-model="configuracoes.flg_autorizar_exclusao_sem_admin_controle_mesas" 
+														value="1" 
+														name="flg_autorizar_exclusao_sem_admin_controle_mesas">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input type="radio"
+														class="inline-radio"
+														ng-model="configuracoes.flg_autorizar_exclusao_sem_admin_controle_mesas" 
+														value="0" 
+														name="flg_autorizar_exclusao_sem_admin_controle_mesas">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
 										</div>
 									</div>
 									
-									<div class="col-sm-1">
+									<div class="col-sm-5">
 									</div>
 
-									<div class="col-lg-3">
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="" class="control-label">Trabalha c/ Delivery?</label>
 											<div class="form-group">
@@ -1823,6 +1843,32 @@
 													<span>Não</span>
 												</label>
 											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label class="control-label">Modelo de Impressora</label>
+											<select chosen
+										    	option="impressoras"
+										    	ng-model="configuracoes.printer_model_op"
+										    	ng-options="item.value as item.dsc for item in impressoras">
+											</select>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label class="control-label">% Taxa de serviço</label>
+											<input ng-model="configuracoes.prc_taxa_servico" name="prc_taxa_servico" thousands-formatter class="form-control input-sm">
+										</div>
+									</div>
+
+									<div class="col-sm-2">
+										<div class="form-group">
+											<label class="control-label">ID Produto Taxa Serviço</label>
+											<input ng-model="configuracoes.id_produto_taxa_servico" name="id_produto_taxa_servico" class="form-control input-sm">
 										</div>
 									</div>
 								</div>
