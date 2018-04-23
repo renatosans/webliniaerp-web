@@ -6,7 +6,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.baseUrl 						= baseUrl();
 	ng.userLogged 					= UserService.getUserLogado();
 	ng.configuracao 				= ConfigService.getConfig(ng.userLogged.id_empreendimento);
-	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', pdf: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
+	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 	ng.ultimasEntradas 				= [];
 	ng.editing 						= false;
 	ng.paginacao 					= {};
@@ -71,7 +71,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.reset = function() {
-		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', pdf: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
+		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 		ng.valor_total_entrada 	= 0 ;
 		ng.qtd_total_entrada 	= 0 ;
 		ng.produto 				= {};
@@ -1181,7 +1181,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		ng.fileModel = $(this).data().model; // get attribute model name
 
 		if(empty(ng.nota)){
-			ng.nota = { vlr_total_imposto : '', xml_nfe: '', pdf: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
+			ng.nota = { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 		}
 
 		if(empty(ng.nota[ng.fileModel])) // validate if is empty
