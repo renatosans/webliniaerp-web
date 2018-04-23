@@ -242,9 +242,7 @@
 							<td 
 
 							style="
-
 								{{ (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;' || ''  }}
-
 							" 
 
 							class="text-left">{{ item.descricao }}</td>
@@ -255,15 +253,11 @@
 
 							<td 
 							style="
-
-								{{ (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;' || ''  }}
-								{{ (item.flg_tipo == 'REVENUE') && 'color: blue;' || ''  }}
-								{{ (item.flg_tipo == 'EXPENSE') && 'color: red;' || ''  }}
-
+								{{ (item.flg_tipo   == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;' || ''  }}
+								{{ (item.flg_tipo   == 'REVENUE') && 'color: blue;' || ''  }}
+								{{ (item.flg_tipo   == 'EXPENSE') && 'color: red;' || ''  }}
 								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado < 0 ) && 'color: red;' || ''  }}
 								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado > 0 ) && 'color: green;' || ''  }}
-
-
 							" 
 							class="text-right">{{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
 						</tr>

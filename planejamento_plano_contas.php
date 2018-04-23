@@ -20,6 +20,9 @@
 	<!-- Pace -->
 	<link href="css/pace.css" rel="stylesheet">
 
+	<!-- Datepicker -->
+	<link href="css/datepicker/bootstrap-datepicker.css" rel="stylesheet"/>
+
 	<!-- Bower Components -->	
 	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
 
@@ -63,7 +66,7 @@
 	</style>
   </head>
 
-  <body class="overflow-hidden" ng-controller="FabricantesController" ng-cloak>
+  <body class="overflow-hidden" ng-controller="PlanejamentoPlanoContasController" ng-cloak>
   	<!-- Overlay Div -->
 	<div id="overlay" class="transparent"></div>
 
@@ -142,15 +145,15 @@
 			<div id="breadcrumb">
 				<ul class="breadcrumb">
 					 <li><i class="fa fa-home"></i> <a href="dashboard.php">Home</a></li>
-					 <li class="active"><i class="fa fa-cogs"></i> Fabricantes</li>
+					 <li class="active"><i class="fa fa-cogs"></i> Planejamentos</li>
 				</ul>
 			</div><!-- breadcrumb -->
 
 			<div class="main-header clearfix">
 				<div class="page-title">
-					<h3 class="no-margin"><i class="fa fa-cogs"></i> Fabricantes</h3>
+					<h3 class="no-margin"><i class="fa fa-cogs"></i> Planejamentos</h3>
 					<br/>
-					<a class="btn btn-info" id="btn-novo" ng-disabled="editing" ng-click="showBoxNovo()"><i class="fa fa-plus-circle"></i> Novo Fabricante</a>
+					<a class="btn btn-info" id="btn-novo" ng-disabled="editing" ng-click="showBoxNovo()"><i class="fa fa-plus-circle"></i> Novo Planejamento</a>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 
@@ -158,55 +161,56 @@
 				<div class="alert alert-sistema" style="display:none"></div>
 
 				<div class="panel panel-default" id="box-novo" style="display:none">
-					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Novo Fabricante</div>
+					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Novo Planejamento</div>
 
 					<div class="panel-body">
 						<form class="form-horizontal" id="form-fabricante" role="form" enctype="multipart/form-data">
+								
+
 							<div class="form-group" id="nome_fabricante">
-								<label for="descricao" class="col-sm-1 control-label">Descrição</label>
-								<div class="col-sm-11">
-									<input type="text" class="form-control"  ng-model="fabricante.nome_fabricante">
-								</div>
+									<label for="descricao" class="col-sm-1 control-label">Período</label>
+									<div class="col-sm-2">
+										<div class="input-group">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker1 form-control input">
+											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="input-group">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker1 form-control">
+											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." id='btn-gerar-tabela' ng-click="gerarTabela()" type="submit" class="btn btn-info">
+											Gerar tabela
+										</button>
+									</div>
 							</div>
 
-							<!-- <div class="form-group" id="nome_fabricante">
-								<label for="descricao" class="col-sm-1 control-label">Imagem</label>
-								<div class="col-sm-11">
-									<input type="file" name="image" />
-								</div>
-							</div> -->
 
-							<div class="empreendimentos form-group">
-								<div class="col-sm-12">
-									<table class="table table-bordered table-condensed table-striped table-hover">
-										<thead>
-											<tr>
-												<td>Empreendimentos Associados</td>
-												<td width="60" align="center">
-													<button class="btn btn-xs btn-primary" ng-click="showEmpreendimentos()">
-														<i class="fa fa-plus-circle"></i>
-													</button>
-												</td>
-											</tr>
-										</thead>
-										<tbody>
-											<tr ng-show="(empreendimentosAssociados.length == 0)">
-												<td colspan="3" align="center">Nenhum empreendimento selecionado</td>
-											</tr>
-											<tr ng-repeat="item in empreendimentosAssociados">
-												<td>{{ item.nome_empreendimento }}</td>
-												<td align="center">
-													<button class="btn btn-xs btn-danger" 
-														ng-if="item.id != userLogged.id_empreendimento" 
-														ng-click="delEmpreendimento(item)">
-														<i class="fa fa-trash-o"></i>
-													</button>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
+							<div style="overflow:auto">
+								
+							
+							<table class="table table-bordered table-condensed table-striped table-hover" ng-if="meses.length > 0">
+								<thead>
+									<tr >
+										<th></th>
+										<th ng-repeat="mes in meses" class="text-center">{{ mes }}</th>
+									</tr>
+									<tr ng-repeat="plano in plano_contas">
+										<td>{{ plano.dsc_completa }}</td>	
+										<td ng-repeat="mes in plano.meses" class="text-center" on-last-repeat>
+											<input type="hidden" ng-model="plano.meses[mes].mes" ng-value="mes" >
+											<input ng-model="mes.valor" thousands-formatter type="text" class="form-control input-md input-xs text-right">
+										</td>
+									</tr>
+								</thead>
+							</table>
+
 							</div>
+
+							<br>
 
 							<div class="form-group">
 								<div class="col-sm-12">
@@ -225,7 +229,7 @@
 				</div><!-- /panel -->
 
 				<div class="panel panel-default">
-					<div class="panel-heading"><i class="fa fa-tasks"></i> Fornecedores Cadastrados</div>
+					<div class="panel-heading"><i class="fa fa-tasks"></i> Planejamentos Cadastrados</div>
 
 					<div class="panel-body">
 						<div class="row">
@@ -402,6 +406,10 @@
 	<!-- Endless -->
 	<script src="js/endless/endless.js"></script>
 
+	<!-- Datepicker -->
+	<script src='js/datepicker/bootstrap-datepicker.js'></script>
+	<script src='js/datepicker/bootstrap-datepicker.pt-BR.js'></script>
+
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
 
@@ -429,8 +437,28 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/fabricantes-controller.js"></script>
+	<script src="js/angular-controller/planejamento_plano_contas-controller.js"></script>
 	<?php include("google_analytics.php"); ?>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var options =  {
+		        format: "mm/yyyy",
+		        language: "pt-BR",
+		        minViewMode: 'months',
+		        clearBtn:true,
+		        multidate:false
+		    }
+			$('.datepicker1').datepicker(options);
+			$('.datepicker2').datepicker(options);
+			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
+			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
+			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
+
+			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
+			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
+		});
+	</script>
 
   </body>
 </html>
