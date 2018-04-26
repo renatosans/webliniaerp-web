@@ -166,7 +166,6 @@
 					<h3 class="no-margin"><i class="fa fa-barcode"></i> Notas Fiscais</h3>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
-
 			<div class="padding-md">
 				<div class="panel panel-default">
 					<div class="panel-heading"><i class="fa fa-filter"></i> Opções de Filtro</div>
@@ -240,6 +239,11 @@
 										<li>
 											<a href="#canceladas_nfe" data-toggle="tab">
 												<i class="fa fa-times-circle-o"></i> Canceladas
+											</a>
+										</li>
+										<li>
+											<a href="#inutilizadas_nfe" data-toggle="tab">
+												<i class="fa fa-times-circle-o"></i> Inutilizadas
 											</a>
 										</li>
 									</ul>
@@ -509,6 +513,79 @@
 																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
 																		Processando Cancelamento
 																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_nfe.length > 1">
+													<li ng-repeat="item in paginacao.canceladas_nfe" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFE','canceladas_nfe','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="inutilizadas_nfe">
+										<br/>
+										<div class="row">
+											<div class="col-sm-12">
+												<button class="btn btn-info btn-sm" ng-click="modalInutilizacao()">
+													<i class="fa fa-plus-circle"></i>
+													 Nova Inutilização
+												</button>
+											</div>
+										</div>
+										<hr>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">ID</th>
+															<th class="text-middle text-center">Data</th>
+															<th class="text-middle text-center">Número Inicial</th>
+															<th class="text-middle text-center">Número Final</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!inutilizacoes)">
+																<td colspan="8" class="text-center text-middle">Nenhuma Inutilização encontrada!</td>
+															</tr>
+															<tr ng-show="(inutilizacoes.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in inutilizacoes">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li>
+																				<a href="{{ nota.caminho_xml }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.id }}</td>
+																<td class="text-center text-middle">{{ nota.dta_registro }}</td>
+																<td class="text-center text-middle">{{ nota.num_inicial }}</td>
+																<td class="text-center text-middle">{{ nota.num_final }}</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')"
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Inutilização Autorizada
+																	</span>
 																</td>
 															</tr>
 														</tbody>
@@ -1512,9 +1589,61 @@
 		</div>
 		<!-- /.modal -->
 
+		<div class="modal modal-fade" id="modal-inutilizacao" style="display: none;">
+  			<div class="modal-dialog modal">
+    			<div class="modal-content">
+      				<div class="modal-header">
+      					<h4>Nova Inutilização</h4>
+      				</div>
+      				<div class="modal-body">
+      					<div class="alert alert-danger" ng-if="(msg_error)">{{ msg_error }}</div>
+      					<div class="row">
+							<div class="form-group">
+								<div class="col-sm-4">
+									<label class="control-label">CNPJ do Emitente</label>
+									<input type="text" name="cnpj" class="form-control" ng-model="inutilizacao.num_cnpj" ui-mask="99.999.999/9999-99" disabled>
+								</div>
+								<div class="col-sm-2">
+									<label class="control-label">Serie</label>
+									<input type="text" name="num_serie" class="form-control" ng-model="inutilizacao.serie" disabled>
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Número Inicial</label>
+									<input type="text" name="num_inicial" class="form-control" ng-model="inutilizacao.num_inicial">
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Número Final</label>
+									<input type="text" name="num_final" class="form-control" ng-model="inutilizacao.num_final">
+								</div>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Justificativa</label>
+									<textarea rows="5" class="form-control" ng-model="inutilizacao.dsc_justificativa"></textarea>
+								</div>
+							</div>	
+						</div>
+      				</div>
+      				<div class="modal-footer">
+      					<button class="btn btn-sm btn-default" data-dismiss="modal">
+      						<i class="fa fa-times-circle"></i>
+      						 Cancelar
+      					</button>
+      					<button class="btn btn-sm btn-success" ng-click="salvarInutilizacao($event)">
+      						<i class="fa fa-save"></i>
+      						 Salvar
+      					</button>
+      				</div>
+      			</div>
+      		</div>
+		</div>
+
 
 		<!-- /Modal novo tamanho-->
-		<div class="modal fade" id="modal-corrigir-nota" style="display:none">
+		<div class="modal fade" id="modal-corrigir-nota" style="display:none;">
   			<div class="modal-dialog modal modal-lg">
     			<div class="modal-content">
       				<div class="modal-header">

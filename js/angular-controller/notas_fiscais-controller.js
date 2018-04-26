@@ -8,12 +8,84 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	ng.configuracoes 	= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.notas 			= null;
 	ng.paginacao 		= {};
+	ng.busca = { text: "", numeroo: "" };
 	
 	ng.reset = function(){
 		ng.Notas = {itens:[]};
 	}
 
-	ng.busca = { text: "", numeroo: "" };
+	ng.modalInutilizacao = function(){
+		$('#modal-inutilizacao').modal('show');
+		ng.inutilizacao = {
+			id_empreendimento : ng.userLogged.id_empreendimento,
+			num_inicial: "",
+			num_final: "",
+			dsc_justificativa: ""
+		}
+		ng.informacoesEmpreedimento();
+	}
+
+	ng.salvarInutilizacao = function(event){
+		ng.msg_error = null;
+		if (ng.inutilizacao.num_inicial == "" || ng.inutilizacao.num_inicial == null) {
+			ng.msg_error = "Preencha o número inicial";
+			return false;
+		} else if (ng.inutilizacao.num_final == "" || ng.inutilizacao.num_final == null) {
+			ng.msg_error = "Preencha o número inicial";
+			return false;
+		} else if (ng.inutilizacao.dsc_justificativa == "" || ng.inutilizacao.dsc_justificativa == null){
+			ng.msg_error = "Descreva uma justificativa";
+			return false;
+		}
+
+		if (ng.inutilizacao.dsc_justificativa.length < 15) {
+			ng.msg_error = "A Justificativa tem que ter ao menos 15 caractéres";
+			return false;
+		}
+
+		var btn = $(event.target);
+		if(!(btn.is(':button')))
+			btn = $(btn.parent('button'));
+		btn.button('loading');
+		aj.post(baseUrlApi()+"nota_fiscal/inutilizacao/save", { data: JSON.stringify( ng.inutilizacao ) })
+			.success(function(data, status, headers, config) {
+				btn.button('reset');
+				$('#modal-inutilizacao').modal('hide');
+				ng.loadInutilizacoes();
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				ng.msg_error = data.body.mensagem;
+			});
+	}
+
+	ng.loadInutilizacoes = function(){
+		aj.get(baseUrlApi()+"nota_fiscal/inutilizacoes?id_empreendimento="+ng.userLogged.id_empreendimento)
+		.success(function(data, status, headers, config) {
+				ng.inutilizacoes = data.inutilizadas;
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
+	ng.informacoesEmpreedimento = function(){
+		aj.get(baseUrlApi()+"empreendimento/"+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.inutilizacao.num_cnpj = data.num_cnpj;
+				aj.get(baseUrlApi()+"serie_documento_fiscal/?cod_empreendimento="+ng.userLogged.id_empreendimento+"&tsdf->flg_excluido=0")
+					.success(function(data, status, headers, config) {
+						ng.inutilizacao.serie = data[0].serie_documento_fiscal;
+					})
+					.error(function(data, status, headers, config) {
+
+					});
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
 	ng.resetFilter = function() {
 		$("#inputDtaEmissao").val("");
 		ng.busca.text = "" ;
@@ -276,6 +348,8 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		},5000);
 	}
 
+	ng.loadInutilizacoes();
+	ng.informacoesEmpreedimento();
 	ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
 	ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
 	ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);

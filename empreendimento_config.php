@@ -2307,6 +2307,12 @@
 													</div>
 												</div>
 											</div>
+											<div class="col-sm-2">
+												<div class="form-group">
+													<label class="control-label">ID Empresa Focus</label>
+													<input type="text" name="id_empresa_focus" class="form-control input-sm" ng-model="configuracoes.id_empresa_focus">
+												</div>
+											</div>
 										</div>
 
 										<div class="row">

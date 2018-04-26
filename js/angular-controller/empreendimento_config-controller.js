@@ -546,6 +546,14 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.id_empresa_focus != undefined){
+			var item = {
+							nome :'id_empresa_focus',
+							valor:ng.configuracoes.id_empresa_focus , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
 		if(ng.configuracoes.token_focus_producao != undefined){
 			var item = {
 							nome :'token_focus_producao',
