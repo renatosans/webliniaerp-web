@@ -19,12 +19,56 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		ng.busca.text = "" ;
 		ng.busca.numeroo = "" ;
 		ng.reset();
-		ng.loadNotas(0,10);
+		ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
+		ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+		ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
+		ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
+		ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
+		ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
+		ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
+		ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
 	}
 
-	ng.loadNotas = function(offset,limit) {
-		ng.notas = [];
-		var query_string = "?cod_empreendimento="+ ng.userLogged.id_empreendimento;
+	ng.filtrar = function(){
+		ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
+		ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+		ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
+		ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
+		ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
+		ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
+		ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
+		ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
+	}
+
+	ng.loadNotas = function(tipo_nota, list_name, status, offset,limit) {
+		ng[list_name] = [];
+		var query_string  = "?cod_empreendimento="+ ng.userLogged.id_empreendimento;
+
+		switch(status){
+			case 'autorizado':
+				query_string += "&("+$.param({status:{exp:"<> 'cancelado')"}});
+			break;
+			case 'cancelado':
+				query_string += "&("+$.param({status:{exp:"= 'cancelado')"}});
+			break;
+		}
+
+		switch(tipo_nota){
+			case 'SAT':
+				query_string += "&flg_sat=1";
+				break;
+			case 'NFCE':
+				query_string += "&flg_nfce=1";
+				break;
+			case 'NFE':
+				query_string += "&("+$.param({flg_sat:{exp:"= 0 OR flg_sat IS NULL )"}});
+				query_string += "&("+$.param({flg_nfce:{exp:"= 0 OR flg_nfce IS NULL )"}});
+				query_string += "&("+$.param({cod_ordem_servico:{exp:"= 0 OR cod_ordem_servico IS NULL )"}});
+				break;
+			case 'NFSE':
+				query_string += "&("+$.param({cod_ordem_servico:{exp:"IS NOT NULL )"}});
+				break;
+		}
 
 		if(ng.busca.nome != ""){
 			query_string += "&("+$.param({nome_destinatario:{exp:"like'%"+ng.busca.text+"%')"}});
@@ -42,11 +86,11 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 
 		aj.get(baseUrlApi()+"notas/"+ offset +"/"+ limit + query_string)
 			.success(function(data, status, headers, config) {
-				ng.notas 			= data.notas;
-				ng.paginacao.notas 	= data.paginacao;
+				ng[list_name] 			= data.notas;
+				ng.paginacao[list_name] 	= data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
-				ng.notas = null;
+				ng[list_name] = null;
 			});
 	}
 
@@ -232,5 +276,12 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		},5000);
 	}
 
-	ng.loadNotas(0,10);
+	ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
+	ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+	ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
+	ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
+	ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
+	ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
+	ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
+	ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
 });

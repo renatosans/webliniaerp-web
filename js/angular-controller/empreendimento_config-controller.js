@@ -844,6 +844,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item3);
 		}
+
+		if(ng.configuracoes.flg_autorizar_exclusao_sem_admin_pdv != undefined){
+			var item3 = {
+							nome 				:'flg_autorizar_exclusao_sem_admin_pdv',
+							valor 				:ng.configuracoes.flg_autorizar_exclusao_sem_admin_pdv , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
 		
 		if(ng.configuracoes.flg_agrupar_pagamentos_venda_data_forma_pagamento != undefined){
 			var item3 = {
@@ -1539,6 +1548,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item = {
 							nome 				:'flg_usa_cartao_magnetico',
 							valor 				:ng.configuracoes.flg_usa_cartao_magnetico , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_autorizar_exclusao_sem_admin_controle_mesas != undefined){
+			var item = {
+							nome 				:'flg_autorizar_exclusao_sem_admin_controle_mesas',
+							valor 				:ng.configuracoes.flg_autorizar_exclusao_sem_admin_controle_mesas , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item);
