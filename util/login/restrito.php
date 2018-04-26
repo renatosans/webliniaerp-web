@@ -1,6 +1,6 @@
 <?php
 	include_once 'util/constants.php';
-    @session_start();
+    session_start();
     date_default_timezone_set('America/Sao_Paulo');
 	function restrito($perfis = array(),$page=null){
 		if(isset($_SESSION['user']['modulos']) && is_array($_SESSION['user']['modulos']))

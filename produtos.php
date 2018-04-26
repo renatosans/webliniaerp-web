@@ -891,28 +891,42 @@
 											<div class="row">
 												<div class="col-sm-12">
 													<div class="empreendimentos form-group" id="empreendimentos">
-															<table class="table table-bordered table-condensed table-striped table-hover">
-																<thead>
-																	<tr>
-																		<td><i class="fa fa-building-o"></i> Empreendimentos</td>
-																		<td width="60" align="center">
-																			<button class="btn btn-xs btn-primary" ng-click="showEmpreendimentos()"><i class="fa fa-plus-circle"></i></button>
-																		</td>
-																	</tr>
-																</thead>
-																<tbody>
-																	<tr ng-show="(empreendimentosAssociados.length == 0)">
-																		<td colspan="2" align="center">Nenhum empreendimento selecionado</td>
-																	</tr>
-																	<tr ng-repeat="item in empreendimentosAssociados">
-																		<td>{{ item.nome_empreendimento }}</td>
-																		<td align="center">
-																			<button class="btn btn-xs btn-danger" ng-click="delEmpreendimento($index,item)"><i class="fa fa-trash-o"></i></button>
-																		</td>
-																	</tr>
-																</tbody>
-															</table>
-												
+														<table class="table table-bordered table-condensed table-striped table-hover">
+															<thead>
+																<tr>
+																	<td><i class="fa fa-building-o"></i> Empreendimento</td>
+																	<td width="120" align="center">Gera O.P.?</td>
+																	<td width="60" align="center">
+																		<button class="btn btn-xs btn-primary" ng-click="showEmpreendimentos()"><i class="fa fa-plus-circle"></i></button>
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+																<tr ng-show="(empreendimentosAssociados.length == 0)">
+																	<td colspan="3" align="center">Nenhum empreendimento selecionado</td>
+																</tr>
+																<tr ng-repeat="item in empreendimentosAssociados">
+																	<td>{{ item.nome_empreendimento }}</td>
+																	<td class="text-center">
+																		<div class="form-group" style="margin:0 auto">
+																			<label class="label-radio inline">
+																				<input ng-model="item.flg_gera_ordem_producao" value="1" type="radio" class="inline-radio"/>
+																				<span class="custom-radio"></span>
+																				<span>Sim</span>
+																			</label>
+																			<label class="label-radio inline">
+																				<input ng-model="item.flg_gera_ordem_producao" value="0" type="radio" class="inline-radio"/>
+																				<span class="custom-radio"></span>
+																				<span>Não</span>
+																			</label>
+																		</div>
+																	</td>
+																	<td align="center">
+																		<button class="btn btn-xs btn-danger" ng-click="delEmpreendimento($index,item)"><i class="fa fa-trash-o"></i></button>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
 													</div>
 												</div>
 											</div>
