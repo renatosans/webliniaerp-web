@@ -4343,7 +4343,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				'FROM tbl_vendas AS ven '+
 				'LEFT JOIN tbl_nota_fiscal AS tnf ON tnf.cod_venda = ven.id '+
 				'WHERE ven.id_empreendimento = '+ ng.userLogged.id_empreendimento +' ';
-				'AND ven.flg_excluido = 0 '+
+				'AND ven.flg_excluido = 0 ';
+		
 		if(ng.caixa_aberto.flg_imprimir_sat_cfe)
 			query += 'AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
 		else if(ng.caixa_aberto.flg_imprimir_nfce)
