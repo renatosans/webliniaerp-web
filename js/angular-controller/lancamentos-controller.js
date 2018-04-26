@@ -1842,6 +1842,9 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		}
 
 		var valor_detalhado = Number(item.valor) ;
+
+		if( !angular.isArray(ng.pagamento.detalhamento) ) ng.pagamento.detalhamento = [] ;
+
 		$.each(ng.pagamento.detalhamento,function(i,v){ valor_detalhado += Number(v.valor) });
 		valor_detalhado = Math.round( valor_detalhado * 100) /100 
 
@@ -1880,6 +1883,7 @@ var Detalhamento = function(){
 		return arr_parc; 
 	}
 	this.distribuir = function(detalhamento,n_parcelas,n_pacela_atual,vlr_total_pg,vlr_parcela){
+		detalhamento = angular.isArray(detalhamento) ? detalhamento : [] ;
 		n_parcelas = Number(n_parcelas),n_pacela_atual = Number(n_pacela_atual),vlr_total_pg = Number(vlr_total_pg),vlr_parcela = Number(vlr_parcela) ;
 		var round = function(total){
 			return Math.round( total * 100) /100

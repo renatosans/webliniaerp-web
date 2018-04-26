@@ -46,6 +46,8 @@ app.controller('PlanejamentoPlanoContasController', function($scope, $http, $win
 		ng.meses = meses ;
 
 		$.each(ng.plano_contas,function(i,v){
+			ng.plano_contas[i].dta_inicial = dtaInicial ;
+			ng.plano_contas[i].dta_final = dtaFinal ;
 			var meses = [] ;
 			$.each(ng.meses,function(x,y){
 				var mes = {} ;
@@ -79,7 +81,23 @@ app.controller('PlanejamentoPlanoContasController', function($scope, $http, $win
 	}
 
 	ng.salvar = function(){
-		console.log(ng.plano_contas);
+		var dtaInicial = $('#dtaInicial').val();
+		var dtaFinal   = $('#dtaFinal').val();
+
+		var post = {
+			id_empreendimento 	: ng.userLogged.id_empreendimento,
+			dta_inicial 		: dtaInicial,
+			dta_final 			: dtaFinal,
+			//plano_contas  		: angular.copy(ng.plano_contas)
+			plano_contas  		: [
+				angular.copy(ng.plano_contas[0]),
+				angular.copy(ng.plano_contas[1]),
+				angular.copy(ng.plano_contas[2]),
+				angular.copy(ng.plano_contas[3])
+			]
+		} ;
+
+		console.log(ng.post);
 	}
 
 	ng.loadPlanoContas();
