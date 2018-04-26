@@ -43,7 +43,7 @@ var Map = {
 		var mapOptions = {
 			streetViewControl: false,
 			scrollWheel: false,
-	        zoom: 6,
+	        zoom: 5,
 	        center: new google.maps.LatLng(-23.550339, -46.633455)
 	    };
 	    Map.map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);

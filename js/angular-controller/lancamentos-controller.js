@@ -175,7 +175,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 					.success(function(data, status, headers, config) {
 						ng.mensagens('alert-success','<strong>Lançamento atualizado com sucesso</strong>','.alert-delete');
 						ng.reset();
-						ng.load();
+						ng.load(0,20);
 					})
 					.error(defaulErrorHandler);
 			}, undefined);
@@ -228,7 +228,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 				.success(function(data, status, headers, config) {
 					ng.mensagens('alert-success','<strong>Lançamento excluido com sucesso</strong>','.alert-delete');
 					ng.reset();
-					ng.load();
+					ng.load(0,20);
 				})
 				.error(defaulErrorHandler);
 		}, undefined);
@@ -280,13 +280,15 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		var dataFinal   = $("#dtaFinal").val();
 		var queryString = "?id_empreendimento="+ ng.userLogged.id_empreendimento;
 
-		if(dataInicial != "" &&  dataFinal != "" ){
+		if ( dataInicial != "" &&  dataFinal != "" ) {
 			var data_arr = dataInicial.split('/');
 			dataInicial = data_arr[2]+"-"+data_arr[1]+"-"+data_arr[0];
 			data_arr = dataFinal.split('/');
 			dataFinal = data_arr[2]+"-"+data_arr[1]+"-"+data_arr[0];
 			queryString += "&" + $.param({data_pagamento:{exp:"between '"+dataInicial+" 00:00:00' and '"+dataFinal+" 23:59:59'"}}) ;
 		}
+		else
+			return false;
 
 		if(ng.busca.dsc_conta_bancaria != ""){
 			queryString += "&id_conta_bancaria="+ng.busca.dsc_conta_bancaria;
@@ -454,7 +456,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		ng.cheques	 	= [{id_banco:null,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
 		ng.boletos	 	= [{id_banco:null,num_conta_corrente:null,doc_boleto:null,num_boleto:null}];
 		ng.msg_error = "Faça um filtro para obter resultados";
-		ng.pagamentos = {detalhamento:[]};
+		ng.pagamentos = null;
 		ng.loadPlanoContas();
 		
 		$("#pagamentoData").val('');
@@ -1435,7 +1437,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			}else if(Number(v.id_forma_pagamento) == 4){
 				ClassDet = new Detalhamento();
 				var total_pagamento_boleto = getIndex('id_forma_pagamento',4,ng.recebidos);
-				total_pagamento_boleto = ng.recebidos[total_pagamento_cheque].valor ;	
+				total_pagamento_boleto = ng.recebidos[total_pagamento_boleto].valor ;	
 				$.each(ng.pg_boletos,function(i_boleto, v_boleto){
 					v.id_banco 				= v_boleto.id_banco ;
 					v.data_pagamento 		= v_boleto.data_pagamento ;

@@ -205,7 +205,7 @@
 									</div>
 
 									<div class="row" ng-if="cliente.flg_tipo == 'cliente' && cliente.tipo_cadastro == 'pf'">
-										<div class="col-sm-2">
+										<div class="col-sm-2 col-md-3">
 											<div id="cpf" class="form-group">
 												<label class="control-label">
 													CPF
@@ -218,7 +218,7 @@
 											</div>
 										</div>
 										
-										<div class="col-sm-2">
+										<div class="col-sm-2 col-md-3">
 											<div id="rg" class="form-group">
 												<label class="control-label">RG</label>
 												<input autocomplete="off" class="form-control"  ng-model="cliente.rg" />
@@ -250,26 +250,25 @@
 									</div>
 
 									<div class="row" ng-if="cliente.tipo_cadastro == 'pj'">
-										<div class="col-sm-2">
+										<div class="col-sm-2 col-md-3">
 											<div id="cnpj" class="form-group">
 												<label class="control-label">
 													CNPJ <i style="font-size: 10px;color: #FF0000;" class="fa fa-asterisk"></i>
 													<span><i class="fa fa-spin fa-spinner" ng-if="(loading_info)"></i></span>
 												</label>
 												<input autocomplete="off" class="form-control" 
-													ui-mask="99.999.999/9999-99" 
 													ng-model="cliente.cnpj"
 													ng-blur="findClientByCNPJ()">
 											</div>
 										</div>
 
-										<div class="col-sm-2">
+										<div class="col-sm-2 col-md-3">
 											<div id="inscricao_estadual" class="form-group">
 												<label class="control-label">I.E.</label>
 												<input autocomplete="off" class="form-control" ng-model="cliente.inscricao_estadual">
 											</div>
 										</div>
-										<div class="col-sm-2">
+										<div class="col-sm-2 col-md-3">
 											<div id="inscricao_estadual" class="form-group">
 												<label class="control-label">I.M.</label>
 												<input autocomplete="off" class="form-control" ng-model="cliente.num_inscricao_municipal">
@@ -926,21 +925,15 @@
 								</div>
 								<div class="col-sm-6">
 									<div class="pull-right">
-										<button type="button" class="btn btn-md btn-info"
-											ng-if="(cliente.id)"
-											ng-click="marcarVisitaCliente(cliente)">
-											<i class="fa fa-street-view"></i> Marcar Presença
-										</button>
-
 										<button type="button" class="btn btn-danger btn-md"
 											ng-click="reset(); setTipoCadastro('cliente','pj');">
 											<i class="fa fa-times-circle"></i> Cancelar
 										</button>
 
-										<button type="submit" id="btn_salvar" class="btn btn-success btn-md"
+										<button type="submit" id="btn_salvar" class="btn btn-md btn-info"
 											data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." 
 											ng-click="salvar($event)">
-											<i class="fa fa-save"></i> Salvar
+											<i class="fa fa-street-view"></i> Salvar e Marcar Presença
 										</button>
 									</div>
 								</div>
