@@ -39,41 +39,47 @@ app.controller('RelatorioDREController', function($scope, $http, $window, UserSe
 
 	ng.dre = null ;
 	ng.loadDRE = function() {
+		var dtaInicial  = $("#dtaInicial").val();
+		var dtaFinal    = $("#dtaFinal").val();
+		if(empty(dtaInicial) && empty(dtaFinal)){
+			$('.alert-periodo').show();
+			return ;
+		}
+
+		$('.alert-periodo').hide();
+
 		buscaExport = {};
 		ng.dre = [] ;
 		$("#modal-aguarde").modal('show');
-	
-		var dtaInicial  = $("#dtaInicial").val();
-		var dtaFinal    = $("#dtaFinal").val();
-
 		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
-
 
 		if(dtaInicial != "" && dtaFinal != ""){
 			dtaInicial = moment(dtaInicial,'MM/YYYY').format('YYYY-MM');
 			dtaFinal   =  moment(dtaFinal,'MM/YYYY').format('YYYY-MM');
-			queryString += "&"+$.param({"date_format(data_pagamento,'%Y-%m')":{exp:"BETWEEN '"+dtaInicial+"' AND '"+dtaFinal+"'"}});
+			//queryString += "&"+$.param({"date_format(data_pagamento,'%Y-%m')":{exp:"BETWEEN '"+dtaInicial+"' AND '"+dtaFinal+"'"}});
 
 		}else if(dtaInicial != ""){
 			dtaInicial = moment(dtaInicial,'MM/YYYY').format('YYYY-MM');
-			queryString += "&"+$.param({data_pagamento:{exp:">='"+dtaInicial+"'"}});
+			dtaFinal = 'null' ;
+			//queryString += "&"+$.param({data_pagamento:{exp:">='"+dtaInicial+"'"}});
 		}else if(dtaFinal != ""){
+			dtaInicial = 'null';
 			dtaFinal =  moment(dtaFinal,'MM/YYYY').format('YYYY-MM');
-			queryString += "&"+$.param({data_pagamento:{exp:"<='"+dtaFinal+"'"}});
+			//queryString += "&"+$.param({data_pagamento:{exp:"<='"+dtaFinal+"'"}});
 		}
 
-		var url = baseUrlApi()+"relatorio/dre/"+ng.userLogged.id_empreendimento;
+		var url = baseUrlApi()+"relatorio/dre/"+ng.userLogged.id_empreendimento+"/"+dtaInicial+"/"+dtaFinal;
 
 		ng.dre = [] ;
 
-		aj.get(url+queryString)
+		aj.get(url)
 			.success(function(data, status, headers, config) {
 				ng.dre = data;
 				$("#modal-aguarde").modal('hide');
 
 			})
 			.error(function(data, status, headers, config) {
-				ng.dre = [];
+				ng.dre = false;
 				$("#modal-aguarde").modal('hide');
 				if (status != 404) {
 					alert("Ocorreu um erro ao carregar o relatorio");
