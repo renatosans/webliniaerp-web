@@ -22,7 +22,7 @@
 	<link href="css/pace.css" rel="stylesheet">
 
 	<!-- Datepicker -->
-	<link href="css/datepicker.css" rel="stylesheet"/>
+	<link href="css/datepicker/bootstrap-datepicker.css" rel="stylesheet"/>
 
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
@@ -168,22 +168,16 @@
 						<form role="form">
 							<div class="row">
 								<div class="col-sm-2">
-									<div class="form-group">
-										<label class="control-label">Inicial</label>
-										<div class="input-group">
-											<input  readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
-											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
-										</div>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker1 form-control input">
+										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
 								</div>
 
 								<div class="col-sm-2">
-									<div class="form-group">
-										<label class="control-label">Final</label>
-										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
-											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
-										</div>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker1 form-control">
+										<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
 									</div>
 								</div>
 							</div>
@@ -211,10 +205,9 @@
 
 				<br/>
 
-				<span ng-if="dre.length != null && dre.length <= 0" class="alert alert-warning">Nenhum registro encontrado</span>
-				
+				<div ng-if="dre == null" class="alert alert-warning">Preencha um período para a busca</div>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="dre != null">
 					<thead>
 						<tr ng-if="dre.length != null && dre.length > 0">
 							<!--<th width="100" class="hidden-print text-center">ID</th> -->
@@ -226,7 +219,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-if="dre.length == null">
+						<tr ng-if="dre.length == 0">
 							<td class="text-center" colspan="4">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
 							</td>
@@ -365,7 +358,8 @@
 	<script src='js/modernizr.min.js'></script>
 
 	<!-- Datepicker -->
-	<script src='js/bootstrap-datepicker.min.js'></script>
+	<script src='js/datepicker/bootstrap-datepicker.js'></script>
+	<script src='js/datepicker/bootstrap-datepicker.pt-BR.js'></script>
 
 	<!-- Timepicker -->
 	<script src='js/bootstrap-timepicker.min.js'></script>
@@ -413,7 +407,15 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('.datepicker').datepicker();
+			var options =  {
+		        format: "mm/yyyy",
+		        language: "pt-BR",
+		        minViewMode: 'months',
+		        clearBtn:true,
+		        multidate:false
+		    }
+			$('.datepicker1').datepicker(options);
+			$('.datepicker2').datepicker(options);
 			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
 			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
@@ -422,6 +424,7 @@
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});
 	</script>
+
 	<?php include("google_analytics.php"); ?>
   </body>
 </html>

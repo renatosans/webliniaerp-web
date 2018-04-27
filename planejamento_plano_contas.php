@@ -158,14 +158,15 @@
 			</div><!-- /main-header -->
 
 			<div class="padding-md">
-				<div class="alert alert-sistema" style="display:none"></div>
-
 				<div class="panel panel-default" id="box-novo" style="display:none">
 					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Novo Planejamento</div>
 
 					<div class="panel-body">
 						<form class="form-horizontal" id="form-fabricante" role="form" enctype="multipart/form-data">
-								
+							
+							<div class="alert alert-periodo alert-warning" style="display: none">
+								O período atinge um já cadastrado	
+							</div>	
 
 							<div class="form-group" id="nome_fabricante">
 									<label for="descricao" class="col-sm-1 control-label">Período</label>
@@ -218,7 +219,7 @@
 										<button ng-click="showBoxNovo(); reset();" type="submit" class="btn btn-danger btn-sm">
 											<i class="fa fa-times-circle"></i> Cancelar
 										</button>
-										<button ng-click="salvar()" type="submit" class="btn btn-success btn-sm">
+										<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Salvando, Aguarde..."  id="btn-salvar" ng-click="salvar()" type="submit" class="btn btn-success btn-sm">
 											<i class="fa fa-save"></i> Salvar
 										</button>
 									</div>
@@ -248,20 +249,26 @@
 							</div>
 						</div>
 
+
+
 						<br>
+
+						<div class="alert alert-sistema" style="display: none"> </div>
 
 						<table class="table table-bordered table-condensed table-striped table-hover">
 							<thead>
 								<tr>
 									<th>#</th>
-									<th>Descrição</th>
-									<th width="80" style="text-align: center;">Opções</th>
+									<th>Data inicial</th>
+									<th>Data final</th>
+									<th width="80" style="text-align: center;"></th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr ng-repeat="item in fabricantes">
+								<tr ng-repeat="item in planejamentos">
 									<td width="80">{{ item.id }}</td>
-									<td>{{ item.nome_fabricante }}</td>
+									<td>{{ item.dta_inicial }}</td>
+									<td>{{ item.dta_final }}</td>
 									<td align="center">
 										<button type="button" ng-click="editar(item)" tooltip="Editar" class="btn btn-xs btn-warning" data-toggle="tooltip">
 											<i class="fa fa-edit"></i>

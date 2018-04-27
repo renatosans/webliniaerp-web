@@ -37,41 +37,34 @@ app.controller('RelatorioDREController', function($scope, $http, $window, UserSe
 		ng.reset();
 	}
 
-
-	ng.loadDRE = function(setDateInit) {
+	ng.dre = null ;
+	ng.loadDRE = function() {
 		buscaExport = {};
-		ng.dre = null;
+		ng.dre = [] ;
 		$("#modal-aguarde").modal('show');
-		if(setDateInit == true){
-			var dtaInicial = formatDateBR(getDate()); 
-			var dtaFinal   = ultimoDiaDoMes(new Date)+dtaInicial.substr(2,8);
-			$("#dtaInicial").val(formatDateBR(getDate()));
-			$("#dtaFinal").val(dtaFinal);
-		}else{
-			var dtaInicial  = $("#dtaInicial").val();
-			var dtaFinal    = $("#dtaFinal").val();
-		}
+	
+		var dtaInicial  = $("#dtaInicial").val();
+		var dtaFinal    = $("#dtaFinal").val();
+
 		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
 
 
 		if(dtaInicial != "" && dtaFinal != ""){
-			dtaInicial = formatDate(dtaInicial);
-			dtaFinal   = formatDate(dtaFinal);
-			queryString += "&"+$.param({data_pagamento:{exp:"BETWEEN '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59'"}});
-			buscaExport.data_pagamento = {exp:"BETWEEN '"+dtaInicial+" 00:00:00' AND '"+dtaFinal+" 23:59:59'"};
+			dtaInicial = moment(dtaInicial,'MM/YYYY').format('YYYY-MM');
+			dtaFinal   =  moment(dtaFinal,'MM/YYYY').format('YYYY-MM');
+			queryString += "&"+$.param({"date_format(data_pagamento,'%Y-%m')":{exp:"BETWEEN '"+dtaInicial+"' AND '"+dtaFinal+"'"}});
 
 		}else if(dtaInicial != ""){
-			dtaInicial = formatDate(dtaInicial);
+			dtaInicial = moment(dtaInicial,'MM/YYYY').format('YYYY-MM');
 			queryString += "&"+$.param({data_pagamento:{exp:">='"+dtaInicial+"'"}});
-			buscaExport.data_pagamento = {exp:">='"+dtaInicial+"'"};
 		}else if(dtaFinal != ""){
-			dtaFinal = formatDate(dtaFinal);
+			dtaFinal =  moment(dtaFinal,'MM/YYYY').format('YYYY-MM');
 			queryString += "&"+$.param({data_pagamento:{exp:"<='"+dtaFinal+"'"}});
-			buscaExport.data_pagamento = {exp:"<='"+dtaFinal+"'"};
 		}
 
 		var url = baseUrlApi()+"relatorio/dre/"+ng.userLogged.id_empreendimento;
 
+		ng.dre = [] ;
 
 		aj.get(url+queryString)
 			.success(function(data, status, headers, config) {
@@ -141,7 +134,7 @@ app.controller('RelatorioDREController', function($scope, $http, $window, UserSe
 		aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.configuracoes = data ;
-				ng.loadDRE(true);
+				//ng.loadDRE(true);
 			})
 			.error(function(data, status, headers, config) {
 
