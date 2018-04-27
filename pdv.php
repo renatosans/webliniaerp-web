@@ -464,7 +464,7 @@
 						    			</div>
 						    		</div>
 
-						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8">
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
@@ -494,6 +494,27 @@
 					    						ng-model="pagamento.periodicidade_parcelamento">
 						    			</div>
 						    		</div>
+						    	</div>
+
+						    	<div class="row" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 10">
+						    		<div class="col-sm-4">
+						    			<label class="control-label">Valor</label>
+						    			<div class="form-group ">
+						    				<input ng-model="pagamento.valor" thousands-formatter type="text" class="form-control input-sm" />
+						    			</div>
+						    		</div>
+						    		<div class="col-sm-4" id="pagamento_maquineta">
+						    			<label class="control-label">Maquineta</label>
+										<select ng-model="pagamento.id_maquineta" class="form-control input-sm">
+											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">{{ item.num_serie_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+						    		<div class="col-sm-4" id="bandeiras">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento.id_bandeira" class="form-control input-sm">
+											<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{ item.nome }}</option>
+										</select>
+									</div>
 						    	</div>
 
 						    	<div class="row">
