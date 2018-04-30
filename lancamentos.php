@@ -642,14 +642,34 @@
 
 					    		<div class="row">
 					    			<div class="col-sm-12 text-center">
-					    				<label class="control-label">&nbsp</label>
+					    				<label class="control-label">&nbsp;</label>
 						    			<div class="form-group ">
-						    				<button type="button" class="btn btn-md btn-primary btn-block"   ng-click="aplicarRecebimento()">Receber</button>
+						    				<button type="button" class="btn btn-md btn-primary btn-block" ng-click="aplicarRecebimento()">Receber</button>
 						    			</div>
 						    		</div>
 								</div>
 							</div>
 							<div class="col-sm-3">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="controls">
+												<label class="control-label">&nbsp;</label>
+											</div>
+											<div>
+												<button class="btn btn-default btn-upload btn-sm">
+													<i class="fa fa-pdf-o"></i> Importar Comprovante
+													<input type="file" data-model="anx"></input>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12" ng-if="(anexo_comprovante.anx)">
+											<p>{{ anexo_comprovante.anx.name }}</p>
+										</div>
+									</div>
+								</div>
 								<table class="table table-bordered table-condensed table-striped table-hover">
 									<thead ng-show="(clientes.length != 0)">
 										<tr>
@@ -991,6 +1011,13 @@
 												<button type="button" ng-click="printPagamentos(item)" tooltip="Imprimir" data-toggle="tooltip" class="btn btn-xs">
 													<i class="fa fa-print"></i>
 												</button>
+												<button type="button" ng-click="showAnexo(item)" ng-if="!(item.pth_anexo)" tooltip="Ver/Download Anexo" class="btn btn-xs btn-primary" data-toggle="tooltip" disabled>
+													<i class="fa fa-paperclip"></i>
+												</button>
+												<button type="button" ng-click="showAnexo(item)" ng-if="(item.pth_anexo)" tooltip="Ver/Download Anexo" class="btn btn-xs btn-primary" data-toggle="tooltip">
+													<i class="fa fa-paperclip"></i>
+												</button>
+
 												<!--<button type="button" ng-click="editar(item)" tooltip="Editar" data-toggle="tooltip" class="btn btn-xs btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>-->

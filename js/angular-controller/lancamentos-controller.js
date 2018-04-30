@@ -108,6 +108,17 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			});
 	}
 
+	ng.showAnexo = function(item){
+		if(!empty(item.pth_anexo)){
+			item = {
+				path: item.pth_anexo.substring(item.pth_anexo.indexOf('assets'), item.pth_anexo.length)
+			};
+			$window.open(baseUrl()+item.path)
+		} else {
+			return false;
+		}
+	}
+
     ng.pagamento_edit = {} ;
     ng.modalChangeStatusPagamento = function(item){
     	ng.pagamento_edit = angular.copy(item) ;
@@ -1460,20 +1471,22 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 			var dados = {
 							pagamentos:pagamentos,
 							id_cliente:ng.cliente.id,
-							id_empreendimento:ng.userLogged.id_empreendimento
+							id_empreendimento:ng.userLogged.id_empreendimento,
+							anexo_comprovante:ng.anexo_comprovante
 						}
 		}else if(ng.flgTipoLancamento == 1){
 			var url = "fornecedor_pagamento";
 			var dados = {
 							pagamentos	 :pagamentos,
-							id_fornecedor:ng.fornecedor.id
+							id_fornecedor:ng.fornecedor.id,
+							anexo_comprovante:ng.anexo_comprovante
 						}
 		}
 
 		$('button').button('reset');
 
 
-		aj.post(baseUrlApi()+url, dados)
+		aj.post(baseUrlApi()+url, { data: JSON.stringify( dados ) })
 			.success(function(data, status, headers, config) {
 				if(typeof data.msg_agenda == "object"){
 					var dias_semanas    = {1:'Segunda-Feira',2:'Terça-Feira',3:'Quarta-Feira',4:'Quinta-Feira',5:'Sexta-Feira',6:'Sábado',7:'Domingo'};
@@ -1868,6 +1881,51 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 	ng.delDetalhamento = function($index){
 		ng.pagamento.detalhamento.splice($index,1);
 	}
+
+	setTimeout(function(){
+	  $('.btn-upload input[type="file"]').on('change', function(){
+		var file = this.files[0]; // get selected file
+		var reader = new FileReader();
+
+		ng.fileModel = $(this).data().model; // get attribute model name
+
+
+		if(empty(ng.anexo_comprovante)){
+			ng.anexo_comprovante = {};
+		}
+
+		if(empty(ng.anexo_comprovante[ng.fileModel])) // validate if is empty
+			ng.anexo_comprovante[ng.fileModel] = {}; // create as object
+
+		// detect file type
+		var type = file.type.substring(file.type.indexOf('/')+1, file.type.length);
+		if(empty(type)){
+			type = file.name.substring((file.name.lastIndexOf('.')+1), file.name.length);
+		}
+		
+		ng.anexo_comprovante[ng.fileModel].name = file.name; // file name
+		ng.anexo_comprovante[ng.fileModel].type = type; // file type
+		ng.anexo_comprovante[ng.fileModel].size = (file.size / 1024); // file size
+
+		// adjust file size string name
+		if(ng.anexo_comprovante[ng.fileModel].size < 1024)
+			ng.anexo_comprovante[ng.fileModel].size = numberFormat(ng.anexo_comprovante[ng.fileModel].size, 2, ',', '.') + ' KB';
+		else if(ng.anexo_comprovante[ng.fileModel].size > 1024)
+			ng.anexo_comprovante[ng.fileModel].size = numberFormat(ng.anexo_comprovante[ng.fileModel].size, 2, ',', '.') + ' MB';
+
+		// after loading file...
+		reader.onload = function (e) {
+			ng.anexo_comprovante[ng.fileModel].path = e.target.result; // get base64 string of file
+			ng.anexo_comprovante[ng.fileModel].updated = true;
+		  	setTimeout(function(){
+				ng.$apply(); // apply changes in the screen
+			},1);
+		}
+
+		if(!empty(file))
+			reader.readAsDataURL(file);
+		});
+	}, 10);
 
 
 	ng.loadPlanoContas();
