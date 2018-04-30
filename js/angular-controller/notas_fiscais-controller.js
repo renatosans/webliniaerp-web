@@ -15,7 +15,12 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	}
 
 	ng.modalInutilizacao = function(){
+		if (ng.configuracoes.id_empresa_focus == "" || ng.configuracoes.id_empresa_focus == null ) {
+			alert('ID Empresa Focus não associado ao empreendimento');
+			return false;
+		}
 		$('#modal-inutilizacao').modal('show');
+		ng.msg_error = null;
 		ng.inutilizacao = {
 			id_empreendimento : ng.userLogged.id_empreendimento,
 			num_inicial: "",
@@ -31,7 +36,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 			ng.msg_error = "Preencha o número inicial";
 			return false;
 		} else if (ng.inutilizacao.num_final == "" || ng.inutilizacao.num_final == null) {
-			ng.msg_error = "Preencha o número inicial";
+			ng.msg_error = "Preencha o número final";
 			return false;
 		} else if (ng.inutilizacao.dsc_justificativa == "" || ng.inutilizacao.dsc_justificativa == null){
 			ng.msg_error = "Descreva uma justificativa";
