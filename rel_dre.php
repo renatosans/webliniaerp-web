@@ -218,7 +218,7 @@
 							<!--<th width="80" class="text-center">ASSOCIATIVO</th>-->
 							<!--<th width="200" class="text-center">FORMULA</th>-->
 							<th width="120" class="text-center">PREVISTO</th>
-							<th width="120" class="text-center">VALOR</th>
+							<th width="120" class="text-center">REALIZADO</th>
 							<th width="120" class="text-center">DIFERENÇA</th>
 						</tr>
 					</thead>
@@ -248,25 +248,16 @@
 								<span ng-if="(item.flg_tipo == 'SUM')">(=)</span>
 								{{ item.descricao }}
 							</td>
-							<!--<td class="text-center">{{ item.flg_associativo }}</td>-->
 
-							<!--<td class="text-left" ng-if="item.flg_associativo == 0">={{ item.dsc_formula }}</td>-->
-							<!--<td class="text-left" ng-if="item.flg_associativo == 1"></td>-->
 
-							<td class="text-right" style="color: black">R$ {{ item.total_planejamento | numberFormat:2:',':'.' }}</td>
-
-							<td 
-							style="
-								{{ (item.flg_tipo   == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;color:black;' || ''  }}
-								{{ (item.flg_tipo   == 'REVENUE') && 'color: blue;' || ''  }}
-								{{ (item.flg_tipo   == 'EXPENSE') && 'color: red;' || ''  }}
-								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado < 0 ) && 'color: red;' || ''  }}
-								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado > 0 ) && 'color: green;' || ''  }}
-							" 
-							class="text-right">R$ {{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
-
-							<td style="font-weight: bold;{{ (item.valor_calculado - item.total_planejamento) < 0 && 'color: red;' || 'color:black;'  }}" class="text-right">
-								R$ {{ (item.valor_calculado - item.total_planejamento) | numberFormat:2:',':'.' }}
+							<td class="text-right {{ (item.flg_tipo == 'SUM' || item.flg_tipo == 'TOP') ? 'text-bold' : '' }}">
+								R$ {{ item.total_planejamento | numberFormat:2:',':'.' }}
+							</td>
+							<td class="text-right {{ (item.flg_tipo == 'SUM' || item.flg_tipo == 'TOP') ? 'text-bold' : '' }}">
+								R$ {{ item.valor_calculado | numberFormat:2:',':'.' }}
+							</td>
+							<td class="text-right {{ (item.flg_tipo == 'SUM' || item.flg_tipo == 'TOP') ? 'text-bold' : '' }}">
+								R$ {{ (item.total_planejamento - item.valor_calculado ) | numberFormat:2:',':'.' }}
 							</td>
 						</tr>
 					</tbody>

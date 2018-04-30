@@ -24,8 +24,7 @@ app.controller('RelatorioDREController', function($scope, $http, $window, UserSe
 		{nome:"Cartão de Débito",id:5},
 		{nome:"Cartão de Crédito",id:6},
 		{nome:"Transferência",id:8}
-	  ]
-
+	  ];
 
 	ng.reset = function() {
 		 $("#dtaInicial").val('');
