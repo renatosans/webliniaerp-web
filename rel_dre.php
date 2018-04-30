@@ -166,6 +166,7 @@
 
 					<div class="panel-body">
 						<form role="form">
+							<div class="alert alert-warning alert-periodo" style="display: none"> Selecione ao menos uma data para a busca </div>
 							<div class="row">
 								<div class="col-sm-2">
 									<div class="input-group">
@@ -206,6 +207,7 @@
 				<br/>
 
 				<div ng-if="dre == null" class="alert alert-warning">Preencha um período para a busca</div>
+				<div ng-if="dre === false" class="alert alert-warning">Nenhum dado encontrado para a busca</div>
 
 				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="dre != null">
 					<thead>
@@ -215,7 +217,9 @@
 							<th >DESCRIÇÃO</th>
 							<!--<th width="80" class="text-center">ASSOCIATIVO</th>-->
 							<!--<th width="200" class="text-center">FORMULA</th>-->
+							<th width="120" class="text-center">PREVISTO</th>
 							<th width="120" class="text-center">VALOR</th>
+							<th width="120" class="text-center">DIFERENÇA</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -249,15 +253,21 @@
 							<!--<td class="text-left" ng-if="item.flg_associativo == 0">={{ item.dsc_formula }}</td>-->
 							<!--<td class="text-left" ng-if="item.flg_associativo == 1"></td>-->
 
+							<td class="text-right" style="color: black">R$ {{ item.total_planejamento | numberFormat:2:',':'.' }}</td>
+
 							<td 
 							style="
-								{{ (item.flg_tipo   == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;' || ''  }}
+								{{ (item.flg_tipo   == 'TOP' || item.flg_tipo == 'SUM') && 'font-weight: bold;color:black;' || ''  }}
 								{{ (item.flg_tipo   == 'REVENUE') && 'color: blue;' || ''  }}
 								{{ (item.flg_tipo   == 'EXPENSE') && 'color: red;' || ''  }}
 								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado < 0 ) && 'color: red;' || ''  }}
 								{{ ( (item.flg_tipo == 'TOP' || item.flg_tipo == 'SUM') && item.valor_calculado > 0 ) && 'color: green;' || ''  }}
 							" 
 							class="text-right">R$ {{ item.valor_calculado | numberFormat:2:',':'.' }}</td>
+
+							<td style="font-weight: bold;{{ (item.valor_calculado - item.total_planejamento) < 0 && 'color: red;' || 'color:black;'  }}" class="text-right">
+								R$ {{ (item.valor_calculado - item.total_planejamento) | numberFormat:2:',':'.' }}
+							</td>
 						</tr>
 					</tbody>
 				</table>
