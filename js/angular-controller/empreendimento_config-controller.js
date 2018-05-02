@@ -861,6 +861,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item3);
 		}
+
+		if(ng.configuracoes.flg_remover_digito_verificador != undefined){
+			var item3 = {
+							nome 				:'flg_remover_digito_verificador',
+							valor 				:ng.configuracoes.flg_remover_digito_verificador , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
 		
 		if(ng.configuracoes.flg_agrupar_pagamentos_venda_data_forma_pagamento != undefined){
 			var item3 = {

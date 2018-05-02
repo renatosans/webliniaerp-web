@@ -728,6 +728,23 @@
 														</div>
 													</div>
 												</div>
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="" class="control-label">Remover digito verificador do código de barras ?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_remover_digito_verificador" value="1" name="flg_remover_digito_verificador"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_remover_digito_verificador" value="0" name="flg_remover_digito_verificador"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -1168,7 +1185,7 @@
 												<div class="col-sm-3">
 													<div class="form-group" id="vlr_custo">
 														<label class="control-label">% Crédito Simples</label>
-														<input  ng-model="empreendimento.num_percentual_credito_simples" thousands-formatter class="form-control input-sm">
+														<input  ng-model="empreendimento.num_percentual_credito_simples" thousands-formatter precision="4" class="form-control input-sm">
 													</div>
 												</div>
 												<div class="col-sm-3">
