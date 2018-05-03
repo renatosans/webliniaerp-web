@@ -823,6 +823,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.efetivarCompra();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2103,6 +2104,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.efetivarReforco();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2293,6 +2295,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.efetivarSangria();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2367,6 +2370,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if (status == 406) {
 					ng.caixa_other_operador  = true ;
 					ng.msg_caixa             = data.msg ;
