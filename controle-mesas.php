@@ -337,15 +337,25 @@
 									<div class="contorls">
 										<input id="txt_numero_comanda" 
 											class="form-control" type="number" 
-											placeholder="digite o número da comanda e pressione ENTER" 
+											placeholder="Digite o número da comanda e pressione ENTER" 
 											ng-enter="loadComandaById()" ng-model="busca.numero_comanda"
 											ng-if="(configuracao.flg_usa_cartao_magnetico == 0)">
 										<input id="txt_numero_comanda" 
 											class="form-control" type="number" 
-											placeholder="digite o número da comanda e pressione ENTER" 
+											placeholder="Digite o número da comanda e pressione ENTER" 
 											ng-enter="loadComandaByNumCartao()" ng-model="busca.numero_comanda"
 											ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">
 									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-2">
+								<div class="form-group">
+									<div class="controls">
+										<label class="control-label">&nbsp;</label>
+									</div>
+									<button class="btn btn-info" ng-click="showPesquisaAvancada()">
+										<i class="fa fa-search"></i> Pesquisa Avançada
+									</button>
 								</div>
 							</div>
 						</div>
@@ -1246,6 +1256,73 @@
 		</div><!-- /main-container -->
 
 		<!--MODAIS-->
+
+		<!-- Modal Pesquisa Avançada -->
+		<div class="modal fade" id="pesquisa-avancada" style="display: none;">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Pesquisa Avançada</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-10">
+								<div class="form-group">
+									<label class="control-label">Nome</label>
+									<input class="form-control" type="text" name="cliente" ng-model="busca_avancada.nome" ng-enter="loadComandasByCliente()">	
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="form-group">
+									<div class="controls">
+										<label class="control-label">&nbsp;</label>
+									</div>
+									<button type="button" class="btn btn-success" ng-click="loadComandasByCliente()">
+										<i class="fa fa-search"> Buscar</i>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead ng-show="!(clientes_comanda == null)">
+										<tr>
+											<th class="text-center" width="60">ID Comanda</th>
+											<th class="text-center">Nome</th>
+											<th class="text-center">Mesa</th>
+											<th class="text-center">Total</th>
+											<th class="text-center">Ações</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-show="(clientes_comanda == null)">
+											<td colspan="3">Busque por um cliente</td>
+										</tr>
+										<tr ng-show="(clientes_comanda.length == 0)">
+											<td colspan="3">Nenhum cliente encontrado</td>
+										</tr>
+										<tr ng-repeat="item in clientes_comanda">
+											<td class="text-center">{{ item.id }}</td>
+											<td>{{ item.nome }}</td>
+											<td class="text-center">{{ item.dsc_mesa }}</td>
+											<td class="text-right">R$ {{ item.vlr_total_mesa | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-center" width="50">
+												<button  ng-click="abrirDetalhesComanda(item.id)" class="btn btn-success btn-xs" type="button" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+													<i class="fa fa-check-square-o"></i> Selecionar
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FIM Modal -->		
 
 		<!-- Modal Autorização Exclusão -->
 		<div class="modal fade" id="autorizacao" style="display:none">
