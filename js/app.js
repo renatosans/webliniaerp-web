@@ -954,6 +954,23 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 				ng.cadastro_externo = 0 ;
 			})
 	}
+	ng.aniversariantes_mes = 0;
+	ng.loadAniversariantesMes = function(){
+		aj.get(baseUrlApi()+"cliente/aniversariantes?tue->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config){
+				ng.aniversariantes_mes = data;
+				if(ng.aniversariantes_mes.length > 0) {
+					ng.alertas.push({
+						type: 'warning',
+						message: "Existem "+ ng.aniversariantes_mes.length +" novos aniversariantes esse mês!",
+						link: "rel_aniversariantes.php"
+					});
+				}				
+			})
+			.error(function(data, status, headers, config){
+				ng.aniversariantes_mes = 0 ;
+			})
+	}
 
 	ng.loadCountOrcamentos = function(first_date,last_date) {
 		var vlrTotalVendasPeriodoComparativo = 0 ;
@@ -1118,6 +1135,7 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 	ng.loadPedidosTransferenciaRecebido();
 	ng.loadPedidosTransferenciaTransporte();
 	ng.loadCadastroExterno();
+	ng.loadAniversariantesMes();
 });
 
 app.directive('bsTooltip', function ($timeout) {

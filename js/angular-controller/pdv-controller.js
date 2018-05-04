@@ -823,6 +823,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.efetivarCompra();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -1824,6 +1825,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.vlr_produto_pesado.valor_string = null ;
 		ng.vlr_produto_pesado.valor = null  ;
 		if(ng.busca.codigo != "") {
+			if (!empty(ng.configuracoes.flg_remover_digito_verificador) && ng.configuracoes.flg_remover_digito_verificador == 1) {
+				codigo = codigo.substr(0,codigo.length-1);
+			}
 			if(!empty(ng.configuracoes.cod_identificador_balanca)){
 				var first = Number(ng.busca.codigo.substring(0,1)) ;
 				if(first == Number(ng.configuracoes.cod_identificador_balanca) && ng.busca.codigo.length == 13){
@@ -2100,6 +2104,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.efetivarReforco();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2290,6 +2295,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.efetivarSangria();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2364,6 +2370,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if (status == 406) {
 					ng.caixa_other_operador  = true ;
 					ng.msg_caixa             = data.msg ;
