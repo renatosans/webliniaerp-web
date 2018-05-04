@@ -1043,7 +1043,7 @@
 											<td class="text-middle text-center">
 												<button type="button" ng-click="editar(item)" 
 													data-toggle="tooltip" tooltip="Editar"
-													ng-if="funcioalidadeAuthorized('ver_botao_editar_cliente')"
+													
 													class="btn btn-md btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>

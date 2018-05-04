@@ -1,1 +1,11 @@
-INSERT INTO `weblinia_clientes`.`tbl_modulo` (`nme_modulo`, `tlt_modulo`, `url_modulo`) VALUES ('Planejamento de Plano de Contas', 'Planejamento de Plano de Contas', 'planejamento_plano_contas');
+#880
+	modified:   js/angular-controller/pdv-controller.js
+
+#874 
+	modified:   devolucao.php
+    modified:   js/angular-controller/devolucao-controller.js
+
+#592
+	modified:   controller/ProdutoController.php
+	modified:   dao/ProdutoDao.php
+

@@ -2484,6 +2484,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.total_pg = Math.round( total * 100) /100 ;
 	}
 
+	ng.getTotalPagamento = function(tirar_id_forma_pagamento){
+		var total = 0 ;
+		$.each(ng.recebidos,function(i,v){
+			if($.isNumeric(tirar_id_forma_pagamento) && Number(tirar_id_forma_pagamento) == Number(v.id_forma_pagamento)){
+				total += 0;
+			}
+			else{
+				total += Number(v.valor);
+			}
+		});
+		return  Math.round( total * 100) /100 ;
+	}
+
 	ng.calculaTroco = function(){
 		var troco = 0;
 			troco = ng.total_pg - ng.vlrTotalCompra;
@@ -2496,14 +2509,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.pagamento = {};
 	ng.pg_cheques = [] ;
 	ng.aplicarRecebimento = function(){
-		var restante  = Math.round((ng.vlrTotalCompra - ng.total_pg) * 100) /100 ;
+		if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 2){
+			var restante = Math.round((ng.vlrTotalCompra - ng.getTotalPagamento(ng.pagamento.id_forma_pagamento)) * 100) /100;
+		}else
+			var restante  = Math.round((ng.vlrTotalCompra - ng.total_pg) * 100) /100 ;
+
 		if((ng.pagamento.valor > restante) && (ng.pagamento.id_forma_pagamento != 3) && (ng.modo_venda == 'pdv')){
 			ng.mensagens('alert-warning','<strong>o valor do pagamento utrapassa o valor restante à receber</strong>','.alert-pagamento');
+			$('html,body').animate({scrollTop: 0},'slow');
 			return;
 		}
 
 		if(ng.pagamento.id_forma_pagamento == 7 && ng.pagamento.valor > restante && (ng.modo_venda == 'pdv')){ 
 			ng.mensagens('alert-warning','<strong>o valor do pagamento utrapassa o valor restante à receber</strong>','.alert-pagamento');
+			$('html,body').animate({scrollTop: 0},'slow');
 			return;
 		}
 
@@ -3584,7 +3603,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		$(".boletoData").datepicker();
 		$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
-		$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
+		//$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 	}
 
 	ng.frmPagIsSel= function(id){
@@ -3659,7 +3678,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			valor += Number(v.valor_pagamento);
 		});
 
-		ng.pagamento.valor = valor;
+		ng.pagamento.valor = Math.round( valor * 100) /100;
 	}
 
 	ng.calTotalBoleto = function(){
@@ -3668,7 +3687,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			valor += Number(v.valor_pagamento);
 		});
 
-		ng.pagamento.valor = valor;
+		ng.pagamento.valor = Math.round( valor * 100) /100;;
 	}
 
 	ng.calTotalPromessa = function(){
@@ -3677,7 +3696,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			valor = round((valor + Number(v.valor_pagamento)),2);
 		});
 
-		ng.pagamento.valor = valor;
+		ng.pagamento.valor = Math.round( valor * 100) /100;;
 
 	}
 

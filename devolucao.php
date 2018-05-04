@@ -215,7 +215,7 @@
 												<button type="button" class="btn btn-sm btn-default" ng-click="busca.clientes='';loadClientes(0,10)">Limpar</button>
 											</div>
 											<div class="col-sm-2">
-												<button type="button" class="btn btn-sm btn-success"  ng-click="view.cadastro_novo_cliente = true">Novo cliente</button>
+												<button type="button" class="btn btn-sm btn-success"  ng-click="view.cadastro_novo_cliente = true;setEstadoCidade()">Novo cliente</button>
 											</div>
 										</div>
 										<br>
@@ -295,6 +295,18 @@
 																	<div id="cpf" class="form-group">
 																		<label class="control-label">CPF <span style="color:red;font-weight: bold;">*</span></label>
 																		<input class="form-control" ui-mask="999.999.999-99" ng-model="cliente.cpf"/>
+																	</div>
+																</div>
+																<div class="col-sm-2">
+																	<div id="id_estado" class="form-group">
+																		<label class="control-label">Estado</label>
+																		<select id="id_select_estado" class="form-control input-sm" ng-model="cliente.id_estado" ng-options="item.id as item.nome for item in estados" ng-change="cliente.id_cidade=null;loadCidadesByEstado()"></select>
+																	</div>
+																</div>
+																<div class="col-sm-4">
+																	<div id="id_cidade" class="form-group">
+																		<label class="control-label">Cidade</label>
+																		<select class="form-control input-sm" ng-model="cliente.id_cidade" ng-options="a.id as a.nome for a in cidades"></select>
 																	</div>
 																</div>
 															</div>
