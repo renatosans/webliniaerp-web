@@ -53,7 +53,7 @@
 		.dialog-header-confirm { background-color: #333333; }
 		.dialog-header-error span, .dialog-header-error h4,
 		.dialog-header-wait span, .dialog-header-wait h4,
-		.dialog-header-confirm span, .dialog-header-confirm h4 { color: #ffffff; }
+		.dialog-header-confirm span, .dialog-header-confirm h4 { colofr: #ffffff; }
 
 		/* Ease Display */
 

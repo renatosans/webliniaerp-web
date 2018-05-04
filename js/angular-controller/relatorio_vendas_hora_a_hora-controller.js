@@ -54,17 +54,17 @@ app.controller('RelatorioVendasHoraAHoraController', function($scope, $http, $wi
 		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
 
 		if(dtaInicial != "" && dtaFinal != ""){
-			dtaInicial = moment(dtaInicial,'MM/YYYY').format('YYYY-MM');
-			dtaFinal   =  moment(dtaFinal,'MM/YYYY').format('YYYY-MM');
+			dtaInicial = moment(dtaInicial,'DD/MM/YYYY').format('YYYY-MM-DD');
+			dtaFinal   =  moment(dtaFinal,'DD/MM/YYYY').format('YYYY-MM-DD');
 			//queryString += "&"+$.param({"date_format(data_pagamento,'%Y-%m')":{exp:"BETWEEN '"+dtaInicial+"' AND '"+dtaFinal+"'"}});
 
 		}else if(dtaInicial != ""){
-			dtaInicial = moment(dtaInicial,'MM/YYYY').format('YYYY-MM');
+			dtaInicial = moment(dtaInicial,'DD/MM/YYYY').format('YYYY-MM-DD');
 			dtaFinal = 'null' ;
 			//queryString += "&"+$.param({data_pagamento:{exp:">='"+dtaInicial+"'"}});
 		}else if(dtaFinal != ""){
 			dtaInicial = 'null';
-			dtaFinal =  moment(dtaFinal,'MM/YYYY').format('YYYY-MM');
+			dtaFinal   =  moment(dtaFinal,'DD/MM/YYYY').format('YYYY-MM-DD');
 			//queryString += "&"+$.param({data_pagamento:{exp:"<='"+dtaFinal+"'"}});
 		}
 

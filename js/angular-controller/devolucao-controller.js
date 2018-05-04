@@ -275,38 +275,54 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		var error = 0 ;
 		var btn = $('#btn-lancar-devolucao');
 		btn.button('loading');
+		var msg_erro = '' ;
 
 		var itens_validos = [] ;
 
 		$.each(ng.itens_venda,function(i,v){
-			if(!empty(v.dta_devolvida) || !empty(v.qtd_devolvida)){
-				itens_validos.push(v);
+			if( ( !empty(v.dta_devolvida) || (empty(v.dta_devolvida) && v.flg_controlar_validade == 0)  ) && !empty(v.qtd_devolvida)){
+				itens_validos.push(angular.copy(v));
+			}else{
+				error ++ ;
+				if( empty(v.dta_devolvida) && v.flg_controlar_validade == 1 ){
+					$("#dta_validade-devolvida-"+i)
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", 'informe a validade')
+					.attr("data-original-title", 'informe a validade')
+					.tooltip()
+					.parent()
+					.addClass("has-error");
+				}
+				if(empty(v.qtd_devolvida)){
+					$("#qtd-devolvida-"+i)
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", 'informe a quantidade')
+					.attr("data-original-title", 'informe a quantidade')
+					.tooltip()
+					.parent()
+					.addClass("has-error");
+				}
 			}
+
 		});
+
+	
+		if(error > 0){
+			ng.mensagens('alert-warning','<strong>É necessario informar a quantidade e a data de validade para os produtos que serão devolvidos</strong>','.alert-validade');
+			btn.button('reset');
+			return false ;
+		}
 
 		$.each(itens_validos,function(i,v){
 			if(empty(v.dta_devolvida)){
 				itens_validos[i].dta_validade = '122099';
 				itens_validos[i].dta_devolvida = '122099';
-				//$("#dta_validade-devolvida-"+i).parent().addClass("has-error");
-				//error ++ ;
-			}
-			if(empty(v.qtd_devolvida)){
-				$("#qtd-devolvida-"+i).parent().addClass("has-error");
-				error ++ ;
+
 			}
 		});
 
-		if(itens_validos.length <= 0){
-			ng.mensagens('alert-warning','<strong>É necessario informar a quantidade e a data de validade para os produtos que serão devolvidos</strong>','.alert-validade');
-			btn.button('reset');
-			return ;
-		}
-
-		if(error > 0){
-			btn.button('reset');
-			return false ;
-		}
 
 		var itens_devolucao = [] ;
 		var id_deposito ;

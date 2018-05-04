@@ -9,3 +9,13 @@
 	modified:   controller/ProdutoController.php
 	modified:   dao/ProdutoDao.php
 
+
+
+
+js/angular-controller/relatorio_vendas_hora_a_hora-controller.js
+rel_vendas_hora_a_hora.php
+modified:   controller/ProdutoController.php
+modified:   controller/RelatorioController.php
+modified:   dao/ProdutoDao.php
+modified:   dao/RelatorioDao.php
+modified:   index.php

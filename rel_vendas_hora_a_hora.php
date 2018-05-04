@@ -435,9 +435,9 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var options =  {
-		        format: "mm/yyyy",
+		        format: "dd/mm/yyyy",
 		        language: "pt-BR",
-		        minViewMode: 'months',
+		        //minViewMode: 'months',
 		        clearBtn:true,
 		        multidate:false
 		    }
