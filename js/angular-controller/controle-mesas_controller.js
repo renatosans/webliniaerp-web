@@ -19,6 +19,7 @@ app.controller('ControleMesasController', function(
 		selTipoProduto:false,
 		escProduto:false
 	} ;
+	ng.busca_avancada = {};
 	ng.userLogged.flg_dispositivo = 1;
 	ng.telaAnterior = null ;
 	ng.mesas = [];
@@ -79,6 +80,12 @@ app.controller('ControleMesasController', function(
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 	}
 
+	ng.showPesquisaAvancada = function(){
+		$('#pesquisa-avancada').modal('show');
+		ng.clientes_comanda = null;
+		ng.busca_avancada.nome = "";
+	}
+
 	ng.showAvaliableKitchens = function(){
 		$('#avaliableKitchens').modal('show');
 		$('[data-toggle="tooltip"]').tooltip();
@@ -97,6 +104,24 @@ app.controller('ControleMesasController', function(
 			ng.produto.qtd = 1;
 		else
 			ng.produto.qtd = (parseInt(ng.produto.qtd,10) + 1);
+	}
+
+	ng.loadComandasByCliente = function(){
+		ng.clientes_comanda = [];
+		var queryString = "?usu->id_empreendimento="+ ng.userLogged.id_empreendimento;
+		if (ng.busca_avancada.nome == "" || ng.busca_avancada.nome == null) {
+			return false;
+		}
+		else if (!empty(ng.busca_avancada.nome) || ng.busca_avancada.nome != null) {
+			queryString += "&"+$.param({"(usu->nome":{exp:"like '%"+ng.busca_avancada.nome+"%' OR usu.id_externo = '"+ng.busca_avancada.nome +"')"}});
+		}
+		aj.get(baseUrlApi()+"mesa/comandas/cliente"+queryString)
+		.success(function(data, status, headers, config) {
+				ng.clientes_comanda = data;
+			})
+			.error(function(data, status, headers, config) {
+				ng.clientes_comanda = [];
+			});
 	}
 
 	ng.loadProdutoAdicionais = function() {
@@ -375,6 +400,7 @@ app.controller('ControleMesasController', function(
 	ng.abrirDetalhesComanda = function(id_comanda){
 		ng.changeTela('detComanda');
 		ng.loadComanda(id_comanda);
+		$('#pesquisa-avancada').modal('hide');
 	}
 
 	ng.bucaTipoProduto = function(tipo){

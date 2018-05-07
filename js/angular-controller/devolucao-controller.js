@@ -64,6 +64,7 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.configuracoes = data ;
+				ng.loadPerfis();
 			})
 			.error(function(data, status, headers, config) {
 					ng.caixa_configurado = false ;
@@ -274,38 +275,54 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		var error = 0 ;
 		var btn = $('#btn-lancar-devolucao');
 		btn.button('loading');
+		var msg_erro = '' ;
 
 		var itens_validos = [] ;
 
 		$.each(ng.itens_venda,function(i,v){
-			if(!empty(v.dta_devolvida) || !empty(v.qtd_devolvida)){
-				itens_validos.push(v);
+			if( ( !empty(v.dta_devolvida) || (empty(v.dta_devolvida) && v.flg_controlar_validade == 0)  ) && !empty(v.qtd_devolvida)){
+				itens_validos.push(angular.copy(v));
+			}else{
+				error ++ ;
+				if( empty(v.dta_devolvida) && v.flg_controlar_validade == 1 ){
+					$("#dta_validade-devolvida-"+i)
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", 'informe a validade')
+					.attr("data-original-title", 'informe a validade')
+					.tooltip()
+					.parent()
+					.addClass("has-error");
+				}
+				if(empty(v.qtd_devolvida)){
+					$("#qtd-devolvida-"+i)
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", 'informe a quantidade')
+					.attr("data-original-title", 'informe a quantidade')
+					.tooltip()
+					.parent()
+					.addClass("has-error");
+				}
 			}
+
 		});
+
+	
+		if(error > 0){
+			ng.mensagens('alert-warning','<strong>É necessario informar a quantidade e a data de validade para os produtos que serão devolvidos</strong>','.alert-validade');
+			btn.button('reset');
+			return false ;
+		}
 
 		$.each(itens_validos,function(i,v){
 			if(empty(v.dta_devolvida)){
 				itens_validos[i].dta_validade = '122099';
 				itens_validos[i].dta_devolvida = '122099';
-				//$("#dta_validade-devolvida-"+i).parent().addClass("has-error");
-				//error ++ ;
-			}
-			if(empty(v.qtd_devolvida)){
-				$("#qtd-devolvida-"+i).parent().addClass("has-error");
-				error ++ ;
+
 			}
 		});
 
-		if(itens_validos.length <= 0){
-			ng.mensagens('alert-warning','<strong>É necessario informar a quantidade e a data de validade para os produtos que serão devolvidos</strong>','.alert-validade');
-			btn.button('reset');
-			return ;
-		}
-
-		if(error > 0){
-			btn.button('reset');
-			return false ;
-		}
 
 		var itens_devolucao = [] ;
 		var id_deposito ;
@@ -425,9 +442,115 @@ app.controller('DevolucaoController', function($scope, $http, $window,$dialogs, 
 		},5000);
 	}
 
-	ng.loadConfig();
-	ng.loadPerfis();
-	ng.loadDevolucoes(0,10);
 
+		ng.consultaCep = function(){
+		aj.get("http://api.postmon.com.br/v1/cep/"+ng.cliente.cep)
+		.success(function(data, status, headers, config) {
+
+			ng.cliente.endereco = data.logradouro;
+			ng.cliente.bairro = data.bairro;
+			var estado = ng.getEstado(data.estado);
+			ng.cliente.id_estado = estado.id;
+			ng.loadCidadesByEstado(data.cidade);
+			//ng.cliente.id_cidade = data.cidade_info.codigo_ibge.substr(0,6);
+			$("#num_logradouro").focus();
+			$('#busca-cep').modal('hide');
+		})
+		.error(function(data, status, headers, config) {
+			$('#busca-cep').modal('hide');
+			alert('CEP inválido');
+		});
+	}
+
+	ng.getEstado = function(uf){
+		var estado = null ;
+		$.each(ng.estados,function(i,x){
+			if(x.uf.toUpperCase() == uf.toUpperCase()){
+			    estado = x;
+				return false;
+			}
+		});
+
+		return estado;
+	}
+
+	ng.getCidadeByIBGE = function(id){
+		var cidade = null ;
+		$.each(ng.cidades,function(i,x){
+			if(Number(id) == Number(x.id)){
+			    cidade = x;
+				return false;
+			}
+		});
+
+		return cidade;
+	}
+
+	ng.getEstadoByidIBGE = function(id){
+		var estado = null ;
+		$.each(ng.estados,function(i,x){
+			if(Number(id) == Number(x.id) ){
+			    estado = x;
+				return false;
+			}
+		});
+
+		return estado;
+	}
+
+	ng.loadEstados = function () {
+		ng.estados = [];
+
+		aj.get(baseUrlApi()+"estados")
+		.success(function(data, status, headers, config) {
+			ng.estados = data;
+		})
+		.error(function(data, status, headers, config) {
+
+		});
+	}
+
+	ng.loadCidadesByEstado = function (nome_cidade) {
+		ng.cidades = [];
+		var id_cidade = angular.copy(ng.cliente.id_cidade);
+		aj.get(baseUrlApi()+"cidades/"+ng.cliente.id_estado)
+		.success(function(data, status, headers, config) {
+			ng.cliente.id_cidade = angular.copy(id_cidade);
+			
+			ng.cidades = data;
+			setTimeout(function(){$("select").trigger("chosen:updated");},300);
+			if(nome_cidade != null){
+				$.each(ng.cidades,function(i,x){
+					if(removerAcentos(nome_cidade) == removerAcentos(x.nome)){
+						ng.cliente.id_cidade = angular.copy(x.id);
+						return false ;
+					}
+				});
+			}
+		})
+		.error(function(data, status, headers, config) {
+
+		});
+	}
+
+	ng.setEstadoCidade = function(){
+		var id_empreendimento =  ng.userLogged.id_empreendimento ;
+		var empreendimentos = ng.userLogged.empreendimento_usuario ;
+		var empreendimento = {} ;
+
+		$.each(empreendimentos,function(i,v){
+			if(id_empreendimento == v.id){
+				empreendimento = angular.copy(v) ;
+				return
+			}
+		});
+		console.log(empreendimento);
+		ng.cliente.id_estado = empreendimento.cod_estado ;
+		ng.loadCidadesByEstado(empreendimento.nme_municipio) ;
+	}
+
+	ng.loadEstados();
+	ng.loadConfig();
+	ng.loadDevolucoes(0,10);
 
 });

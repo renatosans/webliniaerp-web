@@ -954,6 +954,11 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 				ng.cadastro_externo = 0 ;
 			})
 	}
+
+	if (ng.config.flg_alerta_cadastro_externo == 1) {
+		ng.loadCadastroExterno();
+	}
+
 	ng.aniversariantes_mes = 0;
 	ng.loadAniversariantesMes = function(){
 		aj.get(baseUrlApi()+"cliente/aniversariantes?tue->id_empreendimento="+ng.userLogged.id_empreendimento)
@@ -1134,7 +1139,6 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 	ng.loadProdutosEstoqueMinimo();
 	ng.loadPedidosTransferenciaRecebido();
 	ng.loadPedidosTransferenciaTransporte();
-	ng.loadCadastroExterno();
 	ng.loadAniversariantesMes();
 });
 

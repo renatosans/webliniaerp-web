@@ -1416,6 +1416,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			return ;
 		}
 
+		if(ng.configuracoes.flg_notificacoes_email != undefined){
+			var item = {
+							nome 				:'flg_notificacoes_email',
+							valor 				:ng.configuracoes.flg_notificacoes_email , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_alerta_cadastro_externo != undefined){
+			var item = {
+							nome 				:'flg_alerta_cadastro_externo',
+							valor 				:ng.configuracoes.flg_alerta_cadastro_externo , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves:chaves, pth_local: ng.config.pth_local} )
 			.success(function(data, status, headers, config) {

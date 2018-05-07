@@ -53,7 +53,7 @@
 		.dialog-header-confirm { background-color: #333333; }
 		.dialog-header-error span, .dialog-header-error h4,
 		.dialog-header-wait span, .dialog-header-wait h4,
-		.dialog-header-confirm span, .dialog-header-confirm h4 { color: #ffffff; }
+		.dialog-header-confirm span, .dialog-header-confirm h4 { colofr: #ffffff; }
 
 		/* Ease Display */
 
@@ -1043,7 +1043,7 @@
 											<td class="text-middle text-center">
 												<button type="button" ng-click="editar(item)" 
 													data-toggle="tooltip" tooltip="Editar"
-													ng-if="funcioalidadeAuthorized('ver_botao_editar_cliente')"
+													
 													class="btn btn-md btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>
