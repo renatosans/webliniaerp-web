@@ -308,6 +308,10 @@
 																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
 																			</li>
 																			<li>
+																				<a href="nota-fiscal.php?id_transferencia={{ nota.cod_transferencia }}" 
+																					ng-show="nota.cod_transferencia">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
 																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
 																					ng-show="nota.cod_venda">
 																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
