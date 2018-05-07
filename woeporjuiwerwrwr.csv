@@ -1,0 +1,134 @@
+cod_plano; dsc_plano
+2.1.1;Estoque Loja
+2.1.1.01;Produtos em Estoque
+2.1.1.01.001;Estoque Matriz
+2.1.1.01.002;Estoque Filial
+3.1.1; Receita Bruta de Vendas Loja Matriz
+3.1.1.01; Receita Bruta de Vendas Loja Matriz
+3.1.1.01.001;Vendas de Produtos - Tabacaria - Matriz
+3.1.1.01.002;Vendas de Produtos - Bebidas - Matriz
+3.1.1.01.003;Vendas de Produtos - Bar - Matriz
+3.1.1.01.004;Vendas de Produtos - Lounge - Matriz
+3.1.1.01.005;Revenda de Produtos - Outros - Matriz
+3.1.1.01.006;Venda a Funcionário - Matriz
+3.1.2; Receita Bruta de Vendas Loja Filial
+3.1.2.01; Receita Bruta de Vendas Loja Filial
+3.1.2.01.001;Vendas de Produtos - Tabacaria - Filial
+3.1.2.01.002;Vendas de Produtos - Bebidas - Filial
+3.1.2.01.003;Vendas de Produtos - Bar - Filial
+3.1.2.01.004;Vendas de Produtos - Lounge - Filial
+3.1.2.01.005;Revenda de Produtos - Outros - Filial
+3.1.2.01.006;Venda a Funcionário - Filial
+3.1.3.01; Devoluções
+3.1.3.01.001;Devolução de Mercadorias
+3.2.1;Outras Receitas
+3.2.1.01;Receita Financeira
+3.2.1.01.001;Rendimento de Aplicações Financeiras
+3.2.1.01.002;Outras Receitas Financeiras
+3.2.1.02;Receitas Diversas
+3.2.1.02.001;Recuperação de Despesa
+3.2.1.02.002;Descontos Obtidos
+4.1.1;Impostos sobre Venda - Loja Matriz
+4.1.1.01;Impostos sobre Vendas Loja Matriz
+4.1.1.01.001;IPI - Matriz
+4.1.1.01.002;ICMS - Matriz
+4.1.1.01.003;PIS - Matriz
+4.1.1.01.004;COFINS - Matriz
+4.1.1.01.005;DAS-MEI - Matriz
+4.1.2;Impostos sobre Venda - Loja Filial
+4.1.2.01;Impostos sobre Vendas Loja Filial
+4.1.1.02.001;IPI - Filial
+4.1.1.02.002;ICMS - Filial
+4.1.1.02.003;PIS - Filial
+4.1.1.02.004;COFINS - Filial
+4.1.1.02.005;DAS-MEI - Filial
+5.1.1;Custo de Mercadoria Vendida - CMV
+5.1.1.01; Custo de Mercadoria Bebidas
+5.1.1.01.001;Custo Wisky
+5.1.1.01.002;Custo Cerveja
+5.1.1.01.003;Custo Vodkas
+5.1.1.01.004;Custo Bebidas Diversas
+5.1.1.02; Custo de Mercadoria Tabacaria
+5.1.1.02.001;Custo Essência
+5.1.1.02.002;Custo Carvão
+5.1.1.02.003;Custo Acessórios Tabacaria Diversos
+5.1.1.03; Custo de Mercadoria Bar
+5.1.1.03.001;Custo Porções
+5.1.1.03.002;Custo Petiscaria
+5.1.1.03.003;Custo Descartáveis
+5.1.1.03.003;Custo Petiscaria Diversos
+5.1.2;Perdas e/ou Quebra
+5.1.2.01;Perdas e/ou Quebra
+5.1.2.01.001;Perda Tabacaria
+5.1.2.01.002;Perda Wisky
+5.1.2.01.003;Perda Cerveja
+5.1.2.01.004;Perda Vodkas
+5.1.2.01.005;Perda Bebidas Diversas
+5.1.2.01.006;Perda Tabacaria
+5.1.2.01.007;Perda Petiscos
+5.1.2.01.007;Perda Outros Itens Danificados/Extraviados
+5.1.3;Custo - Cosumo Loja
+5.1.3.01;Custo - Consumo Loja
+5.1.3.01.001;Consumo Sócios
+5.1.3.01.002;Consumo Funcionário
+5.1.3.01.003;Consumo Clientes
+6.1.1;Despesas Administrativas
+6.1.1.01;Despesas com Pessoal
+6.1.1.01.001;Salário Folha Equipe
+6.1.1.01.002;Adiantamento de Salário Folha Equipe
+6.1.1.01.003;Freelancer
+6.1.1.01.004;Freelancer - Seguranças
+6.1.1.01.005;Pró-Labore Sócios
+6.1.1.01.006;Comissões
+6.1.1.01.007;Férias
+6.1.1.01.008;Décimo Terceiro Salário
+6.1.1.01.009;Horas Extras
+6.1.1.01.010;Aviso Prévio
+6.1.1.01.011;Indenizações Trabalhistas
+6.1.1.01.012;Gratificações
+6.1.1.01.013;INSS
+6.1.1.01.014;FGTS
+6.1.1.01.015;Despesas com Pessoal - Outros
+6.1.1.02;Despesas Administrativas
+6.1.1.02.001;Administração de Sistemas - ERP
+6.1.1.02.002;Combustíveis e Lubrificantes
+6.1.1.02.003;Despesa com Publicidade e Propaganda
+6.1.1.02.004;Despesa com Viagens
+6.1.1.02.005;Despesa Material de Escritório
+6.1.1.02.006;Manutenção Equipamentos TI
+6.1.1.02.007;Serviços de Contabilidade
+6.1.1.02.008;Serviços Diversos - PF
+6.1.1.02.009;Serviços Diversos - PJ
+6.1.1.02.010;Brindes
+6.1.1.02.011;Cursos e Feiras
+6.1.1.02.012;Alimentação Diversas
+6.1.1.02.013;Confraternizações
+6.1.1.02.014;Despesas Administrativa - Outros
+6.1.1.03;Despesas Operacionais
+6.1.1.03.001;Aluguel
+6.1.1.03.002;Energia Elétrica
+6.1.1.03.003;Telefone
+6.1.1.03.004;Água e Esgoto
+6.1.1.03.005;Seguro Predial
+6.1.1.03.006;IPTU
+6.1.1.03.007;Alarme e Monitoramento
+6.1.1.03.008;Fretes e Carretos
+6.1.1.03.009;Manutenção Predial
+6.1.1.03.010;Compra de Equipamentos Predial
+6.1.1.03.011;Serviços Exautores
+6.1.1.03.012;Serviços Ventilação/Ar Condicionado
+6.1.1.03.013;Material de Limpeza
+6.1.1.03.014;Serviços de Limpeza Predial
+6.1.1.04;Despesas Financeiras
+6.1.1.04.001;Despesas Bancárias
+6.1.1.04.002;Tarifas de DOC/TED
+6.1.1.04.003;Juros
+6.1.1.04.004;Multas por Atraso
+6.1.1.05;Impostos, Taxas e Contribuições
+6.1.1.05.001; IPTU
+6.1.1.05.002; IPVA
+6.1.1.05.003; PIS – Demais Receitas
+6.1.1.05.004; Cofins – Demais Receitas
+6.1.1.05.005; Multas Fiscais Compensatórias
+6.1.1.05.006; Multas Fiscais Punitivas
+6.1.1.05.007; Multas Não-Fiscais
