@@ -1,4 +1,4 @@
-app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService) {
+app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService,$sce) {
 	var ng = $scope,
 		aj = $http;
 	ng.mostrar_validades 	= false ;
@@ -54,7 +54,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.promessas_pagamento      = [{status_pagamento:0,data_pagamento:null,valor_pagamento:0}] ;
 	ng.dsc_formas_pagamento     = [] ;
 	ng.dadosOrcamento           = null ;
-	ng.margemAplicada           = {atacado:false,intermediario:false,varejo:true,parceiro:false} ;
+	ng.margemAplicada           = {atacado:false,intermediario:false,intermediario_ii:false,varejo:true,parceiro:false} ;
 
 	ng.dados_venda = {};
 	ng.formas_pagamento = [
@@ -80,12 +80,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.selectMargemAplicadaInicial = function(){
 		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
 			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasIntermediarioII = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario_ii'),
 			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
 
 		if(hasVarejo) {
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: true,
 				parceiro: false
 			};
@@ -93,6 +95,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: true,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: false,
 				parceiro: false
 			};
@@ -100,12 +103,22 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: true,
+				intermediario_ii: false,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(hasIntermediarioII) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				intermediario_ii: true,
 				varejo: false,
 				parceiro: false
 			};
 		} else {
 			ng.margemAplicada = {
 				atacado: false,
+				intermediario: false,
 				intermediario: false,
 				varejo: false,
 				parceiro: true
@@ -232,11 +245,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.produto_taxa_servico.vlr_venda 				= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 						ng.produto_taxa_servico.vlr_venda_atacado 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 						ng.produto_taxa_servico.vlr_venda_intermediario = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
+						ng.produto_taxa_servico.vlr_venda_intermediario_ii = ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 						ng.produto_taxa_servico.vlr_venda_varejo 		= ((ng.vlrTotalCompra * ng.configuracoes.prc_taxa_servico) / 100);
 
 						var ex = ((ng.produto_taxa_servico.vlr_custo) - ng.produto_taxa_servico.vlr_venda) * (-1);
 						ng.produto_taxa_servico.margem_atacado 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
 						ng.produto_taxa_servico.margem_intermediario 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
+						ng.produto_taxa_servico.margem_intermediario_ii 	= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
 						ng.produto_taxa_servico.margem_varejo 			= (ex * 100) / (ng.produto_taxa_servico.vlr_custo);
 
 						ng.produto_taxa_servico.valor_desconto_real = 0;
@@ -357,6 +372,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			produto.vlr_real       		 = produto.vlr_venda_intermediario;
 			produto.perc_margem_aplicada = produto.margem_intermediario;
 			ng.margem_aplicada_venda 	 = 'intermediario';
+		}
+		else if(ng.margemAplicada.intermediario_ii){
+			produto.vlr_unitario		 = produto.vlr_venda_intermediario_ii;
+			produto.vlr_real       		 = produto.vlr_venda_intermediario_ii;
+			produto.perc_margem_aplicada = produto.margem_intermediario_ii;
+			ng.margem_aplicada_venda 	 = 'intermediario_ii';
 		}
 		else if(ng.margemAplicada.parceiro){
 			produto.vlr_unitario    	 = produto.vlr_custo_real;
@@ -635,10 +656,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			pagamentos.push(item);
 
 			}
-
 		}
-
-
 
 		var produtos = angular.copy(ng.carrinho);
 		var venda    = {
@@ -684,9 +702,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		var n_repeat 	  	  = 10 ;
 		var repeat_count      = 0  ;
 		var produtos_enviar   = [] ;
-
-
-
 
 		$.each(produtos,function(index,obj){
 			if(repeat_count >= n_repeat){
@@ -787,8 +802,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				ng.efetivarCompra();
-
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
 						ng.efetivarCompra();
@@ -806,8 +819,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
+				else
+					ng.efetivarCompra();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -1221,6 +1237,106 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.caixa_aberto.flg_imprimir_sat_cfe = 1;
 	}
 
+	ng.changeFlagImprimirNFCe = function() {
+		var actual_value = angular.copy(ng.caixa_aberto.flg_imprimir_nfce);
+		if(parseInt(actual_value, 10) === 1)
+			ng.caixa_aberto.flg_imprimir_nfce = 0;
+		else
+			ng.caixa_aberto.flg_imprimir_nfce = 1;
+	}
+
+	ng.trustSrc = function(src) {
+		return $sce.trustAsResourceUrl(src);
+	}
+
+	ng.printDANFENFCe = function() {
+		window.open($scope.nfce_data.caminho_danfe);
+	}
+
+	ng.processNFCe = function(id_venda, cod_nota_fiscal) {
+		$('#modal-vendas-reenviar-sat').modal('hide');
+		$('#modal-erro-nfce').modal('hide');
+
+		ng.showModalSatCfe('Aguarde, emitindo NFC-e...');
+		
+		var calcular_post_data = { 
+			id_empreendimento : ng.userLogged.id_empreendimento,
+			id_venda          : id_venda,
+			cod_operacao      : ng.caixa_aberto.cod_operacao_padrao_sat_cfe
+		};
+		aj.post(baseUrlApi()+'nfe/calcular', calcular_post_data)
+			.success(function(data, status, headers) {
+				if(!empty(cod_nota_fiscal))
+					data.dados_emissao.cod_nota_fiscal = cod_nota_fiscal;
+
+				data.cod_operacao 		= ng.caixa_aberto.cod_operacao_padrao_sat_cfe;
+				data.id_empreendimento 	= ng.userLogged.id_empreendimento;
+				var processar_nfce_post = {
+					nota: JSON.stringify(data)
+				};
+				aj.post(baseUrlApi()+'nfe/send/NFCe', processar_nfce_post)
+					.success(function(data, status, headers) {
+						ng.resetPdv('inicial',true);
+						$('#modal-sat-cfe').modal('hide');
+						$scope.nfce_data = JSON.parse(data.nota_data);
+						$('#modal-danfe-nfce').modal('show');
+					})
+					.error(function(data, status, headers, config) {
+						ng.resetPdv('inicial',true);
+						$('#modal-sat-cfe').modal('hide');
+						
+						if(!empty(data.erros)) {
+							$scope.erros_nfce = data.erros;
+						}
+						
+						if(!empty(data.body)) {
+							$scope.erros_nfce = [{mensagem: JSON.parse(data.body).mensagem_sefaz}];
+						}
+
+						if(!empty(data.nota_data)) {
+							var nota_data = JSON.parse(data.nota_data);
+							ng.id_venda = nota_data.cod_venda;
+							ng.cod_nota_fiscal = nota_data.cod_nota_fiscal;
+						}
+
+						$('#modal-erro-nfce').modal('show');
+					});
+			})
+			.error(function(data, status, headers, config) {
+				$('#modal-sat-cfe').modal('hide');
+				$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
+			});
+	}
+
+	ng.cancelNFCe = function(cod_nota_fiscal, btn_index) {
+		$('#btn-cancel-nfce-'+ btn_index).button('loading');
+		var cancel_nfce_post = {
+			id_empreendimento: ng.userLogged.id_empreendimento,
+			justificativa: 'Cancelamento de venda pelo PDV.'
+		};
+		aj.post(baseUrlApi()+'nfce/'+ cod_nota_fiscal +'/cancelar', cancel_nfce_post)
+			.success(function(data, status, headers) {
+				ng.resetPdv('inicial',true);
+				$('#btn-cancel-nfce-'+ btn_index).button('reset');
+				alert('NFC-e cancelado com sucesso!');
+			})
+			.error(function(data, status, headers, config) {
+				$('#btn-cancel-nfce-'+ btn_index).button('reset');
+				ng.resetPdv('inicial',true);
+				$('#modal-sat-cfe').modal('hide');
+				
+				if(!empty(data.erros)) {
+					$scope.erros_nfce = data.erros;
+				}
+				
+				if(!empty(data.body)) {
+					$scope.erros_nfce = [{mensagem: JSON.parse(data.body).mensagem}];
+				}
+
+				$('#modal-erro-nfce').modal('show');
+			});
+	}
+
 	ng.gravarMovimentacoes = function(){
 			
 			var id_venda = ng.finalizarOrcamento == true ? ng.id_orcamento : ng.id_venda;
@@ -1245,14 +1361,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					}
 					ng.sendMessageWebSocket(msg);
 				}
-				if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
-					console.log('data.flg_incluir_cpf_sat_cfe: '+ ng.flg_incluir_cpf_sat_cfe);
-					
+
+				if(Number(ng.caixa_aberto.flg_imprimir_nfce) == 1){
+					$('#modal_progresso_venda').modal('hide');
+					ng.processNFCe(ng.id_venda);
+				}
+				else if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
 					if(empty(ng.caixa_open.id_ws_dsk)){
 						$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
-					}else{
+					}
+					else{
 						$('#modal_progresso_venda').modal('hide');
-						ng.showModalSatCfe('Aguarde, imprimindo CF-e SAT...');
+						ng.showModalSatCfe('Aguarde, emitindo CF-e SAT...');
 						var post = { 
 							id_empreendimento : ng.userLogged.id_empreendimento,
 							id_venda          : ng.id_venda,
@@ -1260,42 +1380,40 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						} ;
 
 						aj.post(baseUrlApi()+"nfe/calcular",post)
-						.success(function(data, status, headers) {
-
-							$.each(data.itens,function(i,v){
-								data.itens[i].prod.xProd =  removerAcentosSAT(v.prod.xProd) ;
+							.success(function(data, status, headers) {
+								$.each(data.itens,function(i,v){
+									data.itens[i].prod.xProd =  removerAcentosSAT(v.prod.xProd) ;
+								});
+								data.pdv = {
+									cod_pdv      : ng.caixa_aberto.id_caixa,
+									cod_operador : ng.caixa_aberto.id_operador,
+									nome_operador : ng.caixa_aberto.nome_operador
+								}
+								data.pagamentos = angular.copy(ng.recebidos) ;
+								data.ide = {
+									txt_sign_ac : ng.configuracoes.txt_sign_ac,
+									num_cnpj_sw : ng.configuracoes.num_cnpj_sw
+								};
+								data.flg_incluir_cpf_sat_cfe = ng.flg_incluir_cpf_sat_cfe;
+								console.log('data.flg_incluir_cpf_sat_cfe: '+ data.flg_incluir_cpf_sat_cfe);
+								var dadosWebSocket = {
+									from 		: ng.caixa_open.id_ws_web ,
+									to  		: ng.caixa_open.id_ws_dsk ,
+									type 		: 'satcfe_process',
+									message 	: JSON.stringify(data)
+								};
+								ng.dadosSatCalculados = data ;
+								ng.sendMessageWebSocket(dadosWebSocket);
+							})
+							.error(function(data, status, headers, config) {
+								$('#modal-sat-cfe').modal('hide');
+								$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
 							});
-
-							data.pdv = {
-								cod_pdv      : ng.caixa_aberto.id_caixa,
-								cod_operador : ng.caixa_aberto.id_operador,
-								nome_operador : ng.caixa_aberto.nome_operador
-							}
-							data.pagamentos = angular.copy(ng.recebidos) ;
-							data.ide = {
-								txt_sign_ac : ng.configuracoes.txt_sign_ac,
-								num_cnpj_sw : ng.configuracoes.num_cnpj_sw
-							};
-							data.flg_incluir_cpf_sat_cfe = ng.flg_incluir_cpf_sat_cfe;
-							
-							console.log('data.flg_incluir_cpf_sat_cfe: '+ data.flg_incluir_cpf_sat_cfe);
-
-							var dadosWebSocket = {
-								from 		: ng.caixa_open.id_ws_web ,
-								to  		: ng.caixa_open.id_ws_dsk ,
-								type 		: 'satcfe_process',
-								message 	: JSON.stringify(data)
-							};
-							ng.dadosSatCalculados = data ;
-							ng.sendMessageWebSocket(dadosWebSocket);
-						})
-						.error(function(data, status, headers, config) {
-							$('#modal-sat-cfe').modal('hide');
-							$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
-						});
 					}
-					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
-				}else{
+
+					PrestaShop.send('post', baseUrlApi()+'prestashop/estoque', postPrestaShop);
+				}
+				else{
 					var btn = $('#btn-fazer-compra');
 						btn.button('reset');
 					
@@ -1420,12 +1538,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.setMargemAplicada = function(){
 		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
 			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasIntermediarioII = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario_ii'),
 			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
 
 		if(ng.cliente.perc_venda == "perc_venda_varejo" && hasVarejo) {
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: true,
 				parceiro: false
 			};
@@ -1433,6 +1553,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: true,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: false,
 				parceiro: false
 			};
@@ -1440,6 +1561,15 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: true,
+				intermediario_ii: false,
+				varejo: false,
+				parceiro: false
+			};
+		} else if(ng.cliente.perc_venda == "perc_venda_intermediario_ii" && hasIntermediario) {
+			ng.margemAplicada = {
+				atacado: false,
+				intermediario: false,
+				intermediario_ii: true,
 				varejo: false,
 				parceiro: false
 			};
@@ -1447,6 +1577,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.margemAplicada = {
 				atacado: false,
 				intermediario: false,
+				intermediario_ii: false,
 				varejo: false,
 				parceiro: true
 			};
@@ -1476,6 +1607,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					produto.vlr_real       		 = produto.vlr_venda_intermediario;
 					produto.perc_margem_aplicada = produto.margem_intermediario;	
 					ng.margem_aplicada_venda 	 = 'intermediario';
+				}else if(ng.margemAplicada.intermediario_ii){
+					produto.vlr_unitario		 = produto.vlr_venda_intermediario_ii;
+					produto.vlr_real       		 = produto.vlr_venda_intermediario_ii;
+					produto.perc_margem_aplicada = produto.margem_intermediario_ii;	
+					ng.margem_aplicada_venda 	 = 'intermediario_ii';
 				}else if(ng.margemAplicada.parceiro){
 					produto.vlr_unitario    	 = produto.vlr_custo_real;
 					produto.vlr_real       		 = produto.vlr_custo_real;
@@ -1606,6 +1742,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						prd_modal.vlr_real = prd_modal.vlr_venda_varejo;
 					else if(ng.margemAplicada.intermediario)
 						prd_modal.vlr_real = prd_modal.vlr_venda_intermediario;
+					else if(ng.margemAplicada.intermediario_ii)
+						prd_modal.vlr_real = prd_modal.vlr_venda_intermediario_ii;
 					else if(ng.margemAplicada.parceiro)
 						prd_modal.vlr_real = prd_modal.vlr_custo_real;
 					else
@@ -1687,6 +1825,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.vlr_produto_pesado.valor_string = null ;
 		ng.vlr_produto_pesado.valor = null  ;
 		if(ng.busca.codigo != "") {
+			if (!empty(ng.configuracoes.flg_remover_digito_verificador) && ng.configuracoes.flg_remover_digito_verificador == 1) {
+				codigo = codigo.substr(0,codigo.length-1);
+			}
 			if(!empty(ng.configuracoes.cod_identificador_balanca)){
 				var first = Number(ng.busca.codigo.substring(0,1)) ;
 				if(first == Number(ng.configuracoes.cod_identificador_balanca) && ng.busca.codigo.length == 13){
@@ -1732,6 +1873,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								data.produtos[0].vlr_custo = aux_custo ;
 								data.produtos[0].vlr_custo_real = aux_custo ;
 								data.produtos[0].vlr_venda_intermediario = Number(ng.vlr_produto_pesado.valor) ;
+
+								var aux_gramas = (Number(ng.vlr_produto_pesado.valor) / Number(data.produtos[0].vlr_venda_intermediario_ii)) ;
+								var aux_custo  = aux_gramas * data.produtos[0].vlr_custo_real ;
+								data.produtos[0].vlr_custo = aux_custo ;
+								data.produtos[0].vlr_custo_real = aux_custo ;
+								data.produtos[0].vlr_venda_intermediario_ii = Number(ng.vlr_produto_pesado.valor) ;
 							}
 							ng.incluirCarrinho(data.produtos[0]);
 							if(!empty(ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra) && ng.configuracoes.flg_auto_focus_pesquisa_produtos_codigo_barra == 1) {
@@ -1770,6 +1917,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 			item.vlr_venda_atacado = item.vlr_venda_atacado;
 			item.vlr_venda_intermediario = item.vlr_venda_intermediario;
+			item.vlr_venda_intermediario_ii = item.vlr_venda_intermediario_ii;
 			item.vlr_venda_varejo = item.vlr_venda_varejo;
 
 			ng.incluirCarrinho(angular.copy(item), 'UPDATE');
@@ -1932,9 +2080,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		btn_reforco.button('loading');
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
-			.success(function(data, status, headers, config) {
-				ng.efetivarReforco();
-				
+			.success(function(data, status, headers, config) {				
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
 						ng.efetivarReforco() ;
@@ -1954,8 +2100,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
+				else
+					ng.efetivarReforco();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2123,8 +2272,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 		aj.get(baseUrlApi()+"caixa/aberto/"+ng.userLogged.id_empreendimento+"/"+ng.pth_local+"/"+ng.userLogged.id)
 			.success(function(data, status, headers, config) {
-				ng.efetivarSangria();
-
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
 						ng.efetivarSangria();
@@ -2144,8 +2291,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
+				else
+					ng.efetivarSangria();
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if(status === 404)
 					alert('Caixa fechado, tente salvar a venda novamente!');
 				else
@@ -2220,6 +2370,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}
 			})
 			.error(function(data, status, headers, config) {
+				$('button').button('reset');
 				if (status == 406) {
 					ng.caixa_other_operador  = true ;
 					ng.msg_caixa             = data.msg ;
@@ -2340,6 +2491,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.total_pg = Math.round( total * 100) /100 ;
 	}
 
+	ng.getTotalPagamento = function(tirar_id_forma_pagamento){
+		var total = 0 ;
+		$.each(ng.recebidos,function(i,v){
+			if($.isNumeric(tirar_id_forma_pagamento) && Number(tirar_id_forma_pagamento) == Number(v.id_forma_pagamento)){
+				total += 0;
+			}
+			else{
+				total += Number(v.valor);
+			}
+		});
+		return  Math.round( total * 100) /100 ;
+	}
+
 	ng.calculaTroco = function(){
 		var troco = 0;
 			troco = ng.total_pg - ng.vlrTotalCompra;
@@ -2352,14 +2516,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.pagamento = {};
 	ng.pg_cheques = [] ;
 	ng.aplicarRecebimento = function(){
-		var restante  = Math.round((ng.vlrTotalCompra - ng.total_pg) * 100) /100 ;
+		if(ng.pagamento.id_forma_pagamento == 4 || ng.pagamento.id_forma_pagamento == 2){
+			var restante = Math.round((ng.vlrTotalCompra - ng.getTotalPagamento(ng.pagamento.id_forma_pagamento)) * 100) /100;
+		}else
+			var restante  = Math.round((ng.vlrTotalCompra - ng.total_pg) * 100) /100 ;
+
 		if((ng.pagamento.valor > restante) && (ng.pagamento.id_forma_pagamento != 3) && (ng.modo_venda == 'pdv')){
 			ng.mensagens('alert-warning','<strong>o valor do pagamento utrapassa o valor restante à receber</strong>','.alert-pagamento');
+			$('html,body').animate({scrollTop: 0},'slow');
 			return;
 		}
 
 		if(ng.pagamento.id_forma_pagamento == 7 && ng.pagamento.valor > restante && (ng.modo_venda == 'pdv')){ 
 			ng.mensagens('alert-warning','<strong>o valor do pagamento utrapassa o valor restante à receber</strong>','.alert-pagamento');
+			$('html,body').animate({scrollTop: 0},'slow');
 			return;
 		}
 
@@ -2691,7 +2861,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 
 		if(push){
-			if(ng.pagamento.id_forma_pagamento == 8){
+			if(ng.pagamento.id_forma_pagamento == 8){ // Transferência Bancária
 				var item = {
 								id_forma_pagamento 				 : ng.pagamento.id_forma_pagamento,
 								valor              				 : ng.pagamento.valor,
@@ -2703,7 +2873,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								conta_transferencia              : ng.pagamento.conta_transferencia,
 								proprietario_conta_transferencia : ng.pagamento.proprietario_conta_transferencia,
 								id_conta_transferencia_destino   : ng.pagamento.id_conta_transferencia_destino,
-								id_banco                         : ng.pagamento.id_banco
+								id_banco                         : ng.pagamento.id_banco,
+								cod_governo_bandeira			 : (!empty(ng.pagamento.id_bandeira)) ? (_.findWhere(ng.bandeiras, {id: Number(ng.pagamento.id_bandeira)}).cod_governo) : null,
+								cod_governo_forma_pagamento		 : (!empty(ng.pagamento.cod_governo_forma_pagamento)) ? ng.pagamento.cod_governo_forma_pagamento : null
 						   };
 			}else{
 				var item = {
@@ -2712,11 +2884,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 								id_maquineta	   				 : ng.pagamento.id_maquineta,
 								id_bandeira		   				 : ng.pagamento.id_bandeira,
 								parcelas           				 : ng.pagamento.parcelas,
-								id_vale_troca     				 : ng.pagamento.id_vale_troca
+								id_vale_troca     				 : ng.pagamento.id_vale_troca,
+								cod_governo_bandeira			 : (!empty(ng.pagamento.id_bandeira)) ? (_.findWhere(ng.bandeiras, {id: Number(ng.pagamento.id_bandeira)}).cod_governo) : null,
+								cod_governo_forma_pagamento		 : (!empty(ng.pagamento.cod_governo_forma_pagamento)) ? ng.pagamento.cod_governo_forma_pagamento : null
 						   };
 			}
 
-			item.forma_pagamento = ng.dsc_formas_pagamento[ng.pagamento.id_forma_pagamento] ;
+			item.forma_pagamento = ng.dsc_formas_pagamento[ng.pagamento.id_forma_pagamento];
 			ng.recebidos.push(item);
 		}
 		ng.totalPagamento();
@@ -3436,7 +3610,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		$(".boletoData").datepicker();
 		$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
-		$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
+		//$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 	}
 
 	ng.frmPagIsSel= function(id){
@@ -3447,24 +3621,32 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		return false ;
 	}
 
-	ng.selectChange = function(id){
-		ng.pagamento.id_forma_pagamento = Number(id);
-		if(ng.maquinetas.length == 1) ng.pagamento.id_maquineta = ng.maquinetas[0].id_maquineta ;
-		if(ng.pagamento.id_forma_pagamento == 2){
-			ng.pagamento.valor = 0 ;
-			ng.pagamento.parcelas = ng.cheques.length  > 0 ? ng.cheques.length : 1 ;
-			if(ng.cheques.length > 0)
-				ng.calTotalCheque();
-		}else if(ng.pagamento.id_forma_pagamento == 6){
-			ng.pagamento.parcelas = 1 ;
-		}else if(ng.pagamento.id_forma_pagamento == 4){
-			ng.pagamento.valor = 0 ;
-			ng.pagamento.parcelas = ng.boletos.length  > 0 ? ng.boletos.length : 1 ;
-			if(ng.boletos.length > 0)
-				ng.calTotalBoleto();
-		}	
+	ng.selectChange = function(forma_pagamento){
+		ng.pagamento.id_forma_pagamento = Number(forma_pagamento.id);
+		ng.pagamento.cod_governo_forma_pagamento = forma_pagamento.cod_governo;
 
-		ng.loadBandeiras(id);
+		if(ng.maquinetas.length == 1)
+			ng.pagamento.id_maquineta = ng.maquinetas[0].id_maquineta;
+
+		switch(ng.pagamento.id_forma_pagamento) {
+			case 2: // Cheque
+				ng.pagamento.valor = 0 ;
+				ng.pagamento.parcelas = ng.cheques.length  > 0 ? ng.cheques.length : 1 ;
+				if(ng.cheques.length > 0)
+					ng.calTotalCheque();
+				break;
+			case 6: // Cartão de Crédito
+				ng.pagamento.parcelas = 1;
+				break;
+			case 4: // Boleto Bancário
+				ng.pagamento.valor = 0;
+				ng.pagamento.parcelas = ng.boletos.length  > 0 ? ng.boletos.length : 1 ;
+				if(ng.boletos.length > 0)
+					ng.calTotalBoleto();
+				break;
+		}
+
+		ng.loadBandeiras(forma_pagamento.id);
 		ng.loadDatapicker();
 	}
 
@@ -3503,7 +3685,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			valor += Number(v.valor_pagamento);
 		});
 
-		ng.pagamento.valor = valor;
+		ng.pagamento.valor = Math.round( valor * 100) /100;
 	}
 
 	ng.calTotalBoleto = function(){
@@ -3512,7 +3694,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			valor += Number(v.valor_pagamento);
 		});
 
-		ng.pagamento.valor = valor;
+		ng.pagamento.valor = Math.round( valor * 100) /100;;
 	}
 
 	ng.calTotalPromessa = function(){
@@ -3521,7 +3703,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			valor = round((valor + Number(v.valor_pagamento)),2);
 		});
 
-		ng.pagamento.valor = valor;
+		ng.pagamento.valor = Math.round( valor * 100) /100;;
 
 	}
 
@@ -4027,12 +4209,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					post.xml_envio_base64 = retornoClient.xmlEnvio;
 					post.dados_emissao.cod_nota_fiscal = ng.cod_nota_fiscal_reenviar_sat ;
 					aj.post(baseUrlApi()+"nfe/gravarDadosSat",post)
-					.success(function(data, status, headers, config) {
-						ng.resetPdv('venda',true);
-					})
-					.error(function(data, status, headers, config) {
-						ng.resetPdv('venda',true);
-					});
+						.success(function(data, status, headers, config) {
+							ng.resetPdv('inicial',true);
+						})
+						.error(function(data, status, headers, config) {
+							ng.resetPdv('inicial',true);
+						});
 					break;
 				case 'satcfe_error':
 					$scope.$apply(function () {
@@ -4183,32 +4365,42 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.paginacao.vendas_reenviar_sat = [];
 		ng.vendas_reenviar_sat = null;
 		
-		query = 'SELECT GROUP_CONCAT(id_venda) AS in_venda FROM'+
-				'('+
-					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
-					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
-					'INNER JOIN tbl_abertura_caixa AS tac ON tac.id = tmc.id_abertura_caixa '+
-					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE tac.id_empreendimento = '+ ng.userLogged.id_empreendimento +' AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
-		   query += (!empty(ng.busca.vendas_sat)) ? ' AND tmc.id_venda = ' + ng.busca.vendas_sat + ' ' : '';
-		   query += 'GROUP BY tmc.id_venda '+
-					'ORDER BY tmc.id_venda DESC '+
-				') AS tb ';
-		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
-		.success(function(data, status, headers, config) {
-			aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+data.in_venda+")")
+		query = 'SELECT ven.id as id_venda, tnf.cod_nota_fiscal '+
+				'FROM tbl_vendas AS ven '+
+				'LEFT JOIN tbl_nota_fiscal AS tnf ON tnf.cod_venda = ven.id '+
+				'WHERE ven.id_empreendimento = '+ ng.userLogged.id_empreendimento +' ';
+				'AND ven.flg_excluido = 0 ';
+		
+		if(ng.caixa_aberto.flg_imprimir_sat_cfe)
+			query += 'AND (tnf.flg_sat = 1 OR tnf.flg_sat IS NULL) AND tnf.n_serie_sat IS NULL ';
+		else if(ng.caixa_aberto.flg_imprimir_nfce)
+			query += 'AND (tnf.cod_venda IS NULL OR (tnf.flg_nfce = 1 AND tnf.chave_nfe IS NULL)) ';
+
+		if(!empty(ng.busca.vendas_sat))
+			query += ' AND ven.id = ' + ng.busca.vendas_sat + ' ';
+
+		query += 'GROUP BY ven.id ORDER BY ven.id DESC LIMIT 50';
+
+		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=true")
 			.success(function(data, status, headers, config) {
-				ng.vendas_reenviar_sat = data.vendas;
-				ng.paginacao.vendas_reenviar_sat = data.paginacao ;
+				var vendas_sem_cfe = data;
+				var in_venda = data.map(function(elem){return elem.id_venda}).join(",");
+				aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+ in_venda +")")
+					.success(function(data, status, headers, config) {
+						angular.forEach(data.vendas, function(venda){
+							venda.cod_nota_fiscal = _.findWhere(vendas_sem_cfe, {id_venda: venda.id.toString()}).cod_nota_fiscal;
+						});
+						ng.vendas_reenviar_sat = data.vendas;
+						ng.paginacao.vendas_reenviar_sat = data.paginacao;
+					})
+					.error(function(data, status, headers, config) {
+						ng.paginacao.vendas_reenviar_sat = [];
+						ng.vendas_reenviar_sat = [];
+					});
 			})
 			.error(function(data, status, headers, config) {
-				ng.paginacao.vendas_reenviar_sat = [];
-				ng.vendas_reenviar_sat = [];
+				
 			});
-		})
-		.error(function(data, status, headers, config) {
-			
-		});
 	}
 	ng.process_reeviar_sat = false ;
 	ng.cod_nota_fiscal_reenviar_sat = null ;
@@ -4280,13 +4472,18 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.loadVendasCancelarSat = function(offset, limit){
-		var dta_inicial = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-		var dta_final = moment().format('YYYY-MM-DD HH:mm:ss');
-
 		var query_string  = "?tnf->cod_empreendimento="+ ng.userLogged.id_empreendimento;
 			query_string += "&tnf->status=autorizado";
+
+		if(ng.configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT') {
+			var dta_inicial = moment().subtract(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+			var dta_final = moment().format('YYYY-MM-DD HH:mm:ss');
+			query_string += "&tnf->data_processado_sat[exp]=BETWEEN '"+ dta_inicial +"' AND '"+ dta_final +"'";
 			query_string += "&tnf->flg_sat=1";
-			// query_string += "&tnf->data_processado_sat[exp]=BETWEEN '"+ dta_inicial +"' AND '"+ dta_final +"'";
+		}
+		else if(ng.configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe') {
+			query_string += "&tnf->flg_nfce=1";
+		}
 
 		ng.vendas_cancelar_sat = [];
 		aj.get(baseUrlApi()+"nota_fiscal/sat/"+ offset +"/"+limit +"/"+ query_string)
@@ -4332,8 +4529,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				'('+
 					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
 					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
+					'INNER JOIN tbl_vendas AS ven ON ven.id = tmc.id_venda '+
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE ta.id = '+ng.caixa_aberto.id+' '+
+					'WHERE ta.id = '+ng.caixa_aberto.id+' AND ven.flg_excluido = 0 '+
 					'GROUP BY tmc.id_venda '+
 				') AS tb '+
 				'GROUP BY grp';

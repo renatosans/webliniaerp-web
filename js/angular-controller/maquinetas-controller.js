@@ -1,4 +1,4 @@
-app.controller('MaquinetasController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('MaquinetasController', function($scope, $http, $window, $dialogs, UserService,ConfigService){
 
 	var ng = $scope
 		aj = $http;
@@ -10,11 +10,13 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
     ng.busca               			= {empreendimento:""} ;
     ng.conta                        = {} ;
     ng.maquineta 					= {per_margem_credito:0,per_margem_debito:0} ;
-
+    ng.configuracoes 				= ConfigService.getConfig(ng.userLogged.id_empreendimento);
     ng.taxa_maquineta               = [];
     ng.nova_taxa                    = {id_maquineta:null,qtd_parcelas_inicio:null,qtd_parcelas_fim:null,prc_taxa:null} ;
 
     ng.editing = false;
+
+    ng.taxa_maquineta_por_bandeira = Number(ng.configuracoes.taxa_maquineta_por_bandeira) == 1 ? 1 : 0 ;
 
     ng.showBoxNovo = function(onlyShow){
     	if(onlyShow) {
@@ -97,6 +99,7 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 			if(maquineta.update_taxa.length > 0){
 				$.each(maquineta.update_taxa,function(i,v){
 					maquineta.update_taxa[i].prc_taxa = Number(v.prc_taxa) / 100 ;
+					maquineta.update_taxa[i].prc_taxa_debito = Number(v.prc_taxa_debito) / 100 ;
 				});
 			}
 		}
@@ -104,8 +107,11 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 		if(maquineta.taxas.length > 0){
 			$.each(maquineta.taxas,function(i,v){
 				v.prc_taxa = Number(v.prc_taxa) / 100 ;
+				v.prc_taxa_debito = Number(v.prc_taxa_debito) / 100 ;
 			});
 		}
+
+		maquineta.taxa_maquineta_por_bandeira = ng.taxa_maquineta_por_bandeira ;
 
 
 		aj.post(baseUrlApi()+url, maquineta)
@@ -145,13 +151,29 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 
 		ng.maquineta = angular.copy(item);
 		ng.maquineta.per_margem_debito   = ng.maquineta.per_margem_debito * 100 ;
-		ng.maquineta.per_margem_credito  = ng.maquineta.per_margem_credito * 100 ;
+
+	
 
 		ng.taxa_maquineta  = ng.maquineta.taxas == null ? [] : angular.copy(ng.maquineta.taxas)  ;
 
 		if(ng.taxa_maquineta.length > 0){
 			$.each(ng.taxa_maquineta,function(i,v){
 				ng.taxa_maquineta[i].prc_taxa = Number(v.prc_taxa) * 100 ;
+				if(!empty(ng.taxa_maquineta[i].id_bandeira)){
+					ng.taxa_maquineta[i].prc_taxa_debito = Number(v.prc_taxa_debito) * 100 ;
+				}
+
+				if(!empty(ng.taxa_maquineta[i].id_bandeira)){
+					$.each(ng.taxa_maquineta,function(i,v){
+						$.each(ng.bandeiras,function(x,y){
+							if( !empty(ng.taxa_maquineta[i].id_bandeira) && (Number(y.id ) == Number(ng.taxa_maquineta[i].id_bandeira)) ){
+								ng.taxa_maquineta[i].nome_bandeira = y.nome ;
+								return  ;
+							}
+						});
+					});
+				}
+
 			});
 		}
 		
@@ -223,6 +245,27 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 			});
 	}
 
+	ng.loadBandeiras = function() {
+		ng.bandeiras = [];
+
+		aj.get(baseUrlApi()+"bandeiras?bfp->id_forma_pagamento[exp]=IN(5,6)")
+			.success(function(data, status, headers, config) {
+				var arr = [] ;
+				ng.bandeiras = [] ;
+				$.each(data,function(x,y){
+					if(arr.indexOf(y.id) < 0){
+						arr.push(y.id) ;
+						ng.bandeiras.push(y)
+					}
+				});
+
+				console.log(ng.bandeiras);
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
 	ng.mensagens = function(classe , msg, alertClass){
 		alertClass = alertClass != null  ?  alertClass:'.alert-sistema' ;
 		$(alertClass).fadeIn().addClass(classe).html(msg);
@@ -260,11 +303,24 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 	ng.addtaxa = function(){
 		var taxa = angular.copy(ng.nova_taxa);
 		taxa.prc_taxa = empty(taxa.prc_taxa,false) ? 0 : taxa.prc_taxa  ;
+		taxa.prc_taxa_debito = empty(taxa.prc_taxa_debito,false) ? 0 : taxa.prc_taxa_debito  ;
 		
-		if(empty(taxa.qtd_parcelas_inicio) && empty(taxa.qtd_parcelas_fim) ){
+		if( empty(taxa.qtd_parcelas_inicio) && empty(taxa.qtd_parcelas_fim) && ng.taxa_maquineta_por_bandeira == 0 ){
 			ng.mensagens('alert-danger','Qtd. parcelas início e Qtd. parcelas fim não podem estar fazias juntas','.alert-add-taxa');
 			return false;
 		}
+
+		if(empty(taxa.id_bandeira,false) && ng.taxa_maquineta_por_bandeira == 1){
+			$("#select_id_bandeira").addClass("has-error");
+			var formControl = $("#select_id_bandeira")
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "bottom")
+				.attr("title", 'Informe o valor da taxa')
+				.attr("data-original-title", 'Informe a bandeira');
+			formControl.tooltip();
+			return false;
+		}
+
 		if(empty(taxa.prc_taxa,false)){
 			$("#prc_taxa").addClass("has-error");
 			var formControl = $("#prc_taxa")
@@ -276,10 +332,22 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 			return false;
 		}
 
+		if(empty(taxa.prc_taxa_debito,false) && ng.taxa_maquineta_por_bandeira == 1){
+			$("#prc_taxa_debito").addClass("has-error");
+			var formControl = $("#prc_taxa_debito")
+				.attr("data-toggle", "tooltip")
+				.attr("data-placement", "bottom")
+				.attr("title", 'Informe o valor da taxa')
+				.attr("data-original-title", 'Informe o valor da taxa');
+			formControl.tooltip();
+			return false;
+		}
+
+
 		taxa.qtd_parcelas_inicio = taxa.qtd_parcelas_inicio == null ? 0 : taxa.qtd_parcelas_inicio ;
 		taxa.qtd_parcelas_fim    = taxa.qtd_parcelas_fim    == null ? 0 : taxa.qtd_parcelas_fim ;
 
-		if(empty(ng.validaTaxa(taxa.qtd_parcelas_inicio))){
+		if(empty(ng.validaTaxa(taxa.qtd_parcelas_inicio)) && ng.taxa_maquineta_por_bandeira == 0){
 			$("#inicio_taxa").addClass("has-error");
 			var formControl = $("#inicio_taxa")
 				.attr("data-toggle", "tooltip")
@@ -290,7 +358,7 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 			return false;
 		}
 
-		if(empty(ng.validaTaxa(taxa.qtd_parcelas_fim))){
+		if(empty(ng.validaTaxa(taxa.qtd_parcelas_fim)) && ng.taxa_maquineta_por_bandeira == 0){
 			$("#fim_taxa").addClass("has-error");
 			var formControl = $("#fim_taxa")
 				.attr("data-toggle", "tooltip")
@@ -299,6 +367,15 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 				.attr("data-original-title", 'Este valor já está incluido em outra faixa');
 			formControl.tooltip();
 			return false;
+		}
+
+		if(ng.taxa_maquineta_por_bandeira == 1){
+			$.each(ng.bandeiras,function(i,v){
+				if(Number(taxa.id_bandeira ) == Number(v.id) ){
+					taxa.nome_bandeira = v.nome ;
+					return  ;
+				}
+			});
 		}
 
 		ng.taxa_maquineta.push(taxa);
@@ -320,4 +397,5 @@ app.controller('MaquinetasController', function($scope, $http, $window, $dialogs
 	ng.loadContas(0,100000);
 	ng.loadBancos();
 	ng.loadMaquinetas(0,10);
+	ng.loadBandeiras();
 });

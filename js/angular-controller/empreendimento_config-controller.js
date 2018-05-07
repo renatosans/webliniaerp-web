@@ -29,6 +29,17 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
     	{ value:'epson_tm_t20'			, dsc:'EPSON TM T20' 		}
 	];
 
+	ng.new_dre = [];
+	ng.new_dre.flg_associativo = 1;
+
+	ng.tipos_dre = [
+    	{ value: null		, dsc:'Selecione'},
+    	{ value:'TOP'		, dsc:'Resumo'},
+    	{ value:'SUM'		, dsc:'Soma'},
+    	{ value:'EXPENSE'	, dsc:'Despesa'},
+    	{ value:'REVENUE'	, dsc:'Receita'}
+	];
+
 	ng.status_venda = [
 		{
 			"id": 1,
@@ -89,6 +100,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	ng.tabela_de_vendas = [
 		{value: 0, name: 'atacado', 				label: 'Atacado'},
 		{value: 0, name: 'intermediario', 			label: 'Intermediário'},
+		{value: 0, name: 'intermediario_ii', 		label: 'Intermediário II'},
 		{value: 0, name: 'varejo', 					label: 'Varejo'}
 	];
 
@@ -125,6 +137,50 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 
 	if(typeof parseJSON(ng.cfg.faixas_curva_abc) == 'object')
 		ng.faixas_curva_abc = parseJSON(ng.cfg.faixas_curva_abc);
+
+	ng.loadModelosDRE = function() {
+		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
+		aj.get(baseUrlApi()+"modelo_dre/"+queryString)
+			.success(function(data, status, headers, config) {
+				ng.modelos_dre = data;
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
+
+	ng.saveModeloDRE = function() {
+		var url  = ng.editing ? 'modelo_dre/update/' : 'modelo_dre/save/';
+		var msg  = ng.editing ? 'Modelo DRE Atualizado com sucesso' : 'Modelo DRE salvo com sucesso!';
+		ng.new_dre.id_empreendimento = ng.userLogged.id_empreendimento;
+
+		aj.post(baseUrlApi()+url, ng.new_dre)
+			.success(function(data, status, headers, config) {
+				ng.new_dre = [];
+				ng.new_dre.flg_associativo = 1;
+				ng.editing = false;
+				ng.loadModelosDRE();
+				ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
+
+	ng.editModeloDRE = function(item) {
+		ng.editing = true;
+		ng.new_dre = angular.copy(item);
+		$('html,body').animate({scrollTop: 0 },'slow');
+	}
+
+	ng.deleteModeloDRE = function(item){
+		var msg = 'Modelo DRE excluído com sucesso!'
+		aj.get(baseUrlApi()+"modelo_dre/delete/"+item.id)
+			.success(function(data, status, headers, config) {
+				ng.loadModelosDRE();
+				ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
 
 	ng.addCampoOrdenacao = function(){
 		if(empty(ng.campos_ordenacao_produtos))
@@ -337,6 +393,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(!empty(ng.configuracoes.flg_finalizar_op_pdv) || ng.configuracoes.flg_finalizar_op_pdv == 0 ){
+			var item = {
+				nome 				: 'flg_finalizar_op_pdv',
+				valor 				: ng.configuracoes.flg_finalizar_op_pdv,
+				id_empreendimento	: ng.userLogged.id_empreendimento
+			};
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
@@ -530,6 +595,38 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				valor: JSON.stringify(status_venda),
 				id_empreendimento	: ng.userLogged.id_empreendimento
 			}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_ambiente_nfe != undefined){
+			var item = {
+							nome :'flg_ambiente_nfe',
+							valor:ng.configuracoes.flg_ambiente_nfe , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.id_empresa_focus != undefined){
+			var item = {
+							nome :'id_empresa_focus',
+							valor:ng.configuracoes.id_empresa_focus , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.token_focus_producao != undefined){
+			var item = {
+							nome :'token_focus_producao',
+							valor:ng.configuracoes.token_focus_producao , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.token_focus_homologacao != undefined){
+			var item = {
+							nome :'token_focus_homologacao',
+							valor:ng.configuracoes.token_focus_homologacao , 
+							id_empreendimento: ng.userLogged.id_empreendimento}
 			chaves.push(item);
 		}
 
@@ -811,6 +908,33 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var item3 = {
 							nome 				:'flg_forcar_fechamento_caixa_zero_horas',
 							valor 				:ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
+
+		if(ng.configuracoes.flg_autorizar_exclusao_sem_admin_pdv != undefined){
+			var item3 = {
+							nome 				:'flg_autorizar_exclusao_sem_admin_pdv',
+							valor 				:ng.configuracoes.flg_autorizar_exclusao_sem_admin_pdv , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
+
+		if(ng.configuracoes.flg_remover_digito_verificador != undefined){
+			var item3 = {
+							nome 				:'flg_remover_digito_verificador',
+							valor 				:ng.configuracoes.flg_remover_digito_verificador , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
+		
+		if(ng.configuracoes.flg_agrupar_pagamentos_venda_data_forma_pagamento != undefined){
+			var item3 = {
+							nome 				:'flg_agrupar_pagamentos_venda_data_forma_pagamento',
+							valor 				:ng.configuracoes.flg_agrupar_pagamentos_venda_data_forma_pagamento , 
 							id_empreendimento	:ng.userLogged.id_empreendimento
 						}
 			chaves.push(item3);
@@ -1249,30 +1373,6 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
-		if(ng.configuracoes.flg_ambiente_nfe != undefined){
-			var item = {
-							nome :'flg_ambiente_nfe',
-							valor:ng.configuracoes.flg_ambiente_nfe , 
-							id_empreendimento: ng.userLogged.id_empreendimento}
-			chaves.push(item);
-		}
-
-		if(ng.configuracoes.token_focus_producao != undefined){
-			var item = {
-							nome :'token_focus_producao',
-							valor:ng.configuracoes.token_focus_producao , 
-							id_empreendimento: ng.userLogged.id_empreendimento}
-			chaves.push(item);
-		}
-
-		if(ng.configuracoes.token_focus_homologacao != undefined){
-			var item = {
-							nome :'token_focus_homologacao',
-							valor:ng.configuracoes.token_focus_homologacao , 
-							id_empreendimento: ng.userLogged.id_empreendimento}
-			chaves.push(item);
-		}
-
 		if(ng.configuracoes.patch_socket_sat != undefined){
 			var item = {
 							nome 				:'patch_socket_sat',
@@ -1326,6 +1426,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item);
 		}
+		
+		if(ng.configuracoes.flg_tipo_documento_fiscal_consumidor != undefined){
+			var item = {
+							nome 				:'flg_tipo_documento_fiscal_consumidor',
+							valor 				:ng.configuracoes.flg_tipo_documento_fiscal_consumidor , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
 
 		btn.button('loading');
 		if(empty(ng.lista_serie_documento_fiscal)){
@@ -1365,6 +1474,24 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}else{
 			return ;
+		}
+
+		if(ng.configuracoes.flg_notificacoes_email != undefined){
+			var item = {
+							nome 				:'flg_notificacoes_email',
+							valor 				:ng.configuracoes.flg_notificacoes_email , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		if(ng.configuracoes.flg_alerta_cadastro_externo != undefined){
+			var item = {
+							nome 				:'flg_alerta_cadastro_externo',
+							valor 				:ng.configuracoes.flg_alerta_cadastro_externo , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
 		}
 
 		btn.button('loading');
@@ -1521,6 +1648,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_autorizar_exclusao_sem_admin_controle_mesas != undefined){
+			var item = {
+							nome 				:'flg_autorizar_exclusao_sem_admin_controle_mesas',
+							valor 				:ng.configuracoes.flg_autorizar_exclusao_sem_admin_controle_mesas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
@@ -1635,6 +1771,34 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 				btn.button('reset');
 			});
 
+		
+	}
+
+	ng.salvarConfigMaquientas = function(event){
+		var btn = $(event.target);
+		if(!(btn.is(':button')))
+			btn = $(btn.parent('button'));
+		var chaves = [];
+
+		var taxa_maquineta_por_bandeira = Number(ng.configuracoes.taxa_maquineta_por_bandeira) == 1 ? 1 : 0 ;
+
+		var item = {
+			nome 				:'taxa_maquineta_por_bandeira',
+			valor 				: taxa_maquineta_por_bandeira , 
+			id_empreendimento	:ng.userLogged.id_empreendimento
+		}
+		chaves.push(item);
+	
+		btn.button('loading');
+		aj.post(baseUrlApi()+"configuracao/save/",{ chaves:chaves, pth_local: ng.config.pth_local} )
+			.success(function(data, status, headers, config) {
+				btn.button('reset');
+				ng.mensagens('alert-success', 'Configurações atualizadas com sucesso','.alert-config-maquinetas');
+				ng.loadConfig();
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+			});
 		
 	}
 
@@ -1889,6 +2053,55 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		});
 	}
 
+	ng.saveMotivoBaixaManual = function(){
+		if (!empty(ng.motivo.dsc_motivo)) {
+			var url  = ng.editingBM ? 'motivo_baixa_manual_estoque/update/' : 'motivo_baixa_manual_estoque/save/';
+			var msg  = ng.editingBM ? 'Motivo Atualizado com sucesso' : 'Motivo salvo com sucesso!';
+
+			ng.motivo.id_empreendimento = ng.userLogged.id_empreendimento;
+			ng.motivo.flg_excluido = 0;
+			aj.post(baseUrlApi()+url, ng.motivo)
+				.success(function(data, status, headers, config) {
+					ng.motivo = [];
+					ng.editingBM = false;
+					ng.loadMotivosBaixaManual();
+					ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+				})
+				.error(function(data, status, headers, config) {
+				});
+		}
+	}
+
+	ng.editMotivoBaixaManual = function(item) {
+		ng.editingBM = true;
+		ng.motivo = angular.copy(item);
+		$('html,body').animate({scrollTop: 300 },'slow');
+	}
+
+	ng.loadMotivosBaixaManual = function(){
+		var queryString = "?id_empreendimento="+ng.userLogged.id_empreendimento;
+		queryString += "&flg_excluido=0";
+		aj.get(baseUrlApi()+"motivo_baixa_manual_estoque"+queryString)
+			.success(function(data, status, headers, config) {
+				ng.motivos = data;
+			})
+			.error(function(data, status, headers, config) {
+				ng.motivos = [];
+			});		
+	}
+
+	ng.deleteMotivoBaixaManual = function(item){
+		var msg = 'Motivo excluído com sucesso!'
+		item.flg_excluido = 1;
+		aj.post(baseUrlApi()+"motivo_baixa_manual_estoque/update/", item)
+			.success(function(data, status, headers, config) {
+				ng.loadMotivosBaixaManual();
+				ng.mensagens('alert-success','<strong>'+msg+'</strong>');
+			})
+			.error(function(data, status, headers, config) {
+			});
+	}
+
 	ng.existsAtualizacaoEmMassa();
 	ng.loadPerfis();
 	ng.loadEmpreendimento(ng.userLogged.id_empreendimento);
@@ -1905,5 +2118,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 	ng.loadPlanoContas();
 	ng.loadPlanoContasSelect();
 	ng.loadFormasPagamento();
+	ng.loadModelosDRE();
+	ng.loadMotivosBaixaManual();
 
 });

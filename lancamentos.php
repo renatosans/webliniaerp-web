@@ -262,7 +262,7 @@
 													<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_transferencia" class="datepicker form-control text-center" ng-model="dta_pagamento">
 													<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 												</div>
-											</div>
+											</div>	
 										</div>
 									</div>
 									<div class="row">
@@ -290,7 +290,7 @@
 												<input class="form-control text-right" type="text" name="valor" ng-model="transferencia.vlr_transferencia" thousands-formatter>
 											</div>
 										</div>
-
+										
 									</div>
 									<div class="row">
 										<div class="col-sm-8">
@@ -513,7 +513,7 @@
 										</div>
 
 									</div>
-									<div class="row" ng-show="pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 11" ng-repeat="item in boletos">
+									<div class="row" ng-show="pagamento.id_forma_pagamento == 4" ng-repeat="item in boletos">
 										<div class="col-sm-3">
 											<div class="form-group boleto_data">
 												<label class="control-label">Data</label>
@@ -607,16 +607,70 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="row">
+									<div class="col-sm-12">
+										<button type="button" class="btn btn-sm btn-default" ng-click="detalhar = !detalhar">
+											Detalhar
+											<i ng-if="detalhar==false" class="fa fa-sort-down"></i>
+											<i ng-if="detalhar==true" class="fa fa-sort-up"></i>
+										</button>
+										<br/><br/>
+										<table ng-if="detalhar==true" class="table table-bordered table-condensed table-striped table-hover">
+											<thead>
+												<tr>
+													<td colspan="2"><i class="fa fa-list-ol	"></i> Detalhamento</td>
+													<td width="60" align="center">
+														<button class="btn btn-xs btn-primary" ng-click="showModalDetalhamento()"><i class="fa fa-plus-circle"></i></button>
+													</td>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-show="(pagamento.detalhamento.length == 0) || (pagamento.detalhamento.length == undefined)">
+													<td colspan="3" align="center">Nenhum detalhamento lançado</td>
+												</tr>
+												<tr ng-repeat="item in pagamento.detalhamento">
+													<td>{{ item.nome_plano_conta }}</td>
+													<td>{{ item.valor | numberFormat:2:',':'.' }}</td>
+													<td align="center">
+														<button class="btn btn-xs btn-danger" ng-click="delDetalhamento($index)"><i class="fa fa-trash-o"></i></button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+
 					    		<div class="row">
 					    			<div class="col-sm-12 text-center">
-					    				<label class="control-label">&nbsp</label>
+					    				<label class="control-label">&nbsp;</label>
 						    			<div class="form-group ">
-						    				<button type="button" class="btn btn-md btn-primary btn-block"   ng-click="aplicarRecebimento()">Receber</button>
+						    				<button type="button" class="btn btn-md btn-primary btn-block" ng-click="aplicarRecebimento()">Receber</button>
 						    			</div>
 						    		</div>
 								</div>
 							</div>
 							<div class="col-sm-3">
+								<div class="form-group">
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="controls">
+												<label class="control-label">&nbsp;</label>
+											</div>
+											<div>
+												<button class="btn btn-default btn-upload btn-sm">
+													<i class="fa fa-pdf-o"></i> Importar Comprovante
+													<input type="file" data-model="anx"></input>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12" ng-if="(anexo_comprovante.anx)">
+											<p>{{ anexo_comprovante.anx.name }}</p>
+										</div>
+									</div>
+								</div>
 								<table class="table table-bordered table-condensed table-striped table-hover">
 									<thead ng-show="(clientes.length != 0)">
 										<tr>
@@ -819,8 +873,8 @@
 							<div class="alert alert-delete" style="display:none"></div>
 						</div>
 					</div>
-
-					<div class="row">
+					<span ng-if="(msg_error)" class="alert alert-warning }}">{{ msg_error }}</span>
+					<div class="row" ng-show="(pagamentos != null)">
 						<div class="col-sm-12">
 							<div class="form-group" id="container-tabela" style="overflow: auto">
 								<table id="tabela-lancamentos" class="table table-condensed table-bordered table-hover table-sm">
@@ -961,6 +1015,13 @@
                                                 <a ng-if="item.id_forma_pagamento == 11 && item.url_boleto" href="{{ item.url_boleto }}" target="_blank" tooltip="Boleto" data-toggle="tooltip" class="btn btn-xs">
                                                     <i class="fa fa-external-link"></i>
                                                 </a>
+												<button type="button" ng-click="showAnexo(item)" ng-if="!(item.pth_anexo)" tooltip="Ver/Download Anexo" class="btn btn-xs btn-primary" data-toggle="tooltip" disabled>
+													<i class="fa fa-paperclip"></i>
+												</button>
+												<button type="button" ng-click="showAnexo(item)" ng-if="(item.pth_anexo)" tooltip="Ver/Download Anexo" class="btn btn-xs btn-primary" data-toggle="tooltip">
+													<i class="fa fa-paperclip"></i>
+												</button>
+
 												<!--<button type="button" ng-click="editar(item)" tooltip="Editar" data-toggle="tooltip" class="btn btn-xs btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>-->
@@ -1072,10 +1133,10 @@
 									<tr ng-hide="dataGroups.length <= 0 || dataGroups == null">
 										<td colspan="{{ (config_table.groupPerDay) ? calculaColspan(3) : calculaColspan(4) }}" class="text-right">Saldo Final</td>
 										<td class="text-right">
-
+											
 										</td>
 										<td class="text-right">
-
+											
 										</td>
 										<td class="text-right">
 											<span class="text-{{ (((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) > 0) ? 'success' : ((((saldo_anterior_receita.vlr_total_despesa - saldo_anterior_despesa.vlr_total_despesa ) + vlr_total_periodo) < 0) ? 'danger' : 'primary') }}">
@@ -1572,7 +1633,7 @@
 			</div>
 			<!-- /.modal-dialog -->
 		</div>
-
+		
 		<!-- /Modal Print-->
 		<div class="modal fade" id="modal-print-lancamento" style="display:none"  data-keyboard="false">
   			<div class="modal-dialog error modal-lg">
@@ -1694,17 +1755,17 @@
 								<label class="label-checkbox">
 									<input type="checkbox" ng-model="config_table.boleto">
 									<span class="custom-checkbox"></span>
-									Boleto
+									Boleto	
 								</label>
-								<label class="label-checkbox">
+								<label class="label-checkbox"> 
 									<input type="checkbox" ng-model="config_table.transferencia">
 									<span class="custom-checkbox"></span>
-									Tranferência
+									Tranferência 	
 								</label>
-								<label class="label-checkbox">
+								<label class="label-checkbox"> 
 									<input type="checkbox" ng-model="config_table.observacao">
 									<span class="custom-checkbox"></span>
-									Observação
+									Observação 	
 								</label>
 							</div>
 
@@ -1750,7 +1811,7 @@
 			</div>
 		</div>
 		<!-- /.modal -->
-
+		
 		<!-- /Modal modal_change_date_pagamento-->
 		<div class="modal fade" id="modal_change_date_pagamento" style="display:none">
   			<div class="modal-dialog error modal-lg">
@@ -1770,7 +1831,7 @@
 										<span class="custom-radio"></span>
 										<span class="text-danger">Despesa</span>
 									</label>
-
+									
 									<label class="label-radio inline">
 										<input name="flg_tipo_lancamento" ng-model="pagamento_edit.flg_tipo_lancamento" ng-click="changeIdLancamento('C')" value="C" type="radio" class="inline-radio">
 										<span class="custom-radio"></span>
@@ -1797,22 +1858,22 @@
 						</div>
 						<div class="row">
 							<div class="col-sm-6">
-								<div class="form-group"
+								<div class="form-group" 
 									ng-show="pagamento_edit.flg_tipo_lancamento == 'D'"
-									np-autocomplete="npAutocompleteFornecedorOptions"
+									np-autocomplete="npAutocompleteFornecedorOptions" 
 									ng-model="pagamento_edit.id_clienteORfornecedor">
 									<label class="control-label" style="color: #777 !important;">Fornecedor</label>
 									<input class="form-control" id="txtNomeFornecedor" type="text" style="border-color: #ccc !important; box-shadow: none !important;"/>
 								</div>
-								<div class="form-group"
+								<div class="form-group" 
 									ng-show="pagamento_edit.flg_tipo_lancamento == 'C'"
-									np-autocomplete="npAutocompleteClienteOptions"
+									np-autocomplete="npAutocompleteClienteOptions" 
 									ng-model="pagamento_edit.id_clienteORfornecedor">
 									<label class="control-label" style="color: #777 !important;">Cliente</label>
 									<input class="form-control" id="txtNomeCliente" type="text" style="border-color: #ccc !important; box-shadow: none !important;"/>
 								</div>
 							</div>
-
+						
 					    	<div class="col-sm-3">
 								<div class="form-group" id="id_conta_bancaria">
 									<label class="control-label">Conta Bancária</label>
@@ -1841,7 +1902,7 @@
 										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_vencimento" class="datepicker form-control text-center">
 										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
-								</div>
+								</div>	
 							</div>
 							<div class="col-lg-3">
 								<div class="form-group">
@@ -1850,7 +1911,7 @@
 										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_competencia" class="datepicker form-control text-center">
 										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
-								</div>
+								</div>	
 							</div>
 							<div class="col-lg-3">
 								<div class="form-group">
@@ -1859,10 +1920,10 @@
 										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_change_pagamento" class="datepicker form-control text-center">
 										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 									</div>
-								</div>
+								</div>	
 							</div>
 					    </div>
-
+					    
 						<div class="row">
 					    	<div class="col-sm-2">
 					    		<div class="form-group">
@@ -1986,16 +2047,16 @@
 						</div>
 		    		</div>
 					<div class="modal-footer" style="   margin-top: 0px;">
-				    	<button type="button"
-				    			data-loading-text=" Aguarde..."
-				    			ng-click="cancelarModal('modal_change_date_pagamento')"
+				    	<button type="button" 
+				    			data-loading-text=" Aguarde..." 
+				    			ng-click="cancelarModal('modal_change_date_pagamento')" 
 				    			id="btn-aplicar-reforco"
 				    		class="btn btn-md  btn-danger fechar-modal">
 				    		</i> Cancelar
 				    	</button>
-				    	<button type="button"
-			    			data-loading-text=" Aguarde..."
-			    			ng-click="updateStatusLancamento(pagamento_edit)"
+				    	<button type="button" 
+			    			data-loading-text=" Aguarde..." 
+			    			ng-click="updateStatusLancamento(pagamento_edit)" 
 			    			id="btn-aplicar-reforco"
 			    			class="btn btn-md btn-success fechar-modal">
 				    		</i> Salvar
@@ -2007,6 +2068,88 @@
 			<!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<!-- /Modal Processando Pagamento-->
+		<div class="modal fade" id="modal_add_detalhamento" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+      					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Detalhar Valor - {{ pagamento.valor | numberFormat:2:',':'.' }} </h4>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="alert alert-detalhamento alert-warning"  ng-show="mensagem_detalhamento != ''" ng-bind-html="mensagem_detalhamento">
+
+				    	</div>
+				    	<div class="row">
+				    		<div class="col-sm-8">
+									<div class="form-group">
+										<label class="ccontrol-label">Plano de conta </label>
+										<select chosen ng-change="ClearChosenSelect('cod_regime_tributario')"
+										option="plano_contas"
+										ng-model="novo_detalhamento.id_plano_conta"
+										ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-3">
+								<label class="control-label">Valor</label>
+								<div class="form-group ">
+									<input ng-model="novo_detalhamento.valor" thousands-formatter type="text" class="form-control text-right" />
+								</div>
+							</div>
+				    	</div>
+				    </div>
+				    <div class="modal-footer">
+		    	<button type="button" id="btn-salvar-detalhe-pagamento" class="btn btn-primary btn-sm"
+		    		ng-click="addDetalhePagamento(true)">
+		    		<i class="fa fa-save"></i> Salvar e ficar
+	    		</button>
+	    		<button type="button" id="btn-salvar-detalhe-pagamento" class="btn btn-primary btn-sm"
+		    		ng-click="addDetalhePagamento()">
+		    		<i class="fa fa-save"></i> Salvar
+	    		</button>
+		    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		<!-- Footer
 		================================================== -->

@@ -183,7 +183,7 @@
 										</select>
 									</div>
 								</div>
-								<div class="col-sm-2">
+								<div class="col-sm-2" ng-if="taxa_maquineta_por_bandeira == 0" >
 									<div class="form-group" id="per_margem_debito">
 										<label class="control-label">Margem débito</label>
 										<input thousands-formatter  ng-model="maquineta.per_margem_debito" class="form-control"/>
@@ -196,7 +196,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="row">
+							<div class="row" ng-if="taxa_maquineta_por_bandeira == 0" >
 								<div class="col-sm-12">
 									<table class="table table-bordered table-condensed table-striped table-hover">
 										<thead>
@@ -225,6 +225,45 @@
 												<td>{{ item.qtd_parcelas_inicio }}</td>
 												<td>{{ item.qtd_parcelas_fim }}</td>
 												<td>{{ item.prc_taxa | numberFormat:2:',':'.' }}%</td>
+												<td align="center">
+													<button type="button" ng-click="deleteTaxa($index,item)" tooltip="Excluir" class="btn btn-xs btn-danger delete" data-toggle="tooltip">
+														<i class="fa fa-trash-o"></i>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="row" ng-if="taxa_maquineta_por_bandeira == 1" >
+								<div class="col-sm-12">
+									<table class="table table-bordered table-condensed table-striped table-hover">
+										<thead>
+											<tr>
+												<th colspan="3">Taxas de crédito</th>
+												<th width="50" class="text-center">
+													<button  ng-click="modalAddtaxa()" class="btn btn-xs btn-primary"><i class="fa fa-plus-circle"></i></button>
+												</th>
+											</tr>
+										</thead>
+										<tr ng-if="taxa_maquineta.length <= 0">
+											<td class="text-center" colspan="6">
+												Não há nenhuma taxa cadastrada.
+											</td>
+										</tr>
+										<thead ng-show="taxa_maquineta.length > 0" >
+											<tr>
+												<th>Bandeira</th>
+												<th>Taxa crédito</th>
+												<th>taxa débito</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="item in taxa_maquineta">
+												<td>{{ item.nome_bandeira }}</td>
+												<td>{{ item.prc_taxa | numberFormat:2:',':'.' }}%</td>
+												<td>{{ item.prc_taxa_debito | numberFormat:2:',':'.' }}%</td>
 												<td align="center">
 													<button type="button" ng-click="deleteTaxa($index,item)" tooltip="Excluir" class="btn btn-xs btn-danger delete" data-toggle="tooltip">
 														<i class="fa fa-trash-o"></i>
@@ -329,7 +368,7 @@
 				    <div class="modal-body">
 				    	<div class="alert alert-add-taxa" style="display:none"></div>
 
-				    	<div class="row">
+				    	<div class="row" ng-if="taxa_maquineta_por_bandeira == 0">
 				    		<div class="col-sm-4" id="inicio_taxa">
 				    			<label class="control-label">Qtd. parcelas início</label>
 				    			<div class="form-group ">
@@ -348,8 +387,32 @@
 				    					<input ng-model="nova_taxa.prc_taxa" thousands-formatter type="text"  class="form-control input-sm" >
 				    			</div>
 				    		</div>
-
 				    	</div>
+
+				    	<div class="row" ng-if="taxa_maquineta_por_bandeira == 1">
+				    		<div class="col-sm-4">
+								<div class="form-group" id="select_id_bandeira">
+									<label class="control-label">Bandeira</label>
+									<select  ng-model="nova_taxa.id_bandeira" class="form-control">
+									<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{item.nome}}</option>
+									</select>
+								</div>
+							</div>
+				    		<div class="col-sm-4" id="prc_taxa">
+				    			<label class="control-label">Taxa de crédito</label>
+				    			<div class="form-group ">
+				    					<input ng-model="nova_taxa.prc_taxa" thousands-formatter type="text"  class="form-control input-sm" >
+				    			</div>
+				    		</div>
+
+				    		<div class="col-sm-4" id="prc_taxa_debito">
+				    			<label class="control-label">Taxa de débito</label>
+				    			<div class="form-group ">
+				    					<input ng-model="nova_taxa.prc_taxa_debito" thousands-formatter type="text"  class="form-control input-sm" >
+				    			</div>
+				    		</div>
+				    	</div>
+
 				    </div>
 
 				    <div class="modal-footer">

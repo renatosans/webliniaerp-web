@@ -198,11 +198,28 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-sm-4">
+									<div class="form-group">
+										<label class="control-label">Motivo</label>
+										<select allow-single-deselect="true"
+											    ng-model="estoqueSaida.id_motivo"
+											    ng-options="item.id as item.dsc_motivo for item in motivos"
+											    class="form-control">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12">
+									<label class="control-label">Descrição</label>
+									<div class="form-group">
+										<textarea class="form-control" rows="3" ng-model="estoqueSaida.descricao"></textarea>
+									</div>
+								</div>
 							</div>
 							<div class="row" >
 								<div class="col-sm-12">
 									<div class="produtos form-group" id="produtos">
-										
 											<table class="table table-bordered table-condensed table-striped table-hover">
 												<thead>
 													<tr>

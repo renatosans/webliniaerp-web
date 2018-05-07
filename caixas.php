@@ -194,76 +194,44 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<div class="panel panel-default" id="box-novo">
-										<div class="panel-heading"><i class="fa fa-sitemap"></i> Depositos</div>
-										<div class="panel-body">
-											<table class="table table-bordered table-condensed table-striped table-hover">
-												<thead>
-													<tr>
-														<td width="60" class="text-center">#</td>
-														<td>Deposito</td>
-														<td width="120" class="text-center">Ordem de saida</td>
-														<td width="60" align="center">
-															<button class="btn btn-xs btn-primary" ng-click="modalDepositos()"><i class="fa fa-plus-circle"></i></button>
-														</td>
-													</tr>
-													<tr ng-if="conta.depositos == null">
-														<td colspan="4" class="text-center">
-															<i class='fa fa-refresh fa-spin'></i> Carregando...
-														</td>
-													</tr>
-													<tr ng-if="conta.depositos.length == 0">
-														<td colspan="4" class="text-center">
-															Nenhum deposito vinculado ao caixa 
-														</td>
-													</tr>
-													<tr ng-repeat="item in conta.depositos | orderBy:'ordem_saida' | emptyToEnd:'ordem_saida'"> 
-														<td class="text-center">{{ item.id_deposito }} </td>
-														<td>{{ item.nme_deposito }} </td>
-														<td class="text-center" ng-class="{'has-error':item.tooltip.init}">
-															<input ng-model="item.ordem_saida" ng-blur="tirarErrorTooltip(item)"  controll-tooltip="item.tooltip" ng-change="verificarOrdemSaida(item,$index)" id="input-ordem-saida-{{ $index }}" somente-numeros style="width:60px;margin:0 auto" class="form-control input-xs text-center">
-														</td>
-														<td align="center">
-															<button class="btn btn-xs btn-danger" ng-click="delDeposito($index,item)"><i class="fa fa-trash-o"></i></button>
-														</td>
-													</tr>
-												</thead>
-											</table>	
-										</div>
-									</div>
+									<table class="table table-bordered table-condensed table-striped table-hover">
+										<caption><i class="fa fa-sitemap"></i> Depositos</caption>
+										<thead>
+											<tr>
+												<td width="60" class="text-center">#</td>
+												<td>Deposito</td>
+												<td width="120" class="text-center">Ordem de saida</td>
+												<td width="60" align="center">
+													<button class="btn btn-xs btn-primary" ng-click="modalDepositos()"><i class="fa fa-plus-circle"></i></button>
+												</td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-if="conta.depositos == null">
+												<td colspan="4" class="text-center">
+													<i class='fa fa-refresh fa-spin'></i> Carregando...
+												</td>
+											</tr>
+											<tr ng-if="conta.depositos.length == 0">
+												<td colspan="4" class="text-center">
+													Nenhum deposito vinculado ao caixa 
+												</td>
+											</tr>
+											<tr ng-repeat="item in conta.depositos | orderBy:'ordem_saida' | emptyToEnd:'ordem_saida'"> 
+												<td class="text-center">{{ item.id_deposito }} </td>
+												<td>{{ item.nme_deposito }} </td>
+												<td class="text-center" ng-class="{'has-error':item.tooltip.init}">
+													<input ng-model="item.ordem_saida" ng-blur="tirarErrorTooltip(item)"  controll-tooltip="item.tooltip" ng-change="verificarOrdemSaida(item,$index)" id="input-ordem-saida-{{ $index }}" somente-numeros style="width:60px;margin:0 auto" class="form-control input-xs text-center">
+												</td>
+												<td align="center">
+													<button class="btn btn-xs btn-danger" ng-click="delDeposito($index,item)"><i class="fa fa-trash-o"></i></button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-2">
-									<div class="form-group" id="flg_imprimir_sat_cfe">
-										<label for="" class="control-label">Emitir SAT CF-e?</label>
-										<div class="form-group">
-											<label class="label-radio inline">
-												<input ng-model="conta.flg_imprimir_sat_cfe" value="0" type="radio" class="inline-radio">
-												<span class="custom-radio"></span>
-												<span>Não</span>
-											</label>
-
-											<label class="label-radio inline">
-												<input ng-model="conta.flg_imprimir_sat_cfe" value="1" type="radio" class="inline-radio">
-												<span class="custom-radio"></span>
-												<span>Sim</span>
-											</label>
-										</div>
-									</div>
-								</div>
-
-								<div class="col-sm-5" ng-show="conta.flg_imprimir_sat_cfe == 1" >
-									<div class="form-group" id="cod_operacao_padrao_sat_cfe">
-										<label class="control-label">Operação</label> 
-										<select chosen
-									    option="lista_operacao"
-									    ng-model="conta.cod_operacao_padrao_sat_cfe"
-									    ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
-										</select>
-									</div>
-								</div>
-								
 								<div class="col-sm-3" >
 									<div class="form-group">
 										<label class="control-label">Modelo de Impressora</label> 
@@ -271,6 +239,58 @@
 									    	option="impressoras"
 									    	ng-model="conta.mod_impressora"
 									    	ng-options="item.value as item.dsc for item in impressoras">
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-2" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')">
+									<div class="form-group" id="flg_imprimir_nfce">
+										<label for="" class="control-label">Emitir NFC-e?</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input type="radio" class="inline-radio" value="0"
+													ng-model="conta.flg_imprimir_nfce">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+
+											<label class="label-radio inline">
+												<input type="radio" class="inline-radio" value="1"
+													ng-model="conta.flg_imprimir_nfce">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-2" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')">
+									<div class="form-group" id="flg_imprimir_sat_cfe">
+										<label for="" class="control-label">Emitir SAT CF-e?</label>
+										<div class="form-group">
+											<label class="label-radio inline">
+												<input type="radio" class="inline-radio" value="0"
+													ng-model="conta.flg_imprimir_sat_cfe">
+												<span class="custom-radio"></span>
+												<span>Não</span>
+											</label>
+
+											<label class="label-radio inline">
+												<input type="radio" class="inline-radio" value="1"
+													ng-model="conta.flg_imprimir_sat_cfe">
+												<span class="custom-radio"></span>
+												<span>Sim</span>
+											</label>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-sm-5">
+									<div class="form-group" id="cod_operacao_padrao_sat_cfe">
+										<label class="control-label">Operação Padrão</label>
+										<select chosen option="lista_operacao"
+									    	ng-model="conta.cod_operacao_padrao_sat_cfe"
+											ng-disabled="(conta.flg_imprimir_nfce == 0 && conta.flg_imprimir_sat_cfe == 0)"
+									    	ng-options="operacao.cod_operacao as operacao.dsc_operacao for operacao in lista_operacao">
 										</select>
 									</div>
 								</div>

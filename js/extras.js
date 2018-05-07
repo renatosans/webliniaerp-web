@@ -1,3 +1,7 @@
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
 
 document.write(unescape("%3Cscript src='js/constants.js' type='text/javascript'%3E%3C/script%3E"));
 

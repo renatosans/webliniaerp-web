@@ -163,6 +163,7 @@
 					<a href="inventario.php" class="btn btn-primary"><i class="fa fa-tags"></i> Inventário</a>
 					<a href="baixa_estoque.php" class="btn btn-primary"><i class="fa fa-caret-square-o-down"></i> Baixa Manual</a>
 					<a href="pedido_transferencia.php" class="btn btn-primary"><i class="fa fa-arrows-h"></i> Transferência</a> 
+					<a href="posicao_estoque.php" class="btn btn-primary"><i class="fa fa-caret-square-o-down"></i> Posição de Estoque</a>
 					<a href="ordem_producao.php" class="btn btn-primary"><i class="fa fa-wrench"></i> Ordem de Produção</a>
 					<a href="zera-estoque.php" class="btn btn-danger"><i class="fa fa-trash-o"></i> Limpeza de Estoque</a>
 				</div><!-- /page-title -->
@@ -195,6 +196,40 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-sm-3">
+									<div class="form-group">
+										<label class="control-label"><br/></label>
+										<div class="controls">
+											<button id="loadXMLButton" type="button" class="btn btn-sm btn-info" 
+												ng-click="loadDataFromXML()" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Aguarde, carregando...">
+												<i class="fa fa-file-code-o"></i> Carregar dados a partir do XML da NF-e
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-4">
+									<div class="form-group">
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="controls">
+													<label class="control-label">&nbsp;</label>
+												</div>
+												<div>
+													<button class="btn btn-default btn-upload btn-sm">
+														<i class="fa fa-pdf-o"></i> Importar PDF
+														<input type="file" data-model="pdf" accept=".pdf"></input>
+													</button>
+												</div>
+											</div>
+											<div class="col-sm-8">
+												<div class="controls">
+													<label class="control-label">&nbsp;</label>
+												</div>
+												<p>{{ nota.pdf.name }}</p>
+											</div>
+										</div>
+									</div>
+								</div>
 
 								<!--<div class="col-sm-3">
 									<div class="form-group">
@@ -216,17 +251,6 @@
 									</div>
 								</div>-->
 
-								<div class="col-sm-4">
-									<div class="form-group">
-										<label class="control-label"><br/></label>
-										<div class="controls">
-											<button id="loadXMLButton" type="button" class="btn btn-sm btn-info" 
-												ng-click="loadDataFromXML()" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Aguarde, carregando...">
-												<i class="fa fa-file-code-o"></i> Carregar dados a partir do XML da NF-e
-											</button>
-										</div>
-									</div>
-								</div>
 							</div>
 						</form>
 						
@@ -465,7 +489,7 @@
 												<td class="text-center">
 													<button type="button" class="btn btn-xs btn-danger"
 														tooltip="Excluir duplicata" data-toggle="tooltip"
-														ng-if="(!dup.xml)">
+														ng-click="deleteDuplicata(dup)">
 														<i class="fa fa-trash-o"></i>
 													</button>
 												</td>
@@ -474,22 +498,19 @@
 									</table>
 								</div>
 
-								<div class="col-sm-4" ng-if="(nota.duplicatas)">
-									<div class="row">
-										<div class="col-lg-12">
+								<div class="col-sm-7" ng-if="(nota.duplicatas)">
+									<div class="row" style="height: 300px">
+										<div class="col-lg-6">
 											<div class="form-group" id="id_conta_bancaria_duplicatas">
 												<label class="control-label">Conta Bancária p/ Lançamento das Duplicatas</label>
-												<select chosen
+												<select  chosen
 													option="contas_bancarias"
 													ng-model="nota.id_conta_bancaria_duplicatas"
 													ng-options="conta.id as conta.dsc_conta_bancaria for conta in contas_bancarias">
 												</select>
 											</div>
 										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
+										<div class="col-lg-6">
 											<div class="form-group" id="id_plano_contas_duplicatas">
 												<label class="control-label">Plano de Contas p/ Lançamento das Duplicatas</label>
 												<select chosen
@@ -612,7 +633,7 @@
 									<th>Total NF-e</th>
 									<th width="100">Pedido</th>
 									<th>Depósito</th>
-									<th width="80" style="text-align: center;">Detalhes</th>
+									<th width="80" style="text-align: center;">Ações</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -633,6 +654,9 @@
 									<td align="center">
 										<button type="button" ng-click="showDetalhes(item)" tooltip="Detalhes" class="btn btn-xs btn-info" data-toggle="tooltip">
 											<i class="fa fa-tasks"></i>
+										</button>
+										<button type="button" ng-click="showPDF(item)" tooltip="Detalhes" class="btn btn-xs btn-primary" data-toggle="tooltip">
+											<i class="fa fa-file-pdf-o"></i>
 										</button>
 									</td>
 								</tr>
@@ -677,7 +701,7 @@
 					            		</button>
 
 					            		<button type="button" class="btn btn-sm btn-info" 
-					            			ng-click="enableNewFormProduto = !enableNewFormProduto">
+					            			ng-click="enableNewFormProduto = !enableNewFormProduto; loadItens()">
 						            		<i class="fa {{ (!enableNewFormProduto) ? 'fa-plus-circle' : 'fa-minus-circle' }} "></i> Cadastrar
 						            	</button>
 						            </div> <!-- /input-group-btn -->
@@ -711,7 +735,7 @@
 									<label class="control-label">
 										Tamanho
 									</label>
-									<select chosen option="tamanhos"
+									<select class="form-control" option="tamanhos"
 										ng-change="clearChosenSelect('tamanho', 'id')"
 										ng-model="new_produto.id_tamanho"
 										ng-options="tamanho.id as tamanho.nome_tamanho for tamanho in tamanhos">
@@ -724,7 +748,7 @@
 									<label class="control-label">
 										Sabor/Cor
 									</label>
-									<select chosen option="cores"
+									<select class="form-control" option="cores"
 										ng-change="clearChosenSelect('cor', 'id')"
 										ng-model="new_produto.id_cor"
 										ng-options="cor.id as cor.nome_cor for cor in cores">
@@ -739,7 +763,7 @@
 									<label class="control-label">
 										Fabricante
 									</label>
-									<select chosen option="fabricantes"
+									<select class="form-control" option="fabricantes"
 										ng-change="clearChosenSelect('fabricante', 'id')"
 										ng-model="new_produto.id_fabricante"
 										ng-options="fabricante.id as fabricante.nome_fabricante for fabricante in fabricantes">
@@ -752,11 +776,29 @@
 									<label class="control-label">
 										Categoria
 									</label>
-									<select chosen option="categorias"
+									<select class="form-control" option="categorias"
 										ng-change="clearChosenSelect('categoria', 'id')"
 										ng-model="new_produto.id_categoria"
 										ng-options="categoria.id as categoria.descricao_categoria for categoria in categorias">
 									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label for="" class="control-label">Unidade de Medida</label>
+									<div class="form-group">
+										<label class="label-radio inline">
+											<input ng-model="new_produto.flg_unidade_fracao"  name="unidade_fracao" value="0" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Unidade</span>
+										</label>
+										<label class="label-radio inline">
+											<input ng-model="new_produto.flg_unidade_fracao"  name="unidade_fracao" value="1" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Fração</span>
+										</label>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -767,7 +809,7 @@
 									<label class="control-label">
 										Forma de Aquisição
 									</label>
-									<select chosen option="formas_aquisicao"
+									<select class="form-control" option="formas_aquisicao"
 										ng-change="clearChosenSelect('forma_aquisicao', 'cod')"
 										ng-model="new_produto.cod_forma_aquisicao"
 										ng-options="forma_aquisicao.cod_controle_item_nfe as forma_aquisicao.nme_item for forma_aquisicao in formas_aquisicao">
@@ -780,7 +822,7 @@
 									<label class="control-label">
 										Origem da Mercadoria
 									</label>
-									<select chosen option="origens_mercadoria"
+									<select class="form-control" option="origens_mercadoria"
 										ng-change="clearChosenSelect('origem_mercadoria', 'cod')"
 										ng-model="new_produto.cod_origem_mercadoria"
 										ng-options="origem_mercadoria.cod_controle_item_nfe as origem_mercadoria.nme_item for origem_mercadoria in origens_mercadoria">
@@ -793,7 +835,7 @@
 									<label class="control-label">
 										Tipo de Tributação IPI
 									</label>
-									<select chosen option="tipos_tributacao_ipi"
+									<select class="form-control" option="tipos_tributacao_ipi"
 										ng-change="clearChosenSelect('tipo_tributacao_ipi', 'cod')"
 										ng-model="new_produto.cod_tipo_tributacao_ipi"
 										ng-options="tipo_tributacao_ipi.cod_controle_item_nfe as tipo_tributacao_ipi.nme_item for tipo_tributacao_ipi in tipos_tributacao_ipi">
@@ -808,7 +850,7 @@
 									<label class="control-label">
 										Regra de Tributação
 									</label>
-									<select chosen option="regras_tributacao"
+									<select class="form-control" option="regras_tributacao"
 										ng-change="clearChosenSelect('regra_tributos', 'cod')"
 										ng-model="new_produto.cod_regra_tributos"
 										ng-options="regra_tributos.id as regra_tributos.nome_regra_tributos for regra_tributos in regras_tributacao">
@@ -840,6 +882,21 @@
 										Unidade Medida
 									</label>
 									<input class="form-control input-sm" ng-model="new_produto.dsc_unidade_medida"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" ng-show="enableNewFormProduto">
+							<div class="col-sm-5">
+								<div class="form-group">
+									<label class="control-label">
+										Natureza
+									</label>
+									<select chosen
+										option="plano_contas"
+										ng-model="new_produto.id_natureza"
+										ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+									</select>
 								</div>
 							</div>
 						</div>
@@ -935,7 +992,7 @@
 										<div class="col-sm-4">
 											<div class="form-group" id="nme_fornecedor">
 												<label class="control-label">Validade (Mês/Ano)</label>
-												<input type="text" class="form-control" ui-mask="99/9999" ng-model="itemValidade.validade" ng-blur="validarDataValidade(itemValidade.validade)">
+												<input type="text" class="form-control" ui-mask="99/9999" ng-model="itemValidade.validade" ng-blur="validarDataValidade(itemValidade.validade);">
 											</div>
 										</div>
 
@@ -970,8 +1027,13 @@
 									</thead>
 									<tbody>
 										<tr ng-repeat="item in produto.validades">
-											<td>{{ item.validade | dateFormat:'date-m/y'}}</td>
-											<td>{{ item.qtd }}</td>
+											<td>
+												<input type="text" class="form-control" ui-mask="99/9999" ng-model="item.validade" ng-blur="validarDataValidade(itemValidade.validade)">
+											</td>
+											<td>
+												<input type="text" class="form-control" ng-model="item.qtd" ng-if="produto.flg_unidade_fracao != 1">
+												<input type="text" class="form-control" ng-model="item.qtd" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
+											</td>
 											<td align="center">
 												<button type="button" class="btn btn-xs btn-danger" ng-click="deleteValidadeItem($index)"><i class="fa fa-trash-o"></i></button>
 											</td>
@@ -980,6 +1042,15 @@
 								</table>
 				   			</div>
 				   		</div>
+				    </div>
+				    <div class="modal-footer clearfix">
+				    	<div class="pull-right">
+				    		<button type="button" 
+				    			class="btn btn-sm btn-info form-control" 
+				    			ng-click="atualizaQtdValidadeItens()">
+				    			<i class="fa fa-refresh"></i> Atualizar quantidades
+			    			</button>
+				    	</div>
 				    </div>
 			  	</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->

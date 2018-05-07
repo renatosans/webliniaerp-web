@@ -13,6 +13,8 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 	ng.busca		   = {nome:"" , id_categoria:null, id_fabricante:null};
 	ng.paginacao       = {grade:null}; 
 
+	ng.sendEmailPdf = false ;
+	ng.emailSendPdfVenda = [] ;
 
     ng.showBoxNovo = function(onlyShow){
     	ng.editing = !ng.editing;
@@ -165,18 +167,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 
 		ng.cliente.empreendimentos 		= [{id:ng.id_empreendimento}];
 		ng.cliente.id_empreendimento 	= ng.id_empreendimento ;
-		/*if(empty(ng.configuracoes)){
-			ng.configuracoes = ConfigService.getConfig(ng.id_empreendimento);
 
-			var emails_notificacoes = !empty(ng.configuracoes.emails_notificacoes) ? JSON.parse(ng.configuracoes.emails_notificacoes) : false ;
-			$.each(emails_notificacoes,function(i,v){
-				emails_notificacoes[i] = {
-					nome : '',
-					email: v
-				};
-			});
-		}
-		*/
 		var btn = $('#btn-salvar');
    		btn.button('loading');
 		ng.removeError();
@@ -190,6 +181,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 		 }
 
 		 cliente.status = 1 ;
+		 cliente.flg_cadastro_externo = 1 ;
 		 
 		 if(cliente.dta_nacimento != null && cliente.dta_nacimento.length == 8 ){
 		 	var data = cliente.dta_nacimento;
@@ -233,6 +225,7 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 		 		ng.mensagens('alert-success','<strong>'+msg+'</strong>');
 		 		$('form').hide();
    				btn.button('reset');
+   				///ng.enviarEmailPdfVenda();
 		 		ng.reset();
 
 		 	})
@@ -262,6 +255,39 @@ app.controller('CadastroController', function($scope, $http, $window, $dialogs, 
 		 			});
 		 		}
 		 	});
+	}
+
+	ng.enviarEmailPdfVenda = function(){
+		if(empty(ng.configuracoes)){
+			ng.configuracoes = ConfigService.getConfig(ng.id_empreendimento);
+
+			var emails = !empty(ng.configuracoes.emails_notificacoes) ? JSON.parse(ng.configuracoes.emails_notificacoes) : false ;
+			$.each(emails,function(i,v){
+				emails[i] = {
+					nome : '',
+					email: v
+				};
+			});
+		}
+
+		var assunto =  'Novo Cliente' ;
+		var corpo = 'teste';
+		var post = {
+			assunto : assunto,
+			corpo : corpo,
+			destinatarios : emails ,
+			form_data : { url_pdf : ng.url_pdf }
+		}
+
+		aj.post(baseUrlApi()+"email/send",post)
+		.success(function(data, status, headers, config) {
+			ng.mensagens('alert-success','<b>Email enviado com sucesso</b>','#alert-enviar-email-comprovante-pdf');
+			ng.emailSendPdfVenda = [] ;
+		})
+		.error(function(data, status, headers, config) {
+			ng.mensagens('alert-danger','<b>Ocorreu um erro ao enviar o email</b>','#alert-enviar-email-comprovante-pdf');
+		});
+
 	}
 
 	ng.removeError = function(){

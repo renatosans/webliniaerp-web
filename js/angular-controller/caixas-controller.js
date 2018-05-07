@@ -1,4 +1,4 @@
-app.controller('CaixasController', function($scope, $http, $window, $dialogs, UserService){
+app.controller('CaixasController', function($scope, $http, $window, $dialogs, UserService, ConfigService){
 
 	var ng = $scope
 		aj = $http;
@@ -8,13 +8,14 @@ app.controller('CaixasController', function($scope, $http, $window, $dialogs, Us
     ng.contas    					= [];
     ng.paginacao           			= {conta:null} ;
     ng.busca               			= {empreendimento:""} ;
-    ng.conta                        = {depositos:[]} ;
+    ng.conta                        = {depositos:[], flg_imprimir_ncfe: 0, flg_imprimir_sat_cfe: 0} ;
     ng.impressoras                  = [
     	{ value: null					, dsc:'Selecione' 			},
     	{ value:'bematech_mp_2500_th'	, dsc:'BEMATECH MP-2500 TH' },
     	{ value:'bematech_mp_4200_th'	, dsc:'BEMATECH MP-4200 TH' },
     	{ value:'epson_tm_t20'			, dsc:'EPSON TM T20' 		}
 	];
+	ng.configuracoes 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 
     ng.editing = false;
 

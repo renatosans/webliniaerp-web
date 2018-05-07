@@ -1,18 +1,21 @@
-ALTER TABLE `tbl_produtos`
-	ADD COLUMN `flg_controlar_validade` INT(1) NULL DEFAULT '0' AFTER `flg_controlar_lote`;
+#880
+	modified:   js/angular-controller/pdv-controller.js
+
+#874 
+	modified:   devolucao.php
+    modified:   js/angular-controller/devolucao-controller.js
+
+#592
+	modified:   controller/ProdutoController.php
+	modified:   dao/ProdutoDao.php
 
 
-modified:   "altera\303\247\303\265es_chamados.txt"
-modified:   js/angular-controller/pdv-controller.js
-modified:   js/angular-controller/produtos-controller.js
-modified:   js/constants.js
-modified:   pdv.php
-modified:   produtos.php
-modified:   util/constants.php
 
 
- modified:   controller/ProdutoController.php
- modified:   controller/VendaController.php
- modified:   dao/EstoqueDao.php
- modified:   dao/ProdutoDao.php
-    modified:   model/ProdutoTO.php
+js/angular-controller/relatorio_vendas_hora_a_hora-controller.js
+rel_vendas_hora_a_hora.php
+modified:   controller/ProdutoController.php
+modified:   controller/RelatorioController.php
+modified:   dao/ProdutoDao.php
+modified:   dao/RelatorioDao.php
+modified:   index.php

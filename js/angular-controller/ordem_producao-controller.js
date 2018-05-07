@@ -14,7 +14,33 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 
     ng.editing = false;
 
-    $('#sizeToggle').trigger("click");
+    ng.isFullscreen = false;
+	ng.resizeScreen = function() {
+		if(!ng.isFullscreen){
+			$("#map_canvas").css("height", 700);
+			$("footer").addClass("hide");
+			$(".main-header").addClass("hide");
+			$("#wrapper").css("min-height", "0px");
+			$("#main-container").css("min-height", "0px");
+			$("#main-container").css("margin-left", 0).css("padding-top", 45);
+			//$("#top-nav").toggle();
+			$("aside").toggle();
+			$("#breadcrumb").toggle();
+			ng.isFullscreen = !ng.isFullscreen;
+		}
+		else {
+			$("#map_canvas").css("height", 600);
+			$("footer").removeClass("hide");
+			$(".main-header").removeClass("hide");
+			$("#wrapper").css("min-height", "800px");
+			$("#main-container").css("min-height", "800px");
+			$("#main-container").css("margin-left", 194).css("padding-top", 45);
+			//$("#top-nav").toggle();
+			$("aside").toggle();
+			$("#breadcrumb").toggle();
+			ng.isFullscreen = !ng.isFullscreen;
+		}
+	}
 
     ng.mensagens = function(classe , msg, alertClass){
 		alertClass = alertClass != null  ?  alertClass:'.alert-sistema' ;
@@ -183,8 +209,8 @@ app.controller('OrdemProducaoController', function($scope, $http, $window, $dial
 
 		aj.get(baseUrlApi()+"ordem_producao/"+ offset +"/"+ limit +"/"+query_string)
 			.success(function(data, status, headers, config) {
-				ng.ordem_producao = data.ordem_producao;
-				ng.paginacao.ordem_producao = data.paginacao;
+				ng.ordem_producao = data;
+				// ng.paginacao.ordem_producao = data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404) {

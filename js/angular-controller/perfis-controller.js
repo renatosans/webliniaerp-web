@@ -36,6 +36,7 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 
 		var hasAtacado = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'atacado'),
 			hasIntermediario = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario'),
+			hasIntermediarioII = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'intermediario_ii'),
 			hasVarejo = TabelaPrecoService.existeTabelaPreco(ng.userLogged.id_empreendimento, 'varejo');
 
 		if(hasAtacado) {
@@ -49,6 +50,13 @@ app.controller('PerfisController', function($scope, $http, $window, $dialogs, Us
 			ng.chosen_perc_venda.push({
 				dsc: 'Intermediario',
 				vlr: 'perc_venda_intermediario'
+			});
+		}
+
+		if(hasIntermediarioII) {
+			ng.chosen_perc_venda.push({
+				dsc: 'Intermediario II',
+				vlr: 'perc_venda_intermediario_ii'
 			});
 		}
 

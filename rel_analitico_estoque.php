@@ -185,21 +185,28 @@
 									</div>
 								</div>
 
-								<div class="col-lg-2">
+								<div class="col-sm-2">
 									<div class="form-group">
 										<label class="control-label"><br></label>
 										<button type="button" class="form-control btn btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 									</div>
 								</div>
 
-								<div class="col-lg-2">
+								<div class="col-sm-2">
 									<div class="form-group">
 										<label class="control-label"><br></label>
 										<button type="button" class="form-control btn btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 									</div>
 								</div>
 
-								<div class="col-lg-2">
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label class="control-label"><br></label>
+										<button class="form-control btn btn-success" ng-click="doExportExcel()"><i class="fa fa-file-excel-o"></i> Exportar</button>
+									</div>
+								</div>								
+
+								<div class="col-sm-2">
 									<div class="form-group">
 										<label class="control-label"><br></label>
 										<button class="form-control btn btn-success hidden-print" ng-show="itens.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>

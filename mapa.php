@@ -231,7 +231,7 @@
 	<script src="js/extras.js"></script>
 
 	<!-- Google Maps API -->
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyANVfzQYwKLB7LJuKBi4_aoCj9n52ZYi-U"></script>
 
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>

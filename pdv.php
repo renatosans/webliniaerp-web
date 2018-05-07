@@ -34,6 +34,7 @@
 
 	<!-- Bower Components -->	
 	<link href="bower_components/noty/lib/noty.css" rel="stylesheet">
+	<link href="bower_components/print-js/dist/print.min.css" rel="stylesheet">
 
 	<!-- Endless -->
 	<link href="css/endless.min.css" rel="stylesheet">
@@ -182,7 +183,8 @@
 					<div class="panel-heading">
 						<i class="fa fa-desktop"></i>
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-primary hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -207,7 +209,8 @@
 					<div class="panel-heading">
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -231,7 +234,8 @@
 					<div class="panel-heading">
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-warning hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -255,7 +259,8 @@
 					<div class="panel-heading">
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa
-						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"></i>
 						<div class="btn-group pull-right">
 							<a href="#" class="btn btn-xs btn-danger hidden-xs" ng-click="resizeScreen()">
 								<i class="fa fa-arrows-alt"></i> Tela Inteira
@@ -283,7 +288,8 @@
 					<div class="panel-heading">
 						<i class="fa fa-desktop"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
-						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}" ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"></i>
 					</div>
 
 
@@ -333,7 +339,11 @@
 							ng-class="{'text-danger':  (status_websocket == 0), 'text-warning': (status_websocket == 1), 'text-success': (status_websocket == 2)}"></i> 
 						Frente de Caixa | PDV - {{ caixa.dsc_conta_bancaria }}
 						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_sat_cfe == 1) ? 'text-success' : 'text-danger' }}"
+							ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"
 							ng-click="changeFlagImprimirSATCFe()"></i>
+						<i class="fa fa-circle {{ (caixa_aberto.flg_imprimir_nfce == 1) ? 'text-success' : 'text-danger' }}"
+							ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"
+							ng-click="changeFlagImprimirNFCe()"></i>
 						<div class="btn-group"  style="margin-left: 40px;" >
 							<i class="fa fa-user"></i> Vendedor - {{ vendedor.nome_vendedor }}
 						</div>
@@ -351,8 +361,22 @@
 								<li><a href="vendas.php"><i class="fa fa-signal"></i> Minhas Vendas</a></li>
 								<li><a ng-if="modo_venda == 'est'" href="#" ng-click="abrirVenda('pdv')"><i class="fa fa-desktop"></i> Nova Venda (Modo Loja)</a></li>
 								<li><a ng-if="modo_venda == 'pdv'" href="#" ng-click="abrirVenda('est')"><i class="fa fa-desktop"></i> Nova Venda (Modo Depósito)</a></li>
-								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalListaReenviarSat()"><i class="fa fa-file-text-o"></i> Reprocessar Cupom SAT</a></li>
-								<li ng-show="caixa_aberto.flg_imprimir_sat_cfe == 1"><a href="#" ng-click="modalCancelarCupomSat()"><i class="fa fa-times-circle"></i> Cancelar Cupom SAT</a></li>
+								<li ng-show="(caixa_aberto.flg_imprimir_sat_cfe == 1 || caixa_aberto.flg_imprimir_nfce == 1)">
+									<a href="#" ng-click="modalListaReenviarSat()">
+										<i class="fa fa-file-text-o"></i>
+										Reprocessar Cupom
+										<span ng-if="(caixa_aberto.flg_imprimir_sat_cfe)">SAT</span>
+										<span ng-if="(caixa_aberto.flg_imprimir_nfce)">NFC-e</span>
+									</a>
+								</li>
+								<li ng-show="(caixa_aberto.flg_imprimir_sat_cfe == 1 || caixa_aberto.flg_imprimir_nfce == 1)">
+									<a href="#" ng-click="modalCancelarCupomSat()">
+										<i class="fa fa-times-circle"></i> 
+										Cancelar Cupom
+										<span ng-if="(caixa_aberto.flg_imprimir_sat_cfe)">SAT</span>
+										<span ng-if="(caixa_aberto.flg_imprimir_nfce)">NFC-e</span>
+									</a>
+								</li>
 								<li ng-show="caixa_aberto"><a href="#" ng-click="showModalReimpressaoCNF()"><i class="fa fa-file-text-o"></i> Re-imprimir Cupom Não Fiscal</a></li>
 								<li ng-show="finalizarOrcamento == false"><a href="#" ng-click="pagamentoFulso()"><i class="fa fa-money"></i> Pagamento</a></li>
 								<li class="hidden-lg"><a href="#" ng-click="resizeScreen()"><i class="fa fa-arrows-alt"></i>Tela Inteira</a></li>
@@ -391,7 +415,7 @@
 			    				<div class="row" ng-repeat="(key,formas) in formas_pagamento">
 					    			<div class="col-sm-3" ng-repeat="forma in formas" >
 					    				<a id="btn-logar" class="bounceIn btn btn-block btn-default btn-sm" ng-class="{'active':frmPagIsSel(forma.id)}"  data-loading-text=" Aguarde..."
-					    					ng-click="selectChange(forma.id)"
+					    					ng-click="selectChange(forma)"
 					    					style="word-wrap: break-word; white-space: inherit; padding-left: 5px; padding-right: 5px; min-height: 92px; margin-bottom: 10px;">
 					    					<i class="fa fa-3x {{ forma.icon }}" style="margin-bottom: 5px; margin-top: 5px; "></i>
 					    					<span style="" class="clearfix">{{ forma.descricao_forma_pagamento }}</span>
@@ -440,7 +464,7 @@
 						    			</div>
 						    		</div>
 
-						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8">
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
@@ -470,6 +494,27 @@
 					    						ng-model="pagamento.periodicidade_parcelamento">
 						    			</div>
 						    		</div>
+						    	</div>
+
+						    	<div class="row" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 10">
+						    		<div class="col-sm-4">
+						    			<label class="control-label">Valor</label>
+						    			<div class="form-group ">
+						    				<input ng-model="pagamento.valor" thousands-formatter type="text" class="form-control input-sm" />
+						    			</div>
+						    		</div>
+						    		<div class="col-sm-4" id="pagamento_maquineta">
+						    			<label class="control-label">Maquineta</label>
+										<select ng-model="pagamento.id_maquineta" class="form-control input-sm">
+											<option ng-repeat="item in maquinetas" value="{{ item.id_maquineta }}">{{ item.num_serie_maquineta }} - {{ item.dsc_conta_bancaria }}</option>
+										</select>
+									</div>
+						    		<div class="col-sm-4" id="bandeiras">
+						    			<label class="control-label">Bandeira</label>
+										<select ng-model="pagamento.id_bandeira" class="form-control input-sm">
+											<option ng-repeat="item in bandeiras" value="{{ item.id }}">{{ item.nome }}</option>
+										</select>
+									</div>
 						    	</div>
 
 						    	<div class="row">
@@ -1051,6 +1096,15 @@
 																ng-if="existeTabelaPreco({intermediario:true})" ng-click="changeMargemAplicada({atacado:false,intermediario:true,varejo:false,parceiro:false})" class="btn btn-sm btn-primary btn-block" type="button">
 																	<i ng-if="margemAplicada.intermediario" class="fa fa-check-circle-o" aria-hidden="true"></i>
 																	Intermediario
+																</button>
+															</div>
+														</div>
+														<div class="row" style="margin-top:5px">
+															<div class="col-sm-12">
+																<button 
+																ng-if="existeTabelaPreco({intermediario_ii:true})" ng-click="changeMargemAplicada({atacado:false,intermediario_ii:true,varejo:false,parceiro:false})" class="btn btn-sm btn-primary btn-block" type="button">
+																	<i ng-if="margemAplicada.intermediario_ii" class="fa fa-check-circle-o" aria-hidden="true"></i>
+																	Intermediario II
 																</button>
 															</div>
 														</div>
@@ -2689,6 +2743,57 @@
 		</div>
 		<!-- /.modal -->
 
+		<!-- /Modal Processando erro nfce -->
+		<div class="modal fade" id="modal-erro-nfce" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+      					<h4>Ocorreu um erro ao processar o NFC-e</h4>
+      				</div>
+				    <div class="modal-body">
+				    	<ul><li ng-repeat="erro in erros_nfce">{{ erro.mensagem }}</li></ul>
+				    </div>
+				     <div class="modal-footer">
+			    		<button type="button" class="btn btn-md btn-default" data-dismiss="modal">
+			    			Fechar
+			    		</button>
+			    		<button type="button" class="btn btn-md btn-primary" 
+			    			ng-if="(id_venda && cod_nota_fiscal)"
+			    			ng-click="processNFCe(id_venda, cod_nota_fiscal)">
+			    			<i class="fa fa-refresh"></i> Reprocessar Cupom NFC-e
+			    		</button>
+			    	</div>
+			  	</div>
+			</div>
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal Processando erro nfce -->
+		<div class="modal fade" id="modal-danfe-nfce" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+      					<h4>DANFE NFC-e</h4>
+      				</div>
+				    <div class="modal-body">
+				    	<iframe id="iframe-nfce" src="{{ trustSrc(nfce_data.caminho_danfe) }}" 
+				    		frameborder="0" allowtransparency="true"
+				    		width="100%" height="380">
+				    	</iframe>  
+				    </div>
+				     <div class="modal-footer">
+			    		<button type="button" class="btn btn-md btn-default" data-dismiss="modal">
+			    			Fechar
+			    		</button>
+			    		<button type="button" class="btn btn-md btn-info" ng-click="printDANFENFCe()">
+			    			<i class="fa fa-print"></i> Imprimir DANFE NFC-e
+			    		</button>
+			    	</div>
+			  	</div>
+			</div>
+		</div>
+		<!-- /.modal -->
+
 		<!-- /Modal Processando erro sat -->
 		<div class="modal fade" id="modal-erro-sat" style="display:none">
   			<div class="modal-dialog error modal-md">
@@ -2825,9 +2930,22 @@
 											<td>{{ configuracoes.id_cliente_movimentacao_caixa == item.id_cliente && 'S/N'  ||  item.nme_cliente }}</td>
 											<td>R${{ item.vlr_total_venda | numberFormat:2:',':'.'}}</td>
 											<td>
-											<button ng-disabled="process_reeviar_sat" data-toggle="tooltip" title="Enviar SAT" data-loading-text='<i class="fa fa-refresh fa-spin"></i>' ng-click="reenviarSat(item,$event)" class="btn btn-success btn-xs" type="button">
-												<i class="fa fa-paper-plane-o"></i>
-											</button>
+												<button class="btn btn-success btn-xs" type="button"
+													data-toggle="tooltip" title="Enviar SAT" 
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i>' 
+													ng-disabled="process_reeviar_sat" 
+													ng-click="reenviarSat(item,$event)"
+													ng-if="(caixa_aberto.flg_imprimir_sat_cfe)">
+													<i class="fa fa-paper-plane-o"></i>
+												</button>
+												<button class="btn btn-success btn-xs" type="button"
+													data-toggle="tooltip" title="Enviar SAT" 
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i>' 
+													ng-disabled="process_reeviar_sat" 
+													ng-click="processNFCe(item.id, item.cod_nota_fiscal); process_reeviar_sat = true;"
+													ng-if="(caixa_aberto.flg_imprimir_nfce)">
+													<i class="fa fa-paper-plane-o"></i>
+												</button>
 											</td>
 										</tr>
 									</tbody>
@@ -2965,9 +3083,16 @@
 											<td class="text-right">R$ {{ item.vlr_total_venda | numberFormat:2:',':'.' }}</td>
 											<td>
 												<button type="button" class="btn btn-danger btn-xs"
-													data-loading-text='<i class="fa fa-refresh fa-spin"></i>' 
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i> Aguarde...' 
+													ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'SAT')"
 													ng-click="cancelarSat(item)" >
-													<i class="fa fa-times-circle"></i> Cancelar SAT
+													<i class="fa fa-times-circle"></i> Cancelar SAT CF-e
+												</button>
+												<button type="button" id="btn-cancel-nfce-{{ $index }}" class="btn btn-danger btn-xs"
+													data-loading-text='<i class="fa fa-refresh fa-spin"></i> Aguarde...' 
+													ng-if="(configuracoes.flg_tipo_documento_fiscal_consumidor == 'NFCe')"
+													ng-click="cancelNFCe(item.cod_nota_fiscal, $index)" >
+													<i class="fa fa-times-circle"></i> Cancelar NFC-e
 												</button>
 											</td>
 										</tr>
@@ -3401,6 +3526,7 @@
 
 	<!-- UnderscoreJS -->
 	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
+	<script type="text/javascript" src="bower_components/print-js/dist/print.min.js"></script>
 
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>

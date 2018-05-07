@@ -18,6 +18,24 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
     ng.estadoSelecionado = {};
     ng.emptyBusca   = {};
 
+    function getUrlVars() {
+		if(window.location.href.indexOf('?') != -1) {
+			var vars = {}, hash;
+			var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+			for(var i = 0; i < hashes.length; i++)
+			{
+				hash = hashes[i].split('=');
+				vars[hash[0]] = hash[1];
+			}
+
+			return vars;
+		}
+		else
+			return null;
+	}
+
+	var params = getUrlVars();
+
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 	}
@@ -106,19 +124,20 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 	}
 
 	ng.consultaLatLog = function() {
-		/*
 		var address = ng.cliente.endereco + ", " + ng.cliente.numero + ", " + ng.cliente.cep.substr(0,5) + "-" + ng.cliente.cep.substr(5,ng.cliente.cep.length);
 
 		var geocoder = new google.maps.Geocoder();
 		geocoder.geocode({'address': address}, function(results, status) {
 			if(results.length == 1) {
-				ng.cliente.num_latitude = results[0].geometry.location.k;
-				ng.cliente.num_longitude = results[0].geometry.location.B;
+				ng.cliente.num_latitude = results[0].geometry.location.lat();
+				ng.cliente.num_longitude = results[0].geometry.location.lng();
+				setTimeout(function(){
+					$scope.$apply();
+				},1);
 			} else {
 				//alert("Endereço inválido!");
 			}
 		});
-		*/
 	}
 
 	ng.mensagens = function(classe , msg){
@@ -283,6 +302,73 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		
 	}
 
+	ng.findClientByCNPJ = function() {
+		if(location.pathname.indexOf('clientes-otimized.php') != -1) {
+			$scope.loading_info = true;
+
+			ng.clientes = null ;
+
+			var query_string = "?(tue->id_empreendimento[exp]=="+ ng.userLogged.id_empreendimento +"&usu->id[exp]= NOT IN("+ ng.configuracao.id_cliente_movimentacao_caixa +","+ ng.configuracao.id_usuario_venda_vitrine +"))";
+
+			switch(ng.cliente.tipo_cadastro) {
+				case 'pj':
+					query_string += "&" + $.param({"(cnpj":{exp:"LIKE '%"+ ng.cliente.cnpj +"%')"}});
+					break;
+				case 'pf':
+					query_string += "&" + $.param({"(cpf":{exp:"LIKE '%"+ ng.cliente.cpf +"%')"}});
+					break;
+			}
+
+			aj.get(baseUrlApi() +"usuarios"+ query_string)
+				.success(function(data, status, headers, config) {
+					$scope.loading_info = false;
+					ng.editar(angular.copy(data.usuarios[0]));
+				})
+				.error(function(data, status, headers, config) {
+					$scope.loading_info = false;
+
+					if(status == 404 && ng.cliente.tipo_cadastro == 'pj') {
+						$scope.loading_info = true;
+
+						$http({
+							method: "GET",
+							url: baseUrlApi() + "external/find-company-info/" + ng.cliente.cnpj
+						}).then(
+							function successCallback(response) {
+								ng.cliente.razao_social = response.data.nome;
+								ng.cliente.nome_fantasia = response.data.fantasia;
+								ng.cliente.email = response.data.email;
+								ng.cliente.cep = response.data.cep.replaceAll('.', '').replaceAll('-', '');
+								ng.cliente.endereco = response.data.logradouro;
+								ng.cliente.numero = response.data.numero.replaceAll('-', '');
+								ng.cliente.bairro = response.data.bairro;
+								ng.cliente.complemento = response.data.complemento;
+
+								angular.forEach(ng.estados, function(estado){
+									if(estado.uf == response.data.uf) {
+										ng.cliente.id_estado = estado.id;
+										ng.loadCidadesByEstado(response.data.municipio);
+									}
+								});
+
+								angular.forEach(ng.perfis, function(perfil){
+									if(perfil.nome == 'atacado') {
+										ng.cliente.id_perfil = perfil.id;
+										ng.loadModulosByPerfil(ng.cliente.id_perfil);
+									}
+								});
+
+								$scope.loading_info = false;
+								$scope.new_cliente = true;
+							},
+							function errorCallback(response) {
+								$scope.loading_info = false;
+							}
+						);
+					}
+				});
+		}
+	}
 
 	ng.loadClientes = function(offset, limit) {
 		offset = offset == null ? 0  : offset;
@@ -297,9 +383,14 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+ng.busca.clientes+"%' OR usu.apelido like '%"+ng.busca.clientes+"%' OR nome_fantasia like '%"+ng.busca.clientes+"%' OR cnpj like '%"+ng.busca.clientes+"%' )"}})+"";
 		}
 		if(ng.busca.tipo_cliente != 'ambos') {
-			query_string += "&"+$.param({"(1":{exp:"=1 AND (CASE WHEN tpf.usuarios_id is NULL THEN 'pj' WHEN tpj.cnpj is NULL THEN 'pf' END) = '"+ ng.busca.tipo_cliente +"' AND (usu.nome like'%"+ng.busca.clientes+"%' OR apelido like '%"+ng.busca.clientes+"%' OR nome_fantasia like '%"+ng.busca.clientes+"%' OR cnpj like '%"+ng.busca.clientes+"%'))"}})+"";
+			query_string += "&"+$.param({"(1":{exp:"=1 AND (CASE WHEN tpf.usuarios_id is NULL THEN 'pj' WHEN tpj.cnpj is NULL THEN 'pf' END) = '"+ ng.busca.tipo_cliente +"' AND (usu.nome like'%"+ng.busca.clientes+"%' OR usu.apelido like '%"+ng.busca.clientes+"%' OR nome_fantasia like '%"+ng.busca.clientes+"%' OR cnpj like '%"+ng.busca.clientes+"%'))"}})+"";
 		}
-
+		if (params != null) {
+			if(params.novos == 1){
+				query_string += "&usu->flg_cadastro_externo=1&aut->login[exp]=is null";	
+			}
+		}
+		
 		aj.get(baseUrlApi()+"usuarios/"+ offset +"/"+ limit +"/"+query_string)
 			.success(function(data, status, headers, config) {
 				ng.clientes = [];
@@ -310,6 +401,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 					ng.clientes.push(item);
 				});
 				ng.loadSaldoDevedorClientes();
+				$('[data-toggle="tooltip"]').tooltip();
 			})
 			.error(function(data, status, headers, config) {
 				if(status == 404)
@@ -459,14 +551,25 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		aj.post(baseUrlApi()+url, cliente)
 		 	.success(function(data, status, headers, config) {
 		 		ng.mensagens('alert-success','<strong>'+msg+'</strong>');
-		 		ng.showBoxNovo();
+		 		
+		 		if(location.pathname.indexOf('clientes-otimized.php') == -1) {
+		 			ng.showBoxNovo();
+		 		}
+		 		
 		 		ng.reset();
+		 		
 		 		$('html,body').animate({scrollTop: 0},'slow');
 		 		btn.button('reset');
-		 		ng.loadClientes(0,10);
+		 		
+		 		if(location.pathname.indexOf('clientes-otimized.php') == -1)
+		 			ng.loadClientes(0,10);
 		 		if(!empty(data.id_cliente))
 		 			cliente.id = data.id_cliente ;
 		 		PrestaShop.send('post',baseUrlApi()+"prestashop/usuario/",cliente);
+
+		 		if(location.pathname.indexOf('clientes-otimized.php') != -1) {
+		 			ng.marcarVisitaCliente(cliente);
+		 		}
 		 	})
 		 	.error(function(data, status, headers, config) {
 		 		btn.button('reset');
@@ -594,7 +697,28 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 				.success(function(data, status, headers, config) {
 					ng.mensagens('alert-success','<strong>Cliente excluido com sucesso</strong>');
 					ng.reset();
-					ng.loadClientes(0,10);
+					if(location.pathname.indexOf('clientes-otimized.php') == -1)
+						ng.loadClientes(0,10);
+				})
+				.error(defaulErrorHandler);
+		}, undefined);
+	}
+
+	ng.marcarVisitaCliente = function(cliente){
+		var post_data = {
+			cliente: cliente,
+			vendedor: ng.userLogged
+		};
+
+		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Confirma a presença deste cliente?</strong>');
+
+		dlg.result.then(function(btn){
+			aj.post(baseUrlApi()+"cliente/"+ cliente.id +"/marcar-visita", {data: JSON.stringify(post_data)})
+				.success(function(data, status, headers, config) {
+					ng.mensagens('alert-success','<strong>Presença gravada com sucessso!</strong>');
+					
+					ng.reset();
+					ng.setTipoCadastro('cliente','pj');
 				})
 				.error(defaulErrorHandler);
 		}, undefined);
@@ -658,10 +782,12 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		aj.get(baseUrlApi()+"configuracoes/"+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.configuracao = data ;
-				ng.loadClientes(0,10);
+				if(location.pathname.indexOf('clientes-otimized.php') == -1)
+					ng.loadClientes(0,10);
 			})
 			.error(function(data, status, headers, config) {
-				ng.loadClientes(0,10);
+				if(location.pathname.indexOf('clientes-otimized.php') == -1)
+					ng.loadClientes(0,10);
 				if(status == 404){
 					ng.configuracao = false ;
 				}
@@ -1074,4 +1200,5 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 	ng.loadControleNfe('regime_tributario','regimeTributario');
 	ng.loadControleNfe('regime_tributario_pis_cofins','regimePisCofins');
 	ng.loadControleNfe('tipo_empresa','tipoEmpresa');
+	$('#sizeToggle').trigger("click");
 });

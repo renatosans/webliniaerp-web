@@ -115,6 +115,10 @@ div[data-tree-model] li .selected {
 	overflow: hidden;
 }
 
+.input-group-btn .btn {
+	border: 1px solid #cccccc;
+}
+
 .btn-status {
 	width: 85px;
 }
@@ -476,4 +480,25 @@ body[ng-controller="LoginController"] {
 input[type=checkbox].checkbox-old {
 	opacity: 1;
 	position: initial;
+}
+
+.btn-upload {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-upload input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }

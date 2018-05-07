@@ -501,7 +501,8 @@
 					</div><!-- /.col -->
 
 					<div class="col-lg-6 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-danger fadeInDown animation-delay4">
+						<div class="panel-stat3 bg-danger fadeInDown animation-delay4"
+							ng-click="drillDownReport('rel_saldo_devedor_cliente')">
 							<h2 class="m-top-none">R$ <span>{{ total.vlrSaldoDevedorClientes | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Saldo Devedor</h6>
 							(de clientes)

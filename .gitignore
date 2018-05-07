@@ -1,6 +1,5 @@
+.gitignore
 js/constants.js
-util/constants.php
-assets/imagens
-api/
 .idea
 ultil/constants.php
+/nbproject/private/

@@ -6,7 +6,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	ng.baseUrl 						= baseUrl();
 	ng.userLogged 					= UserService.getUserLogado();
 	ng.configuracao 				= ConfigService.getConfig(ng.userLogged.id_empreendimento);
-	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [] };
+	ng.nota 						= { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 	ng.ultimasEntradas 				= [];
 	ng.editing 						= false;
 	ng.paginacao 					= {};
@@ -23,7 +23,6 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
     ng.paginacao_pedidos 			= {};
     ng.pesquisa 					= { produto: "", fornecedores: "" };
     ng.fornecedor 					= {};
-    ng.nota.flg_alterar_valor_custo = 0;
     ng.busca_cod_barra 				= false;
 
 	$("#arquivo-nota").change(function() {
@@ -32,6 +31,24 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$(this).parent().find('label').attr('data-title','Trocar XML');
 		$(this).parent().find('label').addClass('selected');
 	});
+
+	$("#pdf-nota").change(function() {
+		var filename = $(this).val().split('\\').pop();
+		$(this).parent().find('span').attr('data-title',filename);
+		$(this).parent().find('label').attr('data-title','Trocar PDF');
+		$(this).parent().find('label').addClass('selected');
+	});
+
+	ng.showPDF = function(item){
+		if(!empty(item.pth_pdf)){
+			item = {
+				path: item.pth_pdf.substring(item.pth_pdf.indexOf('assets'), item.pth_pdf.length)
+			};
+			$window.open(baseUrl()+item.path)
+		} else {
+			return false;
+		}
+	}
 
 	ng.incluirDuplicata = function(item){
 		ng.new_duplicata.xml = false;
@@ -43,6 +60,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		$("#list_duplicatas").modal("hide");
 	}
 
+	ng.deleteDuplicata = function(item) {
+		ng.nota.duplicatas = _.without(ng.nota.duplicatas, item);
+	}
+
 	ng.resetModalDuplicada = function(){
 		ng.new_duplicata.num_duplicata = "";
 		ng.new_duplicata.dta_vencimento = "";
@@ -50,7 +71,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 	}
 
 	ng.reset = function() {
-		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0};
+		ng.nota 				= {vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
 		ng.valor_total_entrada 	= 0 ;
 		ng.qtd_total_entrada 	= 0 ;
 		ng.produto 				= {};
@@ -237,8 +258,8 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		post_data.vlr_total_imposto 	= parseFloat((!empty(post_data.vlr_total_imposto)) ? post_data.vlr_total_imposto.replace(",", ".") : 0);
 		post_data.vlr_frete 			= parseFloat((!empty(post_data.vlr_frete)) ? post_data.vlr_frete.replace(",", ".") : 0);
 
-		$.each(post_data,function(i,x){
-			post_data[i].imposto = ($.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
+		$.each(post_data.itens,function(i,x){
+			post_data.itens[i].imposto = (!empty(x.imposto) && $.isNumeric(x.imposto)) ? (Number(x.imposto) / 100) : 0;
 		});	
 
 		$http.post(baseUrlApi()+'estoque/entrada', {nota: JSON.stringify(post_data)})
@@ -553,6 +574,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 		ng.produto.qtd = qtdTotal;
 		ng.atualizaValores();
+		$("#list_validades").modal('hide');
 	}
 
 	ng.deleteValidadeItem = function(index) {
@@ -817,9 +839,15 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		aj.get(baseUrlApi()+"nfe/controles/null/"+ctr)
 			.success(function(data, status, headers, config) {
 				ng[key] = ng[key].concat(data);
+				setTimeout(function(){
+					$scope.$apply();
+				}, 10);
 			})
 			.error(function(data, status, headers, config) {
 				ng[key] = [];
+				setTimeout(function(){
+					$scope.$apply();
+				}, 10);
 			});
 	}
 
@@ -850,13 +878,15 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 				else {
 					ng.addProduto({
 						id_produto: 		data.id,
+						id_natureza: 		ng.new_produto.id_natureza,
 						nome_fabricante: 	(!empty(ng.new_produto.id_fabricante)) ? _.findWhere(ng.fabricantes, { id: ng.new_produto.id_fabricante }).nome_fabricante : null,
 						nome_produto: 		ng.new_produto.nome,
 						codigo_barra: 		ng.new_produto.codigo_barra,
+						flg_unidade_fracao: ng.new_produto.flg_unidade_fracao,
 						peso: 				(!empty(ng.new_produto.id_tamanho)) ? _.findWhere(ng.tamanhos, { id: ng.new_produto.id_tamanho }).nome_tamanho : null,
 						sabor: 				(!empty(ng.new_produto.id_cor)) ? _.findWhere(ng.cores, { id: ng.new_produto.id_cor }).nome_cor : null,
 						qtd: 				1,
-						validades: 			[{ qtd: 1 }],
+						validades: 			[],
 						custo: 				0,
 						flg_localizado: 	true
 					});
@@ -919,6 +949,9 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
     }
 
     ng.addProduto = function(item, autoAddQtd){
+    	if (ng.nota.itens == "") {
+    		ng.nota.itens = [];
+    	}
     	if( empty(ng.itemDePara) ) {
 			autoAddQtd = (autoAddQtd == false) ? false : true;
 
@@ -1049,6 +1082,12 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 
 	/* inicio - funções gerais */
 
+	ng.loadItens = function() {
+		ng.loadControleNfe('forma_aquisicao','formas_aquisicao');
+		ng.loadControleNfe('origem_mercadoria','origens_mercadoria');
+		ng.loadControleNfe('tipo_tributacao_ipi','tipos_tributacao_ipi');
+	}
+
 	ng.clearForm = function(){
 		ng.nota.itens = [] ;
 		$('#pagamentoData').val('');
@@ -1134,13 +1173,55 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 			});
 	}
 
+	setTimeout(function(){
+	  $('.btn-upload input[type="file"]').on('change', function(){
+		var file = this.files[0]; // get selected file
+		var reader = new FileReader();
+
+		ng.fileModel = $(this).data().model; // get attribute model name
+
+		if(empty(ng.nota)){
+			ng.nota = { vlr_total_imposto : '', xml_nfe: '', flg_cadastra_produto_nao_encontrado: 0, itens: [], flg_alterar_valor_custo: 0 };
+		}
+
+		if(empty(ng.nota[ng.fileModel])) // validate if is empty
+			ng.nota[ng.fileModel] = {}; // create as object
+
+		// detect file type
+		var type = file.type.substring(file.type.indexOf('/')+1, file.type.length);
+		if(empty(type)){
+			type = file.name.substring((file.name.lastIndexOf('.')+1), file.name.length);
+		}
+		
+		ng.nota[ng.fileModel].name = file.name; // file name
+		ng.nota[ng.fileModel].type = type; // file type
+		ng.nota[ng.fileModel].size = (file.size / 1024); // file size
+
+		// adjust file size string name
+		if(ng.nota[ng.fileModel].size < 1024)
+			ng.nota[ng.fileModel].size = numberFormat(ng.nota[ng.fileModel].size, 2, ',', '.') + ' KB';
+		else if(ng.nota[ng.fileModel].size > 1024)
+			ng.nota[ng.fileModel].size = numberFormat(ng.nota[ng.fileModel].size, 2, ',', '.') + ' MB';
+
+		// after loading file...
+		reader.onload = function (e) {
+			ng.nota[ng.fileModel].path = e.target.result; // get base64 string of file
+			ng.nota[ng.fileModel].updated = true;
+		  	setTimeout(function(){
+				ng.$apply(); // apply changes in the screen
+			},1);
+		}
+
+		if(!empty(file))
+			reader.readAsDataURL(file);
+		});
+	}, 10);
+
 	ng.loadEntradas(0,10);
 	ng.loadCores();
 	ng.loadTamanhos();
 	ng.loadFabricantes();
 	ng.loadCategorias();
 	ng.loadContasBancarias();
-	ng.loadControleNfe('forma_aquisicao','formas_aquisicao');
-	ng.loadControleNfe('origem_mercadoria','origens_mercadoria');
-	ng.loadControleNfe('tipo_tributacao_ipi','tipos_tributacao_ipi');
+	ng.loadPlanoContas();
 });

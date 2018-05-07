@@ -937,6 +937,46 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 		}, 2000);
 	}
 
+	ng.cadastro_externo = 0;
+	ng.loadCadastroExterno= function(){
+		aj.get(baseUrlApi()+"cliente/externo?usu->id_empreendimento="+ng.userLogged.id_empreendimento+"&usu->flg_cadastro_externo=1"+"&aut->login[exp]=is null")
+			.success(function(data, status, headers, config){
+				ng.cadastro_externo = data;
+				if(ng.cadastro_externo.length > 0) {
+					ng.alertas.push({
+						type: 'warning',
+						message: "Você tem "+ ng.cadastro_externo.length +" novo(s) cliente(s)!",
+						link: "clientes.php?novos=1"
+					});
+				}				
+			})
+			.error(function(data, status, headers, config){
+				ng.cadastro_externo = 0 ;
+			})
+	}
+
+	if (ng.config.flg_alerta_cadastro_externo == 1) {
+		ng.loadCadastroExterno();
+	}
+
+	ng.aniversariantes_mes = 0;
+	ng.loadAniversariantesMes = function(){
+		aj.get(baseUrlApi()+"cliente/aniversariantes?tue->id_empreendimento="+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config){
+				ng.aniversariantes_mes = data;
+				if(ng.aniversariantes_mes.length > 0) {
+					ng.alertas.push({
+						type: 'warning',
+						message: "Existem "+ ng.aniversariantes_mes.length +" novos aniversariantes esse mês!",
+						link: "rel_aniversariantes.php"
+					});
+				}				
+			})
+			.error(function(data, status, headers, config){
+				ng.aniversariantes_mes = 0 ;
+			})
+	}
+
 	ng.loadCountOrcamentos = function(first_date,last_date) {
 		var vlrTotalVendasPeriodoComparativo = 0 ;
 		aj.get(baseUrlApi()+"count_orcamentos/dashboard?id_empreendimento="+ng.userLogged.id_empreendimento)
@@ -1099,6 +1139,7 @@ app.controller('AlertasController', function($scope, $http, $window, UserService
 	ng.loadProdutosEstoqueMinimo();
 	ng.loadPedidosTransferenciaRecebido();
 	ng.loadPedidosTransferenciaTransporte();
+	ng.loadAniversariantesMes();
 });
 
 app.directive('bsTooltip', function ($timeout) {
@@ -1112,6 +1153,10 @@ app.directive('bsTooltip', function ($timeout) {
     }
 });
 
+app.config(['$httpProvider', function($httpProvider) {
+	$httpProvider.defaults.useXDomain = true;
+	delete $httpProvider.defaults.headers.common['X-Requested-With'];
+}]);
 
 /*app.factory('httpRequestInterceptor',function () {
   var user = angular.fromJson(sessionStorage.user);

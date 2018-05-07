@@ -197,7 +197,7 @@
 									<div class="tab-content">
 										<div class="tab-pane fade in active" id="informacoes_basicas">
 											<div class="row">
-												<div class="col-sm-3">
+												<div class="col-sm-2">
 													<div class="form-group">
 														<label for="" class="control-label">Tipo do produto</label>
 														<div class="form-group">
@@ -206,10 +206,23 @@
 																<span class="custom-radio"></span>
 																<span>Normal</span>
 															</label>
+															<div class="clearfix"></div>
 															<label class="label-radio inline">
 																<input ng-model="produto.flg_produto_composto" ng-click="changeTipoProduto('flg_produto_composto','tipo')" name="tipo_produto" value="1" type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
 																<span>Composto</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-3" ng-if="(produto.flg_produto_composto == null || produto.flg_produto_composto == 0)">
+													<div class="form-group">
+														<label for="" class="control-label">Subtipo do Produto</label>
+														<div class="controls">
+															<label class="label-checkbox">
+																<input type="checkbox" ng-model="produto.flg_materia_prima"  ng-true-value="1" ng-false-value="0">
+																<span class="custom-checkbox"></span>
+																Matéria Prima
 															</label>
 														</div>
 													</div>
@@ -298,7 +311,7 @@
 																		<td>{{ item.peso }}</td>
 																		<td>{{ item.sabor }}</td>
 																		<td class="text-right" width="70">R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}</td>
-																		<td width="80">
+																		<td width="100">
 																			<input type="text" class="form-control input-xs text-center"
 																				onKeyPress="return SomenteNumero(event);" 
 																				ng-model="item.qtd" 
@@ -306,7 +319,7 @@
 																				ng-if="item.flg_unidade_fracao != 1"/>
 
 																			<input type="text" class="form-control input-xs text-center"
-																				thousands-formatter precision="3"
+																				thousands-formatter precision="5"
 																				onKeyPress="return SomenteNumero(event);" 
 																				ng-model="item.qtd" 
 																				ng-keyup="calVlrCustoInsumos()" 
@@ -393,6 +406,7 @@
 															<th class="text-center" rowspan="2" style="line-height: 46px">Custo </th>
 															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('atacado')">Venda (Atacado)</th>
 															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('intermediario')">Venda (Intermediário)</th>
+															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('intermediario_ii')">Venda (Intermediário II)</th>
 															<th class="text-center" colspan="2" ng-if="existeTabelaPreco('varejo')">Venda (Varejo)</th>
 														</tr>
 														<tr>
@@ -400,6 +414,8 @@
 															<td class="text-center" ng-if="existeTabelaPreco('atacado')">R$</td>
 															<td class="text-center" ng-if="existeTabelaPreco('intermediario')">%</td>
 															<td class="text-center" ng-if="existeTabelaPreco('intermediario')">R$</td>
+															<td class="text-center" ng-if="existeTabelaPreco('intermediario_ii')">%</td>
+															<td class="text-center" ng-if="existeTabelaPreco('intermediario_ii')">R$</td>
 															<td class="text-center" ng-if="existeTabelaPreco('varejo')">%</td>
 															<td class="text-center" ng-if="existeTabelaPreco('varejo')">R$</td>
 														</tr>
@@ -440,6 +456,14 @@
 															<td ng-if="existeTabelaPreco('intermediario')">
 																<input ng-model="preco.valor_venda_intermediario" ng-keyup="calculaMargens('intermediario','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
+
+															<td ng-if="existeTabelaPreco('intermediario_ii')">
+																<input ng-model="preco.perc_venda_intermediario_ii" ng-keyup="calculaMargens('intermediario_ii','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'    type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+															</td>
+															<td ng-if="existeTabelaPreco('intermediario_ii')">
+																<input ng-model="preco.valor_venda_intermediario_ii" ng-keyup="calculaMargens('intermediario_ii','valor',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
+															</td>
+
 															<td ng-if="existeTabelaPreco('varejo')">
 																<input ng-if="existeTabelaPreco('varejo')" ng-model="preco.perc_venda_varejo" ng-keyup="calculaMargens('varejo','margem',preco)"  ng-disabled="preco.vlr_custo == null || preco.vlr_custo == ''"  thousands-formatter precision='{{ configuracao.qtd_casas_decimais }}'   type="text" class="form-control input-xs parsley-validated maskPorcentagem">
 															</td>
@@ -514,6 +538,12 @@
 																<span>Fração</span>
 															</label>
 														</div>
+													</div>
+												</div>
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label class="control-label">Qtd. Multipla</label>
+														<input ng-model="produto.qtd_multiplo_transferencia" type="text" class="form-control input-xs" onkeypress="return SomenteNumero(event);">
 													</div>
 												</div>
 											</div>
@@ -745,8 +775,19 @@
 												<div class="col-sm-2">
 													<div class="form-group" id="qtd_minima_estoque">
 														<label class="control-label">Profundidade do pacote</label>
-														<input ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" thousands-formatter precision="6" ng-model="produto.profundidade_pacote" type="text" class="form-control input-sm">
+														<input ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" thousands-formatter precision="6" 
+															ng-model="produto.profundidade_pacote" type="text" class="form-control input-sm">
 													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group" id="peso">
+														<label class="control-label">Natureza</label>
+														<select chosen
+															option="plano_contas"
+															ng-model="produto.id_natureza"
+															ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+														</select>
+													</div>													
 												</div>
 											</div>
 											<div class="row">
@@ -806,6 +847,25 @@
 													</div>
 												</div>
 											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<button class="btn btn-default btn-upload">
+														<i class="fa fa-paper-clip"></i> Selecione mais imagens para o produto
+														<input type="file" data-model="thumbnail">
+													</button>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<ul class="list-inline">
+														<li ng-repeat="item in produto.fotos | filter:{flg_excluir:false}">
+															<img ng-if="(item.path_nova)" src="{{ item.path_nova }}" class="img-responsive img-thumbnail" style="max-width: 200px">
+															<img ng-if="(!item.path_nova)" src="{{ item.path }}" class="img-responsive img-thumbnail" style="max-width: 200px">
+															<button class="btn btn-danger btn-xs" ng-click="item.flg_excluir = true"><i class="fa fa-trash-o"></i></button>
+														</li>
+													</ul>
+												</div>
+											</div>
 											<!--<div class="row">
 												<div class="col-sm-12">
 													<div class="form-group" id="descricao">
@@ -831,28 +891,42 @@
 											<div class="row">
 												<div class="col-sm-12">
 													<div class="empreendimentos form-group" id="empreendimentos">
-															<table class="table table-bordered table-condensed table-striped table-hover">
-																<thead>
-																	<tr>
-																		<td><i class="fa fa-building-o"></i> Empreendimentos</td>
-																		<td width="60" align="center">
-																			<button class="btn btn-xs btn-primary" ng-click="showEmpreendimentos()"><i class="fa fa-plus-circle"></i></button>
-																		</td>
-																	</tr>
-																</thead>
-																<tbody>
-																	<tr ng-show="(empreendimentosAssociados.length == 0)">
-																		<td colspan="2" align="center">Nenhum empreendimento selecionado</td>
-																	</tr>
-																	<tr ng-repeat="item in empreendimentosAssociados">
-																		<td>{{ item.nome_empreendimento }}</td>
-																		<td align="center">
-																			<button class="btn btn-xs btn-danger" ng-click="delEmpreendimento($index,item)"><i class="fa fa-trash-o"></i></button>
-																		</td>
-																	</tr>
-																</tbody>
-															</table>
-												
+														<table class="table table-bordered table-condensed table-striped table-hover">
+															<thead>
+																<tr>
+																	<td><i class="fa fa-building-o"></i> Empreendimento</td>
+																	<td width="120" align="center">Gera O.P.?</td>
+																	<td width="60" align="center">
+																		<button class="btn btn-xs btn-primary" ng-click="showEmpreendimentos()"><i class="fa fa-plus-circle"></i></button>
+																	</td>
+																</tr>
+															</thead>
+															<tbody>
+																<tr ng-show="(empreendimentosAssociados.length == 0)">
+																	<td colspan="3" align="center">Nenhum empreendimento selecionado</td>
+																</tr>
+																<tr ng-repeat="item in empreendimentosAssociados">
+																	<td>{{ item.nome_empreendimento }}</td>
+																	<td class="text-center">
+																		<div class="form-group" style="margin:0 auto">
+																			<label class="label-radio inline">
+																				<input ng-model="item.flg_gera_ordem_producao" value="1" type="radio" class="inline-radio"/>
+																				<span class="custom-radio"></span>
+																				<span>Sim</span>
+																			</label>
+																			<label class="label-radio inline">
+																				<input ng-model="item.flg_gera_ordem_producao" value="0" type="radio" class="inline-radio"/>
+																				<span class="custom-radio"></span>
+																				<span>Não</span>
+																			</label>
+																		</div>
+																	</td>
+																	<td align="center">
+																		<button class="btn btn-xs btn-danger" ng-click="delEmpreendimento($index,item)"><i class="fa fa-trash-o"></i></button>
+																	</td>
+																</tr>
+															</tbody>
+														</table>
 													</div>
 												</div>
 											</div>
@@ -1120,6 +1194,7 @@
 											<th class="text-center" width="60">Estoque</th>
 											<th class="text-center" width="100" ng-if="existeTabelaPreco('atacado')">Vlr. Atacado</th>
 											<th class="text-center" width="100" ng-if="existeTabelaPreco('intermediario')">Vlr. Intermediário</th>
+											<th class="text-center" width="100" ng-if="existeTabelaPreco('intermediario_ii')">Vlr. Intermediário II</th>
 											<th class="text-center" width="100" ng-if="existeTabelaPreco('varejo')">Vlr. Varejo</th>
 											<th width="80" style="text-align: center;">Opções</th>
 										</tr>
@@ -1155,6 +1230,7 @@
 											<td class="text-center"><a href="#"  ng-click="qtdDepostito(item,$event)">{{ configuracao.id_produto_debito_anterior_cliente == item.id_produto && ' ' || item.qtd_item }}</a></td>
 											<td class="text-right" ng-if="existeTabelaPreco('atacado')">R$ {{ item.vlr_venda_atacado | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td class="text-right" ng-if="existeTabelaPreco('intermediario')">R$ {{ item.vlr_venda_intermediario | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
+											<td class="text-right" ng-if="existeTabelaPreco('intermediario_ii')">R$ {{ item.vlr_venda_intermediario_ii | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td class="text-right" ng-if="existeTabelaPreco('varejo')">R$ {{ item.vlr_venda_varejo | numberFormat: configuracoes.qtd_casas_decimais : ',' : '.' }}</td>
 											<td align="center">
 												<button type="button" ng-click="editar(item)" class="btn btn-xs btn-warning" title="editar" data-toggle="tooltip" ng-if="funcioalidadeAuthorized('inclusao_alteracao_produto')">

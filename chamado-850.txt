@@ -1,0 +1,38 @@
+ALTER TABLE `tbl_pagamentos_venda`
+	ADD COLUMN `id_pagamento_detalhamento` INT(11) NULL DEFAULT NULL AFTER `id_parcelamento`;
+
+
+modified:   js/angular-controller/lancamentos-controller.js
+modified:   lancamentos.php
+
+
+modified:   controller/PagamentoClienteController.php
+modified:   controller/VendaController.php
+modified:   dao/PagamentoClienteDao.php
+modified:   model/PagamentoClienteTO.php
+
+
+
+INSERT INTO `tbl_modulo` (`nme_modulo`, `tlt_modulo`, `url_modulo`) VALUES ('Relatório DRE', 'Relatório DRE', 'rel_dre.php');
+
+
+
+SELECT * FROM tbl_pagamentos_venda  AS tpv
+WHERE tpv.id_controle_pagamento = 10462458 AND tpv.id_empreendimento = 6
+ORDER BY id DESC ;
+
+SELECT tmd.*, tpc.id AS id_plano_conta, tpc.cod_plano, tpc.dsc_plano FROM tbl_modelo_dre AS tmd
+LEFT JOIN tbl_plano_conta AS tpc ON tmd.id = tpc.id_modelo_dre
+WHERE  tmd.id_empreendimento = 54
+ORDER BY tmd.id ASC;
+
+SELECT tpc.id FROM tbl_modelo_dre AS tmd
+INNER  JOIN tbl_plano_conta AS tpc ON tmd.id = tpc.id_modelo_dre
+WHERE  tmd.id_empreendimento = 54 
+ORDER BY tmd.id ASC;
+
+SELECT tpv.* FROM tbl_pagamentos_venda AS tpv 
+WHERE tpv.id_plano_conta IN (44649,44650,7532,7617,7493,7526,7524,44651,7571,7530,7503,7615,7517,7581,7593,7550 );
+
+SELECT tpv.* FROM tbl_pagamentos_fornecedores AS tpv 
+WHERE tpv.id_plano_conta IN (44649,44650,7532,7617,7493,7526,7524,44651,7571,7530,7503,7615,7517,7581,7593,7550);

@@ -31,6 +31,8 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
     ];
     ng.teste="jheizer";
 
+    var flg_error = 0;
+
     ng.funcioalidadeAuthorized = function(cod_funcionalidade){
     	val = FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
     	
@@ -358,7 +360,37 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		});
 	}
 
+	ng.verificaQtdMultiplo = function(container, index, item){
+		if (item.qtd_multiplo_transferencia != "" || item.qtd_multiplo_transferencia != null) {
+			if ((item.qtd_transferida % item.qtd_multiplo_transferencia) > 0) {
+				var element = '#'+ container +' #produtos #txt-qtd-multiplo-'+ index;
+				$(element).closest('.form-group').addClass('has-error');
+				var formControl = $(element)
+					.attr("data-toggle", "tooltip")
+					.attr("data-placement", "top")
+					.attr("title", 'Apenas solicitação em multiplo de: ' + item.qtd_multiplo_transferencia)
+				formControl.tooltip();
+				item.flg_error = 1;
+			} else{
+				var element = '#'+ container +' #produtos #txt-qtd-multiplo-'+ index;
+				$(element).tooltip('destroy');
+				$(element).closest('.form-group').removeClass("has-error");
+				item.flg_error = 0;
+			}
+		}
+	}
+
 	ng.salvarTransferencia = function(){
+		var flg_error_save = false
+		angular.forEach(ng.transferencia.produtos, function(produto){
+			if (produto.flg_error == 1) {
+				alert("Por favor, verifique se existe algum produto com quantidade multipla");
+				flg_error_save = true
+			}
+		});
+		if (flg_error_save) {
+			return false;
+		}
 		var btn = $('#salvar-transferencia') ;
 		btn.button('loading');
 		$('.tr-out-estoque').find('input').tooltip('destroy');
@@ -581,6 +613,9 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 	}
 
 	ng.salvarNovaTransferencia = function(id_status_transferencia,event){
+		if (flg_error == 1) {
+			return false;
+		}
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$(".has-error").removeClass("has-error");
 		var btn = $(event.target);
@@ -665,7 +700,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 			post.produtos = ng.formatPostValidades() ;
 		}
 
-		aj.post(baseUrlApi()+url,post)
+		aj.post(baseUrlApi()+url,{ form_data: JSON.stringify(post)})
 		.success(function(data, status, headers, config) {
 			btn.button('reset'); 
 			ng.transferencia = angular.copy(transferenciaTO);

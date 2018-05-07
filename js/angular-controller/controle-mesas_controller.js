@@ -4,6 +4,7 @@ app.controller('ControleMesasController', function(
 	var ng = $scope,
 		aj = $http;
 	ng.userLogged = UserService.getUserLogado();
+	ng.id_modulo = FuncionalidadeService.getIdModulo();
 	ng.allCozinhas = CozinhaService.getAllCozinhas(ng.userLogged.id_empreendimento);
 	ng.cozinhasDisponiveis = CozinhaService.getCozinhasAtivas(ng.userLogged.id_empreendimento);
 	ng.configuracao  = ConfigService.getConfig(ng.userLogged.id_empreendimento);
@@ -18,6 +19,7 @@ app.controller('ControleMesasController', function(
 		selTipoProduto:false,
 		escProduto:false
 	} ;
+	ng.busca_avancada = {};
 	ng.userLogged.flg_dispositivo = 1;
 	ng.telaAnterior = null ;
 	ng.mesas = [];
@@ -78,6 +80,12 @@ app.controller('ControleMesasController', function(
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 	}
 
+	ng.showPesquisaAvancada = function(){
+		$('#pesquisa-avancada').modal('show');
+		ng.clientes_comanda = null;
+		ng.busca_avancada.nome = "";
+	}
+
 	ng.showAvaliableKitchens = function(){
 		$('#avaliableKitchens').modal('show');
 		$('[data-toggle="tooltip"]').tooltip();
@@ -96,6 +104,24 @@ app.controller('ControleMesasController', function(
 			ng.produto.qtd = 1;
 		else
 			ng.produto.qtd = (parseInt(ng.produto.qtd,10) + 1);
+	}
+
+	ng.loadComandasByCliente = function(){
+		ng.clientes_comanda = [];
+		var queryString = "?usu->id_empreendimento="+ ng.userLogged.id_empreendimento;
+		if (ng.busca_avancada.nome == "" || ng.busca_avancada.nome == null) {
+			return false;
+		}
+		else if (!empty(ng.busca_avancada.nome) || ng.busca_avancada.nome != null) {
+			queryString += "&"+$.param({"(usu->nome":{exp:"like '%"+ng.busca_avancada.nome+"%' OR usu.id_externo = '"+ng.busca_avancada.nome +"')"}});
+		}
+		aj.get(baseUrlApi()+"mesa/comandas/cliente"+queryString)
+		.success(function(data, status, headers, config) {
+				ng.clientes_comanda = data;
+			})
+			.error(function(data, status, headers, config) {
+				ng.clientes_comanda = [];
+			});
 	}
 
 	ng.loadProdutoAdicionais = function() {
@@ -190,7 +216,8 @@ app.controller('ControleMesasController', function(
 	}
 
 	ng.cancelarComanda = function(id_comanda) {
-		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja excluir este orçamento?</strong>');
+		$('#autorizacao').modal('hide');
+		dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja excluir esta comanda?</strong>');
 
 		dlg.result.then(function(btn){
 			aj.get(baseUrlApi()+"orcamento/delete/"+id_comanda+"/"+ng.userLogged.id_empreendimento+"/"+ng.userLogged.id)
@@ -373,6 +400,7 @@ app.controller('ControleMesasController', function(
 	ng.abrirDetalhesComanda = function(id_comanda){
 		ng.changeTela('detComanda');
 		ng.loadComanda(id_comanda);
+		$('#pesquisa-avancada').modal('hide');
 	}
 
 	ng.bucaTipoProduto = function(tipo){
@@ -507,6 +535,17 @@ app.controller('ControleMesasController', function(
 				ng.abrirDetalhesComanda(comanda.id_comanda);
 		}
 		ng.busca.numero_comanda = "";
+	}
+
+	ng.loadComandaByNumCartao = function(){
+		ng.comandaSelecionada = null;
+		aj.get(baseUrlApi()+'comanda/cartao-fisico/' + ng.busca.numero_comanda +'?tv->flg_excluido=0&tv->venda_confirmada=0&tv->id_empreendimento='+ ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.abrirDetalhesComanda(data.comanda.id);
+			})
+			.error(function(data, status, headers, config) {
+				$dialogs.notify('Desculpe!','<strong>Não foi possível localizar uma comanda com o código informado!</strong>');			
+			}); 
 	}
 
 	ng.loadComandaById = function(){
@@ -813,7 +852,7 @@ app.controller('ControleMesasController', function(
 						flg_produto_composto: 	produto.flg_produto_composto,
 						dta_create: 			moment().format('YYYY-MM-DD HH:mm:ss'),
 						dta_lancamento: 		moment().format('YYYY-MM-DD HH:mm:ss'),
-						id_mesa: 				ng.mesaSelecionada.mesa.id_mesa,
+						id_mesa: 				(!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa,
 						flg_delivery: 			(produto.flg_delivery) ? 1 : 0,
 						adicionais: 			produto.adicionais_selecionados
 					});
@@ -821,8 +860,8 @@ app.controller('ControleMesasController', function(
 
 				var categorias = _.groupBy(ng.itens_pedido, 'id_categoria');
 				
-				angular.forEach(categorias, function(itens) {
-					angular.forEach(itens, function(item){
+				angular.forEach(categorias, function(itens, idx_cat) {
+					angular.forEach(itens, function(item, idx_item){
 						item.id_usuario 		= ng.userLogged.id;
 						item.id_empreendimento 	= ng.userLogged.id_empreendimento;
 						item.id_deposito 		= ng.configuracao.id_deposito_padrao;
@@ -1090,26 +1129,63 @@ app.controller('ControleMesasController', function(
 		});
 	}
 
-	ng.excluirItemComanda = function(event){
-		var btn = $(event.target);
-		if(!btn.is(':button')) btn = $(event.target).parent();
-		btn.button('loading');
+	ng.verificaUsuario = function(){
+		ng.usuario.id_empreendimento = ng.userLogged.id_empreendimento;
+		ng.usuario.id_modulo = ng.id_modulo;
+		ng.usuario.cod_funcionalidade = "excluir_item_comanda";
+		aj.post(baseUrlApi()+"funcionalidade/autorizacao", { data: JSON.stringify( ng.usuario ) })
+			.success(function(data, status, headers, config){
+				if (ng.tipo_selecionado == 'item_comanda')
+					ng.excluirItem(data.id_usuario);
+				else if (ng.tipo_selecionado == 'comanda')
+					ng.cancelarComanda(ng.id_comanda_selecionada);
 
-		aj.get(baseUrlApi()+"item_comanda/delete/"+ng.produto.id_item_venda+"/"+ng.mesaSelecionada.mesa.id_mesa)
+			})
+			.error(function(data, status, headers, config){
+				ng.msg_autorizacao = data;
+			})
+	}
+
+	ng.excluirItem = function(id_usuario){
+		var post_data = {
+			id_item 			: ng.produto.id_item_venda,
+			id_mesa 			: (!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa,
+			id_usuario 			: id_usuario,
+			id_empreendimento 	: ng.userLogged.id_empreendimento
+		};
+
+		aj.post(baseUrlApi()+"item_comanda/delete", {data: JSON.stringify(post_data)})
 		.success(function(data, status, headers, config) {
 			var msg = {
 					type : 'table_change',from : ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
 					message : JSON.stringify({index_mesa:ng.indexMesaSelecionada,mesa:data.mesa,id_comanda:ng.comandaSelecionada.comanda.id})
 				}
 			ng.sendMessageWebSocket(msg);
-			btn.button('reset');
 			ng.produto = {} ;
 			ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+			$('#autorizacao').modal('hide');
 		})
 		.error(function(data, status, headers, config) {
-			btn.button('reset');
 			$dialogs.notify('Atenção!','<strong>Erro ao excluir produto</strong>');
 		});
+	}
+
+	ng.verificaChaveAutorizacao = function(id_comanda_selecionada, tipo){
+		ng.msg_autorizacao = null;
+		ng.tipo_selecionado = tipo;
+		ng.id_comanda_selecionada = id_comanda_selecionada;
+		if (ng.tipo_selecionado == 'item_comanda') {
+			if (ng.configuracao.flg_autorizar_exclusao_sem_admin_controle_mesas == 0)
+				$('#autorizacao').modal('show');
+			else
+				ng.excluirItem(ng.userLogged.id);
+
+		} else if (ng.tipo_selecionado == 'comanda') {
+			if (ng.configuracao.flg_autorizar_exclusao_sem_admin_controle_mesas == 0)
+				$('#autorizacao').modal('show');
+			else
+				ng.cancelarComanda(ng.id_comanda_selecionada);
+		}
 	}
 
 	ng.vlrTotalItensComanda = function(){

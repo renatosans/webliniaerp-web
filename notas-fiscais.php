@@ -166,7 +166,6 @@
 					<h3 class="no-margin"><i class="fa fa-barcode"></i> Notas Fiscais</h3>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
-
 			<div class="padding-md">
 				<div class="panel panel-default">
 					<div class="panel-heading"><i class="fa fa-filter"></i> Opções de Filtro</div>
@@ -175,7 +174,7 @@
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label class="control-label">Nº NF-e</label>
-									<input ng-model="busca.numeroo" ng-enter="loadNotas(0,10)" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
+									<input ng-model="busca.numeroo" ng-enter="filtrar()" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched">
 								</div>
 							</div>
 
@@ -183,8 +182,8 @@
 								<div class="form-group">
 									<label class="control-label">Destinatário</label>
 									<input ng-model="busca.text" type="text" class="form-control input-sm ng-pristine ng-valid ng-touched"
-										 ng-enter="loadNotas(0,10)" 
-										 ng-keyup="loadNotas(0,10)"
+										 ng-enter="filtrar()" 
+										 ng-keyup="filtrar()"
 									>
 								</div>
 							</div>
@@ -201,8 +200,10 @@
 
 							<div class="col-sm-1">
 								<div class="form-group">
-									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-primary" ng-click="loadNotas(0,10)"><i class="fa fa-filter"></i> Filtrar</button>
+									<div class="controls">
+										<label class="control-label"><br></label>
+									</div>
+									<button type="button" class="btn btn-sm btn-primary" ng-click="filtrar()"><i class="fa fa-filter"></i> Filtrar</button>
 								</div>
 							</div>
 
@@ -215,156 +216,1289 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="panel panel-default">
 					<div class="panel-tab clearfix">
 						<ul class="tab-bar">
-							<li class="active"><a href="#emitidas" data-toggle="tab"><i class="fa fa-send"></i> Emitidas</a></li>
-							<!--<li><a href="#canceladas" data-toggle="tab"><i class="fa fa-times-circle"></i> Canceladas</a></li>
-							<li><a href="#inutilizadas" data-toggle="tab"><i class="fa fa-ban"></i> Inútilizads</a></li>-->
+							<li class="active"><a href="#list_nfe" data-toggle="tab"><i class="fa fa-file-text-o"></i> NF-e</a></li>
+							<li><a href="#list_nfse" data-toggle="tab"><i class="fa fa-file-text-o"></i> NFS-e</a></li>
+							<li><a href="#list_sat" data-toggle="tab"><i class="fa fa-file-text-o"></i> SAT</a></li>
+							<li><a href="#list_nfce" data-toggle="tab"><i class="fa fa-file-text-o"></i> NFC-e</a></li>
 						</ul>
 					</div>
 					<div class="panel-body">
 						<div class="tab-content">
-							<div class="tab-pane fade in active" id="emitidas">
-								<div class="row">
-									<div class="col-lg-12">
-										<div class="table-responsive">
-											<div class="alert alert-list-notas" style="display:none"></div>
-											<table class="table table-bordered table-condensed table-striped table-hover">
-												<thead>
-													<th class="text-middle text-center" width="50"></th>
-													<th class="text-middle text-center">Nº NF-e</th>
-													<th class="text-middle">Destinatário</th>
-													<th class="text-middle text-center">Data de Emissão</th>
-													<th class="text-middle text-center">Valor da NF-e</th>
-													<th class="text-middle text-center">Tipo NF-e</th>
-													<th class="text-middle text-center">Operação</th>
-													<th class="text-middle text-center">Status</th>
-												</thead>
-												<tbody>
-													<tr ng-show="(!notas)">
-														<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
-													</tr>
-													<tr ng-show="(notas.length == 0)">
-														<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
-													</tr>
-													<tr bs-tooltip ng-repeat="nota in notas">
-														<td class="text-middle">
-															<div class="btn-group">
-																<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
-																	data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-																	Ações <span class="caret"></span>
-																</button>
-																<ul class="dropdown-menu">
-																	<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
-																		ng-click="showDANFEModal(nota, 'PDF')">
-																		<a href="">
-																			<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
-																		</a>
-																	</li>
-																	<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
-																		<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
-																			<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
-																		</a>
-																	</li>
-																	<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
-																		<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
-																			<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
-																		</a>
-																	</li>
-																	<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
-																		<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																			ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
-																			<i class="fa fa-refresh"></i> Atualizar Status
-																		</a>
-																	</li>
-																	<li role="separator" class="divider" 
-																		ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
-																	</li>
-																	<li>
-																		<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
-																			ng-show="nota.cod_venda">
-																			<i class="fa fa-list-alt"></i> Visualizar Detalhes
-																		</a>
-																		<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
-																			ng-show="nota.cod_ordem_servico">
-																			<i class="fa fa-list-alt"></i> Visualizar Detalhes
-																		</a>
-																	</li>
-																	<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
-																		ng-click="modalCorrecao(nota,$index)">
-																		<a href="">
-																			<i class="fa fa-edit"></i> Cartas de Correção
-																		</a>
-																	</li>
-																	<li ng-show="(nota.status == 'autorizado')" 
-																		ng-click="modalCancelar(nota,$index)">
-																		<a href="">
-																			<i class="fa fa-times-circle"></i> Cancelar Nota
-																		</a>
-																	</li>
-																</ul>
-															</div>
-														</td>
-														<td class="text-center text-middle">{{ nota.numero }}</td>
-														<td class="text-middle">{{ nota.nome_destinatario }}</td>
-														<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
-														<td class="text-right text-middle">
-															R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
-														</td>
-														<td class="text-center text-middle">
-															{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
-														</td>
-														<td class="text-center text-middle">
-															<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
-																ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+							<div class="tab-pane fade" id="list_nfe">
+								<div class="panel-tab clearfix">
+									<ul class="tab-bar">
+										<li class="active">
+											<a href="#emitidas_nfe" data-toggle="tab">
+												<i class="fa fa-check-circle-o"></i> Emitidas
+											</a>
+										</li>
+										<li>
+											<a href="#canceladas_nfe" data-toggle="tab">
+												<i class="fa fa-times-circle-o"></i> Canceladas
+											</a>
+										</li>
+										<li>
+											<a href="#inutilizadas_nfe" data-toggle="tab">
+												<i class="fa fa-times-circle-o"></i> Inutilizadas
+											</a>
+										</li>
+									</ul>
+								</div>
 
-															<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
-																ng-show="(nota.cod_ordem_servico != null)"></i>
-														</td>
-														<td class="text-middle text-center">
-															<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
-																data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
-																NF-e Autorizada
-															</span>
-															<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
-																data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
-																Processando Autorização
-															</span>
-															<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
-																data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
-																Erro na Autorização
-															</span>
-															<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
-																data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
-																Erro no cancelamento
-															</span>
-															<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
-																data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
-																Cancelada
-															</span>
-															<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
-																data-toggle="tooltip" title="Atualize o status para ver o andamento">
-																Processando Cancelamento
-															</span>															
-														</td>
-													</tr>
-												</tbody>
-											</table>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="emitidas_nfe">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!emitidas_nfe)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(emitidas_nfe.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in emitidas_nfe">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.emitidas_nfe.length > 1">
+													<li ng-repeat="item in paginacao.emitidas_nfe" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFE','emitidas_nfe','autorizado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
 										</div>
 									</div>
+									<div class="tab-pane fade" id="canceladas_nfe">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!canceladas_nfe)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(canceladas_nfe.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in canceladas_nfe">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
 
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_nfe.length > 1">
+													<li ng-repeat="item in paginacao.canceladas_nfe" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFE','canceladas_nfe','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="inutilizadas_nfe">
+										<br/>
+										<div class="row">
+											<div class="col-sm-12">
+												<button class="btn btn-info btn-sm" ng-click="modalInutilizacao()">
+													<i class="fa fa-plus-circle"></i>
+													 Nova Inutilização
+												</button>
+											</div>
+										</div>
+										<hr>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">ID</th>
+															<th class="text-middle text-center">Data</th>
+															<th class="text-middle text-center">Número Inicial</th>
+															<th class="text-middle text-center">Número Final</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!inutilizacoes)">
+																<td colspan="8" class="text-center text-middle">Nenhuma Inutilização encontrada!</td>
+															</tr>
+															<tr ng-show="(inutilizacoes.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in inutilizacoes">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li>
+																				<a href="{{ nota.caminho_xml }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.id }}</td>
+																<td class="text-center text-middle">{{ nota.dta_registro }}</td>
+																<td class="text-center text-middle">{{ nota.num_inicial }}</td>
+																<td class="text-center text-middle">{{ nota.num_final }}</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')"
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Inutilização Autorizada
+																	</span>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_nfe.length > 1">
+													<li ng-repeat="item in paginacao.canceladas_nfe" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFE','canceladas_nfe','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-					<div class="panel-footer clearfix">
-						<div class="pull-right">
-							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.notas.length > 1">
-								<li ng-repeat="item in paginacao.notas" ng-class="{'active': item.current}">
-									<a href="" h ng-click="loadNotas(item.offset,item.limit)">{{ item.index }}</a>
-								</li>
-							</ul>
+							<div class="tab-pane fade" id="list_nfse">
+								<div class="panel-tab clearfix">
+									<ul class="tab-bar">
+										<li class="active">
+											<a href="#emitidas_nfse" data-toggle="tab">
+												<i class="fa fa-check-circle-o"></i> Emitidas
+											</a>
+										</li>
+										<li>
+											<a href="#canceladas_nfse" data-toggle="tab">
+												<i class="fa fa-times-circle-o"></i> Canceladas
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="emitidas_nfse">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!emitidas_nfse)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(emitidas_nfse.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in emitidas_nfse">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.emitidas_nfse.length > 1">
+													<li ng-repeat="item in paginacao.emitidas_nfse" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFSE','emitidas_nfse','autorizado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="canceladas_nfse">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!canceladas_nfse)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(canceladas_nfse.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in canceladas_nfse">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_nfse.length > 1">
+													<li ng-repeat="item in paginacao.canceladas_nfse" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFSE','canceladas_nfse','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="list_sat">
+								<div class="panel-tab clearfix">
+									<ul class="tab-bar">
+										<li class="active">
+											<a href="#emitidas_sat" data-toggle="tab">
+												<i class="fa fa-check-circle-o"></i> Emitidas
+											</a>
+										</li>
+										<li>
+											<a href="#canceladas_sat" data-toggle="tab">
+												<i class="fa fa-times-circle-o"></i> Canceladas
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="emitidas_sat">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!emitidas_sat)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(emitidas_sat.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in emitidas_sat">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.emitidas_sat.length > 1">
+													<li ng-repeat="item in paginacao.emitidas_sat" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('SAT','emitidas_sat','autorizado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="canceladas_sat">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!canceladas_sat)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(canceladas_sat.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in canceladas_sat">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_sat.length > 1">
+													<li ng-repeat="item in paginacao.canceladas_sat" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('SAT','canceladas_sat','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="list_nfce">
+								<div class="panel-tab clearfix">
+									<ul class="tab-bar">
+										<li class="active">
+											<a href="#emitidas_nfce" data-toggle="tab">
+												<i class="fa fa-check-circle-o"></i> Emitidas
+											</a>
+										</li>
+										<li>
+											<a href="#canceladas_nfce" data-toggle="tab">
+												<i class="fa fa-times-circle-o"></i> Canceladas
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="emitidas_nfce">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!emitidas_nfce)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(emitidas_nfce.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in emitidas_nfce">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.emitidas_nfce.length > 1">
+													<li ng-repeat="item in paginacao.emitidas_nfce" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFCE','emitidas_nfce','autorizado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="canceladas_nfce">
+										<br/>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead>
+															<th class="text-middle text-center" width="50"></th>
+															<th class="text-middle text-center">Nº NF-e</th>
+															<th class="text-middle">Destinatário</th>
+															<th class="text-middle text-center">Data de Emissão</th>
+															<th class="text-middle text-center">Valor da NF-e</th>
+															<th class="text-middle text-center">Tipo NF-e</th>
+															<th class="text-middle text-center">Operação</th>
+															<th class="text-middle text-center">Status</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(!canceladas_nfce)">
+																<td colspan="8" class="text-center text-middle">Nenhuma NF-e encontrada!</td>
+															</tr>
+															<tr ng-show="(canceladas_nfce.length == 0)">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="nota in canceladas_nfce">
+																<td class="text-middle">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
+																			data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																			Ações <span class="caret"></span>
+																		</button>
+																		<ul class="dropdown-menu">
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')" 
+																				ng-click="showDANFEModal(nota, 'PDF')">
+																				<a href="">
+																					<i class="fa fa-file-pdf-o"></i> Visualizar DANFE (PDF)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')|| (nota.status == 'processando_cancelamento')||(nota.status == 'erro_cancelamento')">
+																				<a href="{{ nota.caminho_xml_nota_fiscal }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar DANFE (XML)
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'cancelado')|| (nota.status == 'processando_cancelamento')">
+																				<a href="{{ nota.caminho_xml_cancelamento }}" target="_blank">
+																					<i class="fa fa-file-code-o"></i> Visualizar XML de Cancelamento
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
+																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
+																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					<i class="fa fa-refresh"></i> Atualizar Status
+																				</a>
+																			</li>
+																			<li role="separator" class="divider" 
+																				ng-show="(nota.status == 'autorizado' || nota.status == 'processando_autorizacao')">
+																			</li>
+																			<li>
+																				<a href="nota-fiscal.php?id_venda={{ nota.cod_venda }}" 
+																					ng-show="nota.cod_venda">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																				<a href="nota-fiscal-servico.php?id={{ nota.cod_ordem_servico }}" 
+																					ng-show="nota.cod_ordem_servico">
+																					<i class="fa fa-list-alt"></i> Visualizar Detalhes
+																				</a>
+																			</li>
+																			<li ng-show="(nota.cod_venda && nota.status == 'autorizado')" 
+																				ng-click="modalCorrecao(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-edit"></i> Cartas de Correção
+																				</a>
+																			</li>
+																			<li ng-show="(nota.status == 'autorizado')" 
+																				ng-click="modalCancelar(nota,$index)">
+																				<a href="">
+																					<i class="fa fa-times-circle"></i> Cancelar Nota
+																				</a>
+																			</li>
+																		</ul>
+																	</div>
+																</td>
+																<td class="text-center text-middle">{{ nota.numero }}</td>
+																<td class="text-middle">{{ nota.nome_destinatario }}</td>
+																<td class="text-center text-middle">{{ nota.data_emissao | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-right text-middle">
+																	R$ {{ (nota.cod_ordem_servico != null) ? nota.valor_total_servicos : ((nota.cod_venda != null || nota.cod_transferencia != null) ? nota.valor_total : '') | numberFormat : 2 : ',' : '.' }}
+																</td>
+																<td class="text-center text-middle">
+																	{{ (nota.cod_ordem_servico != null) ? 'Serviço' : ((nota.cod_venda != null || nota.cod_transferencia != null) ? 'Produtos' : '') }}
+																</td>
+																<td class="text-center text-middle">
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.natureza_operacao }}"
+																		ng-show="(nota.cod_venda != null || nota.cod_transferencia != null)"></i>
+
+																	<i class="fa fa-info-circle fa-2x" data-toggle="tooltip" title="{{ nota.issqn_descricao_servico_municipio }}"
+																		ng-show="(nota.cod_ordem_servico != null)"></i>
+																</td>
+																<td class="text-middle text-center">
+																	<span class="label label-success" ng-show="(nota.status == 'autorizado') || (nota.status == 'erro_cancelamento') || (nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		NF-e Autorizada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Processando Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_autorizacao')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Erro na Autorização
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'erro_cancelamento')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz_cancelamento }}">
+																		Erro no cancelamento
+																	</span>
+																	<span class="label label-danger" ng-show="(nota.status == 'cancelado')" 
+																		data-toggle="tooltip" title="{{ nota.mensagem_sefaz }}">
+																		Cancelada
+																	</span>
+																	<span class="label label-warning" ng-show="(nota.status == 'processando_cancelamento')" 
+																		data-toggle="tooltip" title="Atualize o status para ver o andamento">
+																		Processando Cancelamento
+																	</span>															
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_nfce.length > 1">
+													<li ng-repeat="item in paginacao.canceladas_nfce" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadNotas('NFCE','canceladas_nfce','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -455,9 +1589,61 @@
 		</div>
 		<!-- /.modal -->
 
+		<div class="modal modal-fade" id="modal-inutilizacao" style="display: none;">
+  			<div class="modal-dialog modal">
+    			<div class="modal-content">
+      				<div class="modal-header">
+      					<h4>Nova Inutilização</h4>
+      				</div>
+      				<div class="modal-body">
+      					<div class="alert alert-danger" ng-if="(msg_error)">{{ msg_error }}</div>
+      					<div class="row">
+							<div class="form-group">
+								<div class="col-sm-4">
+									<label class="control-label">CNPJ do Emitente</label>
+									<input type="text" name="cnpj" class="form-control" ng-model="inutilizacao.num_cnpj" ui-mask="99.999.999/9999-99" disabled>
+								</div>
+								<div class="col-sm-2">
+									<label class="control-label">Serie</label>
+									<input type="text" name="num_serie" class="form-control" ng-model="inutilizacao.serie" disabled>
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Número Inicial</label>
+									<input type="text" name="num_inicial" class="form-control" ng-model="inutilizacao.num_inicial">
+								</div>
+								<div class="col-sm-3">
+									<label class="control-label">Número Final</label>
+									<input type="text" name="num_final" class="form-control" ng-model="inutilizacao.num_final">
+								</div>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Justificativa</label>
+									<textarea rows="5" class="form-control" ng-model="inutilizacao.dsc_justificativa"></textarea>
+								</div>
+							</div>	
+						</div>
+      				</div>
+      				<div class="modal-footer">
+      					<button class="btn btn-sm btn-default" data-dismiss="modal">
+      						<i class="fa fa-times-circle"></i>
+      						 Cancelar
+      					</button>
+      					<button class="btn btn-sm btn-success" ng-click="salvarInutilizacao($event)">
+      						<i class="fa fa-save"></i>
+      						 Salvar
+      					</button>
+      				</div>
+      			</div>
+      		</div>
+		</div>
+
 
 		<!-- /Modal novo tamanho-->
-		<div class="modal fade" id="modal-corrigir-nota" style="display:none">
+		<div class="modal fade" id="modal-corrigir-nota" style="display:none;">
   			<div class="modal-dialog modal modal-lg">
     			<div class="modal-content">
       				<div class="modal-header">

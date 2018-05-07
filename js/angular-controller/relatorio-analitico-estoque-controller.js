@@ -48,6 +48,11 @@ app.controller('RelatorioAnaliticoEstoqueController', function($scope, $http, $w
 		ng.loadItens(0);
 	}
 
+	ng.doExportExcel = function(){
+		var query_String = "?est->id_deposito="+ng.deposito.id+"&tpp->id_empreendimento="+ng.userLogged.id_empreendimento;
+    	window.location.href = baseUrlApi()+"relatorio/estoque/analitico/export"+ query_String;
+    }
+
 	ng.loadItens = function(offset) {
 		aj.get(baseUrlApi()+"relatorio/estoque/analitico/"+ offset +"/"+ng.itensPorPagina+"/?id_deposito="+ng.deposito.id+"&id_empreendimento="+ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {

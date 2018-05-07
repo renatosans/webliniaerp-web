@@ -8,23 +8,144 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	ng.configuracoes 	= ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.notas 			= null;
 	ng.paginacao 		= {};
+	ng.busca = { text: "", numeroo: "" };
 	
 	ng.reset = function(){
 		ng.Notas = {itens:[]};
 	}
 
-	ng.busca = { text: "", numeroo: "" };
+	ng.modalInutilizacao = function(){
+		if (ng.configuracoes.id_empresa_focus == "" || ng.configuracoes.id_empresa_focus == null ) {
+			alert('ID Empresa Focus não associado ao empreendimento');
+			return false;
+		}
+		$('#modal-inutilizacao').modal('show');
+		ng.msg_error = null;
+		ng.inutilizacao = {
+			id_empreendimento : ng.userLogged.id_empreendimento,
+			num_inicial: "",
+			num_final: "",
+			dsc_justificativa: ""
+		}
+		ng.informacoesEmpreedimento();
+	}
+
+	ng.salvarInutilizacao = function(event){
+		ng.msg_error = null;
+		if (ng.inutilizacao.num_inicial == "" || ng.inutilizacao.num_inicial == null) {
+			ng.msg_error = "Preencha o número inicial";
+			return false;
+		} else if (ng.inutilizacao.num_final == "" || ng.inutilizacao.num_final == null) {
+			ng.msg_error = "Preencha o número final";
+			return false;
+		} else if (ng.inutilizacao.dsc_justificativa == "" || ng.inutilizacao.dsc_justificativa == null){
+			ng.msg_error = "Descreva uma justificativa";
+			return false;
+		}
+
+		if (ng.inutilizacao.dsc_justificativa.length < 15) {
+			ng.msg_error = "A Justificativa tem que ter ao menos 15 caractéres";
+			return false;
+		}
+
+		var btn = $(event.target);
+		if(!(btn.is(':button')))
+			btn = $(btn.parent('button'));
+		btn.button('loading');
+		aj.post(baseUrlApi()+"nota_fiscal/inutilizacao/save", { data: JSON.stringify( ng.inutilizacao ) })
+			.success(function(data, status, headers, config) {
+				btn.button('reset');
+				$('#modal-inutilizacao').modal('hide');
+				ng.loadInutilizacoes();
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				ng.msg_error = data.body.mensagem;
+			});
+	}
+
+	ng.loadInutilizacoes = function(){
+		aj.get(baseUrlApi()+"nota_fiscal/inutilizacoes?id_empreendimento="+ng.userLogged.id_empreendimento)
+		.success(function(data, status, headers, config) {
+				ng.inutilizacoes = data.inutilizadas;
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
+	ng.informacoesEmpreedimento = function(){
+		aj.get(baseUrlApi()+"empreendimento/"+ng.userLogged.id_empreendimento)
+			.success(function(data, status, headers, config) {
+				ng.inutilizacao.num_cnpj = data.num_cnpj;
+				aj.get(baseUrlApi()+"serie_documento_fiscal/?cod_empreendimento="+ng.userLogged.id_empreendimento+"&tsdf->flg_excluido=0")
+					.success(function(data, status, headers, config) {
+						ng.inutilizacao.serie = data[0].serie_documento_fiscal;
+					})
+					.error(function(data, status, headers, config) {
+
+					});
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
+
 	ng.resetFilter = function() {
 		$("#inputDtaEmissao").val("");
 		ng.busca.text = "" ;
 		ng.busca.numeroo = "" ;
 		ng.reset();
-		ng.loadNotas(0,10);
+		ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
+		ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+		ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
+		ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
+		ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
+		ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
+		ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
+		ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
 	}
 
-	ng.loadNotas = function(offset,limit) {
-		ng.notas = [];
-		var query_string = "?cod_empreendimento="+ ng.userLogged.id_empreendimento;
+	ng.filtrar = function(){
+		ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
+		ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+		ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
+		ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
+		ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
+		ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
+		ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
+		ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
+	}
+
+	ng.loadNotas = function(tipo_nota, list_name, status, offset,limit) {
+		ng[list_name] = [];
+		var query_string  = "?cod_empreendimento="+ ng.userLogged.id_empreendimento;
+
+		switch(status){
+			case 'autorizado':
+				query_string += "&("+$.param({status:{exp:"<> 'cancelado')"}});
+			break;
+			case 'cancelado':
+				query_string += "&("+$.param({status:{exp:"= 'cancelado')"}});
+			break;
+		}
+
+		switch(tipo_nota){
+			case 'SAT':
+				query_string += "&flg_sat=1";
+				break;
+			case 'NFCE':
+				query_string += "&flg_nfce=1";
+				break;
+			case 'NFE':
+				query_string += "&("+$.param({flg_sat:{exp:"= 0 OR flg_sat IS NULL )"}});
+				query_string += "&("+$.param({flg_nfce:{exp:"= 0 OR flg_nfce IS NULL )"}});
+				query_string += "&("+$.param({cod_ordem_servico:{exp:"= 0 OR cod_ordem_servico IS NULL )"}});
+				break;
+			case 'NFSE':
+				query_string += "&("+$.param({cod_ordem_servico:{exp:"IS NOT NULL )"}});
+				break;
+		}
 
 		if(ng.busca.nome != ""){
 			query_string += "&("+$.param({nome_destinatario:{exp:"like'%"+ng.busca.text+"%')"}});
@@ -42,11 +163,11 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 
 		aj.get(baseUrlApi()+"notas/"+ offset +"/"+ limit + query_string)
 			.success(function(data, status, headers, config) {
-				ng.notas 			= data.notas;
-				ng.paginacao.notas 	= data.paginacao;
+				ng[list_name] 			= data.notas;
+				ng.paginacao[list_name] 	= data.paginacao;
 			})
 			.error(function(data, status, headers, config) {
-				ng.notas = null;
+				ng[list_name] = null;
 			});
 	}
 
@@ -232,5 +353,14 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		},5000);
 	}
 
-	ng.loadNotas(0,10);
+	ng.loadInutilizacoes();
+	ng.informacoesEmpreedimento();
+	ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
+	ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+	ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
+	ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
+	ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
+	ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
+	ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
+	ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
 });
