@@ -29,7 +29,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		{nome:"Cheque",id:2},
 		{nome:"Dinheiro",id:3},
 		{nome:"Boleto Bancário",id:4},
-		{nome:"Boleto Bancário - Pagare", id:11},
+		{nome:"Boleto Bancário - Bankse", id:11},
 		{nome:"Cartão de Débito",id:5},
 		{nome:"Cartão de Crédito",id:6},
 		{nome:"Transferência",id:8}

@@ -350,49 +350,49 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			});
 	}
 
-	ng.savePagareSettings = function (e) {
+	ng.saveBankseSettings = function (e) {
         var btn = $(e.target);
         if(!(btn.is(':button')))
             btn = $(btn.parent('button'));
 
 		var data = [];
 
-        if(ng.configuracoes.pagare_environment){
+        if(ng.configuracoes.bankse_environment){
             data.push({
-                nome: 'pagare_environment',
-                valor: ng.configuracoes.pagare_environment,
+                nome: 'bankse_environment',
+                valor: ng.configuracoes.bankse_environment,
                 id_empreendimento: ng.userLogged.id_empreendimento
             })
         }
 
-		if(ng.configuracoes.pagare_username_development){
+		if(ng.configuracoes.bankse_username_development){
 			data.push({
-				nome: 'pagare_username_development',
-				valor: ng.configuracoes.pagare_username_development,
+				nome: 'bankse_username_development',
+				valor: ng.configuracoes.bankse_username_development,
 				id_empreendimento: ng.userLogged.id_empreendimento
 			})
 		}
 
-        if(ng.configuracoes.pagare_password_development){
+        if(ng.configuracoes.bankse_password_development){
             data.push({
-                nome: 'pagare_password_development',
-                valor: ng.configuracoes.pagare_password_development,
+                nome: 'bankse_password_development',
+                valor: ng.configuracoes.bankse_password_development,
                 id_empreendimento: ng.userLogged.id_empreendimento
             })
         }
 
-        if(ng.configuracoes.pagare_username_production){
+        if(ng.configuracoes.bankse_username_production){
             data.push({
-                nome: 'pagare_username_production',
-                valor: ng.configuracoes.pagare_username_production,
+                nome: 'bankse_username_production',
+                valor: ng.configuracoes.bankse_username_production,
                 id_empreendimento: ng.userLogged.id_empreendimento
             })
         }
 
-        if(ng.configuracoes.pagare_password_production){
+        if(ng.configuracoes.bankse_password_production){
             data.push({
-                nome: 'pagare_password_production',
-                valor: ng.configuracoes.pagare_password_production,
+                nome: 'bankse_password_production',
+                valor: ng.configuracoes.bankse_password_production,
                 id_empreendimento: ng.userLogged.id_empreendimento
             })
         }
