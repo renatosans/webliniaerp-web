@@ -592,7 +592,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 		ng.clientes = [];
-		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")";
+		query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+")"+"&usu->flg_excluido=0";
 
 		if(ng.busca.clientes != ""){
 			query_string += "&"+$.param({'(usu->nome':{exp:"like'%"+ng.busca.clientes+"%' OR usu.apelido LIKE '%"+ng.busca.clientes+"%')"}});
