@@ -147,11 +147,11 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 				break;
 		}
 
-		if(ng.busca.nome != ""){
+		if(!empty(ng.busca.nome)){
 			query_string += "&("+$.param({nome_destinatario:{exp:"like'%"+ng.busca.text+"%')"}});
 		}
 
-		if(ng.busca.numeroo != ""){
+		if(!empty(ng.busca.numeroo)){
 			query_string += "&("+$.param({numero:{exp:"like'%"+ng.busca.numeroo+"%')"}});
 		}
 
@@ -363,4 +363,9 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
 	ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
 	ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
+
+	setTimeout(function() {
+	  $('a[href="#list_nfse"]').trigger('click');
+	  $('a[href="#list_nfe"]').trigger('click');
+	},10);
 });
