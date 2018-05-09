@@ -430,7 +430,7 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/relatorio_vendas_hora_a_hora-controller.js?<?php echo filemtime('relatorio_vendas_hora_a_hora-controller.js')?>"></script>
+	<script src="js/angular-controller/relatorio_vendas_hora_a_hora-controller.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {

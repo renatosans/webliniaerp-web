@@ -171,7 +171,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 			});
 	}
 
-	ng.atualzarStatus = function(cod_nota_fiscal,index,event){
+	ng.atualzarStatus = function(list_name, cod_nota_fiscal,index,event){
 		if(!empty(event)){
 		var element = $(event.target);
 		event.stopPropagation();
@@ -181,7 +181,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		}	
 
 		var url = "";
-		if(!empty(ng.notas[index].cod_ordem_servico))
+		if(!empty(ng[list_name][index].cod_ordem_servico))
 			url = baseUrlApi()+"nfse/"+ cod_nota_fiscal +"/atualizar/status/"+ ng.userLogged.id_empreendimento;
 		else
 			url = baseUrlApi()+"nota_fiscal/"+ cod_nota_fiscal +"/"+ ng.userLogged.id_empreendimento +"/atualizar/status";
@@ -190,14 +190,14 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 			.success(function(data, status, headers, config) {
 				if(!empty(event)){
 					element.html('<i class="fa fa-check-circle-o"></i> Atualizado');
-					if(!(ng.notas[index].status == data.status))
-						ng.notas[index] = data ;
+					if(!(ng[list_name][index].status == data.status))
+						ng[list_name][index] = data ;
 					$timeout(function(){
 						element.html('<i class="fa fa-refresh"></i> Atualizar Status');
 					}, 2000);	
 				}else{
-					if(!(ng.notas[index].status == data.status))
-						ng.notas[index] = data ;
+					if(!(ng[list_name][index].status == data.status))
+						ng[list_name][index] = data ;
 				}
 			})
 			.error(function(data, status, headers, config) {
