@@ -1308,7 +1308,7 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-lg btn-danger" ng-if="receber_pagamento == false" ng-click="cancelar()"><i class="fa fa-times-circle"></i> Cancelar Venda</button>
 							<button type="button" class="btn btn-lg btn-warning" ng-if="receber_pagamento" ng-click="cancelarPagamento()"><i class="fa fa-times-circle"></i> Cancelar Pagamento</button>
-							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled=" (modo_venda == 'pdv' && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
+							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled=" (modo_venda == null && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
 							<button type="button" class="btn btn-lg btn-primary" ng-if="receber_pagamento == false" ng-disabled="carrinho.length == 0" ng-click="receberPagamento()"><i class="fa fa-money"></i> Receber</button>
 							<button  type="button" class="btn btn-lg btn-success" ng-show="receber_pagamento == false && modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-orcamento" ng-click="salvarOrcamento()" ng-disabled="carrinho.length <= 0 || !isNumeric(cliente.id)"><i class="fa fa-save"></i> Orçamento</button>
 
@@ -1318,6 +1318,50 @@
 				</div>
 			</div>
 		</div><!-- /main-container -->
+
+		<div class="modal fade" id="modal-lembrete-troca-vendedor" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+						<h4>Sangria</h4>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-12" id="valor_retirada_sangria">
+				    			Deseja trocar de vendedor ? 
+				    		</div>
+				    	</div>
+				    </div>
+
+				    <div class="modal-footer">
+				    	<button type="button" class="btn btn-md btn-success" ng-click="selVendedor(true)">
+				    		<i class="fa fa-times-circle"></i> SIM
+				    	</button>
+				    	<button type="button"  class="btn btn-md btn-default" id="btn-aplicar-sangria" ng-click="fecharModalLembreteTrocaVendedor()">
+				    		<i class="fa fa-minus-circle"></i> Não
+				    	</button>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

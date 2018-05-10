@@ -213,9 +213,17 @@
 										<table ng-if="transferencia.flg_controle_validade!=1" class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 											<thead>
 												<tr>
-													<td colspan="{{ ( isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 ) && 12 || 6 }}"><i class="fa fa-archive"></i> Produtos</td>
-													<td width="60" align="center"  ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4">
-													<button class="btn btn-xs btn-primary" tooltip title="Selecionar produto(s)" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+													<td colspan="{{ ( isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 ) && 13 || 7 }}"><i class="fa fa-archive"></i> Produtos</td>
+													<td width="80" align="center"  ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4">
+														<button class="btn btn-xs btn-primary" tooltip title="Selecionar produto(s)" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+
+
+														<button 
+															ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)"
+															class="btn btn-xs" ng-click="addFocus()" 
+															ng-class="{ 'btn-info' : (busca_cod_barra == false), 'btn-success' : (busca_cod_barra == true) }">
+															<i class="fa fa-barcode"></i>
+														</button>
 													</td>
 												</tr>
 											</thead>
@@ -1092,6 +1100,9 @@
 
 	<!-- Logout confirmation -->
 	<?php include("logoutConfirm.php"); ?>
+
+
+	<input ng-model="cod_barra_busca" ng-blur="blurBuscaCodBarra(cod_barra_busca)"  class="form-control input-sm" style="position: absolute;top: -100px" id="focus" ng-enter="loadProdutosCodigoBarra()"/>
 
     <!-- Le javascript
     ================================================== -->

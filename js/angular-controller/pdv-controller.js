@@ -3217,6 +3217,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.abrirVenda = function(tipo){
+		if(ng.configuracoes && ng.configuracoes.flg_lembrete_troca_vendedor_pdv && ng.configuracoes.flg_lembrete_troca_vendedor_pdv == 1)
+			$('#modal-lembrete-troca-vendedor').modal('show');
+		
 		if(tipo == 'pdv'){
 			ng.modo_venda = 'pdv' ;
 			ng.venda_aberta = true ;
@@ -3927,13 +3930,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}, 500);  	
 	}
 
-	ng.selVendedor = function(){
+	ng.selVendedor = function(fecharModal){
+		if(fecharModal === true){
+			$("#modal-lembrete-troca-vendedor").modal("hide");
+		}
 		var offset = 0  ;
 		var limit  =  10 ;;
 		ng.modal_senha_vendedor.show = false ;
 		ng.modal_senha_vendedor.senha_vendedor = null;
 		ng.loadVendedor(offset,limit);
 		$("#list-vendedor").modal("show");
+	}
+
+	ng.fecharModalLembreteTrocaVendedor = function(){
+		$("#modal-lembrete-troca-vendedor").modal("hide");
 	}
 
 	ng.loadVendedor= function(offset,limit) {

@@ -1102,6 +1102,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item11);
 		}
 
+		if(ng.configuracoes.flg_lembrete_troca_vendedor_pdv != undefined){
+			var flg_lembrete_troca_vendedor_pdv = {
+							nome 				:'flg_lembrete_troca_vendedor_pdv',
+							valor 				:ng.configuracoes.flg_lembrete_troca_vendedor_pdv , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(flg_lembrete_troca_vendedor_pdv);
+		}
+
 		btn.button('loading');
 		var pth_local_sucess = false ;
 		if(ng.config.pth_local != undefined){

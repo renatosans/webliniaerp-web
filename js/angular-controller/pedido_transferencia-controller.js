@@ -837,6 +837,82 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		delete item.tooltip ;
 	}
 
+	ng.addFocus = function(){
+   		ng.cod_barra_busca = '';
+   		$('#focus').focus();
+   		ng.busca_cod_barra = true ;
+   	}
+
+   	ng.blurBuscaCodBarra = function(){
+   		ng.busca_cod_barra = false ;
+   		$.noty.closeAll();
+		var i = noty({
+			timeout : 4000,
+			layout: 'topRight',
+			type: 'warning',
+			theme: 'relax',
+			text: 'Busca por codigo de barra desativada',
+		});
+   	}
+
+   	ng.loadProdutosCodigoBarra = function(offset, limit) {
+	
+		ng.produtos = null;
+
+ 		offset = offset == null ? 0  : offset;
+		limit  = limit  == null ? 10 : limit;
+
+		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		if(!empty(ng.transferencia.id_deposito_padrao_pedido)){
+			query_string += "&id_deposito_estoque="+ng.transferencia.id_deposito_padrao_pedido;
+			// query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
+		}
+		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
+
+		query_string += "&(pro->codigo_barra[exp]=='"+ng.cod_barra_busca+"')";
+
+		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+query_string)
+			.success(function(data, status, headers, config) {
+				if(data.produtos.length == 1){
+					var produto = angular.copy(data.produtos[0]);
+					if(produto.qtd_item > 0) {
+						ng.addProduto(produto);
+						ng.addFocus();
+					}else{
+						$.noty.closeAll();
+						var i = noty({
+							timeout : 4000,
+							layout: 'topRight',
+							type: 'error',
+							theme: 'relax',
+							text: 'Produto sem estoque',
+						});	
+					}
+				}
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404) {
+					$.noty.closeAll();
+					var i = noty({
+						timeout : 4000,
+						layout: 'topRight',
+						type: 'error',
+						theme: 'relax',
+						text: 'Codigo de barra não corresponde a nenhum produto',
+					});
+				}else{
+						$.noty.closeAll();
+						var i = noty({
+							timeout : 4000,
+							layout: 'topRight',
+							type: 'error',
+							theme: 'relax',
+							text: 'Ocorreu um erro ao buscar o produto',
+						});
+				}
+			});
+	}
+
 	ng.loadtransferencias(0,10);
 	ng.loadDepositosSelect();
 

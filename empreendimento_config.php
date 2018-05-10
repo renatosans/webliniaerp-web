@@ -748,6 +748,24 @@
 											</div>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="" class="control-label">Exibir Lembrete para trocar de vendedor?</label> <div class="form-group">
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_lembrete_troca_vendedor_pdv" value="1" name="flg_lembrete_troca_vendedor_pdv"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Sim</span>
+													</label>
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_lembrete_troca_vendedor_pdv" value="0" name="flg_lembrete_troca_vendedor_pdv"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Não</span>
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
 								</fieldset>
 
 								<div class="row" ng-show="userLogged.id_empreendimento == 75">

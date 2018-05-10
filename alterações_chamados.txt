@@ -1,21 +1,15 @@
-#880
+#892
+	modified:   pdv.php
+
+#866
+	modified:   pdv.php
 	modified:   js/angular-controller/pdv-controller.js
+	modified:   empreendimento_config.php
+	modified:   js/angular-controller/empreendimento_config-controller.js
 
-#874 
-	modified:   devolucao.php
-    modified:   js/angular-controller/devolucao-controller.js
+#765
+	modified:   pedido_transferencia_recebido.php
+	modified:   js/angular-controller/pedido_transferencia_recebido-controller.js
+	modified:   pedido_transferencia.php
+	modified:   js/angular-controller/pedido_transferencia-controller.js
 
-#592
-	modified:   controller/ProdutoController.php
-	modified:   dao/ProdutoDao.php
-
-
-
-
-js/angular-controller/relatorio_vendas_hora_a_hora-controller.js
-rel_vendas_hora_a_hora.php
-modified:   controller/ProdutoController.php
-modified:   controller/RelatorioController.php
-modified:   dao/ProdutoDao.php
-modified:   dao/RelatorioDao.php
-modified:   index.php
