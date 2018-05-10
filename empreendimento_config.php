@@ -1629,20 +1629,57 @@
 							</div>
 
 							<div class="tab-pane fade" id="notificacoes">
-								<form  role="form">
 								<div class="alert alert-config-not" style="display:none"></div>
-								<div class="row">
-									<div class="col-sm-12">
-										<div class="form-group">
-											<label class="control-label">Emails para notificações</label>
-											<tags-input
-											 ng-model="notEmails"
-											 allowed-tags-pattern="^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}"
-											  placeholder="Add email" >
-											</tags-input>
+								<form  role="form">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label class="control-label">Emails para notificações</label>
+												<tags-input
+												 ng-model="notEmails"
+												 allowed-tags-pattern="^[a-zA-Z0-9][a-zA-Z0-9\._-]+@([a-zA-Z0-9\._-]+\.)[a-zA-Z-0-9]{2}"
+												  placeholder="Add email" >
+												</tags-input>
+											</div>
 										</div>
 									</div>
-								</div>
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="" class="control-label">Ativar notificações por email?</label>
+												<div class="form-group">
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_notificacoes_email" value="1" name="flg_notificacoes_email"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Sim</span>
+													</label>
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_notificacoes_email" value="0" name="flg_notificacoes_email"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Não</span>
+													</label>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="" class="control-label">Alerta cadastro externo?</label>
+												<div class="form-group">
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_alerta_cadastro_externo" value="1" name="flg_alerta_cadastro_externo"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Sim</span>
+													</label>
+													<label class="label-radio inline">
+														<input ng-model="configuracoes.flg_alerta_cadastro_externo" value="0" name="flg_alerta_cadastro_externo"   type="radio" class="inline-radio">
+														<span class="custom-radio"></span>
+														<span>Não</span>
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
 								</form>
 								<div class="row">
 									<div class="col-sm-12">

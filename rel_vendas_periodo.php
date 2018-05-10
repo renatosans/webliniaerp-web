@@ -184,7 +184,7 @@
 
 				<br>
 
-				<table class="table table-condensed table-bordered table-striped table-hover"
+				<table id="data" class="table table-condensed table-bordered table-striped table-hover"
 					ng-if="(vendas != null)">
 					<thead>
 						<tr>

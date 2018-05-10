@@ -177,7 +177,7 @@
 				<div class="alert alert-sistema" style="display:none"></div>
 
 				<div class="panel panel-default" id="box-novo" style="display:none">
-					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Novo Produto</div>
+					<div class="panel-heading"><i class="fa fa-plus-circle"></i> Novo Produto - <strong>{{ produto.nome }}</strong></div>
 					<div class="panel-body">
 						<div class="panel panel-default" id="box-novo">
 								<div class="panel-tab clearfix">

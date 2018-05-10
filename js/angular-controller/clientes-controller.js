@@ -374,7 +374,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 10 : limit;
 		ng.clientes = null ;
-		var query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+"&usu->id[exp]= NOT IN("+ng.configuracao.id_cliente_movimentacao_caixa+","+ng.configuracao.id_usuario_venda_vitrine+"))";
+		var query_string = "?(tue->id_empreendimento[exp]=="+ng.userLogged.id_empreendimento+"&usu->flg_excluido=0"+"&usu->id[exp]= NOT IN("+ng.configuracao.id_cliente_movimentacao_caixa+","+ng.configuracao.id_usuario_venda_vitrine+"))";
 
 		if(not_in(ng.userLogged.id,'222,498,1069,46')){
 			query_string += " AND (usu.id NOT IN (222,498,1069,46) OR ( usu.id IN (222,498,1069,46) AND emp.id = 6 ) )";
