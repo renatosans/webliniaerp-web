@@ -469,9 +469,24 @@
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
 					    						ng-model="pagamento.valor"
-					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 9"/>
+					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9"/>
 						    			</div>
 						    		</div>
+
+						    		<div class="col-sm-3" ng-if="pagamento.id_forma_pagamento == 4" >
+										<div class="form-group element-group">
+											<label class="control-label">Periodicidade</label>
+											<select class="form-control" ng-model="pagamento.periodicidade" ng-change="pushCheques()">
+												<option value="1">Mensal</option>
+												<option value="2">Bimestral</option>
+												<option value="3">Trimestral</option>
+												<option value="4">Quadrimestral</option>
+												<option value="6">Semestral</option>
+												<option value="12">Anual</option>
+											</select>
+										</div>
+									</div>
+
 						    		<div class="col-sm-3" id="numero_parcelas" 
 						    			ng-if="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9 || pagamento.id_forma_pagamento == 4">
 						    			<label class="control-label">Parcelas</label>
@@ -480,18 +495,6 @@
 					    						ng-blur="pushCheques()" 
 					    						ng-focus="qtdCheque()" 
 					    						ng-model="pagamento.parcelas">
-						    			</div>
-						    		</div>
-
-						    		<div class="col-sm-3" id="periodicidade_parcelamento" 
-						    			ng-if="pagamento.id_forma_pagamento == 4">
-						    			<label class="control-label">A cada: (dias)</label>
-						    			<div class="form-group ">
-					    					<input type="text" class="form-control input-sm"
-					    						disabled="disabled" 
-					    						ng-blur="pushCheques()" 
-					    						ng-focus="qtdCheque()" 
-					    						ng-model="pagamento.periodicidade_parcelamento">
 						    			</div>
 						    		</div>
 						    	</div>
@@ -626,7 +629,7 @@
 										<div class="form-group boleto_data">
 											<label class="control-label">Data</label>
 											<div class="input-group">
-												<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control boletoData">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" date-init="{{ item.date_init }}"  type="text" id="pagamentoData" class="datepicker form-control boletoData">
 												<span class="input-group-addon" class="cld_pagameto" ng-click="focusData($index)"><i class="fa fa-calendar"></i></span>
 											</div>
 										</div>
@@ -1323,7 +1326,7 @@
   			<div class="modal-dialog error modal-md">
     			<div class="modal-content">
       				<div class="modal-header">
-						<h4>Sangria</h4>
+						<h4>Lembrete</h4>
       				</div>
 
 				    <div class="modal-body">

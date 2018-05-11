@@ -50,7 +50,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.id_venda     = null ;
 
 	ng.cheques					= [{id_banco:null,valor:0,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
-	ng.boletos					= [{id_banco:null,num_conta_corrente:null,num_cheque:null,status_pagamento:0}];
+	ng.boletos					= [/*{id_banco:null,num_conta_corrente:null,num_cheque:null,status_pagamento:0}*/];
 	ng.promessas_pagamento      = [{status_pagamento:0,data_pagamento:null,valor_pagamento:0}] ;
 	ng.dsc_formas_pagamento     = [] ;
 	ng.dadosOrcamento           = null ;
@@ -3547,16 +3547,20 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.pagamento.parcelas = empty(ng.pagamento.parcelas) ? 1 : ng.pagamento.parcelas ;
 			ng.pagamento.parcelas = ng.pagamento.parcelas == "" ?  1 : ng.pagamento.parcelas ;
 
-			if(parseInt(ng.pagamento.parcelas, 10) > parseInt(nParcelasAntBoleto, 10)){
+			/*if(parseInt(ng.pagamento.parcelas, 10) > parseInt(nParcelasAntBoleto, 10)){
 				var repeat = parseInt(ng.pagamento.parcelas, 10) - parseInt(nParcelasAntBoleto, 10) ;
+				var last_date = moment().format('DD/MM/YYYY') ;
+				var periodicidade =  $.isNumeric(ng.pagamento.periodicidade) ? ng.pagamento.periodicidade  : 1 ;
 				while(repeat > 0){
 					var item = {
 						id_banco: null,
 						valor_pagamento: 0,
 						num_conta_corrente: null,
 						num_cheque: null,
-						status_pagamento: 0
+						status_pagamento: 0,
+						date_init : moment(last_date,'DD/MM/YYYY').add(periodicidade, 'M').format('DD/MM/YYYY')
 					};
+					last_date = moment(last_date,'DD/MM/YYYY').add(periodicidade, 'M').format('DD/MM/YYYY') ;
 					ng.boletos.push(item);
 					repeat -- ;
 				}
@@ -3567,7 +3571,27 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.boletos.splice(index,1);
 					repeat -- ;
 				}
+			}*/
+
+
+			ng.boletos = [] ;
+			var repeat = parseInt(ng.pagamento.parcelas, 10) ;
+			var last_date = moment().format('DD/MM/YYYY') ;
+			var periodicidade =  $.isNumeric(ng.pagamento.periodicidade) ? ng.pagamento.periodicidade  : 1 ;
+			while(repeat > 0){
+				var item = {
+					id_banco: null,
+					valor_pagamento: 0,
+					num_conta_corrente: null,
+					num_cheque: null,
+					status_pagamento: 0,
+					date_init : moment(last_date,'DD/MM/YYYY').add(periodicidade, 'M').format('DD/MM/YYYY')
+				};
+				last_date = moment(last_date,'DD/MM/YYYY').add(periodicidade, 'M').format('DD/MM/YYYY') ;
+				ng.boletos.push(item);
+				repeat -- ;
 			}
+
 			
 			nParcelasAntBoleto = ng.pagamento.parcelas;
 			ng.calTotalBoleto();
@@ -3603,6 +3627,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.boletos.splice(index-1,1);
 		ng.pagamento.parcelas = parseInt(ng.pagamento.parcelas, 10) - 1;
 		nParcelasAntBoleto = ng.pagamento.parcelas;
+		ng.pushCheques();
 	}
 
 
@@ -3611,8 +3636,19 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
 		$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});*/
 
-		$(".boletoData").datepicker();
-		$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
+		var elements = $(".boletoData") ;
+
+		$.each(elements,function(i,v){
+			date_init = empty($(v).attr('date-init')) ? false : $(v).attr('date-init') ;
+			$(v).datepicker();
+			if(date_init){
+				$(v).datepicker("update",date_init);	
+				$(v).val(date_init);
+			}
+			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});	
+		});
+
+		
 		//$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 	}
 

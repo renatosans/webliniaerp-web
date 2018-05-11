@@ -1,15 +1,10 @@
-#892
-	modified:   pdv.php
+#898 
 
-#866
-	modified:   pdv.php
-	modified:   js/angular-controller/pdv-controller.js
-	modified:   empreendimento_config.php
-	modified:   js/angular-controller/empreendimento_config-controller.js
+	Ateração API
+		modified:   dao/EstoqueDao.php
+	    modified:   dao/ProdutoDao.php ( OBS: não tem relação com o chamado, mas vai corrigir um erro que achei )
 
-#765
-	modified:   pedido_transferencia_recebido.php
-	modified:   js/angular-controller/pedido_transferencia_recebido-controller.js
-	modified:   pedido_transferencia.php
-	modified:   js/angular-controller/pedido_transferencia-controller.js
+#866 
 
+	Alteração WEB
+		modified: pdv.php
