@@ -346,7 +346,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
     ng.atualizaQtdTotal = function(){
      	var qtd_total = 0;
      	$.each(ng.inventario.itens,function(i,item){
-     		qtd_total += (item.qtd_ivn == null || item.qtd_ivn == "" ? 0 : item.qtd_ivn);
+     		qtd_total += (item.qtd_ivn == null || item.qtd_ivn == "" ? 0 : parseFloat(item.qtd_ivn));
      	});
      	ng.inventario.qtd_total = qtd_total ;
      }
