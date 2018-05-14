@@ -222,7 +222,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		ng.transferencia.produtos.splice(index,1);
 	}
 
-	ng.addProduto = function(item){
+	ng.addProduto = function(item,incrementar){
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$(".has-error").removeClass("has-error");
 		if(typeof item.atualizar_custo == 'undefined'){
@@ -240,8 +240,22 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 			produto.qtd_transferida = qtd_transferida ;
 		}
 
-		ng.transferencia.produtos.push(produto);
-		item.qtd_pedida = null ;
+		var index = null ;
+		$.each(ng.transferencia.produtos,function(i,v){
+			if(v.id_produto == produto.id){
+				index = i ;
+				return ;
+			}
+		});
+
+		if(incrementar === true && $.isNumeric(index)){
+			var qtd = $.isNumeric(ng.transferencia.produtos[index].qtd_pedida) ? Number(ng.transferencia.produtos[index].qtd_pedida)  : 1 ;
+			ng.transferencia.produtos[index].qtd_pedida = (qtd + 1) ;
+		}else{
+			produto.qtd_pedida = empty(produto.qtd_pedida) ? 1 : produto.qtd_pedida ;
+			ng.transferencia.produtos.push(produto);
+			item.qtd_pedida = null ;
+		}
 
 		$('#foco').focus()
 	}
@@ -870,13 +884,13 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
 		query_string += "&(pro->codigo_barra[exp]=='"+ng.cod_barra_busca+"')";
-
+		ng.cod_barra_busca = '' ;
 		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+query_string)
 			.success(function(data, status, headers, config) {
 				if(data.produtos.length == 1){
 					var produto = angular.copy(data.produtos[0]);
 					if(produto.qtd_item > 0) {
-						ng.addProduto(produto);
+						ng.addProduto(produto,true);
 						ng.addFocus();
 					}else{
 						$.noty.closeAll();
