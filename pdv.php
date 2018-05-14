@@ -638,7 +638,7 @@
 										<div class="form-group boleto_valor">
 											<label class="control-label">Valor</label>
 											<div class="form-group ">
-					    						<input ng-blur="pushCheques()" ng-keyUp="calTotalBoleto()"  thousands-formatter ng-model="item.valor_pagamento" type="text" class="form-control" >
+					    						<input ng-keyUp="calTotalBoleto()"  thousands-formatter ng-model="item.valor_pagamento" type="text" class="form-control" >
 					    					</div>
 										</div>
 									</div>

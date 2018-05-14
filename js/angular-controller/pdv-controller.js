@@ -3578,10 +3578,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			var repeat = parseInt(ng.pagamento.parcelas, 10) ;
 			var last_date = moment().format('DD/MM/YYYY') ;
 			var periodicidade =  $.isNumeric(ng.pagamento.periodicidade) ? ng.pagamento.periodicidade  : 1 ;
+			var valor_pagamento =  $.isNumeric(ng.pagamento.valor) ? Number(ng.pagamento.valor)  : 0 ;
+			var valor_parcela =  valor_pagamento > 0 ? Math.round( (valor_pagamento/repeat) * 100) /100 : 0  ;
+			var parcelas_somadas = 0 ;
 			while(repeat > 0){
+				parcelas_somadas = Math.round( (parcelas_somadas+valor_parcela) * 100) /100 ;
 				var item = {
 					id_banco: null,
-					valor_pagamento: 0,
+					valor_pagamento: valor_parcela,
 					num_conta_corrente: null,
 					num_cheque: null,
 					status_pagamento: 0,
@@ -3592,9 +3596,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				repeat -- ;
 			}
 
+			if(valor_pagamento != parcelas_somadas){
+				var r = Math.round( (valor_pagamento-parcelas_somadas) * 100) /100 ;
+				var index = ng.boletos.length - 1 ;
+				ng.boletos[index].valor_pagamento = Math.round( (ng.boletos[index].valor_pagamento+(r)) * 100) /100 ;
+			}
+
+
 			
 			nParcelasAntBoleto = ng.pagamento.parcelas;
-			ng.calTotalBoleto();
+			//ng.calTotalBoleto();
 			setTimeout(function(){ ng.loadDatapicker();}, 1000);
 
 			if(!empty(ng.pagamento.periodicidade_parcelamento)) {
@@ -3623,7 +3634,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 	}
 
-	ng.delItemBoleto = function(index) {
+	ng.delItemBoleto = function(index){
 		ng.boletos.splice(index-1,1);
 		ng.pagamento.parcelas = parseInt(ng.pagamento.parcelas, 10) - 1;
 		nParcelasAntBoleto = ng.pagamento.parcelas;
@@ -4813,7 +4824,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.carrinho = [] ;
 		ng.recebidos = [];
 		ng.cheques					= [{id_banco:null,valor:0,num_conta_corrente:null,num_cheque:null,flg_cheque_predatado:0}];
-		ng.boletos					= [{id_banco:null,num_conta_corrente:null,num_cheque:null,status_pagamento:0}];
+		ng.boletos					= [/*{id_banco:null,num_conta_corrente:null,num_cheque:null,status_pagamento:0}*/];
 		ng.promessas_pagamento      = [{status_pagamento:0,data_pagamento:null,valor_pagamento:0}] ;
 		ng.totalPagamento();
 		ng.calculaTroco();
