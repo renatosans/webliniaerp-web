@@ -15,6 +15,10 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 	ng.vendas 			= null;
 	ng.flg_venda_obrigatoria = 0;
 	ng.flg_cozinha = 0;
+	var params      = getUrlVars();
+
+	if(!empty(params.dtaInicial)) ng.stardate_dtaInicial = moment(params.dtaInicial).format('DD/MM/YYYY') ;
+	if(!empty(params.dtaFinal)) ng.stardate_dtaFinal = moment(params.dtaFinal).format('DD/MM/YYYY') ;
 
 	 $scope.all_countries = [{
                 "id": 28,
@@ -104,21 +108,27 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 		ng.reset();
 	}
 
-	ng.aplicarFiltro = function() {
+	ng.aplicarFiltro = function(dtaInicial,dtaFinal) {
 		$("#modal-aguarde").modal('show');
-		dtaInicial = ng.busca.dtaInicial;
-		if(empty(dtaInicial)){
-			$("#modal-aguarde").modal('hide');
-			ng.mensagens('alert-danger','<strong>Por Favor selecione a data inicial</strong>','.errorBusca');
-		}else{
-			ng.loadVendas(0,ng.itensPorPagina);
-		};
+
+		if(!empty(dtaInicial) || !empty(dtaFinal)){
+			ng.loadVendas(dtaInicial,dtaFinal);
+		}
+		else{
+			dtaInicial = ng.busca.dtaInicial;
+			if(empty(dtaInicial)){
+				$("#modal-aguarde").modal('hide');
+				ng.mensagens('alert-danger','<strong>Por Favor selecione a data inicial</strong>','.errorBusca');
+			}else{
+				ng.loadVendas();
+			};
+		}
 	}
 
-	ng.loadVendas = function() {
+	ng.loadVendas = function(dtaInicial,dtaFinal) {
 		ng.msg_error = null;
-		dtaInicial = ng.busca.dtaInicial;
-		dtaFinal   = ng.busca.dtaFinal;
+		dtaInicial = empty(dtaInicial) ? ng.busca.dtaInicial : dtaInicial;
+		dtaFinal   = empty(dtaFinal)   ? ng.busca.dtaFinal   : dtaFinal;
 		var queryString = "";
 
 		if(!empty(dtaInicial) && !empty(dtaFinal)){
@@ -151,7 +161,6 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 		/*if(ng.cliente.id != "" && ng.cliente.id != null){
 			queryString = queryString == "" ? "?usu->id="+ng.cliente.id : "&usu->id="+ng.cliente.id ;
 		}*/
-		
 		aj.get(baseUrlApi()+"produtos/by_venda/"+ng.userLogged.id_empreendimento+"/"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data;
@@ -310,6 +319,11 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 	ng.reset();
 
 	ng.msg_error = 'Selecione ao menos um período!';
+
+	if(!empty(params.dtaInicial) ||  !empty(params.dtaFinal)){
+		ng.aplicarFiltro(params.dtaInicial,params.dtaFinal) ;
+	}
+
 });
 
 app.directive('bsPopover', function () {

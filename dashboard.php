@@ -326,7 +326,7 @@
 					</div><!-- /.col -->
 
 					<div class="col-lg-3 col-sm-6 col-md-6">
-						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
+						<div ng-click="redirectToSubReport('rel_vendas_produto','YYYY-MM-DD')" class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_custo_produto | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Custo Produtos Vendidos</h6>
 							(no período)
