@@ -75,6 +75,8 @@ app.controller('RelatorioVendasHoraAHoraController', function($scope, $http, $wi
 		aj.get(url)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data.horas;
+				ng.gerarGraficoHoraHora(data.horas);
+				ng.gerarGraficoSemana(data.semana);
 				$("#modal-aguarde").modal('hide');
 
 			})
@@ -85,6 +87,88 @@ app.controller('RelatorioVendasHoraAHoraController', function($scope, $http, $wi
 					alert("Ocorreu um erro ao carregar o relatorio");
 				};
 			});
+	}
+
+	
+	ng.refGraficoSemana = null ;
+	ng.gerarGraficoSemana = function(semana){
+		if(ng.refGraficoSemana) ng.refGraficoHoraHora.destroy();
+		var saida = [] ;
+		$.each(semana,function(i,v){
+			var total_dia = 0 ;
+			var media_semana = 0
+			$.each(v,function(x,y){
+				total_dia += y.total ;
+			});
+			
+			saida.push(total_dia);
+		});
+
+
+		// Bar chart
+		new Chart(document.getElementById("bar-chart"), {
+		    type: 'bar',
+		    data: {
+		      labels: ["Domingo","Segunda", "Terça", "Quarta", "Quinta", "Sexta","Sábado"],
+		      datasets: [
+		        {
+		          backgroundColor: ["#3e95cd", "#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd","#3e95cd"],
+		          data: saida
+		        }
+		      ]
+		    },
+		    options: {
+		      legend: { display: false },
+		      title: {
+		        display: true,
+		        text: 'Faturamento dia a dia'
+		      },
+		      tooltips: {
+			         enabled: false
+			    }
+		    }
+		});
+	}
+
+	ng.refGraficoHoraHora = null ;
+	ng.gerarGraficoHoraHora = function(horas){
+		if(ng.refGraficoHoraHora) ng.refGraficoHoraHora.destroy();
+		var saida = [] ;
+		$.each(horas,function(i,v){
+			var total_hora = 0 ;
+			var media_hora = 0
+			$.each(v,function(x,y){
+				total_hora += y.total ;
+			});
+			if(total_hora > 0)
+				media_hora = total_hora / 7 ;
+
+			saida.push(media_hora);
+		});
+		
+		new Chart(document.getElementById("line-chart"), {
+		  type: 'line',
+		  data: {
+		    labels: ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'],
+		    datasets: [{ 
+		        data: saida,
+		        borderColor: "#3e95cd",
+		        fill: false
+		      }
+		    ]
+		  },
+		  options: {
+		  	legend : false,
+		    title: {
+		      display: true,
+		      text: 'Faturamento hora a hora'
+		    },
+		    tooltips: {
+		         enabled: false
+		    }
+		  }
+		});
+
 	}
 
 	ng.selFornecedor = function(){
