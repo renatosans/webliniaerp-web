@@ -919,7 +919,11 @@
 											<th >Tamanho</th>
 											<th >Sabor/Cor</th>
 											<th class="text-center" width="80">Qtd.</th>
-											<th width="80"></th>
+											<th width="100">
+												<button class="btn btn-xs btn-success" ng-click="selectAll()">
+													<i class="fa fa-check-square-o"></i> Selecionar Todos
+												</button>
+											</th>
 										</tr>
 									</thead>
 									<tbody>

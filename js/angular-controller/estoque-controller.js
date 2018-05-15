@@ -973,6 +973,12 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 		}
     }
 
+    ng.selectAll = function(){
+    	angular.forEach(ng.produtos, function(r,s){
+    		ng.addProduto(r);
+    	});
+    }
+
     ng.addFocus = function(){
    		ng.cod_barra_busca = '';
    		$('#focus').focus();
