@@ -10,6 +10,11 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 	ng.busca.vendedores  = '';
 	ng.vendedor          = {};
 
+	var params      = getUrlVars();
+
+	if(!empty(params.dtaInicial)) ng.stardate_dtaInicial = moment(params.dtaInicial).format('DD/MM/YYYY') ;
+	if(!empty(params.dtaFinal)) ng.stardate_dtaFinal = moment(params.dtaFinal).format('DD/MM/YYYY') ;
+
 	ng.doExportExcel = function(id_table){
     	$('#'+ id_table).tableExport({
     		filename: id_table, 
@@ -72,6 +77,7 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 		aj.get(baseUrlApi()+"relatorio/vendas/consolidado/vendedor/"+offset+'/'+limit+"/"+queryString)
 			.success(function(data, status, headers, config) {
 				ng.vendas = data.vendas;
+				ng.calculaTotais();
 				ng.paginacao.vendas = data.paginacao ;
 				$("#modal-aguarde").modal('hide');
 
@@ -84,6 +90,21 @@ app.controller('RelatorioTotalVendasVendedorController', function($scope, $http,
 				ng.paginacao.vendas = [];
 				ng.paginacao.vendas = null;
 			});
+	}
+
+	ng.calculaTotais = function(tipo){
+		var qtd_vendas = 0 ;
+		var total_vendas = 0 ;
+		var total_comissao = 0 ;
+		$.each(ng.vendas,function(i,v){
+			qtd_vendas = qtd_vendas + v.qtd_vendas;
+			total_vendas = Math.round( ( v.vlr_total_vendas + total_vendas ) * 100) /100 ;
+			total_comissao = Math.round( ( v.vlr_total_comissao + total_comissao ) * 100) /100 ;
+		});
+
+		ng.qtd_vendas = qtd_vendas;
+		ng.total_vendas = total_vendas;
+		ng.total_comissao = total_comissao; 
 	}
 
 	ng.selCliente = function(){
