@@ -1142,7 +1142,9 @@
 														ng-model="item.qtd_pedida" 
 														ng-if="item.flg_unidade_fracao != 1" 
 														ng-blur="verificaQtdMultiplo('produtos',index,item)"
-														id="txt-qtd-multiplo-{{ index }}"/>
+														id="txt-qtd-multiplo-{{ index }}"
+														ng-enter="addProduto(item)"
+														ng-disabled="produtoSelected(item.id)"/>
 												</div>
 												<div class="form-group">
 													<input type="text" 
@@ -1152,7 +1154,9 @@
 														ng-if="item.flg_unidade_fracao == 1" 
 														ng-blur="verificaQtdMultiplo('produtos',index,item)"
 														id="txt-qtd-multiplo-{{ index }}" 
-														thousands-formatter precision="3"/>
+														thousands-formatter precision="3"
+														ng-enter="addProduto(item)"
+														ng-disabled="produtoSelected(item.id)"/>
 												</div>
 											</td>
 											<td width="50" align="center">

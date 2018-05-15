@@ -930,12 +930,14 @@
 											<td>{{ item.sabor }}</td>
 											<td>
 												<input type="text" class="form-control text-center input-xs" width="50"
+													ng-enter="addProduto(item)"
 													onKeyPress="return SomenteNumero(event);" 
 													ng-model="item.qtd"
 													ng-disabled="isProdutoSelected(item)"
 													ng-if="item.flg_unidade_fracao != 1"/>
 
 												<input type="text" class="form-control input-xs" width="50"
+													ng-enter="addProduto(item)"
 													onKeyPress="return SomenteNumero(event);" 
 													ng-model="item.qtd"
 													ng-disabled="isProdutoSelected(item)"

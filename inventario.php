@@ -583,7 +583,7 @@
 											<td>{{ item.sabor }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td class="text-center">
-												<button ng-show="!produtoSelected(item.id)" type="button" id="selecionar" class="btn btn-xs btn-success" ng-click="addProduto(item, true)">
+												<button ng-show="!produtoSelected(item.id)" type="button" id="selecionar" class="btn btn-xs btn-success" ng-click="addProduto(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
 												</button>
 												<button ng-show="produtoSelected(item.id)" disabled="disabled" class="btn btn-primary btn-xs" type="button">
