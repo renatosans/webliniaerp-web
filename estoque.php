@@ -427,10 +427,13 @@
 												<td class="text-middle">{{ item.nome_fabricante }}</td>
 												<td class="text-middle">{{ item.peso }}</td>
 												<td class="text-middle">{{ item.sabor }}</td>
-												<td class="text-center text-middle" ng-if="(item.flg_controlar_validade == 1)">{{ item.qtd }}</td>
-												<td width="70" class="text-center text-middle" colspan="2" ng-if="(item.flg_controlar_validade != 1)">
+												<td width="70" class="text-center text-middle" colspan="2" ng-if="(item.flg_controlar_validade != 1 && item.flg_unidade_fracao == 1)">
+													<input type="text" class="form-control input-xs text-center" ng-model="item.qtd" ng-keyup="atualizaValores()" thousands-formatter precision="{{ configuracao.qtd_casas_decimais }}">
+												</td>
+												<td width="70" class="text-center text-middle" colspan="2" ng-if="(item.flg_controlar_validade != 1 && item.flg_unidade_fracao != 1)">
 													<input type="text" class="form-control input-xs text-center" ng-model="item.qtd" ng-keyup="atualizaValores()">
 												</td>
+												<td class="text-center text-middle" ng-if="(item.flg_controlar_validade == 1)">{{ item.qtd }}</td>
 												<td class="text-middle" style="width: 32px;" ng-if="(item.flg_controlar_validade == 1)">
 													<button type="button" 
 														class="btn btn-xs btn-primary" 
@@ -601,7 +604,9 @@
 
 							<div class="col-sm-1">
 								<div class="form-group">
-									<label class="control-label"><br></label>
+									<div class="controls">
+										<label class="control-label">&nbsp;</label>
+									</div>
 									<button type="button" class="btn btn-sm btn-primary" ng-click="loadEntradas(0,10)" ><i class="fa fa-filter"></i> Filtrar</button>
 								</div>
 							</div>
@@ -935,7 +940,7 @@
 													ng-model="item.qtd"
 													ng-disabled="isProdutoSelected(item)"
 													ng-if="item.flg_unidade_fracao == 1"
-													thousands-formatter precision="3"/>
+													thousands-formatter precision="{{ configuracao.qtd_casas_decimais }}"/>
 											</td>
 											<td class="text-center">
 												<button type="button"

@@ -260,7 +260,7 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td colspan="6" ng-hide="inventario.itens.length > 0">
+												<td colspan="7" class="text-center" ng-hide="inventario.itens.length > 0">
 													Não há produtos selecionados
 												</td>
 											</tr>
@@ -275,7 +275,10 @@
 														<i class="fa fa-calendar"></i>
 													</button>
 												</td>
-												<td class="text-center" width="70" colspan="2" ng-if="(item.flg_controlar_validade != 1)">
+												<td class="text-center" width="70" colspan="2" ng-if="(item.flg_controlar_validade != 1 && item.flg_unidade_fracao == 1)">
+													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdTotal()" thousands-formatter precision="{{ configuracao.qtd_casas_decimais }}">
+												</td>
+												<td class="text-center" width="70" colspan="2" ng-if="(item.flg_controlar_validade != 1 && item.flg_unidade_fracao != 1)">
 													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdTotal()">
 												</td>
 												<td class="text-center">
@@ -343,14 +346,18 @@
 
 							<div class="col-sm-1">
 								<div class="form-group">
-									<label class="control-label"><br></label>
+									<div class="controls">
+										<label class="control-label">&nbsp;</label>
+									</div>
 									<button type="button" class="btn btn-sm btn-primary" ng-click="loadUltimosInventarios(0,10)"><i class="fa fa-filter"></i> Filtrar</button>
 								</div>
 							</div>
 
 							<div class="col-sm-1">
 								<div class="form-group">
-									<label class="control-label"><br></label>
+									<div class="controls">
+										<label class="control-label">&nbsp;</label>
+									</div>
 									<button type="button" class="btn btn-sm btn-block btn-default" ng-click="resetFilter()">Limpar</button>
 								</div>
 							</div>
@@ -558,7 +565,11 @@
 											<th>Tamanho</th>
 											<th>Cor/Sabor</th>
 											<th>Fabricante</th>
-											<th width="80"></th>
+											<th width="100">
+												<button class="btn btn-xs btn-success" ng-click="selectAll()">
+													<i class="fa fa-check-square-o"></i> Selecionar Todos
+												</button>
+											</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -571,10 +582,13 @@
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
 											<td>{{ item.nome_fabricante }}</td>
-											<td>
-											<button ng-click="addProduto(item)" class="btn btn-success btn-xs" type="button">
-												<i class="fa fa-check-square-o"></i> Selecionar
-											</button>
+											<td class="text-center">
+												<button ng-show="!produtoSelected(item.id)" type="button" id="selecionar" class="btn btn-xs btn-success" ng-click="addProduto(item, true)">
+													<i class="fa fa-check-square-o"></i> Selecionar
+												</button>
+												<button ng-show="produtoSelected(item.id)" disabled="disabled" class="btn btn-primary btn-xs" type="button">
+                                                	<i class="fa fa-check-circle-o"></i> Selecionado
+                                            	</button>
 											</td>
 										</tr>
 									</tbody>

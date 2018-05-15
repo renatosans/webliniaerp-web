@@ -1,10 +1,11 @@
-app.controller('InventarioController', function($scope, $http, $window, $dialogs, UserService, PrestaShop){
+app.controller('InventarioController', function($scope, $http, $window, $dialogs, UserService, PrestaShop, ConfigService){
 
 	var ng = $scope
 		aj = $http;
 
 	ng.baseUrl 			   = baseUrl();
 	ng.userLogged 		   = UserService.getUserLogado();
+	ng.configuracao 	   = ConfigService.getConfig(ng.userLogged.id_empreendimento);
 	ng.entradaEstoque 	   = {};
 	ng.utimosInventarios   = [] ;
 	ng.detalhes            = [];
@@ -581,21 +582,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		if(autoAddQtd && empty(item.qtd))
     		item.qtd = 1;
     	else
-    		item.qtd = 0
-
-		var x = false ;
-
-		$.each(ng.inventario.itens,function(i,produto){
-			if(produto.id == item.id){
-				x = true ;
-			}
-		});
-
-		if(x){
-			ng.mensagens('alert-danger','<strong>Este produto já foi adicionado a lista</strong>','.alert-produtos');
-			return;
-		}
-
+    		item.qtd = 0;
 		ng.inventario.itens.push(item);
 		if(autoAddQtd) {
 	    	ng.itemValidade = { validade: '', qtd: item.qtd, flg_unidade_fracao: item.flg_unidade_fracao};
@@ -603,6 +590,12 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 	    	ng.addValidadeItem();
     		ng.atualizaQtdTotal();
     	}
+	}
+
+	ng.selectAll = function(){
+		angular.forEach(ng.produtos, function(r, s){
+			ng.inventario.itens.push(r);
+		});
 	}
 
 	/* end */
@@ -624,6 +617,17 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 				}
 			});
 		}
+	}
+
+	ng.produtoSelected = function(id){
+		var r = false ;
+		$.each(ng.inventario.itens,function(i,x){
+			if(Number(x.id) == Number(id)){
+				r = true ;
+				return false ;
+			}
+		});
+		return r ;
 	}
 
 	ng.formatDate = function(date){
