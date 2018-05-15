@@ -427,8 +427,11 @@
 												<td class="text-middle">{{ item.nome_fabricante }}</td>
 												<td class="text-middle">{{ item.peso }}</td>
 												<td class="text-middle">{{ item.sabor }}</td>
-												<td class="text-center text-middle">{{ item.qtd }}</td>
-												<td class="text-middle" style="width: 32px;">
+												<td class="text-center text-middle" ng-if="(item.flg_controlar_validade == 1)">{{ item.qtd }}</td>
+												<td width="70" class="text-center text-middle" colspan="2" ng-if="(item.flg_controlar_validade != 1)">
+													<input type="text" class="form-control input-xs text-center" ng-model="item.qtd" ng-keyup="atualizaValores()">
+												</td>
+												<td class="text-middle" style="width: 32px;" ng-if="(item.flg_controlar_validade == 1)">
 													<button type="button" 
 														class="btn btn-xs btn-primary" 
 														ng-click="showValidades(item)">

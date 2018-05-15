@@ -269,13 +269,16 @@
 												<td>{{ item.nome_fabricante }}</td>
 												<td>{{ item.peso }}</td>
 												<td>{{ item.sabor }}</td>
-												<td width="32">
+												<td class="text-center" ng-if="(item.flg_controlar_validade == 1)">{{ item.qtd_ivn }}</td>
+												<td width="32" ng-if="(item.flg_controlar_validade == 1)">
 													<button type="button" class="btn btn-xs btn-primary" ng-click="showValidades(item)">
 														<i class="fa fa-calendar"></i>
 													</button>
 												</td>
-												<td style="text-align: center;">{{ item.qtd_ivn }}</td>
-												<td>
+												<td class="text-center" width="70" colspan="2" ng-if="(item.flg_controlar_validade != 1)">
+													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdTotal()">
+												</td>
+												<td class="text-center">
 													<button ng-click="deleteItem($index)" type="button" class="btn btn-xs btn-danger">
 														<i class="fa fa-trash-o"></i> Remover Item
 													</button>
@@ -283,7 +286,7 @@
 											</tr>
 											<tr style="font-weight: bold;" ng-show="inventario.itens.length > 0">
 												<td style="text-align: right;" colspan="4">TOTAIS</td>
-												<td style="text-align: center;">{{ inventario.qtd_total }}</td>
+												<td style="text-align: center;" colspan="2">{{ inventario.qtd_total }}</td>
 												<td></td>
 											</tr>
 										</tbody>
@@ -477,7 +480,6 @@
 												<label class="control-label">Quantidade</label>
 												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()" ng-if="produto.flg_unidade_fracao != 1">
 												<input type="text" class="form-control"  ng-model="itemValidade.qtd" ng-enter="addValidadeItem()" ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
-												<pre>{{ produto }}</pre>
 											</div>
 										</div>
 
