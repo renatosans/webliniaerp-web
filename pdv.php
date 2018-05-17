@@ -399,14 +399,17 @@
 					    		<div class="row">
 					    			<div class="col-sm-12">
 					    				<div class="form-group">
+											<div style="float: right; font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_limite_credito">
+												<span style="color:#000"> / Limite de Crédito :</span> <span style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
+											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor<0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor==0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 										</div>
 									</div>
@@ -1154,16 +1157,23 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-sm-6">
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor<0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor==0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12 text-right">
+											<span ng-if="cliente.vlr_saldo_devedor > 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor > 0" style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_saldo_devedor < 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor < 0" style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_saldo_devedor == 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor == 0" style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_limite_credito" style="color:#000">/ Limite de Crédito :</span> 
+											<span ng-if="cliente.vlr_limite_credito" style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">/ Saldo Final:</span> 
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">R$ {{ cliente.vlr_limite_credito - cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
 										</div>
 									</div>
 									<br/>

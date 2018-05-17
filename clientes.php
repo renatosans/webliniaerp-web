@@ -452,8 +452,15 @@
 										<div class="col-sm-4">
 											<div id="id_finalidade" class="form-group">
 												<label class="control-label">Finalidade</label>
-												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.dsc_finalidade">
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.dsc_finalidade" >
 												<!--<select class="form-control input-sm" ng-model="cliente.id_finalidade" ng-options="a.id as a.nome for a in finalidades"></select>-->
+											</div>
+										</div>
+
+										<div class="col-sm-2">
+											<div id="vlr_limite_credito" class="form-group">
+												<label class="control-label">Limite de Crédito</label>
+												<input type="text" class="form-control input-sm" ng-model="cliente.vlr_limite_credito" thousands-formatter precision="2">
 											</div>
 										</div>
 
