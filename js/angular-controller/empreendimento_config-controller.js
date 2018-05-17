@@ -1413,7 +1413,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		if(!(btn.is(':button')))
 			btn = $(btn.parent('button'));
 		var chaves = [];
-		if(!empty(ng.notEmails) || ng.notEmails.length > 0){
+		// if(!empty(ng.notEmails) || ng.notEmails.length > 0){
 			var emails = [] ;
 			$.each(ng.notEmails,function(i,v){
 				emails.push(v.text);
@@ -1421,9 +1421,9 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var x = JSON.stringify(emails);
 			item = {nome:'emails_notificacoes',valor:x,id_empreendimento:ng.userLogged.id_empreendimento}
 			chaves.push(item);
-		}else{
-			return ;
-		}
+		// }else{
+		// 	return ;
+		// }
 
 		if(ng.configuracoes.flg_notificacoes_email != undefined){
 			var item = {
