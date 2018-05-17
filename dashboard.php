@@ -329,7 +329,10 @@
 						<div ng-click="redirectToSubReport('rel_vendas_produto','YYYY-MM-DD')" class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_custo_produto | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Custo Produtos Vendidos</h6>
-							(no período)
+							{{ total.vlr_custo_produto / total.vlrTotalFaturamento * 100 | numberFormat: 2 :',':'.' }}% (no período) 
+							<div class="pull-right">
+								<font size="4"></font>
+							</div>
 							<div class="stat-icon">
 								<i class="fa fa-3x fa-archive"></i>
 							</div>
@@ -382,7 +385,10 @@
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_taxa_maquineta | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Taxa Maquineta</h6>
-							(no período)
+							{{ total.vlr_taxa_maquineta / total.vlrTotalFaturamento * 100 | numberFormat: 2 :',':'.' }}% (no período)
+							<div class="pull-right">
+								<font size="4"></font>
+							</div>
 							<div class="stat-icon">
 								<i class="fa fa-3x fa-fax"></i>
 							</div>
@@ -399,7 +405,10 @@
 						<div class="panel-stat3 bg-primary fadeInDown animation-delay6" style="min-height: 125px;">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ total.vlr_pagamento_fornecedor | numberFormat:config.qtd_casas_decimais:',':'.' }}</span></h2>
 							<h6>Total Pago aos Fornecedores</h6>
-							(no período)
+							{{ total.vlr_pagamento_fornecedor / total.vlrTotalFaturamento * 100 | numberFormat: 2 :',':'.' }}% (no período)
+							<div class="pull-right">
+								<font size="4"></font>
+							</div>
 							<div class="stat-icon">
 								<i class="fa fa-truck fa-3x"></i>
 							</div>
@@ -469,7 +478,10 @@
 						<div class="panel-stat3 bg-warning fadeInDown animation-delay5">
 							<h2 class="m-top-none">R$ <span >{{ total.vlrSaldoDevedorFornecedores | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Pagamentos Agendados</h6>
-							(a fornecedores)
+							{{ total.vlrSaldoDevedorFornecedores / total.vlrTotalFaturamento * 100 | numberFormat: 2 :',':'.' }}% (a fornecedores)
+							<div class="pull-right">
+								<font size="4"></font>
+							</div>
 							<div class="stat-icon">
 								<i class="fa fa-truck fa-3x"></i>
 							</div>
@@ -487,7 +499,10 @@
 							ng-click="redirectToSubReport('rel_total_vendas_vendedor')">
 							<h2 class="m-top-none">R$ <span id="clientsSalesCount">{{ vlr_total_comissao_vendedores | numberFormat : config.qtd_casas_decimais : ',' : '.' }}</span></h2>
 							<h6>Total Comissõs Vendedores</h6>
-							(no período)
+							{{ vlr_total_comissao_vendedores / total.vlrTotalFaturamento * 100 | numberFormat: 2 :',':'.' }}% (no período)
+							<div class="pull-right">
+								<font size="4"></font>
+							</div>
 							<div class="stat-icon">
 								<i class="fa fa-truck fa-3x"></i>
 							</div>

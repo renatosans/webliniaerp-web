@@ -778,7 +778,8 @@
 														id="txt-qtd-multiplo-{{ index }}" 
 														ng-model="item.qtd_pedida" 
 														ng-blur="verificaQtdMultiplo('list_produtos', index, item)"
-														ng-if="item.flg_unidade_fracao != 1"/>
+														ng-if="item.flg_unidade_fracao != 1"
+														ng-enter="addProduto(item)"/>
 												</div>
 												<div class="form-group">
 													<input type="text" 
@@ -787,7 +788,8 @@
 														ng-model="item.qtd_pedida" 
 														ng-blur="verificaQtdMultiplo('list_produtos', index, item)"
 														ng-if="item.flg_unidade_fracao == 1" 
-														thousands-formatter precision="3"/>
+														thousands-formatter precision="3"
+														ng-enter="addProduto(item)"/>
 												</div>
 											</td>
 											<td width="50" align="center">
