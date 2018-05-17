@@ -464,7 +464,7 @@
 						    			</div>
 						    		</div>
 
-						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10">
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10 && && pagamento.id_forma_pagamento != 4">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
@@ -472,6 +472,17 @@
 					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9"/>
 						    			</div>
 						    		</div>
+
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 4">
+						    			<label class="control-label">Valor</label>
+						    			<div class="form-group ">
+					    					<input type="text" class="form-control input-sm" thousands-formatter
+					    						ng-model="pagamento.valor"
+					    						ng-blur="pushCheques()" 
+					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9"/>
+						    			</div>
+						    		</div>
+
 
 						    		<div class="col-sm-3" ng-if="pagamento.id_forma_pagamento == 4" >
 										<div class="form-group element-group">
