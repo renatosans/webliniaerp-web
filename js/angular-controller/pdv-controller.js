@@ -758,13 +758,13 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			if (ng.cliente.vlr_saldo_devedor < 0) {
 				calc = (ng.cliente.vlr_limite_credito - ((ng.cliente.vlr_saldo_devedor * -1) + ng.vlrTotalCompra));
 				if (calc <= 0) {
-					$dialogs.notify('Atenção!','<strong>O cliente já atingiu o limite disponivel</strong>');
+					$dialogs.notify('Atenção!','<strong>O valor total da venda ultrapassa o saldo disponível do cliente</strong>');
 					return false;
 				}
 			} else {
 				calc = ((ng.cliente.vlr_limite_credito + ng.cliente.vlr_saldo_devedor) - ng.vlrTotalCompra);
 				if (calc <= 0) {
-					$dialogs.notify('Atenção!','<strong>O valor da venda utrapassa o limite disponivel</strong>');
+					$dialogs.notify('Atenção!','<strong>O valor total da venda ultrapassa o saldo disponível do cliente</strong>');
 					return false;
 				}
 			}

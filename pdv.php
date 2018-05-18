@@ -1173,7 +1173,7 @@
 											<span ng-if="cliente.vlr_limite_credito" style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
 											
 											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">/ Saldo Final:</span> 
-											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">R$ {{ cliente.vlr_limite_credito - cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">R$ {{ cliente.vlr_saldo_devedor + cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
 										</div>
 									</div>
 									<br/>
