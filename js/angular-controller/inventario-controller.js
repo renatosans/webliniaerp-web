@@ -239,7 +239,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		var qtdTotal = 0;
 
 		$.each(ng.produto.validades, function(i, item) {
-			qtdTotal += (item.qtd);
+			qtdTotal += parseFloat(item.qtd);
 		});
 
 		ng.produto.qtd_ivn = qtdTotal;
