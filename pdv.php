@@ -467,7 +467,7 @@
 						    			</div>
 						    		</div>
 
-						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10 && && pagamento.id_forma_pagamento != 4">
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10 && pagamento.id_forma_pagamento != 4">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
