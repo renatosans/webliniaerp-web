@@ -402,6 +402,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(!empty(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia) || ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia == 0 ){
+			var item = {
+				nome 				: 'flg_mostrar_produtos_sem_estoque_pedido_transferencia',
+				valor 				: ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia,
+				id_empreendimento	: ng.userLogged.id_empreendimento
+			};
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
