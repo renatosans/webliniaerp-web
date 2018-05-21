@@ -299,7 +299,7 @@
 					<tfoot>
 						<tr>
 							<td class="text-right text-bold" colspan="7">Totais</td>
-							<td class="text-center text-bold">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
+							<td class="text-center text-bold" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">R$ {{ vlr_custo_total | numberFormat: 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold">R$ {{ vlr_real_item_total | numberFormat: 2 : ',' : '.'}}</td>
 							<td></td>
 							<td></td>

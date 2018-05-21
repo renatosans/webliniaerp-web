@@ -399,14 +399,17 @@
 					    		<div class="row">
 					    			<div class="col-sm-12">
 					    				<div class="form-group">
+											<div style="float: right; font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_limite_credito">
+												<span style="color:#000"> / Limite de Crédito :</span> <span style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
+											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor<0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor==0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 										</div>
 									</div>
@@ -464,14 +467,40 @@
 						    			</div>
 						    		</div>
 
-						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10">
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10 && pagamento.id_forma_pagamento != 4">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
 					    						ng-model="pagamento.valor"
-					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 4 || pagamento.id_forma_pagamento == 9"/>
+					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9"/>
 						    			</div>
 						    		</div>
+
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento == 4">
+						    			<label class="control-label">Valor</label>
+						    			<div class="form-group ">
+					    					<input type="text" class="form-control input-sm" thousands-formatter
+					    						ng-model="pagamento.valor"
+					    						ng-blur="pushCheques()" 
+					    						ng-disabled="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9"/>
+						    			</div>
+						    		</div>
+
+
+						    		<div class="col-sm-3" ng-if="pagamento.id_forma_pagamento == 4" >
+										<div class="form-group element-group">
+											<label class="control-label">Periodicidade</label>
+											<select class="form-control" ng-model="pagamento.periodicidade" ng-change="pushCheques()">
+												<option value="1">Mensal</option>
+												<option value="2">Bimestral</option>
+												<option value="3">Trimestral</option>
+												<option value="4">Quadrimestral</option>
+												<option value="6">Semestral</option>
+												<option value="12">Anual</option>
+											</select>
+										</div>
+									</div>
+
 						    		<div class="col-sm-3" id="numero_parcelas" 
 						    			ng-if="pagamento.id_forma_pagamento == 2 || pagamento.id_forma_pagamento == 9 || pagamento.id_forma_pagamento == 4">
 						    			<label class="control-label">Parcelas</label>
@@ -480,18 +509,6 @@
 					    						ng-blur="pushCheques()" 
 					    						ng-focus="qtdCheque()" 
 					    						ng-model="pagamento.parcelas">
-						    			</div>
-						    		</div>
-
-						    		<div class="col-sm-3" id="periodicidade_parcelamento" 
-						    			ng-if="pagamento.id_forma_pagamento == 4">
-						    			<label class="control-label">A cada: (dias)</label>
-						    			<div class="form-group ">
-					    					<input type="text" class="form-control input-sm"
-					    						disabled="disabled" 
-					    						ng-blur="pushCheques()" 
-					    						ng-focus="qtdCheque()" 
-					    						ng-model="pagamento.periodicidade_parcelamento">
 						    			</div>
 						    		</div>
 						    	</div>
@@ -626,7 +643,7 @@
 										<div class="form-group boleto_data">
 											<label class="control-label">Data</label>
 											<div class="input-group">
-												<input readonly="readonly" style="background:#FFF;cursor:pointer" ng-model="pagamento.data" type="text" id="pagamentoData" class="datepicker form-control boletoData">
+												<input readonly="readonly" style="background:#FFF;cursor:pointer" date-init="{{ item.date_init }}"  type="text" id="pagamentoData" class="datepicker form-control boletoData">
 												<span class="input-group-addon" class="cld_pagameto" ng-click="focusData($index)"><i class="fa fa-calendar"></i></span>
 											</div>
 										</div>
@@ -635,7 +652,7 @@
 										<div class="form-group boleto_valor">
 											<label class="control-label">Valor</label>
 											<div class="form-group ">
-					    						<input ng-blur="pushCheques()" ng-keyUp="calTotalBoleto()"  thousands-formatter ng-model="item.valor_pagamento" type="text" class="form-control" >
+					    						<input ng-keyUp="calTotalBoleto()"  thousands-formatter ng-model="item.valor_pagamento" type="text" class="form-control" >
 					    					</div>
 										</div>
 									</div>
@@ -1140,16 +1157,23 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-sm-6">
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor<0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor==0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12 text-right">
+											<span ng-if="cliente.vlr_saldo_devedor > 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor > 0" style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_saldo_devedor < 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor < 0" style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_saldo_devedor == 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor == 0" style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_limite_credito" style="color:#000">/ Limite de Crédito :</span> 
+											<span ng-if="cliente.vlr_limite_credito" style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">/ Saldo Final:</span> 
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">R$ {{ cliente.vlr_saldo_devedor + cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
 										</div>
 									</div>
 									<br/>
@@ -1308,7 +1332,7 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-lg btn-danger" ng-if="receber_pagamento == false" ng-click="cancelar()"><i class="fa fa-times-circle"></i> Cancelar Venda</button>
 							<button type="button" class="btn btn-lg btn-warning" ng-if="receber_pagamento" ng-click="cancelarPagamento()"><i class="fa fa-times-circle"></i> Cancelar Pagamento</button>
-							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled=" (modo_venda == 'pdv' && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
+							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled=" (modo_venda == null && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
 							<button type="button" class="btn btn-lg btn-primary" ng-if="receber_pagamento == false" ng-disabled="carrinho.length == 0" ng-click="receberPagamento()"><i class="fa fa-money"></i> Receber</button>
 							<button  type="button" class="btn btn-lg btn-success" ng-show="receber_pagamento == false && modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-orcamento" ng-click="salvarOrcamento()" ng-disabled="carrinho.length <= 0 || !isNumeric(cliente.id)"><i class="fa fa-save"></i> Orçamento</button>
 
@@ -1318,6 +1342,50 @@
 				</div>
 			</div>
 		</div><!-- /main-container -->
+
+		<div class="modal fade" id="modal-lembrete-troca-vendedor" style="display:none">
+  			<div class="modal-dialog error modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+						<h4>Lembrete</h4>
+      				</div>
+
+				    <div class="modal-body">
+				    	<div class="row">
+				    		<div class="col-sm-12" id="valor_retirada_sangria">
+				    			Deseja trocar de vendedor ? 
+				    		</div>
+				    	</div>
+				    </div>
+
+				    <div class="modal-footer">
+				    	<button type="button" class="btn btn-md btn-success" ng-click="selVendedor(true)">
+				    		<i class="fa fa-times-circle"></i> SIM
+				    	</button>
+				    	<button type="button"  class="btn btn-md btn-default" id="btn-aplicar-sangria" ng-click="fecharModalLembreteTrocaVendedor()">
+				    		<i class="fa fa-minus-circle"></i> Não
+				    	</button>
+				    </div>
+			  	</div>
+			  	<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

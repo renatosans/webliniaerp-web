@@ -22,7 +22,7 @@
 	<link href="css/pace.css" rel="stylesheet">
 
 	<!-- Datepicker -->
-	<link href="css/datepicker.css" rel="stylesheet"/>
+	<link href="css/datepicker/bootstrap-datepicker.css" rel="stylesheet"/>
 
 	<!-- Timepicker -->
 	<link href="css/bootstrap-timepicker.css" rel="stylesheet"/>
@@ -171,7 +171,7 @@
 									<div class="form-group">
 										<label class="control-label">Inicial</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="datepicker form-control">
+											<input stardate="{{ stardate_dtaInicial }}" ng-model="dtaInicial" date-picker  readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaInicial" class="form-control">
 											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
@@ -181,7 +181,7 @@
 									<div class="form-group">
 										<label class="control-label">Final</label>
 										<div class="input-group">
-											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal" class="datepicker form-control">
+											<input stardate="{{ stardate_dtaFinal }}" ng-model="dtaFinal" date-picker readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dtaFinal"  class="form-control">
 											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
@@ -257,6 +257,15 @@
 							<td class="text-right">R$ {{item.vlr_total_comissao | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2" class="text-right"><b>TOTAIS VENDAS</b></td>	
+							<td  class="text-center">{{ qtd_vendas }}</td>
+							<td  class="text-right">R$ {{ total_vendas | numberFormat:2:',':'.' }}</td>	
+							<td colspan="2" class="text-right"><b>TOTAL COMISSÃO</b></td>	
+							<td  class="text-right">R$ {{ total_comissao | numberFormat:2:',':'.' }}</td>
+						</tr>
+					</tfoot>
 				</table>
 				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 				<div class="pull-right hidden-print">
@@ -367,8 +376,10 @@
 	<!-- Modernizr -->
 	<script src='js/modernizr.min.js'></script>
 
+
 	<!-- Datepicker -->
-	<script src='js/bootstrap-datepicker.min.js'></script>
+	<script src='js/datepicker/bootstrap-datepicker.js'></script>
+	<script src='js/datepicker/bootstrap-datepicker.pt-BR.js'></script>
 
 	<!-- Timepicker -->
 	<script src='js/bootstrap-timepicker.min.js'></script>
@@ -418,13 +429,13 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('.datepicker').datepicker();
+			/*$('.datepicker').datepicker();
 			$("#cld_pagameto").on("click", function(){ $("#pagamentoData").trigger("focus"); });
 			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
 
 			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
-			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
+			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});*/
 		});
 	</script>
 	<?php include("google_analytics.php"); ?>

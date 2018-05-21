@@ -147,7 +147,7 @@
 									<div class="form-group">
 										<label class="control-label">Inicial</label>
 										<div class="input-group">
-											<input readonly="readonly" ng-model="busca.dtaInicial" date-picker style="background:#FFF;cursor:pointer" type="text"  class=" form-control">
+											<input  stardate="{{ stardate_dtaInicial }}" readonly="readonly" ng-model="busca.dtaInicial" date-picker style="background:#FFF;cursor:pointer" type="text"  class=" form-control">
 											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>
@@ -157,7 +157,7 @@
 									<div class="form-group">
 										<label class="control-label">Final</label>
 										<div class="input-group">
-											<input readonly="readonly" ng-model="busca.dtaFinal" date-picker style="background:#FFF;cursor:pointer" type="text"  class="form-control">
+											<input stardate="{{ stardate_dtaFinal }}" readonly="readonly" ng-model="busca.dtaFinal" date-picker style="background:#FFF;cursor:pointer" type="text"  class="form-control">
 											<span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
 										</div>
 									</div>

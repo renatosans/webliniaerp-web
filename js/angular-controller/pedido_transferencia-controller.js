@@ -166,6 +166,19 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		},500);
 	}
 
+	ng.canRequest = function(item) {
+		if(empty(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia) || 
+			parseInt(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia, 10) === 0) {
+			if(item.qtd_item <= 0) {
+				return false;
+			}
+			else
+				return true;
+		}
+		else
+			return true;
+	}
+
 	ng.loadProdutos = function(offset, limit) {
 	
 		ng.produtos = null;
@@ -173,12 +186,18 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
  		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 10 : limit;
 
-		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		query_string = "?pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
+		
+		// Se estiver configurado p/ ocultar produtos sem estoque no pedido de transferência
+		if(empty(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia) || 
+			parseInt(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia, 10) === 0) {
+			query_string += "&tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		}
+
 		if(!empty(ng.transferencia.id_deposito_padrao_pedido)){
 			query_string += "&id_deposito_estoque="+ng.transferencia.id_deposito_padrao_pedido;
 			// query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
 		}
-		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
 		if(!empty(ng.busca.produto)){
 			if(isNaN(Number(ng.busca.produto)))
@@ -192,9 +211,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 				angular.forEach(data.produtos, function(produto){
 					if(empty(ng.produtos))
 						ng.produtos = [];
-					if(produto.qtd_item > 0) {
 						ng.produtos.push(produto);
-					}
 				});
 				ng.paginacao.produtos = data.paginacao;
 			})
@@ -222,7 +239,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		ng.transferencia.produtos.splice(index,1);
 	}
 
-	ng.addProduto = function(item){
+	ng.addProduto = function(item,incrementar){
 		$($(".has-error").find(".form-control")).tooltip('destroy');
 		$(".has-error").removeClass("has-error");
 		if(typeof item.atualizar_custo == 'undefined'){
@@ -240,8 +257,22 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 			produto.qtd_transferida = qtd_transferida ;
 		}
 
-		ng.transferencia.produtos.push(produto);
-		item.qtd_pedida = null ;
+		var index = null ;
+		$.each(ng.transferencia.produtos,function(i,v){
+			if(v.id_produto == produto.id){
+				index = i ;
+				return ;
+			}
+		});
+
+		if(incrementar === true && $.isNumeric(index)){
+			var qtd = $.isNumeric(ng.transferencia.produtos[index].qtd_pedida) ? Number(ng.transferencia.produtos[index].qtd_pedida)  : 1 ;
+			ng.transferencia.produtos[index].qtd_pedida = (qtd + 1) ;
+		}else{
+			produto.qtd_pedida = empty(produto.qtd_pedida) ? 1 : produto.qtd_pedida ;
+			ng.transferencia.produtos.push(produto);
+			item.qtd_pedida = null ;
+		}
 
 		$('#foco').focus()
 	}
@@ -835,6 +866,82 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 
 	ng.clearTooltip = function(item){
 		delete item.tooltip ;
+	}
+
+	ng.addFocus = function(){
+   		ng.cod_barra_busca = '';
+   		$('#focus').focus();
+   		ng.busca_cod_barra = true ;
+   	}
+
+   	ng.blurBuscaCodBarra = function(){
+   		ng.busca_cod_barra = false ;
+   		$.noty.closeAll();
+		var i = noty({
+			timeout : 4000,
+			layout: 'topRight',
+			type: 'warning',
+			theme: 'relax',
+			text: 'Busca por codigo de barra desativada',
+		});
+   	}
+
+   	ng.loadProdutosCodigoBarra = function(offset, limit) {
+	
+		ng.produtos = null;
+
+ 		offset = offset == null ? 0  : offset;
+		limit  = limit  == null ? 10 : limit;
+
+		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		if(!empty(ng.transferencia.id_deposito_padrao_pedido)){
+			query_string += "&id_deposito_estoque="+ng.transferencia.id_deposito_padrao_pedido;
+			// query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
+		}
+		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
+
+		query_string += "&(pro->codigo_barra[exp]=='"+ng.cod_barra_busca+"')";
+		ng.cod_barra_busca = '' ;
+		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+query_string)
+			.success(function(data, status, headers, config) {
+				if(data.produtos.length == 1){
+					var produto = angular.copy(data.produtos[0]);
+					if(produto.qtd_item > 0) {
+						ng.addProduto(produto,true);
+						ng.addFocus();
+					}else{
+						$.noty.closeAll();
+						var i = noty({
+							timeout : 4000,
+							layout: 'topRight',
+							type: 'error',
+							theme: 'relax',
+							text: 'Produto sem estoque',
+						});	
+					}
+				}
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404) {
+					$.noty.closeAll();
+					var i = noty({
+						timeout : 4000,
+						layout: 'topRight',
+						type: 'error',
+						theme: 'relax',
+						text: 'Codigo de barra não corresponde a nenhum produto',
+					});
+				}else{
+						$.noty.closeAll();
+						var i = noty({
+							timeout : 4000,
+							layout: 'topRight',
+							type: 'error',
+							theme: 'relax',
+							text: 'Ocorreu um erro ao buscar o produto',
+						});
+				}
+			});
 	}
 
 	ng.loadtransferencias(0,10);

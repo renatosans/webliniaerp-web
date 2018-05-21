@@ -162,32 +162,48 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		ng.transferencia.produtos.splice(index,1);
 	}
 
-	ng.addProduto = function(item){
+	ng.addProduto = function(item,incrementar){
 		var produto = angular.copy(item) ;
-		produto.id_produto = item.id ;
-		produto.qtd_pedida = empty(produto.qtd_pedida) ? 0 : produto.qtd_pedida  ;
-		produto.qtd_transferida = (!empty(produto.qtd_transferida)) ? produto.qtd_transferida : 0 ;
-		produto.add 	   = item.add == 0 ? 0 : 1 ;
+		var index = null ;
+		$.each(ng.transferencia.produtos,function(i,v){
+			if(v.id_produto == produto.id){
+				index = i ;
+				return ;
+			}
+		});
 
-		produto.vlr_custo_real = item.vlr_custo_real ;
-		produto.vlr_venda_atacado = item.vlr_venda_atacado ;
-		produto.vlr_venda_intermediario = item.vlr_venda_intermediario ;
-		produto.vlr_venda_varejo = item.vlr_venda_varejo ;
-
-		if(empty(item.tipo_vlr_custo)){
-			produto.vlr_custo = item.vlr_custo_real ;
-			produto.tipo_vlr_custo = 'vlr_custo_real' ;
+		if(incrementar === true && $.isNumeric(index)){
+			var qtd = $.isNumeric(ng.transferencia.produtos[index].qtd_transferida) ? Number(ng.transferencia.produtos[index].qtd_transferida)  : 1 ;
+			ng.transferencia.produtos[index].qtd_transferida = (qtd + 1) ;
 		}else{
-			produto.vlr_custo = item[item.tipo_vlr_custo] ;
-			produto.tipo_vlr_custo = item.tipo_vlr_custo ;
+			produto.id_produto = item.id ;
+			produto.qtd_pedida = empty(produto.qtd_pedida) ? 0 : produto.qtd_pedida  ;
+			produto.qtd_transferida = (!empty(produto.qtd_transferida)) ? produto.qtd_transferida : 0 ;
+			produto.add 	   = item.add == 0 ? 0 : 1 ;
+
+			produto.vlr_custo_real = item.vlr_custo_real ;
+			produto.vlr_venda_atacado = item.vlr_venda_atacado ;
+			produto.vlr_venda_intermediario = item.vlr_venda_intermediario ;
+			produto.vlr_venda_varejo = item.vlr_venda_varejo ;
+
+			if(empty(item.tipo_vlr_custo)){
+				produto.vlr_custo = item.vlr_custo_real ;
+				produto.tipo_vlr_custo = 'vlr_custo_real' ;
+			}else{
+				produto.vlr_custo = item[item.tipo_vlr_custo] ;
+				produto.tipo_vlr_custo = item.tipo_vlr_custo ;
+			}
+		
+			if(empty(ng.transferencia.id) && ng.enviarNovaTransferencia){
+				produto.qtd_transferida = produto.qtd_pedida;
+				produto.qtd_pedida = 0;
+			}
+
+			
+			produto.qtd_transferida = empty(produto.qtd_transferida) ? 1 : produto.qtd_transferida ;
+			ng.transferencia.produtos.push(produto);
+			item.qtd_pedida = null;
 		}
-	
-		if(empty(ng.transferencia.id) && ng.enviarNovaTransferencia){
-			produto.qtd_transferida = produto.qtd_pedida;
-			produto.qtd_pedida = 0;
-		}
-		ng.transferencia.produtos.push(produto);
-		item.qtd_pedida = null;
 	}
 
 	ng.deletarTransferencia = function(item){
@@ -949,6 +965,82 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 
 	ng.isNumeric = function(vlr){
 		return $.isNumeric(vlr);
+	}
+
+	ng.addFocus = function(){
+   		ng.cod_barra_busca = '';
+   		$('#focus').focus();
+   		ng.busca_cod_barra = true ;
+   	}
+
+   	ng.blurBuscaCodBarra = function(){
+   		ng.busca_cod_barra = false ;
+   		$.noty.closeAll();
+		var i = noty({
+			timeout : 4000,
+			layout: 'topRight',
+			type: 'warning',
+			theme: 'relax',
+			text: 'Busca por codigo de barra desativada',
+		});
+   	}
+
+   	ng.loadProdutosCodigoBarra = function(offset, limit) {
+	
+		ng.produtos = null;
+
+ 		offset = offset == null ? 0  : offset;
+		limit  = limit  == null ? 10 : limit;
+
+		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		if(!empty(ng.transferencia.id_deposito_padrao_pedido)){
+			query_string += "&id_deposito_estoque="+ng.transferencia.id_deposito_padrao_pedido;
+			// query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
+		}
+		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
+
+		query_string += "&(pro->codigo_barra[exp]=='"+ng.cod_barra_busca+"')";
+		ng.cod_barra_busca = '' ;
+		aj.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit +"/"+query_string)
+			.success(function(data, status, headers, config) {
+				if(data.produtos.length == 1){
+					var produto = angular.copy(data.produtos[0]);
+					if(produto.qtd_item > 0) {
+						ng.addProduto(produto,true);
+						ng.addFocus();
+					}else{
+						$.noty.closeAll();
+						var i = noty({
+							timeout : 4000,
+							layout: 'topRight',
+							type: 'error',
+							theme: 'relax',
+							text: 'Produto sem estoque',
+						});	
+					}
+				}
+			})
+			.error(function(data, status, headers, config) {
+				if(status == 404) {
+					$.noty.closeAll();
+					var i = noty({
+						timeout : 4000,
+						layout: 'topRight',
+						type: 'error',
+						theme: 'relax',
+						text: 'Codigo de barra não corresponde a nenhum produto',
+					});
+				}else{
+						$.noty.closeAll();
+						var i = noty({
+							timeout : 4000,
+							layout: 'topRight',
+							type: 'error',
+							theme: 'relax',
+							text: 'Ocorreu um erro ao buscar o produto',
+						});
+				}
+			});
 	}
 
 

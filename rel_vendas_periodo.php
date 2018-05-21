@@ -212,22 +212,22 @@
 					</tbody>
 					<tfoot>
 						<tr>
-							<td class="text-right text-bold" colspan="6">Total Vendido</td>
+							<td class="text-right text-bold" colspan="{{ configuracoes.flg_modo_controle_mesas == 'mesas_comandas' ? '6' : '5'}}">Total Vendido</td>
 							<td class="text-right">R$ {{ vlr_total_vendido | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 						<tr>
-							<td class="text-right text-bold" colspan="6">Ticket Medio</td>
+							<td class="text-right text-bold" colspan="{{ configuracoes.flg_modo_controle_mesas == 'mesas_comandas' ? '6' : '5'}}">Ticket Medio</td>
 							<td class="text-right">R$ {{ vlr_ticket_medio | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 						<tr>
-							<td class="text-center text-bold" colspan="7">Total por Forma de Pagamento</td>
+							<td class="text-center text-bold" colspan="{{ configuracoes.flg_modo_controle_mesas == 'mesas_comandas' ? '7' : '6'}}">Total por Forma de Pagamento</td>
 						</tr>
 						<tr ng-repeat="item in formas_pagamento">
-							<td class="text-right" colspan="6">{{ item.dsc_forma_pagamento }} ({{ item.prc_respectivo | numberFormat : 0 : ',' : '.' }}%)</td>
+							<td class="text-right" colspan="{{ configuracoes.flg_modo_controle_mesas == 'mesas_comandas' ? '6' : '5'}}">{{ item.dsc_forma_pagamento }} ({{ item.prc_respectivo | numberFormat : 0 : ',' : '.' }}%)</td>
 							<td class="text-right">R$ {{ item.vlr_soma_pagamento | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 						<tr>
-							<td class="text-right text-bold" colspan="6">Total Recebido</td>
+							<td class="text-right text-bold" colspan="{{ configuracoes.flg_modo_controle_mesas == 'mesas_comandas' ? '6' : '5'}}">Total Recebido</td>
 							<td class="text-right">R$ {{ vlr_total_formas_pagamento | numberFormat : 2 : ',' : '.'  }}</td>
 						</tr>
 					</tfoot>

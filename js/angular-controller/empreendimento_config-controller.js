@@ -402,6 +402,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(!empty(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia) || ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia == 0 ){
+			var item = {
+				nome 				: 'flg_mostrar_produtos_sem_estoque_pedido_transferencia',
+				valor 				: ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia,
+				id_empreendimento	: ng.userLogged.id_empreendimento
+			};
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
@@ -1102,6 +1111,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item11);
 		}
 
+		if(ng.configuracoes.flg_lembrete_troca_vendedor_pdv != undefined){
+			var flg_lembrete_troca_vendedor_pdv = {
+							nome 				:'flg_lembrete_troca_vendedor_pdv',
+							valor 				:ng.configuracoes.flg_lembrete_troca_vendedor_pdv , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(flg_lembrete_troca_vendedor_pdv);
+		}
+
 		btn.button('loading');
 		var pth_local_sucess = false ;
 		if(ng.config.pth_local != undefined){
@@ -1404,7 +1422,7 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 		if(!(btn.is(':button')))
 			btn = $(btn.parent('button'));
 		var chaves = [];
-		if(!empty(ng.notEmails) || ng.notEmails.length > 0){
+		// if(!empty(ng.notEmails) || ng.notEmails.length > 0){
 			var emails = [] ;
 			$.each(ng.notEmails,function(i,v){
 				emails.push(v.text);
@@ -1412,9 +1430,9 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			var x = JSON.stringify(emails);
 			item = {nome:'emails_notificacoes',valor:x,id_empreendimento:ng.userLogged.id_empreendimento}
 			chaves.push(item);
-		}else{
-			return ;
-		}
+		// }else{
+		// 	return ;
+		// }
 
 		if(ng.configuracoes.flg_notificacoes_email != undefined){
 			var item = {

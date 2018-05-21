@@ -206,88 +206,115 @@
 
 				<br/>
 
-				<div ng-if="vendas == null" class="alert alert-warning">Preencha um período para a busca</div>
-				<div ng-if="vendas === false" class="alert alert-warning">Nenhum dado encontrado para a busca</div>
+				<div class="panel-tab clearfix" id="tab-cliente">
+					<ul class="tab-bar">
+						<li class="active"><a href="#relatorio" data-toggle="tab">
+							<i class="fa fa-copy fa-lg"></i> Relatório</a>
+						</li>
+						<li><a href="#graficos" data-toggle="tab">
+							<i class="fa fa-dashboard fa-lg"></i> Graficos</a>
+						</li>
+					</ul>
+				</div>
+				<br/>
+				<div class="tab-content">
+					<div class="tab-pane in active" id="relatorio">
+						<div ng-if="vendas == null" class="alert alert-warning">Preencha um período para a busca</div>
+						<div ng-if="vendas === false" class="alert alert-warning">Nenhum dado encontrado para a busca</div>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="vendas != null">
-					<thead>
-						<tr ng-if="lengthObject(vendas) != null && lengthObject(vendas) > 0">
-							
-							<th rowspan="2"  width="100"  class="text-center" ></th>
-							<th colspan="2" class="text-center">Domingo</th>
-							<th colspan="2" class="text-center">Segunda</th>
-							<th colspan="2" class="text-center">Terça</th>
-							<th colspan="2" class="text-center">Quarta</th>
-							<th colspan="2" class="text-center">Quinta</th>
-							<th colspan="2" class="text-center">Sexta</th>
-							<th colspan="2" class="text-center">Sábado</th>
-						</tr>
+						<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="vendas != null">
+							<thead>
+								<tr ng-if="lengthObject(vendas) != null && lengthObject(vendas) > 0">
+									
+									<th rowspan="2"  width="100"  class="text-center" ></th>
+									<th colspan="2" class="text-center">Domingo</th>
+									<th colspan="2" class="text-center">Segunda</th>
+									<th colspan="2" class="text-center">Terça</th>
+									<th colspan="2" class="text-center">Quarta</th>
+									<th colspan="2" class="text-center">Quinta</th>
+									<th colspan="2" class="text-center">Sexta</th>
+									<th colspan="2" class="text-center">Sábado</th>
+								</tr>
 
-						<tr>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-							<th class="text-center">
-								Qtd
-							</th>
-							<th class="text-center">
-								Total
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="lengthObject(vendas) == 0">
-							<td class="text-center" colspan="4">
-								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
-							</td>
-						</tr>
-						<tr ng-repeat="(hora, item) in vendas">
-							<td>
-								{{ hora }}
-							</td>	
+								<tr>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+									<th class="text-center">
+										Qtd
+									</th>
+									<th class="text-center">
+										Total
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-if="lengthObject(vendas) == 0">
+									<td class="text-center" colspan="4">
+										<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
+									</td>
+								</tr>
+								<tr ng-repeat="(hora, item) in vendas">
+									<td>
+										{{ hora }}
+									</td>	
 
-							<td class="text-center" ng-repeat-start="hora_item in item">
-								{{ hora_item.qtd }}
-							</td>
-							<td class="text-right" ng-repeat-end>
-								R$ {{ hora_item.total | numberFormat:2:',':'.' }}	
-							</td>
-						</tr>
-					</tbody>
-				</table>
+									<td class="text-center" ng-repeat-start="hora_item in item">
+										{{ hora_item.qtd }}
+									</td>
+									<td class="text-right" ng-repeat-end>
+										R$ {{ hora_item.total | numberFormat:2:',':'.' }}	
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="tab-pane" id="graficos">
+						<div ng-if="vendas == null" class="alert alert-warning">Preencha um período para a busca</div>
+						<div ng-if="vendas === false" class="alert alert-warning">Nenhum dado encontrado para a busca</div>
+
+						<div class="row">
+							<div class="col-sm-6">
+								<canvas id="line-chart"></canvas>
+							</div>
+							<div class="col-sm-6">
+								<canvas id="bar-chart"></canvas>
+							</div>
+						</div>
+					</div>	
 				</div>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
@@ -418,6 +445,8 @@
 	<!-- Extras -->
 	<script src="js/extras.js"></script>
 
+	<script type="text/javascript" src="http://www.chartjs.org/dist/2.7.2/Chart.bundle.js"></script>
+
 	<!-- AngularJS -->
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="js/angular-strap.min.js"></script>
@@ -451,6 +480,8 @@
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});
 	</script>
+
+
 
 	<?php include("google_analytics.php"); ?>
   </body>

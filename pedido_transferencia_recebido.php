@@ -204,9 +204,9 @@
 											<table class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 												<thead>
 													<tr>
-														<td colspan="10"><i class="fa fa-archive"></i> Produtos</td>
-														<td width="60" align="center">
-														<button class="btn btn-xs btn-primary" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+														<td colspan="11"><i class="fa fa-archive"></i> Produtos</td>
+														<td width="80" align="center">
+															<button class="btn btn-xs btn-primary" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
 														</td>
 													</tr>
 												</thead>
@@ -508,9 +508,15 @@
 											<table class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 												<thead>
 													<tr>
-														<td colspan="10"><i class="fa fa-archive"></i> Produtos</td>
-														<td width="60" align="center">
-														<button class="btn btn-xs btn-primary" tooltip title="Selecionar produto(s)" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+														<td colspan="11"><i class="fa fa-archive"></i> Produtos</td>
+														<td width="80" align="center">
+															<button class="btn btn-xs btn-primary" tooltip title="Selecionar produto(s)" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+															<button 
+																ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)"
+																class="btn btn-xs" ng-click="addFocus()" 
+																ng-class="{ 'btn-info' : (busca_cod_barra == false), 'btn-success' : (busca_cod_barra == true) }">
+																<i class="fa fa-barcode"></i>
+															</button>
 														</td>
 													</tr>
 												</thead>
@@ -1136,7 +1142,9 @@
 														ng-model="item.qtd_pedida" 
 														ng-if="item.flg_unidade_fracao != 1" 
 														ng-blur="verificaQtdMultiplo('produtos',index,item)"
-														id="txt-qtd-multiplo-{{ index }}"/>
+														id="txt-qtd-multiplo-{{ index }}"
+														ng-enter="addProduto(item)"
+														ng-disabled="produtoSelected(item.id)"/>
 												</div>
 												<div class="form-group">
 													<input type="text" 
@@ -1146,7 +1154,9 @@
 														ng-if="item.flg_unidade_fracao == 1" 
 														ng-blur="verificaQtdMultiplo('produtos',index,item)"
 														id="txt-qtd-multiplo-{{ index }}" 
-														thousands-formatter precision="3"/>
+														thousands-formatter precision="3"
+														ng-enter="addProduto(item)"
+														ng-disabled="produtoSelected(item.id)"/>
 												</div>
 											</td>
 											<td width="50" align="center">
@@ -1313,6 +1323,10 @@
 
 	<!-- Logout confirmation -->
 	<?php include("logoutConfirm.php"); ?>
+
+
+	<input ng-model="cod_barra_busca" ng-blur="blurBuscaCodBarra(cod_barra_busca)"  class="form-control input-sm" style="position: absolute;top: -100px" id="focus" ng-enter="loadProdutosCodigoBarra()"/>
+
 
     <!-- Le javascript
     ================================================== -->

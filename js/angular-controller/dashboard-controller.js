@@ -698,9 +698,18 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			return (ng.total.vlrTotalFaturamento  - (ng.total.vlr_custo_produto + ng.total.vlr_taxa_maquineta + ng.total.vlr_pagamento_fornecedor + ng.vlr_total_comissao_vendedores));
 		}
 
-		ng.redirectToSubReport = function(report_name) {
-			var dta_inicial = $("#dtaInicial").val();
-			var dta_final = $("#dtaFinal").val();
+		ng.redirectToSubReport = function(report_name,format_date) {
+			if(empty(format_date)){
+				var dta_inicial = $("#dtaInicial").val();
+				var dta_final = $("#dtaFinal").val();
+			}else{
+				if( moment($("#dtaInicial").val(),'DD/MM/YYYY').isValid() )
+					var dta_inicial = moment($("#dtaInicial").val(),'DD/MM/YYYY').format(format_date);
+
+				if( moment($("#dtaFinal").val(),'DD/MM/YYYY').isValid() )
+					var dta_final = moment($("#dtaFinal").val(),'DD/MM/YYYY').format(format_date);
+			}
+
 			window.location.href = report_name + '.php?dtaInicial='+ dta_inicial +'&dtaFinal='+ dta_final;
 		}
 

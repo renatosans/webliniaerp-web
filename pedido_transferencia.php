@@ -213,9 +213,17 @@
 										<table ng-if="transferencia.flg_controle_validade!=1" class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 											<thead>
 												<tr>
-													<td colspan="{{ ( isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 ) && 12 || 6 }}"><i class="fa fa-archive"></i> Produtos</td>
-													<td width="60" align="center"  ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4">
-													<button class="btn btn-xs btn-primary" tooltip title="Selecionar produto(s)" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+													<td colspan="{{ ( isNumeric(transferencia.id) && transferencia.id_status_transferencia == 3 ) && 13 || 7 }}"><i class="fa fa-archive"></i> Produtos</td>
+													<td width="80" align="center"  ng-if="!isNumeric(transferencia.id) || transferencia.id_status_transferencia == 4">
+														<button class="btn btn-xs btn-primary" tooltip title="Selecionar produto(s)" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutos()"><i class="fa fa-plus-circle"></i></button>
+
+
+														<button 
+															ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)"
+															class="btn btn-xs" ng-click="addFocus()" 
+															ng-class="{ 'btn-info' : (busca_cod_barra == false), 'btn-success' : (busca_cod_barra == true) }">
+															<i class="fa fa-barcode"></i>
+														</button>
 													</td>
 												</tr>
 											</thead>
@@ -743,6 +751,7 @@
 											<th >Fabricante</th>
 											<th >Tamanho</th>
 											<th >Sabor/Cor</th>
+											<th class="text-center">Estoque</th>
 											<th class="text-center">Qtd. Multipla</th>
 											<th >Quantidade</th>
 											<th >Ações</th>
@@ -755,12 +764,13 @@
 										<tr ng-show="produtos == null" class="text-center">
 											<td colspan="7" ><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
 										</tr>
-										<tr ng-repeat="(index,item) in produtos">
+										<tr class="{{ !canRequest(item) ? 'danger' : '' }}" ng-repeat="(index,item) in produtos">
 											<td>{{ item.id }}</td>
 											<td>{{ item.nome }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
+											<td class="text-center">{{ item.qtd_item }}</td>
 											<td class="text-center" ng-if="(item.qtd_multiplo_transferencia)">{{ item.qtd_multiplo_transferencia }}</td>
 											<td class="text-center" ng-if="(item.qtd_multiplo_transferencia == null || item.qtd_multiplo_transferencia == 0 )">Un.</td>
 											<td  width="50">
@@ -770,7 +780,9 @@
 														id="txt-qtd-multiplo-{{ index }}" 
 														ng-model="item.qtd_pedida" 
 														ng-blur="verificaQtdMultiplo('list_produtos', index, item)"
-														ng-if="item.flg_unidade_fracao != 1"/>
+														ng-if="item.flg_unidade_fracao != 1"
+														ng-disabled="!canRequest(item)"
+														ng-enter="addProduto(item)"/>
 												</div>
 												<div class="form-group">
 													<input type="text" 
@@ -779,11 +791,18 @@
 														ng-model="item.qtd_pedida" 
 														ng-blur="verificaQtdMultiplo('list_produtos', index, item)"
 														ng-if="item.flg_unidade_fracao == 1" 
-														thousands-formatter precision="3"/>
+														thousands-formatter precision="3"
+														ng-disabled="!canRequest(item)"
+														ng-enter="addProduto(item)"/>
 												</div>
 											</td>
 											<td width="50" align="center">
-												<button ng-show="!produtoSelected(item.id)" type="button" id="selecionar" class="btn btn-xs btn-success" ng-click="addProduto(item)">
+												<button 
+													type="button" id="selecionar" 
+													class="btn btn-xs btn-success" 
+													ng-show="(!produtoSelected(item.id))" 
+													ng-disabled="!canRequest(item)"
+													ng-click="addProduto(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
 												</button>
 												<button ng-show="produtoSelected(item.id)" ng-show="existsAcessorio(item)" ng-disabled="true" class="btn btn-primary btn-xs" type="button">
@@ -1092,6 +1111,9 @@
 
 	<!-- Logout confirmation -->
 	<?php include("logoutConfirm.php"); ?>
+
+
+	<input ng-model="cod_barra_busca" ng-blur="blurBuscaCodBarra(cod_barra_busca)"  class="form-control input-sm" style="position: absolute;top: -100px" id="focus" ng-enter="loadProdutosCodigoBarra()"/>
 
     <!-- Le javascript
     ================================================== -->
