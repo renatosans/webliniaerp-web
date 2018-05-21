@@ -754,18 +754,22 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		$("#input_auto_complete_cliente").parent().tooltip('destroy');
 		$("#input_auto_complete_cliente").parents('.form-group').removeClass("has-error");
 		ng.cod_nota_fiscal_reenviar_sat = null ;
+		
 		if ($.isNumeric(ng.cliente.id) && ng.modo_venda == 'est' && !ng.orcamento) {
-			if (ng.cliente.vlr_saldo_devedor < 0) {
-				calc = (ng.cliente.vlr_limite_credito - ((ng.cliente.vlr_saldo_devedor * -1) + ng.vlrTotalCompra));
-				if (calc <= 0) {
-					$dialogs.notify('Atenção!','<strong>O valor total da venda ultrapassa o saldo disponível do cliente</strong>');
-					return false;
-				}
-			} else {
-				calc = ((ng.cliente.vlr_limite_credito + ng.cliente.vlr_saldo_devedor) - ng.vlrTotalCompra);
-				if (calc <= 0) {
-					$dialogs.notify('Atenção!','<strong>O valor total da venda ultrapassa o saldo disponível do cliente</strong>');
-					return false;
+			
+			if((empty(ng.recebimento) || ng.recebimento === false) && !empty(ng.cliente.vlr_limite_credito) && ng.cliente.vlr_limite_credito > 0) {
+				if (ng.cliente.vlr_saldo_devedor < 0) {
+					calc = (ng.cliente.vlr_limite_credito - ((ng.cliente.vlr_saldo_devedor * -1) + ng.vlrTotalCompra));
+					if (calc <= 0) {
+						$dialogs.notify('Atenção!','<strong>O valor total da venda ultrapassa o saldo disponível do cliente</strong>');
+						return false;
+					}
+				} else {
+					calc = ((ng.cliente.vlr_limite_credito + ng.cliente.vlr_saldo_devedor) - ng.vlrTotalCompra);
+					if (calc <= 0) {
+						$dialogs.notify('Atenção!','<strong>O valor total da venda ultrapassa o saldo disponível do cliente</strong>');
+						return false;
+					}
 				}
 			}
 		}else if(!$.isNumeric(ng.cliente.id) && ng.modo_venda == 'est' && !ng.orcamento ){
@@ -2485,6 +2489,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 
 		ng.addCloseWindowBlock();
+		ng.recebimento = true;
 	}
 
 	ng.receber = function(){
@@ -4919,6 +4924,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.setMargemAplicada();
 		ng.nome_ultimo_produto = null ;
 		ng.dados_sat_cancelamento_in_progress = null;
+		ng.recebimento = null;
 		$('button').button('reset');
 	}
 
