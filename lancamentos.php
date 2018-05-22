@@ -970,12 +970,12 @@
 
 
 											<td class="text-center">
-												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-success"
+												<button ng-disabled="(item.id_tipo_conta==5 && configuracao.flg_permitir_alterar_mov_caixa_aberto == 0)" type="button" class="btn btn-xs btn-success"
 													ng-if="item.status_pagamento == 1" ng-click="loadVendaByIdLancamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
 													<i class="fa fa-check-circle"></i>
 												</button>
-												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-warning"
+												<button ng-disabled="(item.id_tipo_conta==5 && configuracao.flg_permitir_alterar_mov_caixa_aberto == 0)" type="button" class="btn btn-xs btn-warning"
 													ng-if="item.status_pagamento == 0" ng-click="modalChangeStatusPagamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
 													<i class="fa fa-warning"></i>
