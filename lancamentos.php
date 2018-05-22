@@ -1851,6 +1851,16 @@
 									</label>
 								</div>
 							</div>
+							<div class="pull-right col-sm-6">
+								<div class="form-group" id="plano_contas">
+									<label class="control-label">Plano de conta </label> 
+									<select chosen
+										option="plano_contas"
+										ng-model="pagamento_edit.id_plano_conta"
+										ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+									</select>
+								</div>
+							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-6">
@@ -2040,6 +2050,14 @@
 				    					<input ng-model="pagamento_edit.conta_transferencia"  type="text" class="form-control" />
 				    			</div>
 				    		</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Observação</label>
+									<textarea class="form-control" rows="5" ng-model="pagamento_edit.obs_pagamento"></textarea>
+								</div>
+							</div>
 						</div>
 		    		</div>
 					<div class="modal-footer" style="   margin-top: 0px;">
