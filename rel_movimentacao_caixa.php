@@ -394,6 +394,14 @@
 							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ totais.formas_pagamento.promessa_pagamento.valor | numberFormat : 2 : ',' : '.'}}</td>
 						</tr>
+						
+						<tr ng-if="movimentacoes.length > 0">
+							<td colspan="5" class="text-right text-bold">{{ totais.formas_pagamento.voucher.dsc }}</td>
+							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.voucher.valor | numberFormat : 2 : ',' : '.'}}</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ totais.formas_pagamento.voucher.valor | numberFormat : 2 : ',' : '.'}}</td>
+						</tr>
 					</tbody>
 				</table>
 
