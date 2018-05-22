@@ -897,7 +897,7 @@
 											<th class="text-center" rowspan="2" width="90">Crédito</th>
 											<th class="text-center" rowspan="2" width="90">Débito</th>
 											<th class="text-center" rowspan="2" width="90">Saldo</th>
-											<th class="text-center" width="90px" rowspan="2">Ações</th>
+											<th class="text-center" width="110" rowspan="2">Ações</th>
 										</tr>
 										<tr>
 											<th class="text-center" ng-if="config_table.cheque">C/C</th>
@@ -1001,7 +1001,7 @@
 													<i class="fa fa-edit"></i>
 												</button>
 											</td> -->
-											<td class="text-center">
+											<td class="text-left">
 												<button ng-disabled="item.id_tipo_conta==5" type="button" ng-click="delete(item,'cliente')" ng-if="item.flg_tipo_lancamento == 'D'" tooltip="Excluir" data-toggle="tooltip" class="btn btn-xs btn-danger">
 													<i class="fa fa-trash-o"></i>
 												</button>
@@ -1021,6 +1021,9 @@
 												<!--<button type="button" ng-click="editar(item)" tooltip="Editar" data-toggle="tooltip" class="btn btn-xs btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>-->
+												<button type="button" ng-if="(item.flg_transferencia_financeiro == 1)" disabled="disabled" tooltip="Transferência" class="btn btn-xs btn-info">
+													<i class="fa fa-exchange"></i>
+												</button>
 											</td>
 										</tr>
 										<tr ng-show="config_table.overviewOfDay">
