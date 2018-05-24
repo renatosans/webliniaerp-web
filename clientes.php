@@ -470,6 +470,13 @@
 												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.id_externo">
 											</div>
 										</div>
+
+										<div class="col-sm-2">
+											<div id="id_finalidade" class="form-group">
+												<label class="control-label">Num. Cartão</label>
+												<input autocomplete="off" type="text" class="form-control input-sm" ng-model="cliente.num_cartao">
+											</div>
+										</div>
 									</div>
 									<div class="row">
 										<div class="col-sm-2">
