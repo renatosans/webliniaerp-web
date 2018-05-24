@@ -147,7 +147,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 				break;
 		}
 
-		if(!empty(ng.busca.nome)){
+		if(!empty(ng.busca.text)){
 			query_string += "&("+$.param({nome_destinatario:{exp:"like'%"+ng.busca.text+"%')"}});
 		}
 
