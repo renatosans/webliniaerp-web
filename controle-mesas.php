@@ -505,7 +505,7 @@
 										<i class="fa fa-plus-circle"></i>
 										Cadastrar Novo
 									</button>
-									<button type="button" class="btn btn-xs btn-default hidden-xs" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event)">
+									<button type="button" class="btn btn-xs btn-default hidden-xs" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event,null)">
 										<i class="fa fa-times-circle"></i>
 										Não Informar
 									</button>
@@ -526,7 +526,7 @@
 										<tbody>
 											<tr ng-repeat="item in clientes">
 												<td class="text-middle text-center" width="50">
-													<button ng-if="!editComanda" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(item.id,$event)" type="button" class="btn btn-sm btn-info">
+													<button ng-if="!editComanda" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(item.id,$event,item)" type="button" class="btn btn-sm btn-info">
 														<i class="fa fa-check-square-o"></i>
 														<span class="hidden-xs">Selecionar</span>
 													</button>
@@ -556,7 +556,7 @@
 								<i class="fa fa-plus-circle"></i>
 								Cadastrar Novo
 							</button>
-							<button ng-if="!editComanda" ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event)" type="button" class="btn btn-md btn-block btn-default">
+							<button ng-if="!editComanda" ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event,null)" type="button" class="btn btn-md btn-block btn-default">
 								<i class="fa fa-times-circle"></i>
 								Não Informar
 							</button>

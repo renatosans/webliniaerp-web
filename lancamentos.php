@@ -897,7 +897,7 @@
 											<th class="text-center" rowspan="2" width="90">Crédito</th>
 											<th class="text-center" rowspan="2" width="90">Débito</th>
 											<th class="text-center" rowspan="2" width="90">Saldo</th>
-											<th class="text-center" width="90px" rowspan="2">Ações</th>
+											<th class="text-center" width="110" rowspan="2">Ações</th>
 										</tr>
 										<tr>
 											<th class="text-center" ng-if="config_table.cheque">C/C</th>
@@ -970,12 +970,12 @@
 
 
 											<td class="text-center">
-												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-success"
+												<button ng-disabled="(item.id_tipo_conta==5 && configuracao.flg_permitir_alterar_mov_caixa_aberto == 0)" type="button" class="btn btn-xs btn-success"
 													ng-if="item.status_pagamento == 1" ng-click="loadVendaByIdLancamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
 													<i class="fa fa-check-circle"></i>
 												</button>
-												<button ng-disabled="item.id_tipo_conta==5" type="button" class="btn btn-xs btn-warning"
+												<button ng-disabled="(item.id_tipo_conta==5 && configuracao.flg_permitir_alterar_mov_caixa_aberto == 0)" type="button" class="btn btn-xs btn-warning"
 													ng-if="item.status_pagamento == 0" ng-click="modalChangeStatusPagamento(item)"
 													tooltip="Clique para alterar o status do lançamento" data-toggle="tooltip">
 													<i class="fa fa-warning"></i>
@@ -1001,7 +1001,7 @@
 													<i class="fa fa-edit"></i>
 												</button>
 											</td> -->
-											<td class="text-center">
+											<td class="text-left">
 												<button ng-disabled="item.id_tipo_conta==5" type="button" ng-click="delete(item,'cliente')" ng-if="item.flg_tipo_lancamento == 'D'" tooltip="Excluir" data-toggle="tooltip" class="btn btn-xs btn-danger">
 													<i class="fa fa-trash-o"></i>
 												</button>
@@ -1021,6 +1021,9 @@
 												<!--<button type="button" ng-click="editar(item)" tooltip="Editar" data-toggle="tooltip" class="btn btn-xs btn-warning">
 													<i class="fa fa-edit"></i>
 												</button>-->
+												<button type="button" ng-if="(item.flg_transferencia_financeiro == 1)" disabled="disabled" tooltip="Transferência" class="btn btn-xs btn-info">
+													<i class="fa fa-exchange"></i>
+												</button>
 											</td>
 										</tr>
 										<tr ng-show="config_table.overviewOfDay">
@@ -1851,6 +1854,16 @@
 									</label>
 								</div>
 							</div>
+							<div class="pull-right col-sm-6">
+								<div class="form-group" id="plano_contas">
+									<label class="control-label">Plano de conta </label> 
+									<select chosen
+										option="plano_contas"
+										ng-model="pagamento_edit.id_plano_conta"
+										ng-options="plano.id as plano.dsc_completa for plano in plano_contas">
+									</select>
+								</div>
+							</div>
 						</div>
 						<div class="row">
 							<div class="col-sm-6">
@@ -2040,6 +2053,14 @@
 				    					<input ng-model="pagamento_edit.conta_transferencia"  type="text" class="form-control" />
 				    			</div>
 				    		</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Observação</label>
+									<textarea class="form-control" rows="5" ng-model="pagamento_edit.obs_pagamento"></textarea>
+								</div>
+							</div>
 						</div>
 		    		</div>
 					<div class="modal-footer" style="   margin-top: 0px;">

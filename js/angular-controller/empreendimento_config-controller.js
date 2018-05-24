@@ -1144,6 +1144,33 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			});
 	}
 
+	ng.salvarConfigFinanceiro = function(event){
+		var btn = $(event.target);
+		if(!(btn.is(':button')))
+			btn = $(btn.parent('button'));
+		var chaves = [];
+
+		if(ng.configuracoes.flg_permitir_alterar_mov_caixa_aberto != undefined){
+			var item = {
+							nome 				:'flg_permitir_alterar_mov_caixa_aberto',
+							valor 				:ng.configuracoes.flg_permitir_alterar_mov_caixa_aberto , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
+		btn.button('loading');
+		aj.post(baseUrlApi()+"configuracao/save/",{ chaves:chaves, pth_local: ng.config.pth_local} )
+			.success(function(data, status, headers, config) {
+				btn.button('reset');
+				ng.mensagens('alert-success', 'Configurações atualizadas com sucesso','.alert-config-fin');
+				ng.loadConfig();
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+			});
+	}
+
 	ng.cancelarModal = function(id){
 		$('#'+id).modal('hide');
 	}

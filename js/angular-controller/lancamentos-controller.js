@@ -129,6 +129,7 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
     	ng.pagamento_edit.vlr_final = ng.pagamento_edit.valor_pagamento;
     	ng.pagamento_edit.vlr_juros = Number(ng.pagamento_edit.vlr_juros);
     	ng.pagamento_edit.vlr_multa = Number(ng.pagamento_edit.vlr_multa);
+    	ng.pagamento_edit.id_plano_conta = Number(ng.pagamento_edit.id_plano_conta);
     	$("#dta_change_pagamento").val(formatDateBR(item.data_pagamento));
     	if (!empty(item.dta_vencimento)) {
 	    	$("#dta_vencimento").val(formatDateBR(item.dta_vencimento));
