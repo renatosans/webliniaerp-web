@@ -559,7 +559,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 
-    	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&pro->flg_produto_composto=0";
+    	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento;
 
     	if(ng.busca.produtos != ""){
     		query_string += "&"+$.param({'(nome':{exp:"like'%"+ng.busca.produtos+"%' OR nome_fabricante like'%"+ng.busca.produtos+"%' OR codigo_barra='"+ng.busca.produtos+"' )"}});
