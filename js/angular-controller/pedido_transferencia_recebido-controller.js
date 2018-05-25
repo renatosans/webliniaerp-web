@@ -223,7 +223,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 	ng.listaTransferencias = {} ;
 	ng.loadtransferencias = function(offset, limit){
 		ng.listaTransferencias.transferencias = null 
-		aj.get(baseUrlApi()+"transferencias/estoque/"+offset+"/"+limit+"?cplSql=id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+" AND id_status_transferencia <> 4 AND flg_excluido = 0 ORDER BY id  DESC")
+		aj.get(baseUrlApi()+"transferencias/estoque/"+offset+"/"+limit+"?cplSql=id_empreendimento_transferencia="+ng.userLogged.id_empreendimento+" AND id_status_transferencia <> 4 AND tte.flg_excluido = 0 ORDER BY id  DESC")
 		.success(function(data, status, headers, config) {
 			ng.listaTransferencias.transferencias = data.transferencias ;
 			ng.listaTransferencias.paginacao = data.paginacao ;
