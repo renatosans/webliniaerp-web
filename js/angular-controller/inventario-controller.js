@@ -565,6 +565,10 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
     		query_string += "&"+$.param({'(nome':{exp:"like'%"+ng.busca.produtos+"%' OR nome_fabricante like'%"+ng.busca.produtos+"%' OR codigo_barra='"+ng.busca.produtos+"' )"}});
     	}
 
+    	if(!empty(ng.configuracao.flg_oculta_produtos_nao_controla_estoque) && ng.configuracao.flg_oculta_produtos_nao_controla_estoque == 1){
+			query_string += "&pro->flg_controlar_estoque=0";
+		}
+
 		ng.produtos = [];
 		aj.get(baseUrlApi()+"produtos/"+offset+"/"+limit+"/"+query_string)
 			.success(function(data, status, headers, config) {

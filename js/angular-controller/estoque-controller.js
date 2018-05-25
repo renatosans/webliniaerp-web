@@ -1049,6 +1049,10 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
     		query_string += "&"+$.param({'(pro->nome':{exp:"like'%"+$scope.pesquisa.produto+"%' OR pro.codigo_barra like'%"+$scope.pesquisa.produto+"%' OR fab.nome_fabricante like'%"+$scope.pesquisa.produto+"%')"}});
     	}
 
+    	if(!empty(ng.configuracao.flg_oculta_produtos_nao_controla_estoque) && ng.configuracao.flg_oculta_produtos_nao_controla_estoque == 1){
+			query_string += "&pro->flg_controlar_estoque=0";
+		}
+
 		$scope.produtos = [];
 		// $http.get(baseUrlApi()+"estoque_produtos/null/"+offset+"/"+limit+"/"+query_string+"&cplSql= ORDER BY tp.nome ASC")
 		$http.get(baseUrlApi()+"produtos/"+ offset +"/"+ limit + query_string)

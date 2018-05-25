@@ -124,6 +124,10 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_pedido;
 		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
+		if(!empty(ng.configuracao.flg_oculta_produtos_nao_controla_estoque) && ng.configuracao.flg_oculta_produtos_nao_controla_estoque == 1){
+			query_string += "&pro->flg_controlar_estoque=0";
+		}
+
 		if($.isNumeric(ng.id_deposito_principal)){
 			query_string +="&id_deposito_estoque="+ng.id_deposito_principal;
 		}
