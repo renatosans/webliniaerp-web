@@ -212,6 +212,12 @@
 																<span class="custom-radio"></span>
 																<span>Composto</span>
 															</label>
+															<div class="clearfix"></div>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_servico" name="flg_servico" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Servico</span>
+															</label>
 														</div>
 													</div>
 												</div>
