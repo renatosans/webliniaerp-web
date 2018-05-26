@@ -264,7 +264,7 @@
 													Não há produtos selecionados
 												</td>
 											</tr>
-											<tr ng-repeat="item in inventario.itens">
+											<tr ng-repeat="item in inventario.itens track by item.id">
 												<td style="line-height: 1.5; vertical-align: middle;">{{ item.nome }}</td>
 												<td>{{ item.nome_fabricante }}</td>
 												<td>{{ item.peso }}</td>

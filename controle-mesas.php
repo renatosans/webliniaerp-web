@@ -535,6 +535,7 @@
 														<span class="hidden-xs">Selecionar</span>
 													</button>
 												</td>
+												<td class="text-middle" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">{{ item.num_cartao }}</td>
 												<td class="text-middle">{{ item.nome | uppercase }}</td>
 												<td ng-if="item.tipo_cadastro=='pf'" class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cpfFormat }}</td>
 												<td ng-if="item.tipo_cadastro=='pj'"  class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cnpjFormat }}</td>
