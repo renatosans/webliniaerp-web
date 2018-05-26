@@ -174,118 +174,6 @@
 
 				<table class="table table-bordered table-condensed table-striped table-hover">
 					<thead ng-if="movimentacoes.length > 0">
-						<tr>
-							<th rowspan="2" style="line-height: 46px;">Data</th>
-							<th rowspan="2" class="text-center" style="line-height: 46px;">Cliente</th>
-							<th rowspan="2" class="text-center" style="line-height: 46px;">Usuario</th>
-							<th rowspan="2" class="text-center" style="line-height: 46px;">Tipo</th>
-							<th rowspan="2" class="text-center" style="line-height: 46px;width: 300px;">Descrição</th>
-							<th rowspan="2" class="text-center" style="line-height: 46px;">Valor</th>
-							<th rowspan="1" class="text-center" colspan="3" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">Taxa Maquineta</th>
-						</tr>
-						<tr ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-							<th class="text-center" rowspan="1">% Perc.</th>
-							<th class="text-center" rowspan="1">R$ Desc.</th>
-							<th class="text-center" rowspan="1">Valor c/ Desc.</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-if="movimentacoes.length == 0 && movimentacoes != null">
-							<td class="text-center" colspan="9">
-								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando movimentações...
-							</td>
-						</tr>
-						
-						<tr ng-if="movimentacoes == null">
-							<td colspan="9" class="text-center">
-								Nenhuma movimentação encontrada para este caixa.
-							</td>
-						</tr>
-
-						<tr ng-repeat="item in movimentacoes">
-							<td>{{ item.dta_movimentacao | dateFormat:'dateTime' }}</td>
-							<td>{{ item.nme_cliente | uppercase }}</td>
-							<td>{{ item.nme_usuario | uppercase }}</td>
-							<td class="text-center">{{ item.tipo_movimentacao }}</td>
-
-							<td ng-if="item.id_forma_pagamento_entrada == 6 && item.id_venda != null">
-								{{ item.dsc_movimentacao}} #{{ item.id_venda }} <b>( Pago em : C.C - {{ item.parcelas }} X R$ {{ item.vlr_parcela | numberFormat:2:',':'.' }} )</b>
-							</td>
-
-							<td ng-if="item.id_forma_pagamento_entrada == 6 && item.id_venda == null">
-								{{ item.dsc_movimentacao}}  <b>( Pago em : C.C - {{ item.parcelas }} X R$ {{ item.vlr_parcela | numberFormat:2:',':'.' }} )</b>
-							</td>
-
-							<td ng-if="item.tipo_movimentacao == 'Sangria' || item.tipo_movimentacao == 'Reforco' ">
-								<a ng-if="item.tipo_movimentacao == 'Sangria'" style="cursor:pointer" init-popover content="
-								<div><b>Fornecedor:</b> {{ item.nome_fornecedor }} <br/> <b>Observação:</b> {{ item.obs_pagamento_saida }}<div/>
-								" >{{ item.obs_pagamento_saida }} <small>({{ item.conta_saida }} >> {{ item.conta_entrada }})</small></a>
-
-								<a ng-if="item.tipo_movimentacao == 'Reforco'" style="cursor:pointer" init-popover content="
-								<div><b>Observação:</b> {{ item.obs_pagamento_entrada }}<div/>
-								" >{{ item.obs_pagamento_entrada }} <small>({{ item.conta_saida }} >> {{ item.conta_entrada }})</small></a>
-							</td>
-
-							<td ng-if="item.id_tipo_movimentacao == 5">
-								{{ item.dsc_movimentacao}} #{{ item.id_venda }}</b>
-							</td>
-
-							<td ng-if="item.id_forma_pagamento_entrada != 6 && item.tipo_movimentacao != 'Sangria' && item.tipo_movimentacao != 'Reforco' && item.id_tipo_movimentacao != 5 && item.id_venda != null ">
-								{{ item.dsc_movimentacao}} #{{ item.id_venda }} <b>( Pago em : {{ item.forma_pagamento_entrada }} )</b>
-							</td>
-
-							<td ng-if="item.id_forma_pagamento_entrada != 6 && item.tipo_movimentacao != 'Sangria' && item.tipo_movimentacao != 'Reforco' && item.id_tipo_movimentacao != 5 && item.id_venda == null ">
-								{{ item.dsc_movimentacao}} {{ item.id_venda }} <b>( Pago em : {{ item.forma_pagamento_entrada }} )</b>
-							</td>
-
-							<td ng-if="isEntrada(item) && item.id_tipo_movimentacao != 5" style="color: #118A2E;" class="text-right">
-								<strong>R$ {{ item.valor_entrada | numberFormat:2:',':'.' }}</strong>
-							</td>
-							<td ng-if="isSaida(item)&& item.id_tipo_movimentacao != 5" style="color:red;" class="text-right">
-								<strong>- R$ {{ item.valor_entrada | numberFormat:2:',':'.' }}</strong>
-							</td>
-							<td ng-if="item.id_tipo_movimentacao == 5" style="color:rgb(208, 216, 22);" class="text-right">
-								<strong>R$ {{ item.para_receber | numberFormat:2:',':'.' }}</strong>
-							</td>
-							<td class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')" >
-								 {{ item.taxa_maquineta * 100 | numberFormat:2:',':'.' }}%
-							</td>
-							<td class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-								 R$ {{ item.vlr_taxa_maquineta | numberFormat:2:',':'.' }}
-							</td>
-							<td class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-								 R$ {{ item.valor_desconto_maquineta | numberFormat:2:',':'.' }}
-							</td>
-						</tr>
-
-						<tr ng-if="movimentacoes.length > 0">
-							<td colspan="5" class="text-right">Saldo Final</td>
-							<td style="color:#000;" class="text-right">
-								<strong>R$ {{ totais.total - totais.formas_pagamento.sangria.valor| numberFormat:2:',':'.'}}</strong>
-							</td>
-							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-
-							</td>
-							<td  style="color:#000;" class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-								<strong>R$ {{ total_desconto_taxa_maquineta | numberFormat:2:',':'.'}}</strong>
-							</td>
-							<td colspan="2" style="color:#000;" class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-								<strong>R$ {{ totais.total - total_desconto_taxa_maquineta | numberFormat:2:',':'.'}}</strong>
-							</td>
-						</tr>
-						
-						<tr ng-if="movimentacoes.length > 0">
-							<td colspan="5" class="text-right">Total de Vendas</td>
-							<td class="text-right" style="color:#000;"><strong>R$ {{ (total_vendas | numberFormat : 2 : ',' : '.') }}</strong> </td>
-							<td ></td>
-							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;">
-								<strong>R$ {{ ((total_desconto_taxa_maquineta_debito+total_desconto_taxa_maquineta_credito) | numberFormat : 2 : ',' : '.') }}</strong>
-							</td>
-							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;">
-								<strong>R$ {{ ((total_vendas-(total_desconto_taxa_maquineta_debito+total_desconto_taxa_maquineta_credito)) | numberFormat:2:',':'.') }}</strong>
-							</td>
-						</tr>
-						
 						<tr colspan="5" ng-if="movimentacoes.length > 0">
 							<td style="background: #D5D5D5;" colspan="9" class="text-uppercase text-center" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
 								<span style="font-size: 14px;">Total por Forma de Pagamento</span>
@@ -402,6 +290,129 @@
 							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ totais.formas_pagamento.voucher.valor | numberFormat : 2 : ',' : '.'}}</td>
 						</tr>
+
+						<tr>
+							<td style="background: #D5D5D5;" colspan="9" class="text-uppercase text-center" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								<span style="font-size: 14px;">Detalhes</span>
+							</td>
+							<td style="background: #D5D5D5;" colspan="6" class="text-uppercase text-center" ng-if="!funcioalidadeAuthorized('ver_taxa_maquineta')">
+								<span style="font-size: 14px;">Detalhes</span>
+							</td>
+						</tr>
+
+						<tr>
+							<th rowspan="2" style="line-height: 46px;">Data</th>
+							<th rowspan="2" class="text-center" style="line-height: 46px;">Cliente</th>
+							<th rowspan="2" class="text-center" style="line-height: 46px;">Usuario</th>
+							<th rowspan="2" class="text-center" style="line-height: 46px;">Tipo</th>
+							<th rowspan="2" class="text-center" style="line-height: 46px;width: 300px;">Descrição</th>
+							<th rowspan="2" class="text-center" style="line-height: 46px;">Valor</th>
+							<th rowspan="1" class="text-center" colspan="3" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">Taxa Maquineta</th>
+						</tr>
+						<tr ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+							<th class="text-center" rowspan="1">% Perc.</th>
+							<th class="text-center" rowspan="1">R$ Desc.</th>
+							<th class="text-center" rowspan="1">Valor c/ Desc.</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-if="movimentacoes.length == 0 && movimentacoes != null">
+							<td class="text-center" colspan="9">
+								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando movimentações...
+							</td>
+						</tr>
+						
+						<tr ng-if="movimentacoes == null">
+							<td colspan="9" class="text-center">
+								Nenhuma movimentação encontrada para este caixa.
+							</td>
+						</tr>
+
+						<tr ng-repeat="item in movimentacoes">
+							<td>{{ item.dta_movimentacao | dateFormat:'dateTime' }}</td>
+							<td>{{ item.nme_cliente | uppercase }}</td>
+							<td>{{ item.nme_usuario | uppercase }}</td>
+							<td class="text-center">{{ item.tipo_movimentacao }}</td>
+
+							<td ng-if="item.id_forma_pagamento_entrada == 6 && item.id_venda != null">
+								{{ item.dsc_movimentacao}} #{{ item.id_venda }} <b>( Pago em : C.C - {{ item.parcelas }} X R$ {{ item.vlr_parcela | numberFormat:2:',':'.' }} )</b>
+							</td>
+
+							<td ng-if="item.id_forma_pagamento_entrada == 6 && item.id_venda == null">
+								{{ item.dsc_movimentacao}}  <b>( Pago em : C.C - {{ item.parcelas }} X R$ {{ item.vlr_parcela | numberFormat:2:',':'.' }} )</b>
+							</td>
+
+							<td ng-if="item.tipo_movimentacao == 'Sangria' || item.tipo_movimentacao == 'Reforco' ">
+								<a ng-if="item.tipo_movimentacao == 'Sangria'" style="cursor:pointer" init-popover content="
+								<div><b>Fornecedor:</b> {{ item.nome_fornecedor }} <br/> <b>Observação:</b> {{ item.obs_pagamento_saida }}<div/>
+								" >{{ item.obs_pagamento_saida }} <small>({{ item.conta_saida }} >> {{ item.conta_entrada }})</small></a>
+
+								<a ng-if="item.tipo_movimentacao == 'Reforco'" style="cursor:pointer" init-popover content="
+								<div><b>Observação:</b> {{ item.obs_pagamento_entrada }}<div/>
+								" >{{ item.obs_pagamento_entrada }} <small>({{ item.conta_saida }} >> {{ item.conta_entrada }})</small></a>
+							</td>
+
+							<td ng-if="item.id_tipo_movimentacao == 5">
+								{{ item.dsc_movimentacao}} #{{ item.id_venda }}</b>
+							</td>
+
+							<td ng-if="item.id_forma_pagamento_entrada != 6 && item.tipo_movimentacao != 'Sangria' && item.tipo_movimentacao != 'Reforco' && item.id_tipo_movimentacao != 5 && item.id_venda != null ">
+								{{ item.dsc_movimentacao}} #{{ item.id_venda }} <b>( Pago em : {{ item.forma_pagamento_entrada }} )</b>
+							</td>
+
+							<td ng-if="item.id_forma_pagamento_entrada != 6 && item.tipo_movimentacao != 'Sangria' && item.tipo_movimentacao != 'Reforco' && item.id_tipo_movimentacao != 5 && item.id_venda == null ">
+								{{ item.dsc_movimentacao}} {{ item.id_venda }} <b>( Pago em : {{ item.forma_pagamento_entrada }} )</b>
+							</td>
+
+							<td ng-if="isEntrada(item) && item.id_tipo_movimentacao != 5" style="color: #118A2E;" class="text-right">
+								<strong>R$ {{ item.valor_entrada | numberFormat:2:',':'.' }}</strong>
+							</td>
+							<td ng-if="isSaida(item)&& item.id_tipo_movimentacao != 5" style="color:red;" class="text-right">
+								<strong>- R$ {{ item.valor_entrada | numberFormat:2:',':'.' }}</strong>
+							</td>
+							<td ng-if="item.id_tipo_movimentacao == 5" style="color:rgb(208, 216, 22);" class="text-right">
+								<strong>R$ {{ item.para_receber | numberFormat:2:',':'.' }}</strong>
+							</td>
+							<td class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')" >
+								 {{ item.taxa_maquineta * 100 | numberFormat:2:',':'.' }}%
+							</td>
+							<td class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								 R$ {{ item.vlr_taxa_maquineta | numberFormat:2:',':'.' }}
+							</td>
+							<td class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								 R$ {{ item.valor_desconto_maquineta | numberFormat:2:',':'.' }}
+							</td>
+						</tr>
+
+						<tr ng-if="movimentacoes.length > 0">
+							<td colspan="5" class="text-right">Saldo Final</td>
+							<td style="color:#000;" class="text-right">
+								<strong>R$ {{ totais.total - totais.formas_pagamento.sangria.valor| numberFormat:2:',':'.'}}</strong>
+							</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+
+							</td>
+							<td  style="color:#000;" class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								<strong>R$ {{ total_desconto_taxa_maquineta | numberFormat:2:',':'.'}}</strong>
+							</td>
+							<td colspan="2" style="color:#000;" class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								<strong>R$ {{ totais.total - total_desconto_taxa_maquineta | numberFormat:2:',':'.'}}</strong>
+							</td>
+						</tr>
+						
+						<tr ng-if="movimentacoes.length > 0">
+							<td colspan="5" class="text-right">Total de Vendas</td>
+							<td class="text-right" style="color:#000;"><strong>R$ {{ (total_vendas | numberFormat : 2 : ',' : '.') }}</strong> </td>
+							<td ></td>
+							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;">
+								<strong>R$ {{ ((total_desconto_taxa_maquineta_debito+total_desconto_taxa_maquineta_credito) | numberFormat : 2 : ',' : '.') }}</strong>
+							</td>
+							<td ng-if="key != 'cartao_debito' && key != 'cartao_credito' && funcioalidadeAuthorized('ver_taxa_maquineta')" class="text-right" style="color:#000;">
+								<strong>R$ {{ ((total_vendas-(total_desconto_taxa_maquineta_debito+total_desconto_taxa_maquineta_credito)) | numberFormat:2:',':'.') }}</strong>
+							</td>
+						</tr>
+						
+						
 					</tbody>
 				</table>
 
