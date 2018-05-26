@@ -470,7 +470,7 @@
 						</div>
 
 						<div class="panel-footer total ">
-							<div class="row">
+							<div class="row" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">
 								<div class="col-xs-12">
 									<table class="table">
 										<thead>
@@ -717,7 +717,7 @@
 						</div>
 
 						<div class="panel-footer total">
-							<div class="row">
+							<div class="row" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">
 								<div class="col-xs-12">
 									<table class="table">
 										<thead>

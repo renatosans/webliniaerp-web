@@ -2310,6 +2310,23 @@
 											</div>
 										</div>
 									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="" class="control-label">Ocultar produtos que não controla estoque?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_oculta_produtos_nao_controla_estoque" value="1" name="flg_oculta_produtos_nao_controla_estoque"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_oculta_produtos_nao_controla_estoque" value="0" name="flg_oculta_produtos_nao_controla_estoque"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
 								</div>
 								<hr>
 								<div class="row">
