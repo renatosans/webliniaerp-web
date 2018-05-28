@@ -13,8 +13,40 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
     ng.conta                        = {} ;
     ng.movimentacao 				= {};
     ng.movimentacoes 				= null;
+    ng.all_selected = false;
 
     var params = getUrlVars();
+
+    ng.selectAllItens = function(){
+    	angular.forEach(ng.movimentacoes, function(item, index){
+    		item.selected = !item.selected;
+    	});
+    }
+
+    ng.showUpdateSelectedRecords = function() {
+    	var can_show = false;
+    	angular.forEach(ng.movimentacoes, function(item, index){
+    		if(item.selected)
+    			can_show = true;
+    	});
+    	return can_show;
+    }
+
+    ng.confirmUpdateSelectedRecords = function(){
+
+    	dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Tem certeza que deseja dar baixa em todos os lançamentos marcados?</strong>');
+
+		dlg.result.then(function(btn){
+    		var selectedItems = _.where(ng.movimentacoes, {selected: true});
+			aj.post(baseUrlApi()+"financeiro/receita/update/status", {data: JSON.stringify(selectedItems)})
+				.success(function(data, status, headers, config) {
+					ng.loadMovimentacoes();
+				})
+				.error(function(data, status, headers, config) {
+
+	 			});
+		}, undefined);
+    }
 
     ng.loadBandeiras = function() {
 		ng.bandeiras = [{id:'', nome: ''}];
