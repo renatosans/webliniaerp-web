@@ -175,6 +175,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	}
 
 	ng.funcioalidadeAuthorized = function(cod_funcionalidade){
+		if (cod_funcionalidade == 35)
+			cod_funcionalidade = 'ver_tabela_parceiro';
+		
 		return FuncionalidadeService.Authorized(cod_funcionalidade,ng.userLogged.id_perfil,ng.userLogged.id_empreendimento);
 	}
 
