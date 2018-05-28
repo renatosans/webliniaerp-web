@@ -566,7 +566,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
     	}
 
     	if(!empty(ng.configuracao.flg_oculta_produtos_nao_controla_estoque) && ng.configuracao.flg_oculta_produtos_nao_controla_estoque == 1){
-			query_string += "&pro->flg_controlar_estoque=0";
+			query_string += "&pro->flg_controlar_estoque=1";
 		}
 
 		ng.produtos = [];
