@@ -33,7 +33,12 @@ app.controller('ControleMesasController', function(
 	ng.produto 		= {};
 	ng.EditProduto 	= false;
 	ng.editComanda 	= false;
-	ng.new_cliente 	= { id_empreendimento: ng.userLogged.id_empreendimento, id_perfil: 6 };
+	ng.new_cliente 	= {
+		id_empreendimento: ng.userLogged.id_empreendimento, 
+		id_perfil: 6, 
+		id_estado: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_estado, 
+		id_cidade: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_cidade
+	};
 	ng.id_ws_dsk 	= ng.configuracao.id_ws_dsk_op;
 	ng.status_websocket = 0 ;
 	var TimeWaitingResponseTestConection = 10000;
@@ -1260,27 +1265,32 @@ app.controller('ControleMesasController', function(
 
 	ng.cadastrarCliente = function($event){
 		var btn = $(event.target);
-		if(!btn.is(':button')) btn = $(event.target).parent();
+		
+		if(!btn.is(':button'))
+			btn = $(event.target).parent();
+		
 		btn.button('loading');
+		
 		var cliente = angular.copy(ng.new_cliente);
-		cliente.celular = empty(cliente.celular) ? null : cliente.celular ;
-		aj.post(baseUrlApi()+"comanda/cliente/new",cliente)
-		.success(function(data, status, headers, config) {
-			if(ng.editComanda){
-				ng.changeCliente(data.usuario.id,$event);
-			}else
-				ng.abrirComanda(data.usuario.id,$event);
-		})
-		.error(function(data, status, headers, config) {
-			btn.button('reset');
-			if(status == 406){
-				var str = "";
-				$.each(data,function(i,x){
-					str += x[0]+'<br/>';
-				});
-				$dialogs.notify('Atenção!','<strong>'+str+'</strong>');
-			}
-		});
+			cliente.celular = empty(cliente.celular) ? null : cliente.celular ;
+		
+		aj.post(baseUrlApi()+"comanda/cliente/new", cliente)
+			.success(function(data, status, headers, config) {
+				if(ng.editComanda){
+					ng.changeCliente(data.usuario.id,$event);
+				}else
+					ng.abrirComanda(data.usuario.id,$event);
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				if(status == 406){
+					var str = "";
+					$.each(data,function(i,x){
+						str += x[0]+'<br/>';
+					});
+					$dialogs.notify('Atenção!','<strong>'+str+'</strong>');
+				}
+			});
 	}
 
 	ng.newConnWebSocket = function(){

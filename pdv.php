@@ -3304,7 +3304,7 @@
 						</div>
 				    <div class="modal-body">
 						<div class="row">
-							<div class="col-md-4" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">
+							<div class="col-md-4" ng-if="(configuracoes.flg_modo_controle_mesas == 'mesas_comandas')">
 								<div class="form-group" id="regimeTributario">
 									<!--<label class="control-label">Operação</label> -->
 									<select chosen
@@ -3338,7 +3338,8 @@
 									<thead ng-show="(comandas.dados != 0)">
 										<tr>
 											<th class="text-center">Nº Comanda</th>
-											<th class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">Mesa</th>
+											<th class="text-center" ng-if="(configuracoes.flg_usa_cartao_magnetico == 1)">Nº Cartão</th>
+											<th class="text-center" ng-if="(configuracoes.flg_modo_controle_mesas == 'mesas_comandas')">Mesa</th>
 											<th class="text-center">Cliente</th>
 											<th class="text-center">Quantidade itens</th>
 											<th width="100" class="text-center">Valor</th>
@@ -3354,7 +3355,8 @@
 										</tr>
 										<tr ng-repeat="item in comandas.dados">
 											<td class="text-center">#{{ item.id_comanda }}</td>
-											<td class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">{{ item.dsc_mesa }}</td>
+											<td class="text-center">{{ item.num_cartao_fisico }}</td>
+											<td class="text-center" ng-if="(configuracoes.flg_modo_controle_mesas == 'mesas_comandas')">{{ item.dsc_mesa }}</td>
 											<td ng-if="config.id_cliente_movimentacao_caixa != item.id_cliente">{{ item.nome_cliente }}</td>
 											<td ng-if="config.id_cliente_movimentacao_caixa == item.id_cliente">(Não informado)</td>
 											<td class="text-center">{{ item.qtd_total }}</td>
