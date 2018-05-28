@@ -1134,7 +1134,7 @@
 																</button>
 															</div>
 														</div>
-														<div class="row" style="margin-top:5px">
+														<div class="row" style="margin-top:5px" ng-show="funcioalidadeAuthorized(35)">
 															<div class="col-sm-12">
 																<button ng-click="changeMargemAplicada({atacado:false,intermediario:false,varejo:false,parceiro:true})" class="btn btn-sm btn-primary btn-block" type="button">
 																	<i ng-if="margemAplicada.parceiro"  class="fa fa-check-circle-o" aria-hidden="true"></i> 
