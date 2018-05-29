@@ -848,6 +848,11 @@ app.controller('ControleMesasController', function(
 	}
 
 	ng.confirmarPedido = function() {
+		if (empty(ng.itens_pedido)) {
+			$dialogs.notify('Atenção!', 'Selecione ao menos um produto para confirmar o pedido!')
+			return false;
+		}
+		
 		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma o pedido?');
 
 		dlg.result.then(

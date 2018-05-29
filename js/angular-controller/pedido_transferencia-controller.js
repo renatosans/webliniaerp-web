@@ -189,7 +189,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		query_string = "?pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
 		if(!empty(ng.configuracoes.flg_oculta_produtos_nao_controla_estoque) && ng.configuracoes.flg_oculta_produtos_nao_controla_estoque == 1){
-			query_string += "&pro->flg_controlar_estoque=0";
+			query_string += "&pro->flg_controlar_estoque=1";
 		}
 		
 		// Se estiver configurado p/ ocultar produtos sem estoque no pedido de transferência
