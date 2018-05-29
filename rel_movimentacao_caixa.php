@@ -274,7 +274,7 @@
 
 						<tr class="warning" 
 							ng-repeat="(nome_bandeira, bandeira) in maquineta.bandeiras"
-							ng-if="maquineta.bandeiras.show && maquineta.bandeiras">
+							ng-if="maquineta.bandeiras.show && maquineta.bandeiras && (nome_bandeira != 'show')">
 							<td colspan="5" class="text-right text-bold">
 								{{ nome_bandeira | uppercase }}
 							</td>
@@ -349,7 +349,7 @@
 
 						<tr class="warning" 
 							ng-repeat="(nome_bandeira, bandeira) in maquineta.bandeiras"
-							ng-if="maquineta.bandeiras.show && maquineta.bandeiras">
+							ng-if="maquineta.bandeiras.show && maquineta.bandeiras && (nome_bandeira != 'show')">
 							<td colspan="5" class="text-right text-bold">
 								{{ nome_bandeira | uppercase }}
 							</td>
@@ -471,7 +471,7 @@
 
 						<tr class="warning" 
 							ng-repeat="(nome_bandeira, bandeira) in maquineta.bandeiras"
-							ng-if="maquineta.bandeiras.show && maquineta.bandeiras">
+							ng-if="maquineta.bandeiras.show && maquineta.bandeiras && (nome_bandeira != 'show')">
 							<td colspan="5" class="text-right text-bold">
 								{{ nome_bandeira | uppercase }}
 							</td>
