@@ -184,20 +184,7 @@
 							<div class="row">
 								<div class="col-sm-12"><div style="display: none" class="alert alert-transferencia-form"></div></div>
 							</div>
-							<!-- <div class="row">
-								<div class="col-sm-4">
-									<div class="form-group" id="id_deposito_principal">
-										<label class="control-label">Deposito</label>
-										<div class="input-group">
-											<input ng-click="selDeposito()" type="text" class="form-control" ng-model="nome_deposito_principal" readonly="readonly" style="cursor: pointer;" />
-											<span class="input-group-btn">
-												<button ng-click="selDeposito()" type="button"  class="btn"><i class="fa fa-sitemap"></i></button>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<br/> -->
+
 							<div class="row" ng-if="configuracao.flg_controlar_validade_transferencia == 0">
 								<div class="col-sm-12">
 									<div class="form-group" id="produtos">
@@ -333,152 +320,166 @@
 									</div>
 								</div>
 							</div>
+							
 							<div class="row" ng-if="configuracao.flg_controlar_validade_transferencia == 1">
 								<div class="col-sm-12">
 									<div class="form-group" id="produtos">
-											<table class="table table-bordered table-condensed table-striped table-hover">
-												<thead>
-													<tr>
-														<td colspan="9"><i class="fa fa-archive"></i> Produtos</td>
-														<td width="60" align="center">
-														<button class="btn btn-xs btn-primary" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutosByValidade()"><i class="fa fa-plus-circle"></i></button>
-														</td>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<th>ID</th>
-														<th>Produto</th>
-														<th>Fabricante</th>
-														<th>Tamanho</th>
-														<th>Sabor/Cor</th>
-														<th class="text-center" >Estoque</th>
-														<th class="text-center" width="90"
-															ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
-															Vlr. Custo
-															<div class="btn-group">
-																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-																		<span class="caret"></span>
-																</button>
-																<ul class="dropdown-menu">
-																	<li>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_custo_real')">
-																			Custo
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
-																		</a>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_atacado')">
-																			Atacado
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
-																		</a>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_intermediario')">
-																			Intermediário
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
-																		</a>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_varejo')">
-																			Varejo
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
-																		</a>
-																	</li>
-																</ul>	
-															</div>	
-														</th>
-														<th class="text-center" >Qtd.Pedida</th>
-														<th class="text-center">Qtd. Multipla</th>
-														<th>Qtd. transferir</th>
-														<!--<th width="250">
-															Depósito
-															<button style="float:right" class="btn btn-xs btn-info" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="selDeposito()" tooltip data-placement="top" title="Selecionar deposito para todos os itens"><i class="fa fa-sitemap"></i></button>
-														</th>-->
-														<th></th>
-													</tr>
-													<tr ng-repeat="item in transferencia.produtos" id="tr-prd-{{ item.id }}">
-														<td>{{ item.id	 }}</td>
-														<td>{{ item.nome }}</td>
-														<td>{{ item.nome_fabricante }}</td>
-														<td>{{ item.peso }}</td>
-														<td>{{ item.sabor }}</td>
-														<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
-														<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
-														<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
-															{{ item.vlr_custo | numberFormat:2:',':'.' }}
-															<div class="btn-group">
-																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-																		<span class="caret"></span>
-																</button>
-																<ul class="dropdown-menu">
-																	<li>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_custo_real')">
-																			Custo: R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
-																		</a>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_atacado')">
-																			Atacado: R$ {{ item.vlr_venda_atacado | numberFormat:2:',':'.' }}
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
-																		</a>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_intermediario')">
-																			Intermediário: R$ {{ item.vlr_venda_intermediario | numberFormat:2:',':'.' }}
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
-																		</a>
-																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_varejo')">
-																			Varejo: R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}
-																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
-																		</a>
-																	</li>
-																</ul>	
-															</div>													
-														</td>
-														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
-														<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
-														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
-															<div class="input-group" id="dtaInicialDiv">
-															<input ng-disabled="true" onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-value="somarQtd(item)"  type="text" class="form-control input-sm" />
-															<span id="btnDtaInicial" class="input-group-addon"
-															 href=""
-															 popover2
-															 model="item.validades"
-															 title="Validades"
-															 func="ctrl"
-															 placement="left"
-															 content='
-																 <table class="table table-bordered table-condensed table-striped table-hover">
-																 	<tr ng-repeat="item in model">
-																 		<td ng-bind="item.nome_deposito"></td>
-																 		<td class"text-center" ng-bind="item.dta_validade|date" ng-if="item.dta_validade != %272099-12-31%27"></td>
-																 		<td class"text-center" ng-if="item.dta_validade == %272099-12-31%27"></td>
-																 		<td class"text-center" ng-bind="item.qtd_item"></td>
-																 		<td width="80" ng-class="{%27has-error%27: item.tooltip != undefined }" >
-																 			<input controll-tooltip="item.tooltip" ng-blur="func.clearTooltip(item)" somente-numeros ng-keyUp="func.vericarQtdByValidade(item,%27body%27)"  ng-model="item.qtd_transferida"  type="text" class="form-control input-xs text-center">
-						           										</td>
-																 	</tr>
-																 </table>
-														 	'
-															><i class="fa fa-calendar"></i></span>
-															</div>
-														</td>
-														<!--<td id="td-prd-deposito-saida-{{ item.id }}">
-															<select chosen ng-change="loadestoque(item)" 
-														    option="depositos_chosen"
-														    ng-model="item.id_deposito_saida"
-														    ng-options="deposito.id as deposito.nme_deposito for deposito in depositos_chosen">
-															</select>
-														</td>-->
-														<td align="center">
-															<button ng-if="item.add == 1" class="btn btn-xs btn-danger" ng-click="excluirProdutoListaByValidade($index)"><i class="fa fa-trash-o"></i></button>
-														</td>
-													</tr>
-												</tbody>
-											</table>
+										<table class="table table-bordered table-condensed table-striped table-hover">
+											<thead>
+												<tr>
+													<td colspan="9"><i class="fa fa-archive"></i> Produtos</td>
+													<td width="60" align="center">
+													<button class="btn btn-xs btn-primary" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutosByValidade()"><i class="fa fa-plus-circle"></i></button>
+													</td>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<th>ID</th>
+													<th>Produto</th>
+													<th>Fabricante</th>
+													<th>Tamanho</th>
+													<th>Sabor/Cor</th>
+													<th class="text-center" >Estoque</th>
+													<th class="text-center" width="90"
+														ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
+														Vlr. Custo
+														<div class="btn-group">
+															<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																	<span class="caret"></span>
+															</button>
+															<ul class="dropdown-menu">
+																<li>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_custo_real')">
+																		Custo
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
+																	</a>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_atacado')">
+																		Atacado
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
+																	</a>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_intermediario')">
+																		Intermediário
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
+																	</a>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_varejo')">
+																		Varejo
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
+																	</a>
+																</li>
+															</ul>	
+														</div>	
+													</th>
+													<th class="text-center" >Qtd.Pedida</th>
+													<th class="text-center">Qtd. Multipla</th>
+													<th>Qtd. transferir</th>
+													<!--<th width="250">
+														Depósito
+														<button style="float:right" class="btn btn-xs btn-info" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="selDeposito()" tooltip data-placement="top" title="Selecionar deposito para todos os itens"><i class="fa fa-sitemap"></i></button>
+													</th>-->
+													<th></th>
+												</tr>
+												<tr ng-repeat="item in transferencia.produtos" id="tr-prd-{{ item.id }}">
+													<td>{{ item.id	 }}</td>
+													<td>{{ item.nome }}</td>
+													<td>{{ item.nome_fabricante }}</td>
+													<td>{{ item.peso }}</td>
+													<td>{{ item.sabor }}</td>
+													<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
+													<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
+													<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
+														{{ item.vlr_custo | numberFormat:2:',':'.' }}
+														<div class="btn-group">
+															<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																	<span class="caret"></span>
+															</button>
+															<ul class="dropdown-menu">
+																<li>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_custo_real')">
+																		Custo: R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
+																	</a>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_atacado')">
+																		Atacado: R$ {{ item.vlr_venda_atacado | numberFormat:2:',':'.' }}
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
+																	</a>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_intermediario')">
+																		Intermediário: R$ {{ item.vlr_venda_intermediario | numberFormat:2:',':'.' }}
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
+																	</a>
+																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_varejo')">
+																		Varejo: R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}
+																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
+																	</a>
+																</li>
+															</ul>	
+														</div>													
+													</td>
+													<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
+													<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
+													<td  width="100" align="center" id="td-prd-{{ item.id }}" >
+														<div class="input-group" id="dtaInicialDiv">
+														<input ng-disabled="true" onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-value="somarQtd(item)"  type="text" class="form-control input-sm" />
+														<span id="btnDtaInicial" class="input-group-addon"
+														 href=""
+														 popover2
+														 model="item.validades"
+														 title="Validades"
+														 func="ctrl"
+														 placement="left"
+														 content='
+															 <table class="table table-bordered table-condensed table-striped table-hover">
+															 	<tr ng-repeat="item in model">
+															 		<td ng-bind="item.nome_deposito"></td>
+															 		<td class"text-center" ng-bind="item.dta_validade|date" ng-if="item.dta_validade != %272099-12-31%27"></td>
+															 		<td class"text-center" ng-if="item.dta_validade == %272099-12-31%27"></td>
+															 		<td class"text-center" ng-bind="item.qtd_item"></td>
+															 		<td width="80" ng-class="{%27has-error%27: item.tooltip != undefined }" >
+															 			<input controll-tooltip="item.tooltip" ng-blur="func.clearTooltip(item)" somente-numeros ng-keyUp="func.vericarQtdByValidade(item,%27body%27)"  ng-model="item.qtd_transferida"  type="text" class="form-control input-xs text-center">
+					           										</td>
+															 	</tr>
+															 </table>
+													 	'
+														><i class="fa fa-calendar"></i></span>
+														</div>
+													</td>
+													<!--<td id="td-prd-deposito-saida-{{ item.id }}">
+														<select chosen ng-change="loadestoque(item)" 
+													    option="depositos_chosen"
+													    ng-model="item.id_deposito_saida"
+													    ng-options="deposito.id as deposito.nme_deposito for deposito in depositos_chosen">
+														</select>
+													</td>-->
+													<td align="center">
+														<button ng-if="item.add == 1" class="btn btn-xs btn-danger" ng-click="excluirProdutoListaByValidade($index)"><i class="fa fa-trash-o"></i></button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="panel-footer">
+							<div class="pull-left">
+								<label class="label-checkbox">
+									<input type="checkbox" id="toggleLine"
+										ng-model="transferencia.venda.flg_gerar_venda" 
+										ng-true-value="true" ng-false-value="false">
+									<span class="custom-checkbox"></span>
+									Gerar venda a partir desse envio?
+								</label>
+							</div>
+
 							<div class="pull-right">
-								<button ng-click="cancelar()" class="btn btn-danger btn-sm"><i class="fa fa-times-circle"></i> Cancelar</button>
-								<button ng-click="salvarTransferencia()" class="btn btn-success btn-sm" id="salvar-transferencia" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
+								<button ng-click="cancelar()" class="btn btn-danger btn-sm">
+									<i class="fa fa-times-circle"></i> Cancelar
+								</button>
+								<button id="salvar-transferencia" class="btn btn-success btn-sm" 
+									ng-click="salvarTransferencia()"
+									data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde...">
 									<i class="fa fa-save"></i> Salvar
 								</button>
-
 							</div>
 							<div style="clear: both;"></div>
 						</div>

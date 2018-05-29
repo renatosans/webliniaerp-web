@@ -202,10 +202,13 @@
 									</span>
 								</div>
 							</div>
-								<div class="col-sm-3">
+							<div class="col-sm-3">
 								<label class="control-label">Cliente</label>
 								<div class="input-group">
-									<input ng-model="busca.ven_nome_cliente" ng-click="selUsuario('cliente')" type="text" class="form-control"  readonly="readonly" style="cursor: pointer;" />
+									<input type="text" class="form-control" 
+										readonly="readonly" style="cursor: pointer;"
+										ng-model="busca.ven_nome_cliente" 
+										ng-click="selUsuario('cliente')"/>
 									<span class="input-group-btn">
 										<button ng-click="selUsuario('cliente')"  type="button" class="btn"><i class="fa fa-user"></i></button>
 									</span>

@@ -274,7 +274,7 @@
 
 						<tr class="warning" 
 							ng-repeat="(nome_bandeira, bandeira) in maquineta.bandeiras"
-							ng-if="maquineta.bandeiras.show && maquineta.bandeiras">
+							ng-if="maquineta.bandeiras.show && maquineta.bandeiras && (nome_bandeira != 'show')">
 							<td colspan="5" class="text-right text-bold">
 								{{ nome_bandeira | uppercase }}
 							</td>
@@ -349,7 +349,7 @@
 
 						<tr class="warning" 
 							ng-repeat="(nome_bandeira, bandeira) in maquineta.bandeiras"
-							ng-if="maquineta.bandeiras.show && maquineta.bandeiras">
+							ng-if="maquineta.bandeiras.show && maquineta.bandeiras && (nome_bandeira != 'show')">
 							<td colspan="5" class="text-right text-bold">
 								{{ nome_bandeira | uppercase }}
 							</td>
@@ -418,12 +418,78 @@
 						</tr>
 						
 						<tr ng-if="movimentacoes.length > 0">
-							<td colspan="5" class="text-right text-bold">{{ totais.formas_pagamento.voucher.dsc }}</td>
+							<td colspan="5" class="text-bold">
+								<button type="button" class="btn btn-xs btn-default"
+									ng-click="show_details.voucher.show = !show_details.voucher.show">
+									<span ng-if="(!show_details.voucher.show)">
+										<i class="fa fa-plus-circle"></i> Detalhar
+									</span>
+									<span ng-if="(show_details.voucher.show)">
+										<i class="fa fa-minus-circle"></i> Resumir
+									</span>
+								</button>
+								<span class="pull-right">
+									{{ totais.formas_pagamento.voucher.dsc }}
+								</span>
+							</td>
 							<td class="text-right text-bold">R$ {{ totais.formas_pagamento.voucher.valor | numberFormat : 2 : ',' : '.'}}</td>
 							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')"></td>
 							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ 0 | numberFormat : 2 : ',' : '.'}}</td>
 							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">R$ {{ totais.formas_pagamento.voucher.valor | numberFormat : 2 : ',' : '.'}}</td>
 						</tr>
+
+						<tr class="info"
+							ng-repeat-start="(nome_maquineta, maquineta) in totais.formas_pagamento.voucher.maquinetas"
+							ng-if="show_details.voucher.show && totais.formas_pagamento.voucher.maquinetas">
+							<td colspan="5" class="text-bold">
+								<button type="button" class="btn btn-xs btn-default"
+									ng-click="maquineta.bandeiras.show = !maquineta.bandeiras.show">
+									<span ng-if="(!maquineta.bandeiras.show)">
+										<i class="fa fa-plus-circle"></i> Detalhar
+									</span>
+									<span ng-if="(maquineta.bandeiras.show)">
+										<i class="fa fa-minus-circle"></i> Resumir
+									</span>
+								</button>
+								<span class="pull-right">
+									{{ nome_maquineta | uppercase }}
+								</span>
+							</td>
+							<td class="text-right text-bold">
+								R$ {{ maquineta.vlr_total | numberFormat : 2 : ',' : '.'}}
+							</td>
+							<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								
+							</td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								R$ {{ maquineta.vlr_total_maquineta | numberFormat : 2 : ',' : '.'}}
+							</td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								R$ {{ bandeira.vlr_total_com_desconto | numberFormat : 2 : ',' : '.'}}
+							</td>
+						</tr>
+
+						<tr class="warning" 
+							ng-repeat="(nome_bandeira, bandeira) in maquineta.bandeiras"
+							ng-if="maquineta.bandeiras.show && maquineta.bandeiras && (nome_bandeira != 'show')">
+							<td colspan="5" class="text-right text-bold">
+								{{ nome_bandeira | uppercase }}
+							</td>
+							<td class="text-right text-bold">
+								R$ {{ bandeira.vlr_total | numberFormat : 2 : ',' : '.'}}
+							</td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								{{ (bandeira.prc_taxa_maquineta * 100) | numberFormat : 2 : ',' : '.' }}%
+							</td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								R$ {{ bandeira.vlr_total_maquineta | numberFormat : 2 : ',' : '.'}}
+							</td>
+							<td class="text-right text-bold" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
+								R$ {{ bandeira.vlr_total_com_desconto | numberFormat : 2 : ',' : '.'}}
+							</td>
+						</tr>
+
+						<tr ng-repeat-end></tr>
 
 						<tr>
 							<td style="background: #D5D5D5;" colspan="9" class="text-uppercase text-center" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
