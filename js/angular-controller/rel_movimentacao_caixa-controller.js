@@ -19,6 +19,9 @@ app.controller('relMovimentacaoCaixaController', function($scope, $http, $window
 		},
 		cartao_debito: {
 			show: false
+		},
+		voucher: {
+			show: false
 		}
 	}
 
