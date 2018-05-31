@@ -292,6 +292,9 @@
 							<button type="button" class="btn btn-sm btn-info" ng-click="confirmUpdateSelectedRecords()">
 								<i class="fa fa-check-circle-o"></i> Dar baixa nos lançamentos selecionados
 							</button>
+							<button type="button" class="btn btn-sm btn-info" ng-click="showModalTransferencia()">
+								<i class="fa fa-exchange"></i> Efetuar transferência dos valores selecionados
+							</button>
 						</div>
 
 						<div class="pull-right">
@@ -430,6 +433,106 @@
 			</div>
 		</div>
 		<!-- /main-container -->
+
+		<!-- Modal Transferencia -->
+		<div class="modal fade" id="modalTransferencia" style="display:none">
+  			<div class="modal-dialog modal-md">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Transferência Entre Contas</h4>
+      				</div>
+
+				    <div class="modal-body">
+						<table class="table table-bordered table-condensed table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="text-center" width="100">Total Selecionado</th>
+									<th class="text-center" width="100">Total Taxas</th>
+									<th class="text-center" width="100">Valor Final</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="text-right">R$ {{ totais_transferencia.vlr_total_selected | numberFormat:2:',':'.' }}</td>
+									<td class="text-right">R$ {{ totais_transferencia.vlr_total_taxa_maquineta_selected | numberFormat:2:',':'.' }}</td>
+									<td class="text-right">R$ {{ totais_transferencia.vlr_total_desconto_selected | numberFormat:2:',':'.' }}</td>
+								</tr>
+							</tbody>
+						</table>
+						<hr>
+						<div class="clearfix" ng-if="(msg_error)">
+							<span class="alert alert-warning">{{ msg_error }}</span>
+							<br>
+							<br>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Transferir</label>
+									<div class="form-group">
+										<label class="label-radio inline">
+											<input ng-model="transferencia.option_selected" name="transferencia.option_selected" value="0" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Total Selecionado</span>
+										</label>
+										<label class="label-radio inline">
+											<input ng-model="transferencia.option_selected" name="transferencia.option_selected" value="1" type="radio" class="inline-radio">
+											<span class="custom-radio"></span>
+											<span>Valor Final</span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label class="control-label">Data</label>
+									<div class="input-group">
+										<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_transferencia" class="datepicker form-control text-center" ng-model="dta_pagamento">
+										<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+									</div>
+								</div>	
+							</div>
+							<div class="col-sm-4">
+								<div class="form-group" id="id_conta_bancaria_origem">
+									<label class="control-label">Conta de origem</label>
+									<select ng-model="transferencia.id_conta_bancaria_origem" class="form-control">
+										<option ></option>
+										<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div class="form-group" id="id_conta_bancaria_destino">
+									<label class="control-label">Conta de destino</label>
+									<select ng-model="transferencia.id_conta_bancaria_destino" class="form-control">
+										<option ></option>
+										<option ng-repeat="item in contas" value="{{ item.id }}">{{ item.dsc_conta_bancaria }}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Observação</label>
+									<textarea class="form-control" ng-model="transferencia.obs_transferencia" rows="5"></textarea>
+								</div>
+							</div>
+						</div>
+				    </div>
+
+				    <div class="modal-footer clearfix">
+				    	<button type="button" id="btn-salvar-transferencia" class="btn btn-primary btn-sm" ng-click="salvarTransferencia()">
+				    		<i class="fa fa-save"></i> Salvar
+			    		</button>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
 
 		<!-- Footer
 		================================================== -->

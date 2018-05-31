@@ -1,4 +1,4 @@
-app.controller('relPagamentosController', function($scope, $http, $window, $dialogs, UserService, FuncionalidadeService, EmpreendimentoService){
+app.controller('relPagamentosController', function($scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService, EmpreendimentoService){
 
 	var ng = $scope
 		aj = $http;
@@ -6,6 +6,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 	ng.baseUrl 						= baseUrl();
 	ng.userLogged 					= UserService.getUserLogado();
 	ng.dados_empreendimento = EmpreendimentoService.getDadosEmpreendimento(ng.userLogged.id_empreendimento);
+	ng.configuracoes	 		= ConfigService.getConfig(ng.userLogged.id_empreendimento);
     ng.contas    					= [];
     ng.paginacao           			= {conta:null} ;
     ng.busca               			= {id_forma_pagamento:"",tipoData:"" } ;
@@ -14,8 +15,96 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
     ng.movimentacao 				= {};
     ng.movimentacoes 				= null;
     ng.all_selected = false;
+    ng.transferencia = {
+    	option_selected: 0,
+    	id_fornecedor: ng.configuracoes.id_fornecedor_movimentacao_caixa,
+		id_cliente: ng.configuracoes.id_cliente_movimentacao_caixa,
+		id_empreendimento: ng.userLogged.id_empreendimento
+    }
 
     var params = getUrlVars();
+
+    ng.showModalTransferencia = function(){
+    	ng.msg_error = null;
+
+    	$('#modalTransferencia').modal('show');
+		
+		var selectedItems = _.where(ng.movimentacoes, {selected: true});
+
+		ng.totais_transferencia = {
+			vlr_total_selected : 0,
+			vlr_total_taxa_maquineta_selected : 0,
+			vlr_total_desconto_selected : 0
+		};
+
+		angular.forEach(selectedItems, function(item, index){
+			ng.totais_transferencia.vlr_total_selected += item.valor_pagamento;
+			ng.totais_transferencia.vlr_total_taxa_maquineta_selected += item.vlr_taxa_maquineta;
+			ng.totais_transferencia.vlr_total_desconto_selected += item.valor_desconto_maquineta;
+		});
+    }
+
+    ng.salvarTransferencia = function(){
+    	ng.transferencia.dta_transferencia = (!empty($("#dta_transferencia").val())) ? formatDate($("#dta_transferencia").val()) : "";
+    	if (empty(ng.transferencia.dta_transferencia)) {
+			ng.msg_error = "Selecione uma data";
+			return false;
+		} else if(empty(ng.transferencia.id_conta_bancaria_origem)) {
+			ng.msg_error = "Selecione uma conta de origem";
+			return false;
+		} else if(empty(ng.transferencia.id_conta_bancaria_destino)) {
+			ng.msg_error = "Selecione uma conta de destino";
+			return false;
+		} else if(ng.transferencia.id_conta_bancaria_destino == ng.transferencia.id_conta_bancaria_origem) {
+			ng.msg_error = "Não é possível fazer uma transferência para a mesma conta";
+			return false;
+		} else if(empty(ng.transferencia.option_selected, true)) {
+			ng.msg_error = "Selecione o que deseja transferir";
+			return false;
+		}
+
+		if (!empty(ng.transferencia.option_selected, true) && ng.transferencia.option_selected == 0)
+			ng.transferencia.vlr_transferencia = ng.totais_transferencia.vlr_total_selected;
+
+		else if (!empty(ng.transferencia.option_selected, true) && ng.transferencia.option_selected == 1)
+			ng.transferencia.vlr_transferencia = ng.totais_transferencia.vlr_total_desconto_selected;
+		
+		aj.post(baseUrlApi()+"lancamento/transferencia", ng.transferencia)
+			.success(function(data, status, headers, config) {
+				ng.msg_error = "Transferência atualizado com sucesso";
+
+				ng.transferencia.dta_transferencia = "";
+				ng.transferencia.id_conta_bancaria_origem = null;
+				ng.transferencia.id_conta_bancaria_destino = null;
+				ng.transferencia.vlr_transferencia = 0;
+				ng.transferencia.obs_transferencia = "";
+				ng.transferencia.id_fornecedor = ng.configuracoes.id_fornecedor_movimentacao_caixa;
+				ng.transferencia.id_cliente = ng.configuracoes.id_cliente_movimentacao_caixa;
+				ng.transferencia.id_empreendimento = ng.userLogged.id_empreendimento;
+
+				$('#modalTransferencia').modal('hide');
+				
+				ng.loadMovimentacoes();
+			})
+			.error(function(data, status, headers, config){
+				ng.msg_error = "Erro ao lançar transferência";	
+			});
+    }
+
+    ng.loadContas = function(offset,limit) {
+		offset = offset == null ? 0  : offset;
+    	limit  = limit  == null ? 20 : limit;
+
+		ng.contas = [];
+
+		aj.get(baseUrlApi()+"contas_bancarias?id_empreendimento="+ng.userLogged.id_empreendimento+"&id_tipo_conta[exp]=<>5")
+			.success(function(data, status, headers, config) {
+				ng.contas = data.contas;
+			})
+			.error(function(data, status, headers, config) {
+
+			});
+	}
 
     ng.selectAllItens = function(){
     	angular.forEach(ng.movimentacoes, function(item, index){
@@ -239,4 +328,5 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 	}
 
 	ng.loadBandeiras();
+	ng.loadContas();
 });
