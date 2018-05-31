@@ -270,7 +270,16 @@ app.controller('ControleMesasController', function(
 				ng.clientes = [];
 			}
 			if(tela=='cadCliente'){
-				ng.new_cliente = {id_empreendimento:ng.userLogged.id_empreendimento,id_perfil:6};
+				/*ng.new_cliente = {
+					id_empreendimento: ng.userLogged.id_empreendimento,
+					id_perfil: 6
+				};*/
+				ng.new_cliente 	= {
+					id_empreendimento: ng.userLogged.id_empreendimento, 
+					id_perfil: 6, 
+					id_estado: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_estado, 
+					id_cidade: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_cidade
+				};
 			}
 			else if(tela=='detMesa')
 				ng.loadComandasByMesa();

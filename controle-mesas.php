@@ -444,8 +444,8 @@
 									<th width="100" class="text-middle text-center">Nº Comanda</th>
 									<th width="100" class="text-middle text-center" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">Nº Cartão</th>
 									<th class="text-middle">Cliente</th>
-									<th class="text-middle text-center">Itens</th>
-									<th class="text-middle text-center">Subtotal</th>
+									<th class="text-middle text-center" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">Itens</th>
+									<th class="text-middle text-center" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">Subtotal</th>
 								</thead>
 								<thead ng-show="mesaSelecionada.comandas.length == 0">
 									<th colspan="3">No momento não há nenhuma comanda aberta</th>
@@ -462,8 +462,8 @@
 										<td ng-if="comanda.id_cliente != configuracao.id_cliente_movimentacao_caixa" >{{ comanda.nome_cliente }}</td>
 										<td ng-if="comanda.id_cliente == configuracao.id_cliente_movimentacao_caixa" ><b>(Cliente não informado)</b></td>
 
-										<td class="text-center">{{ comanda.qtd_total }}</td>
-										<td class="text-right">R$ {{ comanda.valor_total | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+										<td class="text-center" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">{{ comanda.qtd_total }}</td>
+										<td class="text-right" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">R$ {{ comanda.valor_total | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
 									</tr>
 								</tbody>
 							</table>

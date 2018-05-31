@@ -4484,8 +4484,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.process_reeviar_sat = false ;
 	ng.cod_nota_fiscal_reenviar_sat = null ;
 	ng.reenviarSat = function(item,event){
-		if (item.id_cliente != ng.configuracoes.id_cliente_movimentacao_caixa) {
-			if (isCPF(item.cpf)) {
+		if ((item.id_cliente != ng.configuracoes.id_cliente_movimentacao_caixa)) {
+			if (isCPF(item.cpf) || empty(item.cpf)) {
 				if(empty(ng.caixa_open.id_ws_dsk)){
 					$('#modal-vendas-reenviar-sat').modal('hide');
 					$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});

@@ -45,20 +45,20 @@ app.controller('RelatorioContasPagar', function($scope, $http, $window, UserServ
 			if(error_periodo > 0)
 				return;
 			query_string += $.param(
-										{
-											sql:{
-													literal_exp:"dta_entrada between '"+dataInicial+"'  AND '"+dataFinal+" 23:59:59' ORDER BY dta_entrada ASC,id ASC"
-												},
-											busca_saldo_anterior:{
-												dta_entrada:{
-													literal_exp: "dta_entrada < '"+dataInicial+"'"
-												},
-												dta_venda:{
-													literal_exp: "dta_venda < '"+dataInicial+"'"
-												}
-											}
-										}
-								   );
+				{
+					sql:{
+							literal_exp:"dta_entrada between '"+dataInicial+"'  AND '"+dataFinal+" 23:59:59' ORDER BY dta_entrada ASC,id ASC"
+						},
+					busca_saldo_anterior:{
+						dta_entrada:{
+							literal_exp: "dta_entrada < '"+dataInicial+"'"
+						},
+						dta_venda:{
+							literal_exp: "dta_venda < '"+dataInicial+"'"
+						}
+					}
+				}
+		   );
 			
 		}else if(ng.tipoBusca == "intervalo"){
 			var intervalo = ng.busca.intervalo;
