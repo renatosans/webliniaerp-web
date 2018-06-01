@@ -55,41 +55,20 @@ app.controller('RelatorioPosicaoEstoqueController', function($scope, $http, $win
 		} else if(empty(dta_final)){
 			alert("Preencha a Data Final");
 			return false;
-		} else if(empty(ng.busca.id_deposito)){
+		} /*else if(empty(ng.busca.id_deposito)){
 			alert("Escolha um depósito");
 			return false;
-		}
+		}*/
 
 		ng.posicoes = [];
 		ng.loadTotalFaturamento();
 
-		var queryString = "?tpe->id_empreendimento="+ ng.userLogged.id_empreendimento 
-							+"&tme->dta_movimentacao[exp]=BETWEEN '"+dta_inicial+"' AND '"+dta_final+"'" 
-							+"&tme->id_deposito="+ ng.busca.id_deposito;
-
-		aj.get(baseUrlApi() +"relatorio/posicoes-estoque/" +dta_inicial+ "/" +dta_final+ queryString)
+		aj.get(baseUrlApi() +"relatorio/posicoes-estoque/"+ng.userLogged.id_empreendimento +"/"+ dta_inicial +"/"+ dta_final)
 			.success(function(data, status, headers, config) {
 				ng.posicoes = data;
 				angular.forEach(ng.posicoes, function(item, index){
-					item.qtd_estoque_inicial = parseFloat(item.qtd_estoque_inicial);
-					item.qtd_estoque = parseFloat(item.qtd_estoque);
-
-					item.qtd_saldo_estoque = ((item.qtd_estoque_inicial + item.qtd_compras) - (item.qtd_vendas + item.qtd_baixas_manuais));
-
-					if (item.qtd_saldo_estoque < 0)
-						item.qtd_diferenca = (item.qtd_estoque - (item.qtd_saldo_estoque * -1));
-					else
-						item.qtd_diferenca = (item.qtd_estoque - item.qtd_saldo_estoque );
-
-					if(item.qtd_diferenca < 0)
-						item.qtd_quebra = (item.qtd_baixas_manuais + (item.qtd_diferenca * -1));
-					else
-						item.qtd_quebra = (item.qtd_baixas_manuais + item.qtd_diferenca);
-
-					if(item.qtd_quebra > 0)
-						item.qtd_quebra = (item.qtd_quebra * -1);
-
-					item.prc_quebra_faturamento = ((((item.qtd_quebra * -1) * item.vlr_custo) / ng.vlrTotalFaturamento) * 100);
+					
+					item.prc_quebra_faturamento = ((item.vlr_quebra_total / ng.vlrTotalFaturamento) * 100);
 
 					ng.prc_quebra_total += item.prc_quebra_faturamento;
 

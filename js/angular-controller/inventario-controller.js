@@ -181,6 +181,20 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		}
 	}
 
+	ng.atualizaQtdValidadeIvn = function(item) {
+		item.qtd_ivn = parseInt(item.qtd_ivn);
+		
+		if(empty(item.validades)){
+			item.validades = [{
+				validade: '122099', 
+				qtd: item.qtd_ivn, 
+				flg_unidade_fracao: item.flg_unidade_fracao
+			}];
+		}
+
+		item.validades[0].qtd = item.qtd_ivn;
+	}
+
 	ng.showValidades = function(item) {
 		ng.produto = item;
 

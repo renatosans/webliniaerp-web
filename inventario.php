@@ -276,10 +276,10 @@
 													</button>
 												</td>
 												<td class="text-center" width="70" colspan="2" ng-if="(item.flg_controlar_validade != 1 && item.flg_unidade_fracao == 1)">
-													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdTotal()" thousands-formatter precision="{{ configuracao.qtd_casas_decimais }}">
+													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdValidadeIvn(item); atualizaQtdTotal()" thousands-formatter precision="{{ configuracao.qtd_casas_decimais }}">
 												</td>
 												<td class="text-center" width="70" colspan="2" ng-if="(item.flg_controlar_validade != 1 && item.flg_unidade_fracao != 1)">
-													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdTotal()">
+													<input type="text" class="form-control text-center input-xs" ng-model="item.qtd_ivn" ng-keyup="atualizaQtdValidadeIvn(item); atualizaQtdTotal()">
 												</td>
 												<td class="text-center">
 													<button ng-click="deleteItem($index)" type="button" class="btn btn-xs btn-danger">
