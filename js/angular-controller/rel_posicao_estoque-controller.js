@@ -76,15 +76,20 @@ app.controller('RelatorioPosicaoEstoqueController', function($scope, $http, $win
 
 					item.qtd_saldo_estoque = ((item.qtd_estoque_inicial + item.qtd_compras) - (item.qtd_vendas + item.qtd_baixas_manuais));
 
-					if (item.qtd_saldo_estoque < 0) {
+					if (item.qtd_saldo_estoque < 0)
 						item.qtd_diferenca = (item.qtd_estoque - (item.qtd_saldo_estoque * -1));
-					} else{
+					else
 						item.qtd_diferenca = (item.qtd_estoque - item.qtd_saldo_estoque );
-					}
 
-					item.qtd_quebra = (item.qtd_baixas_manuais + (item.qtd_diferenca * -1));
+					if(item.qtd_diferenca < 0)
+						item.qtd_quebra = (item.qtd_baixas_manuais + (item.qtd_diferenca * -1));
+					else
+						item.qtd_quebra = (item.qtd_baixas_manuais + item.qtd_diferenca);
 
-					item.prc_quebra_faturamento = (((item.qtd_quebra * item.vlr_custo) / ng.vlrTotalFaturamento) * 100);
+					if(item.qtd_quebra > 0)
+						item.qtd_quebra = (item.qtd_quebra * -1);
+
+					item.prc_quebra_faturamento = ((((item.qtd_quebra * -1) * item.vlr_custo) / ng.vlrTotalFaturamento) * 100);
 
 					ng.prc_quebra_total += item.prc_quebra_faturamento;
 

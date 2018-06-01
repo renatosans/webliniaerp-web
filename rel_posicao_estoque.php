@@ -193,7 +193,7 @@
 							<th class="text-center">Estoque Inicial</th>
 							<th class="text-center">Compras</th>
 							<th class="text-center">Vendas</th>
-							<th class="text-center">Despesas</th>
+							<th class="text-center">Baixas</th>
 							<th class="text-center">Saldo</th>
 							<th class="text-center">Estoque</th>
 							<th class="text-center">Diferença</th>
@@ -210,27 +210,27 @@
 						<tr ng-repeat="item in posicoes">
 							<td class="text-center">{{ item.id }}</td>
 							<td>{{ item.nome }}</td>
-							<td class="text-center">{{ item.qtd_estoque_inicial | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_compras | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_vendas | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_baixas_manuais | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_saldo_estoque | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_estoque | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_diferenca | numberFormat : '.' : ','  }}</td>
-							<td class="text-center">{{ item.qtd_quebra | numberFormat : '.' : ','  }}</td>
+							<td class="text-center">{{ item.qtd_estoque_inicial | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_compras | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_vendas | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_baixas_manuais | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_saldo_estoque | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_estoque | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_diferenca | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_quebra | numberFormat : ',' : '.' : 0  }}</td>
 							<td class="text-center text-success" ng-if="(item.prc_quebra_faturamento <= 0.30)"><i class="fa fa-circle"></i></td>
 							<td class="text-center text-warning" ng-if="(item.prc_quebra_faturamento > 0.30) && (item.prc_quebra_faturamento <= 0.49)"><i class="fa fa-circle"></i></td>
 							<td class="text-center text-danger" ng-if="(item.prc_quebra_faturamento > 0.50)"><i class="fa fa-circle"></i></td>
 						</tr>
-						<tr ng-if="(posicoes.length > 1)">
-							<td colspan="11" class="text-right text-success" ng-if="(prc_quebra_total <= 0.30)"><h4><i class="fa fa-circle"></i> {{ prc_quebra_total | numberFormat : '.' : ',' }} <small>(Percentual de Quebra Total)</small></h3></td>
-							<td colspan="11" class="text-right text-warning" ng-if="(prc_quebra_total > 0.30) && (prc_quebra_total <= 0.49)"><h4><i class="fa fa-circle"></i> {{ prc_quebra_total | numberFormat : '.' : ',' }} <small>(Percentual de Quebra Total)</small></h3></td>
-							<td colspan="11" class="text-right text-danger" ng-if="(prc_quebra_total > 0.50)"><h4><i class="fa fa-circle"></i> {{ prc_quebra_total | numberFormat : '.' : ',' }} <small>(Percentual de Quebra Total)</small></h3></td>
+						<tr ng-if="(posicoes.length > 0)">
+							<td colspan="11" class="text-right text-success" ng-if="(prc_quebra_total <= 0.30)"><h4><i class="fa fa-circle"></i> {{ prc_quebra_total | numberFormat : ',' : '.' : 0 }} <small>(Percentual de Quebra Total)</small></h3></td>
+							<td colspan="11" class="text-right text-warning" ng-if="(prc_quebra_total > 0.30) && (prc_quebra_total <= 0.49)"><h4><i class="fa fa-circle"></i> {{ prc_quebra_total | numberFormat : ',' : '.' : 0 }} <small>(Percentual de Quebra Total)</small></h3></td>
+							<td colspan="11" class="text-right text-danger" ng-if="(prc_quebra_total > 0.50)"><h4><i class="fa fa-circle"></i> {{ prc_quebra_total | numberFormat : ',' : '.' : 0 }} <small>(Percentual de Quebra Total)</small></h3></td>
 						</tr>
-						<tr ng-if="(posicoes.length > 1)">
-							<td colspan="11" class="text-right text-success" ng-if="(med_prc_quebra_total <= 0.30)"><h4><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : '.' : ',' }} <small>(Media de Quebra Total)</small></h3></td>
-							<td colspan="11" class="text-right text-warning" ng-if="(med_prc_quebra_total > 0.30) && (med_prc_quebra_total <= 0.49)"><h4><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : '.' : ',' }} <small>(Media de Quebra Total)</small></h3></td>
-							<td colspan="11" class="text-right text-danger" ng-if="(med_prc_quebra_total > 0.50)"><h4><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : '.' : ',' }} <small>(Media de Quebra Total)</small></h3></td>
+						<tr ng-if="(posicoes.length > 0)">
+							<td colspan="11" class="text-right text-success" ng-if="(med_prc_quebra_total <= 0.30)"><h4><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : ',' : '.' : 0 }} <small>(Media de Quebra Total)</small></h3></td>
+							<td colspan="11" class="text-right text-warning" ng-if="(med_prc_quebra_total > 0.30) && (med_prc_quebra_total <= 0.49)"><h4><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : ',' : '.' : 0 }} <small>(Media de Quebra Total)</small></h3></td>
+							<td colspan="11" class="text-right text-danger" ng-if="(med_prc_quebra_total > 0.50)"><h4><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : ',' : '.' : 0 }} <small>(Media de Quebra Total)</small></h3></td>
 						</tr>
 					</tbody>
 				</table>
