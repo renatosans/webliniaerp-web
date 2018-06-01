@@ -127,7 +127,7 @@
 								<a style="cursor:pointer" class="hoverBorder" ng-click="semEstoque(item)">
 									<span class="hoverBorderWrapper">
 									<img width="263" height="263" ng-if="(item.img == null || item.img == '')" src="http://via.placeholder.com/730x730" alt="portfolio">
-									<img width="263" height="263" ng-if="!(item.img == null || item.img == '')" src="http://webliniaerp.com.br/assets/imagens/produtos/{{ item.img }}" alt="portfolio">
+									<img width="263" height="263" ng-if="!(item.img == null || item.img == '')" src="<?=(URL_BASE)?>/assets/imagens/produtos/{{ item.img }}" alt="portfolio">
 										<span class="hoverBorderInner"></span>
 										<span ng-if="(item.qtd_item - item.qtd_reservada) > 0"  ng-click="showModalDesejo(item)" class="readMore">+ Detalhes</span>
 										<span ng-if="(item.qtd_item - item.qtd_reservada) <= 0" ng-click="showModalDesejo(item)" class="readMore" style="background:#DB5959">solicite já!</span>
