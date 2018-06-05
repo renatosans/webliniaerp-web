@@ -236,6 +236,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.loadVendasTop10Produtos(date_first, date_last);
 			ng.loadSaldoDevedorCliente();
 			ng.loadVendasVendedores(date_first, date_last);
+			ng.loadQuebraEstoque(date_first, date_last);
 		}
 
 		ng.limparFiltros = function() {
@@ -378,6 +379,17 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 				.error(function(data, status, headers, config) {
 					ng.total.vlrSaldoDevedorClientes = 0;
 				});
+		}
+
+		ng.loadQuebraEstoque = function(first_date, last_date){
+			ng.total.quebra_estoque = 'loading';
+			aj.get(baseUrlApi()+"relatorio/posicoes-estoque/"+ ng.userLogged.id_empreendimento +"/"+ first_date +"/"+ last_date)
+				.success(function(data, status, headers, config){
+					ng.total.quebra_estoque = data;
+				})
+				.error(function(data, status, headers, config){
+					ng.total.quebra_estoque = 0;
+				})
 		}
 
 		/*ng.loadSaldoDevedorCliente = function(first_date, last_date) {
