@@ -905,6 +905,9 @@ app.controller('ControleMesasController', function(
 					});
 				});
 
+				$('.btnCancelarPedido').hide();
+				$('.btnConfirmarPedido').button('loading');
+
 				aj.post(baseUrlApi()+"item_comanda/add/grade",{ itens: JSON.stringify(itens), categorias: JSON.stringify(categorias) })
 					.success(function(data, status, headers, config) {
 						var msg = {
@@ -917,17 +920,20 @@ app.controller('ControleMesasController', function(
 							})
 						};
 						ng.sendMessageWebSocket(msg);
-
 						ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
 						ng.produto = {};
 						ng.itens_pedido = null;
 						ng.vlr_total_pedido = 0;
+						$('.btnCancelarPedido').show();
+						$('.btnConfirmarPedido').button('reset');
 					})
 					.error(function(data, status, headers, config) {
 						if(status == 406)
 							$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
 						else
 							$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
+						$('.btnCancelarPedido').show();
+						$('.btnConfirmarPedido').button('reset');
 					});
 			},
 			function(){

@@ -981,11 +981,12 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
+											<button type="button" class="btn btn-block btn-danger btnCancelarPedido"
 												ng-click="cancelarPedido()">
 												Cancelar pedido
 											</button>
-											<button type="button" class="btn btn-block btn-info"
+											<button type="button" class="btn btn-block btn-info btnConfirmarPedido"
+												data-loading-text="Aguarde..."
 												ng-click="confirmarPedido()">
 												Confirmar pedido
 											</button>
@@ -1120,11 +1121,12 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
+											<button type="button" class="btn btn-block btn-danger btnCancelarPedido"
 												ng-click="cancelarPedido()">
 												Cancelar pedido
 											</button>
-											<button type="button" class="btn btn-block btn-info"
+											<button type="button" class="btn btn-block btn-info btnConfirmarPedido"
+												data-loading-text="Aguarde..."
 												ng-click="confirmarPedido()">
 												Confirmar pedido
 											</button>
@@ -1237,11 +1239,12 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
+											<button type="button" class="btn btn-block btn-danger btnCancelarPedido"
 												ng-click="cancelarPedido()">
 												Cancelar pedido
 											</button>
-											<button type="button" class="btn btn-block btn-info"
+											<button type="button" class="btn btn-block btn-info btnConfirmarPedido"
+												data-loading-text="Aguarde..."
 												ng-click="confirmarPedido()">
 												Confirmar pedido
 											</button>

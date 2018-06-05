@@ -1653,48 +1653,48 @@ app.controller('LancamentosController', function($scope, $http, $window, $dialog
 		
 		$("#modal-print").modal("show");
 		if(item.id_forma_pagamento == 6){
-				aj.get(baseUrlApi()+"lancamentos/parcelas/"+ng.vendaPrint.id_parcelamento )
-					.success(function(data, status, headers, config) {
-						parcelas = data ;
-						aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ng.userLogged.id_empreendimento+"/"+ng.vendaPrint.id_cliente)
-							.success(function(data, status, headers, config) {
-								ng.vendaPrint.vlr_saldo_devedor = Number(data.vlr_saldo_devedor);
+			aj.get(baseUrlApi()+"lancamentos/parcelas/"+ng.vendaPrint.id_parcelamento)
+				.success(function(data, status, headers, config) {
+					parcelas = data ;
+					aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ng.userLogged.id_empreendimento+"/"+ng.vendaPrint.id_cliente)
+						.success(function(data, status, headers, config) {
+							ng.vendaPrint.vlr_saldo_devedor = Number(data.vlr_saldo_devedor);
 
-								if(parcelas.length > 1){
-									dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Este pagamento faz parte de um parcelamento em '+parcelas.length+'x. Deseja imprimir todas as parcelas ? </strong>');
+							if(parcelas.length > 1){
+								dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Este pagamento faz parte de um parcelamento em '+parcelas.length+'x. Deseja imprimir todas as parcelas ? </strong>');
 
-									dlg.result.then(function(btn){
-										
-										ng.itensPrint = parcelas;
-										$("#modal-print").modal("show")
-									}, function(){
-										$.each(parcelas,function(i,v){
-											if(v.id == ng.vendaPrint.id_lancamento){
-												ng.itensPrint = [v];
-											}
-										});
-										$("#modal-print").modal("show");
-									});
-								}else{
+								dlg.result.then(function(btn){
+									
+									ng.itensPrint = parcelas;
+									$("#modal-print").modal("show")
+								}, function(){
 									$.each(parcelas,function(i,v){
 										if(v.id == ng.vendaPrint.id_lancamento){
 											ng.itensPrint = [v];
 										}
 									});
-								}
+									$("#modal-print").modal("show");
+								});
+							}else{
+								$.each(parcelas,function(i,v){
+									if(v.id == ng.vendaPrint.id_lancamento){
+										ng.itensPrint = [v];
+									}
+								});
+							}
 
 
-							})
-							.error(function(data, status, headers, config) {
+						})
+						.error(function(data, status, headers, config) {
 
-							})
-							.error(function(data, status, headers, config) {
-
-						});
-					})
-					.error(function(data, status, headers, config) {
+						})
+						.error(function(data, status, headers, config) {
 
 					});
+				})
+				.error(function(data, status, headers, config) {
+
+				});
 		}else{
 			aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ng.userLogged.id_empreendimento+"/"+ng.vendaPrint.id_cliente)
 				.success(function(data, status, headers, config) {
