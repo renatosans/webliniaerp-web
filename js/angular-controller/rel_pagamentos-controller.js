@@ -108,7 +108,8 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 
     ng.selectAllItens = function(){
     	angular.forEach(ng.movimentacoes, function(item, index){
-    		item.selected = !item.selected;
+    		if(item.status_pagamento == 0)
+    			item.selected = !item.selected;
     	});
     }
 
