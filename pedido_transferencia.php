@@ -209,7 +209,8 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<!--<pre>{{ transferencia.produtos | json }}</pre>-->
-								<div class="form-group" id="produtos">
+								<div class="table-responsive">
+									<div class="form-group" id="produtos">
 										<table ng-if="transferencia.flg_controle_validade!=1" class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 											<thead>
 												<tr>
@@ -472,6 +473,7 @@
 												</tr>
 											</tbody>
 										</table>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -989,7 +991,8 @@
 									</tr>
 									<tbody>
 										<tr ng-repeat="item in usuarios.itens">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.apelido }}</td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">

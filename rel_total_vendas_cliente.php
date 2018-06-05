@@ -246,7 +246,8 @@
 									<i class="fa fa-tasks"></i> Compras
 								</a>
 							</td>
-							<td>{{ item.nme_cliente }}</td>
+							<td class="text-middle" ng-if="!(item.nme_cliente == null || item.nme_cliente=='')">{{ item.nme_cliente | uppercase }}</td>
+							<td class="text-middle" ng-if="(item.nme_cliente == null || item.nme_cliente=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 							<td class="text-center">{{ item.qtd_vendas }}</td>
 							<td class="text-right">R$ {{item.vlr_total_vendas | numberFormat:2:',':'.'}}</td>
 						</tr>
@@ -315,7 +316,8 @@
 											<td colspan="2">Não há clientes cadastrados</td>
 										</tr>
 										<tr ng-repeat="item in clientes">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">
 												<button type="button" class="btn btn-xs btn-success" ng-click="addCliente(item)">
