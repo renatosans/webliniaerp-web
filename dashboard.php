@@ -588,14 +588,14 @@
 					</div><!-- /.col -->
 
 					<div class="col-lg-3 col-sm-3 col-md-3">
-						<div class="panel-stat3 bg-info fadeInDown animation-delay3" ng-class="{'bg-success':(total.quebra_estoque <= 0.30), 'bg-warning': (total.quebra_estoque > 0.30 && total.quebra_estoque <= 0.49), 'bg-danger': (total.quebra_estoque > 0.49)}">
-							<h2 class="m-top-none"><span id="clientesCount">{{ total.quebra_estoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }} %</span></h2>
+						<div class="panel-stat3 bg-info fadeInDown animation-delay3" ng-class="{'bg-success':(med_prc_quebra_total <= 0.30), 'bg-warning': (med_prc_quebra_total > 0.30 && med_prc_quebra_total <= 0.49), 'bg-danger': (med_prc_quebra_total > 0.49)}">
+							<h2 class="m-top-none"><span >{{ med_prc_quebra_total | numberFormat: config.qtd_casas_decimais : ',' : '.' }}%</span></h2>
 							<h6>Quebra de Estoque</h6>
 							(No período)
 							<div class="stat-icon">
 								<i class="fa fa-sitemap fa-3x"></i>
 							</div>
-							<div class="loading-overlay" ng-class="{'active':total.quebra_estoque == 'loading'}">
+							<div class="loading-overlay" ng-class="{'active':med_prc_quebra_total == 'loading'}">
 								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
 							</div> 
 						</div>
