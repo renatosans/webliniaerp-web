@@ -300,7 +300,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('emitidas_nfe', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -444,7 +444,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('canceladas_nfe', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -675,7 +675,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('emitidas_nfse', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -815,7 +815,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('canceladas_nfse', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -973,7 +973,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('emitidas_sat', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -1113,7 +1113,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('canceladas_sat', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -1271,7 +1271,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('emitidas_nfce', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>
@@ -1411,7 +1411,7 @@
 																			</li>
 																			<li ng-show="(nota.status == 'processando_autorizacao') || (nota.status == 'processando_cancelamento')">
 																				<a href="" target="_blank" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Atualizando" 
-																					ng-click="atualzarStatus(nota.cod_nota_fiscal, $index, $event)">
+																					ng-click="atualzarStatus('canceladas_nfce', nota.cod_nota_fiscal, $index, $event)">
 																					<i class="fa fa-refresh"></i> Atualizar Status
 																				</a>
 																			</li>

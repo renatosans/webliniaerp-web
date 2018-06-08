@@ -480,6 +480,7 @@ app.controller('ClientesController', function($scope, $http, $window, $dialogs, 
 
 		 cliente.id_empreendimento = ng.userLogged.id_empreendimento;
 		 cliente.status = 1 ;
+		 cliente.flg_cadastro_externo = 0 ;
 
 		  if(cliente.dta_nacimento != null && cliente.dta_nacimento.length == 8 ){
 		 	var data = cliente.dta_nacimento;

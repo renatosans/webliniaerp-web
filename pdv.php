@@ -399,14 +399,17 @@
 					    		<div class="row">
 					    			<div class="col-sm-12">
 					    				<div class="form-group">
+											<div style="float: right; font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_limite_credito">
+												<span style="color:#000"> / Limite de Crédito :</span> <span style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
+											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor<0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 											<div style="font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor==0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
 											</div>
 										</div>
 									</div>
@@ -464,7 +467,7 @@
 						    			</div>
 						    		</div>
 
-						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10 && && pagamento.id_forma_pagamento != 4">
+						    		<div class="col-sm-6" id="pagamento_valor" ng-if="pagamento.id_forma_pagamento != 7 && pagamento.id_forma_pagamento != 8 && pagamento.id_forma_pagamento != 10 && pagamento.id_forma_pagamento != 4">
 						    			<label class="control-label">Valor</label>
 						    			<div class="form-group ">
 					    					<input type="text" class="form-control input-sm" thousands-formatter
@@ -1131,7 +1134,7 @@
 																</button>
 															</div>
 														</div>
-														<div class="row" style="margin-top:5px">
+														<div class="row" style="margin-top:5px" ng-show="funcioalidadeAuthorized(35)">
 															<div class="col-sm-12">
 																<button ng-click="changeMargemAplicada({atacado:false,intermediario:false,varejo:false,parceiro:true})" class="btn btn-sm btn-primary btn-block" type="button">
 																	<i ng-if="margemAplicada.parceiro"  class="fa fa-check-circle-o" aria-hidden="true"></i> 
@@ -1154,16 +1157,23 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-sm-6">
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor>0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor<0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
-											<div style="float: right;font-weight: bold;font-size: 15px;" ng-if="cliente.vlr_saldo_devedor==0">
-												<span style="color:#000">Saldo Devedor :</span> <span style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
-											</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12 text-right">
+											<span ng-if="cliente.vlr_saldo_devedor > 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor > 0" style="color:green">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_saldo_devedor < 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor < 0" style="color:red">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_saldo_devedor == 0" style="color:#000">Saldo Devedor :</span> 
+											<span ng-if="cliente.vlr_saldo_devedor == 0" style="color:blue">R$ {{ cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="cliente.vlr_limite_credito" style="color:#000">/ Limite de Crédito :</span> 
+											<span ng-if="cliente.vlr_limite_credito" style="color:blue">R$ {{ cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
+											
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">/ Saldo Final:</span> 
+											<span ng-if="(cliente.vlr_limite_credito) && (cliente.vlr_saldo_devedor)" style="color:#000">R$ {{ cliente.vlr_saldo_devedor + cliente.vlr_limite_credito | numberFormat:2:',':'.' }}</span>
 										</div>
 									</div>
 									<br/>
@@ -1322,7 +1332,7 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-lg btn-danger" ng-if="receber_pagamento == false" ng-click="cancelar()"><i class="fa fa-times-circle"></i> Cancelar Venda</button>
 							<button type="button" class="btn btn-lg btn-warning" ng-if="receber_pagamento" ng-click="cancelarPagamento()"><i class="fa fa-times-circle"></i> Cancelar Pagamento</button>
-							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled=" (modo_venda == null && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
+							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled="(modo_venda == null && total_pg == 0) || (modo_venda == 'pdv' && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
 							<button type="button" class="btn btn-lg btn-primary" ng-if="receber_pagamento == false" ng-disabled="carrinho.length == 0" ng-click="receberPagamento()"><i class="fa fa-money"></i> Receber</button>
 							<button  type="button" class="btn btn-lg btn-success" ng-show="receber_pagamento == false && modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-orcamento" ng-click="salvarOrcamento()" ng-disabled="carrinho.length <= 0 || !isNumeric(cliente.id)"><i class="fa fa-save"></i> Orçamento</button>
 
@@ -1756,7 +1766,8 @@
 									</tr>
 									<tbody>
 										<tr ng-repeat="item in clientes">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.apelido }}</td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">
@@ -3294,7 +3305,7 @@
 						</div>
 				    <div class="modal-body">
 						<div class="row">
-							<div class="col-md-4" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">
+							<div class="col-md-4" ng-if="(configuracoes.flg_modo_controle_mesas == 'mesas_comandas')">
 								<div class="form-group" id="regimeTributario">
 									<!--<label class="control-label">Operação</label> -->
 									<select chosen
@@ -3328,7 +3339,8 @@
 									<thead ng-show="(comandas.dados != 0)">
 										<tr>
 											<th class="text-center">Nº Comanda</th>
-											<th class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">Mesa</th>
+											<th class="text-center" ng-if="(configuracoes.flg_usa_cartao_magnetico == 1)">Nº Cartão</th>
+											<th class="text-center" ng-if="(configuracoes.flg_modo_controle_mesas == 'mesas_comandas')">Mesa</th>
 											<th class="text-center">Cliente</th>
 											<th class="text-center">Quantidade itens</th>
 											<th width="100" class="text-center">Valor</th>
@@ -3344,7 +3356,8 @@
 										</tr>
 										<tr ng-repeat="item in comandas.dados">
 											<td class="text-center">#{{ item.id_comanda }}</td>
-											<td class="text-center" ng-if="configuracoes.flg_modo_controle_mesas == 'mesas_comandas'">{{ item.dsc_mesa }}</td>
+											<td class="text-center">{{ item.num_cartao_fisico }}</td>
+											<td class="text-center" ng-if="(configuracoes.flg_modo_controle_mesas == 'mesas_comandas')">{{ item.dsc_mesa }}</td>
 											<td ng-if="config.id_cliente_movimentacao_caixa != item.id_cliente">{{ item.nome_cliente }}</td>
 											<td ng-if="config.id_cliente_movimentacao_caixa == item.id_cliente">(Não informado)</td>
 											<td class="text-center">{{ item.qtd_total }}</td>

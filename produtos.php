@@ -212,6 +212,12 @@
 																<span class="custom-radio"></span>
 																<span>Composto</span>
 															</label>
+															<div class="clearfix"></div>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_servico" name="flg_servico" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Servico</span>
+															</label>
 														</div>
 													</div>
 												</div>
@@ -489,41 +495,58 @@
 										</div>
 										<div class="tab-pane fade" id="estoque">
 											<div class="row">
-												<div class="col-sm-3">
+												<div class="col-sm-2">
+													<div class="form-group">
+														<label for="" class="control-label">Controlar estoque?</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_controlar_estoque"  name="flg_controlar_estoque" value="1" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Sim</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="produto.flg_controlar_estoque"  name="flg_controlar_estoque" value="0" type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-3" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group">
 														<label for="" class="control-label">Estoque controlado por lote?</label>
 														<div class="form-group">
 															<label class="label-radio inline">
 																<input ng-model="produto.flg_controlar_lote"  name="controlar_lote" value="1" type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
-																<span>sim</span>
+																<span>Sim</span>
 															</label>
 															<label class="label-radio inline">
 																<input ng-model="produto.flg_controlar_lote"  name="controlar_lote" value="0" type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
-																<span>não</span>
+																<span>Não</span>
 															</label>
 														</div>
 													</div>
 												</div>
-												<div class="col-sm-3">
+												<div class="col-sm-3" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group">
 														<label for="" class="control-label">Estoque controlado por validade?</label>
 														<div class="form-group">
 															<label class="label-radio inline">
 																<input ng-model="produto.flg_controlar_validade"  name="controlar_validade" value="1" type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
-																<span>sim</span>
+																<span>Sim</span>
 															</label>
 															<label class="label-radio inline">
 																<input ng-model="produto.flg_controlar_validade"  name="controlar_validade" value="0" type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
-																<span>não</span>
+																<span>Não</span>
 															</label>
 														</div>
 													</div>
 												</div>
-												<div class="col-sm-3">
+												<div class="col-sm-2" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group">
 														<label for="" class="control-label">Unidade de Medida</label>
 														<div class="form-group">
@@ -540,14 +563,14 @@
 														</div>
 													</div>
 												</div>
-												<div class="col-sm-2">
+												<div class="col-sm-2" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group">
 														<label class="control-label">Qtd. Multipla</label>
 														<input ng-model="produto.qtd_multiplo_transferencia" type="text" class="form-control input-xs" onkeypress="return SomenteNumero(event);">
 													</div>
 												</div>
 											</div>
-											<div ng-if="funcioalidadeAuthorized('alterar_quantidade')" class="row">
+											<div ng-if="funcioalidadeAuthorized('alterar_quantidade')" class="row" ng-show="(produto.flg_controlar_estoque == 1)">
 												<div class="col-sm-3" id="inventario_novo_deposito">
 													<label class="control-label">Depósito</label>
 													<div class="input-group">
@@ -559,7 +582,7 @@
 											            </div>
 											        </div>
 												</div>
-												<div class="col-sm-4" id="inventario_novo_id">
+												<div class="col-sm-4" id="inventario_novo_id" ng-show="(produto.flg_controlar_estoque == 1)">
 													<label class="control-label">Combinação</label>
 													<div class="input-group">
 											            <input ng-model="inventario_novo.dsc_combinacao" ng-disabled="true" type="text" class="form-control input-xs" ng-enter="modalCombinacao(0,10)">
@@ -571,30 +594,30 @@
 											        </div>
 												</div>
 												<div class="col-sm-2">
-													<div class="form-group" id="inventario_novo_validade">
+													<div class="form-group" id="inventario_novo_validade" ng-show="(produto.flg_controlar_estoque == 1)">
 														<label class="control-label" >Data de Validade</label>
 														<input ng-model="inventario_novo.dta_validade" ui-mask="99/99/9999"  type="text" class="form-control input-xs">
 													</div>
 												</div>
-												<div class="col-sm-1" ng-if="produto.flg_controlar_lote==1">
+												<div class="col-sm-1" ng-if="produto.flg_controlar_lote==1" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group" id="inventario_novo_lote">
 														<label class="control-label" >Lote</label>
 														<input ng-model="inventario_novo.lote" type="text" class="form-control input-xs">
 													</div>
 												</div>
-												<div class="col-sm-1" ng-if="produto.flg_unidade_fracao != 1">
+												<div class="col-sm-1" ng-if="produto.flg_unidade_fracao != 1" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group" id="inventario_novo_qtd">
 														<label class="control-label">Qtd.</label>
 														<input ng-model="inventario_novo.qtd_ivn" onkeypress="return SomenteNumero(event);" type="text" class="form-control input-xs">
 													</div>
 												</div>
-												<div class="col-sm-2" ng-if="produto.flg_unidade_fracao == 1">
+												<div class="col-sm-2" ng-if="produto.flg_unidade_fracao == 1" ng-show="(produto.flg_controlar_estoque == 1)">
 													<div class="form-group" id="inventario_novo_qtd">
 														<label class="control-label">Qtd.</label>
 														<input ng-model="inventario_novo.qtd_ivn" thousands-formatter precision="3" onkeypress="return SomenteNumero(event);" type="text" class="form-control input-xs">
 													</div>
 												</div>
-												<div class="col-sm-1">
+												<div class="col-sm-1" ng-show="(produto.flg_controlar_estoque == 1)">
 													<label class="control-label">&nbsp;</label>
 													<div class="form-group" >
 														<button data-loading-text="Aguarde..." ng-click="addNovoInventario()" type="submit" id="btn-novo_inventario" class="btn btn-success btn-xs">
@@ -603,7 +626,7 @@
 													</div>
 												</div>
 											</div>
-											<div class="row">
+											<div class="row" ng-show="(produto.flg_controlar_estoque == 1)">
 												<div class="col-sm-12">
 													<table class="table table-bordered table-condensed table-striped table-hover">
 														<thead>

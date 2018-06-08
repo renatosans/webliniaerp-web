@@ -209,7 +209,8 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<!--<pre>{{ transferencia.produtos | json }}</pre>-->
-								<div class="form-group" id="produtos">
+								<div class="table-responsive">
+									<div class="form-group" id="produtos">
 										<table ng-if="transferencia.flg_controle_validade!=1" class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 											<thead>
 												<tr>
@@ -472,6 +473,7 @@
 												</tr>
 											</tbody>
 										</table>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -751,6 +753,7 @@
 											<th >Fabricante</th>
 											<th >Tamanho</th>
 											<th >Sabor/Cor</th>
+											<th class="text-center">Estoque</th>
 											<th class="text-center">Qtd. Multipla</th>
 											<th >Quantidade</th>
 											<th >Ações</th>
@@ -763,12 +766,13 @@
 										<tr ng-show="produtos == null" class="text-center">
 											<td colspan="7" ><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
 										</tr>
-										<tr ng-repeat="(index,item) in produtos">
+										<tr class="{{ !canRequest(item) ? 'danger' : '' }}" ng-repeat="(index,item) in produtos">
 											<td>{{ item.id }}</td>
 											<td>{{ item.nome }}</td>
 											<td>{{ item.nome_fabricante }}</td>
 											<td>{{ item.peso }}</td>
 											<td>{{ item.sabor }}</td>
+											<td class="text-center">{{ item.qtd_item }}</td>
 											<td class="text-center" ng-if="(item.qtd_multiplo_transferencia)">{{ item.qtd_multiplo_transferencia }}</td>
 											<td class="text-center" ng-if="(item.qtd_multiplo_transferencia == null || item.qtd_multiplo_transferencia == 0 )">Un.</td>
 											<td  width="50">
@@ -779,6 +783,7 @@
 														ng-model="item.qtd_pedida" 
 														ng-blur="verificaQtdMultiplo('list_produtos', index, item)"
 														ng-if="item.flg_unidade_fracao != 1"
+														ng-disabled="!canRequest(item)"
 														ng-enter="addProduto(item)"/>
 												</div>
 												<div class="form-group">
@@ -789,11 +794,17 @@
 														ng-blur="verificaQtdMultiplo('list_produtos', index, item)"
 														ng-if="item.flg_unidade_fracao == 1" 
 														thousands-formatter precision="3"
+														ng-disabled="!canRequest(item)"
 														ng-enter="addProduto(item)"/>
 												</div>
 											</td>
 											<td width="50" align="center">
-												<button ng-show="!produtoSelected(item.id)" type="button" id="selecionar" class="btn btn-xs btn-success" ng-click="addProduto(item)">
+												<button 
+													type="button" id="selecionar" 
+													class="btn btn-xs btn-success" 
+													ng-show="(!produtoSelected(item.id))" 
+													ng-disabled="!canRequest(item)"
+													ng-click="addProduto(item)">
 													<i class="fa fa-check-square-o"></i> Selecionar
 												</button>
 												<button ng-show="produtoSelected(item.id)" ng-show="existsAcessorio(item)" ng-disabled="true" class="btn btn-primary btn-xs" type="button">
@@ -980,7 +991,8 @@
 									</tr>
 									<tbody>
 										<tr ng-repeat="item in usuarios.itens">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.apelido }}</td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">

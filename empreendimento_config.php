@@ -180,6 +180,7 @@
 							<li><a href="#estoque" data-toggle="tab"><i class="fa fa-sitemap"></i> Estoque</a></li>
 							<li><a href="#tab_preco" data-toggle="tab"><i class="fa fa-sitemap"></i> Tab Preços</a></li>
 							<li><a href="#pdv" data-toggle="tab"><i class="fa fa-desktop"></i> PDV</a></li>
+							<li><a href="#financeiro" data-toggle="tab"><i class="fa fa-money"></i> Financeiro</a></li>
 							<li><a href="#relatorios" data-toggle="tab"><i class="fa fa-copy"></i> Relatórios</a></li>
 							<li><a href="#mesas" data-toggle="tab"><i class="fa fa-table"></i> Controle Mesas</a></li>
 							<li><a href="#fiscal" data-toggle="tab"><i class="fa fa-barcode"></i> Fiscal</a></li>
@@ -445,6 +446,38 @@
 										</div>
 									</div>
 								</form>
+							</div>
+
+							<div class="tab-pane fade" id="financeiro">
+								<div class="alert alert-config-fin" style="display:none"></div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="" class="control-label">Permitir alterar Mov. de Caixa Aberto?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_permitir_alterar_mov_caixa_aberto" value="1" name="flg_permitir_alterar_mov_caixa_aberto"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_permitir_alterar_mov_caixa_aberto" value="0" name="flg_permitir_alterar_mov_caixa_aberto"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="pull-right">
+											<button data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando..." ng-click="salvarConfigFinanceiro($event)" type="submit" class="btn btn-success btn-sm">
+												<i class="fa fa-save"></i> Salvar
+											</button>
+										</div>
+									</div>
+								</div>
 							</div>
 
 							<div class="tab-pane fade" id="pdv">
@@ -2252,6 +2285,42 @@
 												</label>
 												<label class="label-radio inline">
 													<input ng-model="configuracoes.flg_finalizar_op_pdv" value="0" name="flg_finalizar_op_pdv"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="" class="control-label">Permite solicitar produtos sem estoque nas transferências?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia" value="1" name="flg_mostrar_produtos_sem_estoque_pedido_transferencia"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia" value="0" name="flg_mostrar_produtos_sem_estoque_pedido_transferencia"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="" class="control-label">Ocultar produtos que não controla estoque?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_oculta_produtos_nao_controla_estoque" value="1" name="flg_oculta_produtos_nao_controla_estoque"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.flg_oculta_produtos_nao_controla_estoque" value="0" name="flg_oculta_produtos_nao_controla_estoque"   type="radio" class="inline-radio">
 													<span class="custom-radio"></span>
 													<span>Não</span>
 												</label>

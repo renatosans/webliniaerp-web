@@ -444,8 +444,8 @@
 									<th width="100" class="text-middle text-center">Nº Comanda</th>
 									<th width="100" class="text-middle text-center" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">Nº Cartão</th>
 									<th class="text-middle">Cliente</th>
-									<th class="text-middle text-center">Itens</th>
-									<th class="text-middle text-center">Subtotal</th>
+									<th class="text-middle text-center" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">Itens</th>
+									<th class="text-middle text-center" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">Subtotal</th>
 								</thead>
 								<thead ng-show="mesaSelecionada.comandas.length == 0">
 									<th colspan="3">No momento não há nenhuma comanda aberta</th>
@@ -462,15 +462,15 @@
 										<td ng-if="comanda.id_cliente != configuracao.id_cliente_movimentacao_caixa" >{{ comanda.nome_cliente }}</td>
 										<td ng-if="comanda.id_cliente == configuracao.id_cliente_movimentacao_caixa" ><b>(Cliente não informado)</b></td>
 
-										<td class="text-center">{{ comanda.qtd_total }}</td>
-										<td class="text-right">R$ {{ comanda.valor_total | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
+										<td class="text-center" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">{{ comanda.qtd_total }}</td>
+										<td class="text-right" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">R$ {{ comanda.valor_total | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 
 						<div class="panel-footer total ">
-							<div class="row">
+							<div class="row" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">
 								<div class="col-xs-12">
 									<table class="table">
 										<thead>
@@ -505,7 +505,7 @@
 										<i class="fa fa-plus-circle"></i>
 										Cadastrar Novo
 									</button>
-									<button type="button" class="btn btn-xs btn-default hidden-xs" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event)">
+									<button type="button" class="btn btn-xs btn-default hidden-xs" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event,null)">
 										<i class="fa fa-times-circle"></i>
 										Não Informar
 									</button>
@@ -526,7 +526,7 @@
 										<tbody>
 											<tr ng-repeat="item in clientes">
 												<td class="text-middle text-center" width="50">
-													<button ng-if="!editComanda" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(item.id,$event)" type="button" class="btn btn-sm btn-info">
+													<button ng-if="!editComanda" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." ng-click="abrirComanda(item.id,$event,item)" type="button" class="btn btn-sm btn-info">
 														<i class="fa fa-check-square-o"></i>
 														<span class="hidden-xs">Selecionar</span>
 													</button>
@@ -535,6 +535,7 @@
 														<span class="hidden-xs">Selecionar</span>
 													</button>
 												</td>
+												<td class="text-middle" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">{{ item.num_cartao }}</td>
 												<td class="text-middle">{{ item.nome | uppercase }}</td>
 												<td ng-if="item.tipo_cadastro=='pf'" class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cpfFormat }}</td>
 												<td ng-if="item.tipo_cadastro=='pj'"  class="text-middle text-center hidden-xs" width="120">{{ item.cpf | cnpjFormat }}</td>
@@ -556,7 +557,7 @@
 								<i class="fa fa-plus-circle"></i>
 								Cadastrar Novo
 							</button>
-							<button ng-if="!editComanda" ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event)" type="button" class="btn btn-md btn-block btn-default">
+							<button ng-if="!editComanda" ng-click="abrirComanda(configuracao.id_cliente_movimentacao_caixa,$event,null)" type="button" class="btn btn-md btn-block btn-default">
 								<i class="fa fa-times-circle"></i>
 								Não Informar
 							</button>
@@ -716,7 +717,7 @@
 						</div>
 
 						<div class="panel-footer total">
-							<div class="row">
+							<div class="row" ng-show="funcioalidadeAuthorized('ver_valores_controle_mesa')">
 								<div class="col-xs-12">
 									<table class="table">
 										<thead>

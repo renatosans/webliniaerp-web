@@ -23,6 +23,8 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			}
 		};
 
+		ng.prc_quebra_total = 0;
+
 		ng.count = {
 			produtos : null,
 			clientes : null,
@@ -236,6 +238,7 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 			ng.loadVendasTop10Produtos(date_first, date_last);
 			ng.loadSaldoDevedorCliente();
 			ng.loadVendasVendedores(date_first, date_last);
+			ng.loadQuebraEstoque(date_first, date_last);
 		}
 
 		ng.limparFiltros = function() {
@@ -378,6 +381,28 @@ app.controller('DashboardController', function($scope, $http, $window, UserServi
 				.error(function(data, status, headers, config) {
 					ng.total.vlrSaldoDevedorClientes = 0;
 				});
+		}
+
+
+		ng.loadQuebraEstoque = function(first_date, last_date){
+			ng.total.quebra_estoque = 'loading';
+			aj.get(baseUrlApi()+"relatorio/posicoes-estoque/"+ ng.userLogged.id_empreendimento +"/"+ first_date +"/"+ last_date)
+				.success(function(data, status, headers, config){
+					ng.total.quebra_estoque = data;
+					ng.med_prc_quebra_total = 0;
+					angular.forEach(ng.total.quebra_estoque, function(item, index){
+					
+						item.prc_quebra_faturamento = ((item.vlr_quebra_total / ng.total.vlrTotalFaturamento) * 100);
+
+						ng.prc_quebra_total += item.prc_quebra_faturamento;
+
+					})
+
+					ng.med_prc_quebra_total = (ng.prc_quebra_total / ng.total.quebra_estoque.length);
+				})
+				.error(function(data, status, headers, config){
+					ng.total.quebra_estoque = 0;
+				})
 		}
 
 		/*ng.loadSaldoDevedorCliente = function(first_date, last_date) {

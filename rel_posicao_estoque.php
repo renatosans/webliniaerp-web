@@ -1,6 +1,6 @@
 <?php
 	include_once "util/login/restrito.php";
-	restrito(array(1));
+	restrito();
 	date_default_timezone_set('America/Sao_Paulo');
 ?>
 <!DOCTYPE html>
@@ -36,36 +36,7 @@
 	<link rel="stylesheet" type="text/css" href="css/custom.css">
   </head>
 
-  <body class="overflow-hidden" ng-controller="RelatorioSaldoDevedorClienteController" ng-cloak>
-	<!-- Overlay Div -->
-	<!-- <div id="overlay" class="transparent"></div>
-
-	<a href="" id="theme-setting-icon" class="hidden-print"><i class="fa fa-cog fa-lg"></i></a>
-	<div id="theme-setting" class="hidden-print">
-		<div class="title">
-			<strong class="no-margin">Skin Color</strong>
-		</div>
-		<div class="theme-box">
-			<a class="theme-color" style="background:#323447" id="default"></a>
-			<a class="theme-color" style="background:#efefef" id="skin-1"></a>
-			<a class="theme-color" style="background:#a93922" id="skin-2"></a>
-			<a class="theme-color" style="background:#3e6b96" id="skin-3"></a>
-			<a class="theme-color" style="background:#635247" id="skin-4"></a>
-			<a class="theme-color" style="background:#3a3a3a" id="skin-5"></a>
-			<a class="theme-color" style="background:#495B6C" id="skin-6"></a>
-		</div>
-		<div class="title">
-			<strong class="no-margin">Sidebar Menu</strong>
-		</div>
-		<div class="theme-box">
-			<label class="label-checkbox">
-				<input type="checkbox" checked id="fixedSidebar">
-				<span class="custom-checkbox"></span>
-				Fixed Sidebar
-			</label>
-		</div>
-	</div> --><!-- /theme-setting -->
-
+  <body class="overflow-hidden" ng-controller="RelatorioPosicaoEstoqueController" ng-cloak>
 	<div id="wrapper" class="bg-white preload">
 		<div id="top-nav" class="fixed skin-1">
 			<a href="#" class="brand">
@@ -146,7 +117,7 @@
 						</span>
 
 						<div class="pull-left m-left-sm">
-							<h3 class="m-bottom-xs m-top-xs">Relatório de Saldo Devedor de Clientes</h3>
+							<h3 class="m-bottom-xs m-top-xs">Relatório Posição de Estoque</h3>
 							<small><?php echo date("d/m/Y H:i:s"); ?></small>
 						</div>
 					</div>
@@ -167,106 +138,104 @@
 					<div class="panel-body">
 						<form role="form">
 							<div class="row">
-								<div class="col-lg-6">
+								<div class="col-sm-2">
 									<div class="form-group">
-										<label class="control-label">Cliente</label>
+										<label class="control-label">Data Inicial</label>
 										<div class="input-group">
-											<input ng-click="selCliente()" type="text" class="form-control" ng-model="vendedor.nome" readonly="readonly" style="cursor: pointer;"></input>
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_inicial" class="datepicker form-control text-center" ng-model="dta_inicial">
+											<span class="input-group-addon" id="cld_dtaInicial"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>	
+								</div>
+
+								<div class="col-sm-2">
+									<div class="form-group">
+										<label class="control-label">Data Final</label>
+										<div class="input-group">
+											<input readonly="readonly" style="background:#FFF;cursor:pointer" type="text" id="dta_final" class="datepicker form-control text-center" ng-model="dta_final">
+											<span class="input-group-addon" id="cld_dtaFinal"><i class="fa fa-calendar"></i></span>
+										</div>
+									</div>	
+								</div>
+
+								<!--<div class="col-sm-4">
+									<div class="form-group">
+										<label class="control-label">Depósito</label>
+										<div class="input-group">
+											<input ng-click="selDepositoNewPosicao()" type="text" class="form-control" ng-model="busca.nome_deposito" readonly="readonly" style="cursor: pointer;"/>
 											<span class="input-group-btn">
-												<button ng-click="selCliente()" ng-click="selCliente(0,10)" type="button" class="btn"><i class="fa fa-users"></i></button>
+												<button ng-click="selDepositoNewPosicao()" type="button"  class="btn"><i class="fa fa-sitemap"></i></button>
 											</span>
 										</div>
 									</div>
-								</div>
+								</div>-->
 							</div>
 						</form>
 					</div>
 
 					<div class="panel-footer clearfix">
 						<div class="pull-right">
-							<button type="button" class="btn btn-sm btn-primary" ng-click="aplicarFiltro()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
+							<button type="button" class="btn btn-sm btn-primary" ng-click="loadPosicoes()"><i class="fa fa-filter"></i> Aplicar Filtro</button>
 							<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar Filtro</button>
 							<button class="btn btn-sm btn-success hidden-print" ng-show="vendas.length > 0" id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
-							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')" ng-if="(vendas != null)"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
 
 				<br>
 
-				<table id="data" class="table table-bordered table-hover table-striped table-condensed" ng-if="(vendas != null)">
+				<table id="data" class="table table-bordered table-hover table-striped table-condensed">
 					<thead>
-						<tr>
-							<th class="text-center" width="100">ID</th>
-							<th>Cliente</th>
-							<th>E-mail</th>
-							<th>Telefone</th>
-							<th>Celular</th>
-							<th>Endereço</th>
-							<th>N°</th>
-							<th>UF</th>
-							<th>Cidade</th>
-
-							<th width="100" class="text-center">Saldo</th>
-
-
+						<tr ng-if="(posicoes.length > 0)">
+							<th class="text-center">ID</th>
+							<th>Nome</th>
+							<th class="text-center">Estoque Inicial</th>
+							<th class="text-center">Compras</th>
+							<th class="text-center">Vendas</th>
+							<th class="text-center">Baixas</th>
+							<th class="text-center">Saldo</th>
+							<th class="text-center">Estoque</th>
+							<th class="text-center">Diferença</th>
+							<th class="text-center">Quebra Total</th>
+							<th class="text-center"></th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-if="vendas.length == 0">
-							<td class="text-center" colspan="10">
+						<tr ng-if="posicoes.length == 0">
+							<td class="text-center" colspan="11">
 								<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
 							</td>
 						</tr>
-						<tr ng-repeat="item in vendas">
-							<td class="text-center">
-								#{{ item.id }}
+						<tr ng-repeat="item in posicoes">
+							<td class="text-center">{{ item.cod_produto }}</td>
+							<td width="300">{{ item.nme_produto }}</td>
+							<td class="text-center">{{ item.qtd_estoque_inicial | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_compras | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_vendas | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_baixas | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_saldo | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_estoque | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_diferenca | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center">{{ item.qtd_quebra_total | numberFormat : ',' : '.' : 0  }}</td>
+							<td class="text-center text-success" ng-if="(item.prc_quebra_faturamento <= 0.30)"><i class="fa fa-circle"></i></td>
+							<td class="text-center text-warning" ng-if="(item.prc_quebra_faturamento > 0.30) && (item.prc_quebra_faturamento <= 0.49)"><i class="fa fa-circle"></i></td>
+							<td class="text-center text-danger" ng-if="(item.prc_quebra_faturamento > 0.50)"><i class="fa fa-circle"></i></td>
+						</tr>
+						<tr ng-if="(posicoes.length > 0)">
+							<td colspan="11" class="text-right text-success" ng-if="(med_prc_quebra_total <= 0.30)">
+								<h3><small>Media de Quebra Total</small><br/><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : ',' : '.' : 2 }}%</h3>
 							</td>
-							<td class="text-middle" ng-if="!(item.nome_cliente == null || item.nome_cliente=='')">{{ item.nome_cliente | uppercase }}</td>
-							<td class="text-middle" ng-if="(item.nome_cliente == null || item.nome_cliente=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
-							<td ng-if="item.vlr_saldo_devedor > 0" style="color:green;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
-							<td>
-								{{ item.email }}
+							<td colspan="11" class="text-right text-warning" ng-if="(med_prc_quebra_total > 0.30) && (med_prc_quebra_total <= 0.49)">
+								<h3><small>Media de Quebra Total</small><br/><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : ',' : '.' : 2 }}%</h3>
 							</td>
-							<td >
-								{{ item.tel_fixo }}
+							<td colspan="11" class="text-right text-danger" ng-if="(med_prc_quebra_total > 0.50)">
+								<h3><small>Media de Quebra Total</small><br/><i class="fa fa-circle"></i> {{ med_prc_quebra_total | numberFormat : ',' : '.' : 2 }}%</h3>
 							</td>
-							<td >
-								{{ item.celular }}
-							</td>
-							<td >
-								{{ item.endereco }}
-							</td>
-							<td >
-								{{ item.numero }}
-							</td>
-							<td >
-								{{ item.uf }}
-							</td>
-							<td >
-								{{ item.nme_cidade }}
-							</td>
-							<td ng-if="item.vlr_saldo_devedor == 0" style="color:blue;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
-							<td ng-if="item.vlr_saldo_devedor < 0" style="color:red;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
 						</tr>
 					</tbody>
-					<tfoot>
-						<tr>
-							<td ng-if="vlr_total < 0" class="text-right text-bold" style="color:red;  font-weight: bold" colspan="9">Total</td>
-							<td ng-if="vlr_total < 0" class="text-right text-bold" style="color:red;  font-weight: bold">R$ {{ vlr_total | numberFormat:2:',':'.'}}</td>
-							<td ng-if="vlr_total >= 0" class="text-right text-bold" style="color:blue;  font-weight: bold" colspan="9">Total</td>
-							<td ng-if="vlr_total >= 0" class="text-right text-bold" style="color:blue;  font-weight: bold">R$ {{ vlr_total | numberFormat:2:',':'.'}}</td>
-						</tr>
-					</tfoot>
 				</table>
-
-				<div class="pull-right hidden-print">
-					<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.vendas.length > 1">
-						<li ng-repeat="item in paginacao.vendas" ng-class="{'active': item.current}">
-							<a href="" h ng-click="loadVendas(item.offset,item.limit)">{{ item.index }}</a>
-						</li>
-					</ul>
-				</div>
+				<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 			</div><!-- /.padding20 -->
 		</div><!-- /main-container -->
 	</div><!-- /wrapper -->
@@ -284,76 +253,78 @@
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
 
-	<!-- /Modal Clientes-->
-		<div class="modal fade" id="list_clientes" style="display:none">
-  			<div class="modal-dialog">
-    			<div class="modal-content">
-      				<div class="modal-header">
-        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Clientes</span></h4>
-      				</div>
-				    <div class="modal-body">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="input-group">
-						            <input ng-model="busca.vendedores" ng-keyup="loadCliente(0,10)" type="text" class="form-control input-sm">
-						            <div class="input-group-btn">
-						            	<button ng-click="loadCliente(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
-						            		<i class="fa fa-search"></i> Buscar
-						            	</button>
-						            </div> <!-- /input-group-btn -->
-						        </div> <!-- /input-group -->
-							</div><!-- /.col -->
-						</div>
-						<br />
-						<div class="row">
-							<div class="col-sm-12">
-								<table class="table table-bordered table-condensed table-striped table-hover">
-									<thead ng-show="(vendedores.length != 0)">
-										<tr>
-											<th >Nome</th>
-											<th >Perfil</th>
-											<th colspan="2">Selecionar</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(vendedores.length == 0)">
-											<td colspan="2">Não há Clientes cadastrados</td>
-										</tr>
-										<tr ng-repeat="item in vendedores">
-											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
-											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
-											<td>{{ item.nome_perfil }}</td>
-											<td width="50" align="center">
-												<button type="button" class="btn btn-xs btn-success" ng-click="addCliente(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
+	<!-- /Modal depositos-->
+	<div class="modal fade" id="list_depositos_new" style="display:none">
+		<div class="modal-dialog">
+			<div class="modal-content">
+  				<div class="modal-header">
+    				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4>Depositos</span></h4>
+  				</div>
+			    <div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group">
+					            <input ng-model="busca.depositos" ng-enter="loadDepositos(0,10)" type="text" class="form-control input-sm">
+					            <div class="input-group-btn">
+					            	<button ng-click="loadDepositos(0,10)" tabindex="-1" class="btn btn-sm btn-primary" type="button">
+					            		<i class="fa fa-search"></i> Buscar
+					            	</button>
+					            </div> <!-- /input-group-btn -->
+					        </div> <!-- /input-group -->
+						</div><!-- /.col -->
+					</div>
 
-						<div class="row">
-				    		<div class="col-sm-12">
-				    			<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_clientes.length > 1">
-									<li ng-repeat="item in paginacao_clientes" ng-class="{'active': item.current}">
-										<a href="" h ng-click="loadCliente(item.offset,item.limit)">{{ item.index }}</a>
-									</li>
-								</ul>
-				    		</div>
+					<br/>
+
+			   		<div class="row">
+			   			<div class="col-sm-12">
+			   				<table class="table table-bordered table-condensed table-striped table-hover">
+								<thead ng-show="(depositos.length != 0)">
+									<tr>
+										<th colspan="2">Nome</th>
+									</tr>
+								</thead>
+								<tbody>
+								<tr ng-show="depositos == null">
+                                    <th class="text-center" colspan="9" style="text-align:center"><i class='fa fa-refresh fa-spin'></i> Carregando ...</th>
+                                </tr>
+                                <tr ng-show="depositos.length == 0">
+                                    <th colspan="4" class="text-center">Não a resultados para a busca</th>
+                                </tr>
+									<tr ng-repeat="item in depositos">
+										<td>{{ item.nme_deposito }}</td>
+										<td width="50" align="center">
+											<button type="button" class="btn btn-xs btn-success" ng-click="addDepositoNewPosicao(item)">
+												<i class="fa fa-check-square-o"></i> Selecionar
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+			   			</div>
+			   		</div>
+
+			   		<div class="row">
+				    	<div class="col-sm-12">
+				    		<ul class="pagination pagination-xs m-top-none pull-right" ng-show="paginacao_depositos.length > 1">
+								<li ng-repeat="item in paginacao_depositos" ng-class="{'active': item.current}">
+									<a href="" ng-click="loadDepositos(item.offset,item.limit)">{{ item.index }}</a>
+								</li>
+							</ul>
 				    	</div>
-				    </div>
-			  	</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
-		</div>
-		<!-- /.modal -->
-
+			    	</div>
+			    </div>
+		  	</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+	
 	<a href="" id="scroll-to-top" class="hidden-print"><i class="fa fa-chevron-up"></i></a>
 
 	<!-- Logout confirmation -->
 	<?php include("logoutConfirm.php"); ?>
+	
 
     <!-- Le javascript
     ================================================== -->
@@ -415,7 +386,7 @@
     <script src="js/app.js"></script>
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
-	<script src="js/angular-controller/relatorio-saldo-devedor-cliente-controller.js"></script>
+	<script src="js/angular-controller/rel_posicao_estoque-controller.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -424,7 +395,10 @@
 			$("#cld_dtaInicial").on("click", function(){ $("#dtaInicial").trigger("focus"); });
 			$("#cld_dtaFinal").on("click", function(){ $("#dtaFinal").trigger("focus"); });
 
-			$('.datepicker').on('changeDate', function(ev){$(this).datepicker('hide');});
+			$('.datepicker').on('changeDate', function(ev){
+				$(this).datepicker('hide');
+				$(this).trigger('change');
+			});
 			$(".dropdown-menu").mouseleave(function(){$('.dropdown-menu').hide();$('input.datepicker').blur()});
 		});
 	</script>

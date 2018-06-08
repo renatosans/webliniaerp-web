@@ -38,6 +38,9 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 		if(!empty(ng.configuracoes.flg_deposito_padrao_vitrine) && ng.configuracoes.flg_deposito_padrao_vitrine == 1) {
 			if(!empty(ng.configuracoes.id_deposito_padrao)) {
 				var sem_estoque_str = "";
+				// if(!empty(ng.configuracoes.flg_exibir_produtos_sem_estoque) && ng.configuracoes.flg_exibir_produtos_sem_estoque == 1)
+				// 	sem_estoque_str = " OR tde.id_deposito IS NULL";
+				query_string += "&"+$.param({'(tde->id_deposito=':{exp: ng.configuracoes.id_deposito_padrao + sem_estoque_str +")"}});
 			}
 		}
 
@@ -139,7 +142,7 @@ app.controller('VitrineController', function($scope, $http, $window, $dialogs, U
 			ng.desejo.qtd   	   		= null ;
 			$("#modal-desejo").modal('show');
 		}else{
-			window.location.href = baseUrl()+"hage/detalhes?produto=" + item.id_produto 
+			window.location.href = baseUrl().substring(0,baseUrl().length-1) + window.location.pathname + '/' +"detalhes?produto=" + item.id_produto 
 		}
 
 		return false;

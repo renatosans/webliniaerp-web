@@ -166,19 +166,42 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 		},500);
 	}
 
+	ng.canRequest = function(item) {
+		if(empty(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia) || 
+			parseInt(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia, 10) === 0) {
+			if(item.qtd_item <= 0) {
+				return false;
+			}
+			else
+				return true;
+		}
+		else
+			return true;
+	}
+
 	ng.loadProdutos = function(offset, limit) {
 	
 		ng.produtos = null;
 
  		offset = offset == null ? 0  : offset;
 		limit  = limit  == null ? 10 : limit;
+		
+		query_string = "?pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
-		var query_string = "?tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		if(!empty(ng.configuracoes.flg_oculta_produtos_nao_controla_estoque) && ng.configuracoes.flg_oculta_produtos_nao_controla_estoque == 1){
+			query_string += "&pro->flg_controlar_estoque=1";
+		}
+		
+		// Se estiver configurado p/ ocultar produtos sem estoque no pedido de transferência
+		if(empty(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia) || 
+			parseInt(ng.configuracoes.flg_mostrar_produtos_sem_estoque_pedido_transferencia, 10) === 0) {
+			query_string += "&tpe->id_empreendimento="+ng.transferencia.id_empreendimento_transferencia;
+		}
+
 		if(!empty(ng.transferencia.id_deposito_padrao_pedido)){
 			query_string += "&id_deposito_estoque="+ng.transferencia.id_deposito_padrao_pedido;
 			// query_string += "&getQtdProduto(tpe->id_empreendimento,pro->id,null,"+ng.transferencia.id_deposito_padrao_pedido+",null)[exp]=>0";
 		}
-		query_string +="&pro->id[exp]= IN(SELECT tp.id FROM tbl_produtos AS tp INNER JOIN tbl_produto_empreendimento AS tpe ON tp.id = tpe.id_produto WHERE tpe.id_empreendimento IN ("+ng.userLogged.id_empreendimento+"))";
 
 		if(!empty(ng.busca.produto)){
 			if(isNaN(Number(ng.busca.produto)))
@@ -192,9 +215,7 @@ app.controller('PedidoTransferenciaController', function($scope, $http, $window,
 				angular.forEach(data.produtos, function(produto){
 					if(empty(ng.produtos))
 						ng.produtos = [];
-					if(produto.qtd_item > 0) {
 						ng.produtos.push(produto);
-					}
 				});
 				ng.paginacao.produtos = data.paginacao;
 			})

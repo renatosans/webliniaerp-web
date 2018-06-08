@@ -181,6 +181,20 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		}
 	}
 
+	ng.atualizaQtdValidadeIvn = function(item) {
+		item.qtd_ivn = parseInt(item.qtd_ivn);
+		
+		if(empty(item.validades)){
+			item.validades = [{
+				validade: '122099', 
+				qtd: item.qtd_ivn, 
+				flg_unidade_fracao: item.flg_unidade_fracao
+			}];
+		}
+
+		item.validades[0].qtd = item.qtd_ivn;
+	}
+
 	ng.showValidades = function(item) {
 		ng.produto = item;
 
@@ -239,7 +253,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		var qtdTotal = 0;
 
 		$.each(ng.produto.validades, function(i, item) {
-			qtdTotal += (item.qtd);
+			qtdTotal += parseFloat(item.qtd);
 		});
 
 		ng.produto.qtd_ivn = qtdTotal;
@@ -559,11 +573,15 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 		offset = offset == null ? 0  : offset;
     	limit  = limit  == null ? 10 : limit;
 
-    	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento+"&pro->flg_produto_composto=0";
+    	var query_string = "?tpe->id_empreendimento="+ng.userLogged.id_empreendimento;
 
     	if(ng.busca.produtos != ""){
     		query_string += "&"+$.param({'(nome':{exp:"like'%"+ng.busca.produtos+"%' OR nome_fabricante like'%"+ng.busca.produtos+"%' OR codigo_barra='"+ng.busca.produtos+"' )"}});
     	}
+
+    	if(!empty(ng.configuracao.flg_oculta_produtos_nao_controla_estoque) && ng.configuracao.flg_oculta_produtos_nao_controla_estoque == 1){
+			query_string += "&pro->flg_controlar_estoque=1";
+		}
 
 		ng.produtos = [];
 		aj.get(baseUrlApi()+"produtos/"+offset+"/"+limit+"/"+query_string)

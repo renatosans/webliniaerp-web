@@ -569,9 +569,10 @@
 						</div>
 					</div><!-- /.col -->
 
-					<div class="col-lg-6 col-sm-6 col-md-6">
+					<div class="col-lg-3 col-sm-3 col-md-3">
 						<div class="panel-stat3 bg-info fadeInDown animation-delay3">
-							<h2 class="m-top-none"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
+							<h2 class="m-top-none" ng-if="total.vlrCustoTotalEstoque >= 1000000000"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h2>
+							<h3 class="m-top-none" ng-if="total.vlrCustoTotalEstoque < 1000000000"><span id="clientesCount">R$ {{ total.vlrCustoTotalEstoque | numberFormat: config.qtd_casas_decimais : ',' : '.' }}</span></h3>
 							<h6>Custo Total</h6>
 							(Produtos em Estoque)
 							<div class="stat-icon">
@@ -585,6 +586,20 @@
 							</div> -->
 						</div>
 					</div><!-- /.col -->
+
+					<div class="col-lg-3 col-sm-3 col-md-3">
+						<div class="panel-stat3 bg-info fadeInDown animation-delay3" ng-class="{'bg-success':(med_prc_quebra_total <= 0.30), 'bg-warning': (med_prc_quebra_total > 0.30 && med_prc_quebra_total <= 0.49), 'bg-danger': (med_prc_quebra_total > 0.49)}">
+							<h2 class="m-top-none"><span >{{ med_prc_quebra_total | numberFormat: config.qtd_casas_decimais : ',' : '.' }}%</span></h2>
+							<h6>Quebra de Estoque</h6>
+							(No período)
+							<div class="stat-icon">
+								<i class="fa fa-sitemap fa-3x"></i>
+							</div>
+							<div class="loading-overlay" ng-class="{'active':med_prc_quebra_total == 'loading'}">
+								<i class="loading-icon fa fa-refresh fa-spin fa-lg"></i>
+							</div> 
+						</div>
+					</div>
 				</div>
 
 				<div class="row">

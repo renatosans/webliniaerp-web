@@ -33,7 +33,12 @@ app.controller('ControleMesasController', function(
 	ng.produto 		= {};
 	ng.EditProduto 	= false;
 	ng.editComanda 	= false;
-	ng.new_cliente 	= { id_empreendimento: ng.userLogged.id_empreendimento, id_perfil: 6 };
+	ng.new_cliente 	= {
+		id_empreendimento: ng.userLogged.id_empreendimento, 
+		id_perfil: 6, 
+		id_estado: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_estado, 
+		id_cidade: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_cidade
+	};
 	ng.id_ws_dsk 	= ng.configuracao.id_ws_dsk_op;
 	ng.status_websocket = 0 ;
 	var TimeWaitingResponseTestConection = 10000;
@@ -265,7 +270,16 @@ app.controller('ControleMesasController', function(
 				ng.clientes = [];
 			}
 			if(tela=='cadCliente'){
-				ng.new_cliente = {id_empreendimento:ng.userLogged.id_empreendimento,id_perfil:6};
+				/*ng.new_cliente = {
+					id_empreendimento: ng.userLogged.id_empreendimento,
+					id_perfil: 6
+				};*/
+				ng.new_cliente 	= {
+					id_empreendimento: ng.userLogged.id_empreendimento, 
+					id_perfil: 6, 
+					id_estado: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_estado, 
+					id_cidade: _.findWhere(ng.userLogged.empreendimento_usuario, {id: ng.userLogged.id_empreendimento}).cod_cidade
+				};
 			}
 			else if(tela=='detMesa')
 				ng.loadComandasByMesa();
@@ -313,7 +327,7 @@ app.controller('ControleMesasController', function(
 			var buscaCpf  = busca.replace(/\./g, '').replace(/\-/g, '');
 			var buscaCnpj = busca.replace(/\./g, '').replace(/\-/g, '').replace(/\//g,'');
 			busca = busca.replace(/\s/g, '%');
-			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+busca+"%' OR usu.apelido like '%"+busca+"%' OR usu.tel_fixo like '%"+busca+"%' OR usu.celular like '%"+busca+"%' OR usu.endereco like '%"+busca+"%' OR tpj.cnpj like '%"+buscaCnpj+"%' OR tpf.cpf like '%"+buscaCpf+"%')"}})+"";
+			query_string += "&"+$.param({"(usu->nome":{exp:"like'%"+busca+"%' OR usu.apelido like '%"+busca+"%' OR usu.tel_fixo like '%"+busca+"%' OR usu.id_externo like '%"+busca+"%' OR usu.num_cartao like '%"+busca+"%' OR usu.celular like '%"+busca+"%' OR usu.endereco like '%"+busca+"%' OR tpj.cnpj like '%"+buscaCnpj+"%' OR tpf.cpf like '%"+buscaCpf+"%')"}})+"";
 		}
 		aj.get(baseUrlApi()+url+query_string)
 		.success(function(data, status, headers, config) {
@@ -324,19 +338,21 @@ app.controller('ControleMesasController', function(
 		}); 
 	}
 
-	ng.abrirComanda = function(id_cliente,event){
+	ng.abrirComanda = function(id_cliente,event,item){
 		var btn = $(event.target);
 		if(!btn.is(':button')) btn = $(event.target).parent();
 		btn.button('loading');
+
 		var post = {
 			id_usuario : ng.userLogged.id,
 			id_cliente : id_cliente,
 			id_empreendimento : ng.userLogged.id_empreendimento,
 			dta_venda : moment().format('YYYY-MM-DD HH:mm:ss'),
-			id_mesa : ng.mesaSelecionada.mesa.id_mesa 
-		}
+			id_mesa : ng.mesaSelecionada.mesa.id_mesa,
+			num_cartao_fisico: (!empty(item) && !empty(item.num_cartao)) ? item.num_cartao : null
+		};
 
-		aj.post(baseUrlApi() + 'mesa', post)
+		aj.post(baseUrlApi()+ 'mesa', post)
 			.success(function(data, status, headers, config) {
 				var msg = {
 					type: 'table_change', 
@@ -346,11 +362,22 @@ app.controller('ControleMesasController', function(
 						mesa: data.mesa
 					})
 				};
+				if (item != null) {
+					if (!empty(item.num_cartao)) {
+						ng.vincular_cartao_fisico_automaticamente = true;
+						ng.num_cartao_fisico = item.num_cartao;
+					}
+				}
+				
 				ng.sendMessageWebSocket(msg);
 				btn.button('reset');
 				// ng.changeTela('detMesa');
 				ng.abrirDetalhesComanda(data.id_venda);
-			});
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				alert(data);
+			}); 
 	}
 
 	ng.loadComandasByMesa = function(){
@@ -391,6 +418,9 @@ app.controller('ControleMesasController', function(
 		aj.get(baseUrlApi()+'comanda/'+id_comanda)
 		.success(function(data, status, headers, config) {
 			ng.comandaSelecionada = data ;
+			if(!empty(ng.vincular_cartao_fisico_automaticamente) && ng.vincular_cartao_fisico_automaticamente && !empty(ng.num_cartao_fisico)) {
+				ng.loadCartoes();
+			}
 		})
 		.error(function(data, status, headers, config) {
 			ng.comandaSelecionada = {} ;
@@ -563,19 +593,28 @@ app.controller('ControleMesasController', function(
 		if(!empty(ng.num_cartao_fisico)){
 			$('#modalVincularCartao button').button('loading');
 			
-			var query_string = "?id_empreendimento=" + ng.userLogged.id_empreendimento + "&num_comanda=" + ng.num_cartao_fisico;
+			var query_string = "?id_empreendimento=" + ng.userLogged.id_empreendimento + "&num_comanda=" + ng.num_cartao_fisico + "&flg_excluido=0";
 			aj.get(baseUrlApi()+"cartoes-fisicos"+query_string)
 				.success(function(data, status, headers, config) {
-					aj.post(baseUrlApi()+"comanda/"+ ng.comandaSelecionada.comanda.id +"/vincular-cartao-fisico", {id_venda: ng.comandaSelecionada.comanda.id, id_cartao_fisico: data[0].id})
-						.success(function(data, status, headers, config) {
-							$('#modalVincularCartao button').button('reset');
-							$('#modalVincularCartao').modal('hide');
-							ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
-						})
-						.error(function(data, status, headers, config) {
-							ng.msg_erro_cartao = data;
-							$('#modalVincularCartao button').button('reset');
-						});
+					if(data[0].flg_bloqueado == 1){
+						if (empty(data[0].obs_motivo_bloqueio))
+							ng.msg_erro_cartao = "Cartão Bloquado";
+						else
+							ng.msg_erro_cartao = "Cartão Bloquado pelo seguinte motivo: " + data[0].obs_motivo_bloqueio;
+						
+						$('#modalVincularCartao button').button('reset');
+					} else {
+						aj.post(baseUrlApi()+"comanda/"+ ng.comandaSelecionada.comanda.id +"/vincular-cartao-fisico", {id_venda: ng.comandaSelecionada.comanda.id, id_cartao_fisico: data[0].id})
+							.success(function(data, status, headers, config) {
+								$('#modalVincularCartao button').button('reset');
+								$('#modalVincularCartao').modal('hide');
+								ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+							})
+							.error(function(data, status, headers, config) {
+								ng.msg_erro_cartao = data;
+								$('#modalVincularCartao button').button('reset');
+							});
+					}
 				})
 				.error(function(data, status, headers, config) {
 					ng.msg_erro_cartao = data;
@@ -655,7 +694,7 @@ app.controller('ControleMesasController', function(
 
 		dlg.result.then(
 			function(btn){
-				if(item.flg_produto_composto === 1){
+				if(item.flg_produto_composto === 1 && (!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1)){
 					dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
 
 					dlg.result.then(
@@ -827,6 +866,11 @@ app.controller('ControleMesasController', function(
 	}
 
 	ng.confirmarPedido = function() {
+		if (empty(ng.itens_pedido)) {
+			$dialogs.notify('Atenção!', 'Selecione ao menos um produto para confirmar o pedido!')
+			return false;
+		}
+		
 		dlg = $dialogs.confirm('Atenção!!!' ,'Confirma o pedido?');
 
 		dlg.result.then(
@@ -957,7 +1001,7 @@ app.controller('ControleMesasController', function(
 
 		dlg.result.then(
 			function(btn){
-				if(ng.produto.flg_produto_composto === 1){
+				if(ng.produto.flg_produto_composto === 1 && (!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1)){
 					dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
 
 					dlg.result.then(
@@ -1244,27 +1288,32 @@ app.controller('ControleMesasController', function(
 
 	ng.cadastrarCliente = function($event){
 		var btn = $(event.target);
-		if(!btn.is(':button')) btn = $(event.target).parent();
+		
+		if(!btn.is(':button'))
+			btn = $(event.target).parent();
+		
 		btn.button('loading');
+		
 		var cliente = angular.copy(ng.new_cliente);
-		cliente.celular = empty(cliente.celular) ? null : cliente.celular ;
-		aj.post(baseUrlApi()+"comanda/cliente/new",cliente)
-		.success(function(data, status, headers, config) {
-			if(ng.editComanda){
-				ng.changeCliente(data.usuario.id,$event);
-			}else
-				ng.abrirComanda(data.usuario.id,$event);
-		})
-		.error(function(data, status, headers, config) {
-			btn.button('reset');
-			if(status == 406){
-				var str = "";
-				$.each(data,function(i,x){
-					str += x[0]+'<br/>';
-				});
-				$dialogs.notify('Atenção!','<strong>'+str+'</strong>');
-			}
-		});
+			cliente.celular = empty(cliente.celular) ? null : cliente.celular ;
+		
+		aj.post(baseUrlApi()+"comanda/cliente/new", cliente)
+			.success(function(data, status, headers, config) {
+				if(ng.editComanda){
+					ng.changeCliente(data.usuario.id,$event);
+				}else
+					ng.abrirComanda(data.usuario.id,$event);
+			})
+			.error(function(data, status, headers, config) {
+				btn.button('reset');
+				if(status == 406){
+					var str = "";
+					$.each(data,function(i,x){
+						str += x[0]+'<br/>';
+					});
+					$dialogs.notify('Atenção!','<strong>'+str+'</strong>');
+				}
+			});
 	}
 
 	ng.newConnWebSocket = function(){
