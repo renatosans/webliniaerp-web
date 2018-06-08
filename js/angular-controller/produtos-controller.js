@@ -1,4 +1,4 @@
-app.controller('ProdutosController', function($scope, $timeout, $http, $window, $dialogs, ConfigService, UserService, FuncionalidadeService, PrestaShop, TabelaPrecoService){
+app.controller('ProdutosController', function($scope, $timeout, $http, $window, $dialogs, ConfigService, UserService, FuncionalidadeService, PrestaShop, TabelaPrecoService,Ezcommerce){
 	var ng = $scope
 		aj = $http;
 
@@ -509,6 +509,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 					 		$('html,body').animate({scrollTop: 0},'slow');
 					 		
 					 		PrestaShop.send('post',baseUrlApi()+"prestashop/produto/",produto);
+					 		Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/"+ng.userLogged.id_empreendimento,produto);
 						})
 						.error(function(data, status, headers, config) {
 							console.log('Erro ao subir fotos');

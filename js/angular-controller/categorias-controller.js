@@ -1,4 +1,4 @@
-app.controller('CategoriasController', function($scope, $http, $window, $dialogs, UserService,PrestaShop){
+app.controller('CategoriasController', function($scope, $http, $window, $dialogs, UserService,PrestaShop,Ezcommerce){
 	var ng = $scope
 		aj = $http;
 
@@ -176,6 +176,7 @@ app.controller('CategoriasController', function($scope, $http, $window, $dialogs
 				if( empty(ng.categoria.id) )
 					itemPost.id = data.categoria.id
 				PrestaShop.send('post',baseUrlApi()+"prestashop/categoria",itemPost);
+				Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/categoria/"+ng.userLogged.id_empreendimento,itemPost);
 				ng.mensagens('alert-success','<strong>Categoria salvo com sucesso!</strong>');
 				ng.showBoxNovo();
 				ng.reset();
