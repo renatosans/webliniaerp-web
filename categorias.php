@@ -507,7 +507,7 @@
     <script src="js/auto-complete/AutoComplete.js"></script>
     <script src="js/angular-services/user-service.js"></script>
 	<script src="js/angular-controller/categorias-controller.js"></script>
-	<script type="text/javascript"></script>>
+	<script type="text/javascript"></script>
 	<?php include("google_analytics.php"); ?>
   </body>
 </html>
