@@ -243,6 +243,15 @@
 														</select>
 													</div>
 												</div>
+
+												<div class="col-sm-2 pull-right">
+													<div class="form-group">
+														<div class="controls">
+															<label class="control-label">ID Produto Pai</label>
+														</div>
+														<input type="text" class="form-control input-sm" ng-model="produto.id_produto_pai">
+													</div>
+												</div>
 											</div>
 											<div class="row">
 												<div class="col-sm-2">
