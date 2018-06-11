@@ -1383,11 +1383,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.sendMessageWebSocket(msg);
 				}
 
-				if(Number(ng.caixa_aberto.flg_imprimir_nfce) == 1){
+				if(!ng.pagamento_fulso && Number(ng.caixa_aberto.flg_imprimir_nfce) == 1){
 					$('#modal_progresso_venda').modal('hide');
 					ng.processNFCe(ng.id_venda);
 				}
-				else if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
+				else if(Number(!ng.pagamento_fulso && ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
 					if(empty(ng.caixa_open.id_ws_dsk)){
 						$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
 					}
