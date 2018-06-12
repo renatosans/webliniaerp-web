@@ -708,12 +708,12 @@
 														</div>
 													</div>
 												</div>
-												<div class="col-sm-2">
+												<!--<div class="col-sm-2">
 													<div class="form-group" id="qtd_minima_estoque">
 														<label class="control-label">Estoque Mínimo</label>
 														<input ng-disabled="configuracao.id_produto_debito_anterior_cliente == produto.id_produto" ng-model="produto.qtd_minima_estoque" type="text" class="form-control input-sm" onKeyPress="return SomenteNumero(event);">
 													</div>
-												</div>
+												</div>-->
 												<div class="col-sm-4">
 													<div class="form-group" id="nme_arquivo_nutricional">
 														<label class="control-label" ng-show="editing == false || (produto.nme_arquivo_nutricional == '' || produto.nme_arquivo_nutricional == null)"><i class="fa fa-camera"></i> Arquivo Nutricional</label>
@@ -928,6 +928,7 @@
 																<tr>
 																	<td><i class="fa fa-building-o"></i> Empreendimento</td>
 																	<td width="120" align="center">Gera O.P.?</td>
+																	<td width="120" align="center">Estoque Mínimo</td>
 																	<td width="60" align="center">
 																		<button class="btn btn-xs btn-primary" ng-click="showEmpreendimentos()"><i class="fa fa-plus-circle"></i></button>
 																	</td>
@@ -951,6 +952,12 @@
 																				<span class="custom-radio"></span>
 																				<span>Não</span>
 																			</label>
+																		</div>
+																	</td>
+																	<td>
+																		<div class="form-group">
+																			<input type="text" class="form-control text-center input-xs" name="" ng-model="item.qtd_estoque_minimo" onKeyPress="return SomenteNumero(event);"  ng-if="produto.flg_unidade_fracao != 1">
+																			<input type="text" class="form-control text-center input-xs" name="" ng-model="item.qtd_estoque_minimo" onKeyPress="return SomenteNumero(event);"  ng-if="produto.flg_unidade_fracao == 1" thousands-formatter precision="3">
 																		</div>
 																	</td>
 																	<td align="center">
