@@ -1413,6 +1413,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 									nome_operador : ng.caixa_aberto.nome_operador
 								}
 								data.pagamentos = angular.copy(ng.recebidos) ;
+								
+								if(!empty(data.dados_venda.vlr_troco, true)) {
+									angular.forEach(data.pagamentos, function(pagamento){
+										if(parseInt(pagamento.id_forma_pagamento, 10) == 3) { // DINHEIRO
+											pagamento.valor_pagamento = parseFloat(pagamento.valor_pagamento);
+											pagamento.valor_pagamento += data.dados_venda.vlr_troco;
+										}
+									});
+								}
+
 								data.ide = {
 									txt_sign_ac : ng.configuracoes.txt_sign_ac,
 									num_cnpj_sw : ng.configuracoes.num_cnpj_sw
@@ -4529,6 +4539,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							nome_operador : ng.caixa_aberto.nome_operador
 						}
 						data.pagamentos = dataCrud.pagamentos ;
+						if(!empty(data.dados_venda.vlr_troco, true)) {
+							angular.forEach(data.pagamentos, function(pagamento){
+								if(parseInt(pagamento.id_forma_pagamento, 10) == 3) { // DINHEIRO
+									pagamento.valor_pagamento = parseFloat(pagamento.valor_pagamento);
+									pagamento.valor_pagamento += data.dados_venda.vlr_troco;
+								}
+							});
+						}
 						data.ide = {
 							txt_sign_ac : ng.configuracoes.txt_sign_ac,
 							num_cnpj_sw : ng.configuracoes.num_cnpj_sw
@@ -4597,6 +4615,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						nome_operador : ng.caixa_aberto.nome_operador
 					}
 					data.pagamentos = dataCrud.pagamentos ;
+					if(!empty(data.dados_venda.vlr_troco, true)) {
+						angular.forEach(data.pagamentos, function(pagamento){
+							if(parseInt(pagamento.id_forma_pagamento, 10) == 3) { // DINHEIRO
+								pagamento.valor_pagamento = parseFloat(pagamento.valor_pagamento);
+								pagamento.valor_pagamento += data.dados_venda.vlr_troco;
+							}
+						});
+					}
 					data.ide = {
 						txt_sign_ac : ng.configuracoes.txt_sign_ac,
 						num_cnpj_sw : ng.configuracoes.num_cnpj_sw
