@@ -188,7 +188,7 @@
 							<td class="text-center">{{ item.peso }}</td>
 							<td class="text-center">{{ item.sabor }}</td>
 							<td class="text-center">{{ item.qtd_atual_estoque }}</td>
-							<td class="text-center">{{ item.qtd_minima_estoque }}</td>
+							<td class="text-center">{{ item.qtd_estoque_minimo }}</td>
 						</tr>
 					</tbody>
 				</table>

@@ -1766,7 +1766,8 @@
 									</tr>
 									<tbody>
 										<tr ng-repeat="item in clientes">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.apelido }}</td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">

@@ -730,6 +730,38 @@ function notifcacaoPrestaShop(tipo){
     
 }
 
+function notifcacaoEzcommerce(tipo,msg){
+    if(tipo == 'sucesso'){
+         var x = noty({
+            text        : "<div style='font-size:12px'><i class='fa fa-check-circle-o' aria-hidden='true'></i> Ezcommerce atualizado</div>",
+            type        : 'success',
+            dismissQueue: false,
+            layout      : 'topRight',
+            theme       : 'relax',
+            timeout     : 5000
+        });
+    }else if(tipo == 'informacao'){
+         var x = noty({
+            text        : "<div style='font-size:12px'><i class='fa fa-refresh fa-spin'></i> Atualizando Ezcommerce</div>",
+            type        : 'information',
+            dismissQueue: false,
+            layout      : 'topRight',
+            theme       : 'relax'
+        });
+    }else{
+         var x = noty({
+                text        : "<div style='font-size:12px'>Erro ao atualizar dados em Ezcommerce ("+msg+")</div>",
+                type        : 'error',
+                dismissQueue: false,
+                layout      : 'topRight',
+                theme       : 'relax'
+            });
+    }
+
+    return x ;
+    
+}
+
 function exibirNoty(msg,type){
 
      var x = noty({

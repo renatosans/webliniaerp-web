@@ -1,4 +1,4 @@
-app.controller('FabricantesController', function($scope, $http, $window, $dialogs, UserService, PrestaShop){
+app.controller('FabricantesController', function($scope, $http, $window, $dialogs, UserService, PrestaShop, Ezcommerce){
 	var ng = $scope
 		aj = $http;
 
@@ -200,6 +200,7 @@ app.controller('FabricantesController', function($scope, $http, $window, $dialog
 		 		if(!empty(data.fabricante) && !empty(data.fabricante.id))
 					itemPost.id = data.fabricante.id ;
 				PrestaShop.send('post',baseUrlApi()+"prestashop/fabricante",itemPost);
+				Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/marca/"+ng.userLogged.id_empreendimento,itemPost);
 				ng.mensagens('alert-success','<strong>Fabricante salvo com sucesso!</strong>');
 				ng.showBoxNovo();
 				ng.reset();

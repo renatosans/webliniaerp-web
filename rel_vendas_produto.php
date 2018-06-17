@@ -346,6 +346,7 @@
 									<tr>
 										<th>#</th>
 										<th>Nome</th>
+										<th>Sabor/Cor</th>
 										<th>Fabricante</th>
 										<th>Tamanho</th>
 										<th width="80"></th>
@@ -358,6 +359,7 @@
 									<tr ng-repeat="item in produtos">
 										<td>{{ item.id_produto }}</td>
 										<td>{{ item.nome_produto }}</td>
+										<td>{{ item.sabor }}</td>
 										<td>{{ item.nome_fabricante }}</td>
 										<td>{{ item.peso }}</td>
 										<td>

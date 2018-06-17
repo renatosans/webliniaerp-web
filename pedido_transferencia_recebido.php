@@ -323,139 +323,141 @@
 							
 							<div class="row" ng-if="configuracao.flg_controlar_validade_transferencia == 1">
 								<div class="col-sm-12">
-									<div class="form-group" id="produtos">
-										<table class="table table-bordered table-condensed table-striped table-hover">
-											<thead>
-												<tr>
-													<td colspan="9"><i class="fa fa-archive"></i> Produtos</td>
-													<td width="60" align="center">
-													<button class="btn btn-xs btn-primary" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutosByValidade()"><i class="fa fa-plus-circle"></i></button>
-													</td>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<th>ID</th>
-													<th>Produto</th>
-													<th>Fabricante</th>
-													<th>Tamanho</th>
-													<th>Sabor/Cor</th>
-													<th class="text-center" >Estoque</th>
-													<th class="text-center" width="90"
-														ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
-														Vlr. Custo
-														<div class="btn-group">
-															<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-																	<span class="caret"></span>
-															</button>
-															<ul class="dropdown-menu">
-																<li>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_custo_real')">
-																		Custo
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
-																	</a>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_atacado')">
-																		Atacado
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
-																	</a>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_intermediario')">
-																		Intermediário
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
-																	</a>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_varejo')">
-																		Varejo
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
-																	</a>
-																</li>
-															</ul>	
-														</div>	
-													</th>
-													<th class="text-center" >Qtd.Pedida</th>
-													<th class="text-center">Qtd. Multipla</th>
-													<th>Qtd. transferir</th>
-													<!--<th width="250">
-														Depósito
-														<button style="float:right" class="btn btn-xs btn-info" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="selDeposito()" tooltip data-placement="top" title="Selecionar deposito para todos os itens"><i class="fa fa-sitemap"></i></button>
-													</th>-->
-													<th></th>
-												</tr>
-												<tr ng-repeat="item in transferencia.produtos" id="tr-prd-{{ item.id }}">
-													<td>{{ item.id	 }}</td>
-													<td>{{ item.nome }}</td>
-													<td>{{ item.nome_fabricante }}</td>
-													<td>{{ item.peso }}</td>
-													<td>{{ item.sabor }}</td>
-													<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
-													<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
-													<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
-														{{ item.vlr_custo | numberFormat:2:',':'.' }}
-														<div class="btn-group">
-															<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-																	<span class="caret"></span>
-															</button>
-															<ul class="dropdown-menu">
-																<li>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_custo_real')">
-																		Custo: R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
-																	</a>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_atacado')">
-																		Atacado: R$ {{ item.vlr_venda_atacado | numberFormat:2:',':'.' }}
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
-																	</a>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_intermediario')">
-																		Intermediário: R$ {{ item.vlr_venda_intermediario | numberFormat:2:',':'.' }}
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
-																	</a>
-																	<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_varejo')">
-																		Varejo: R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}
-																		<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
-																	</a>
-																</li>
-															</ul>	
-														</div>													
-													</td>
-													<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
-													<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
-													<td  width="100" align="center" id="td-prd-{{ item.id }}" >
-														<div class="input-group" id="dtaInicialDiv">
-														<input ng-disabled="true" onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-value="somarQtd(item)"  type="text" class="form-control input-sm" />
-														<span id="btnDtaInicial" class="input-group-addon"
-														 href=""
-														 popover2
-														 model="item.validades"
-														 title="Validades"
-														 func="ctrl"
-														 placement="left"
-														 content='
-															 <table class="table table-bordered table-condensed table-striped table-hover">
-															 	<tr ng-repeat="item in model">
-															 		<td ng-bind="item.nome_deposito"></td>
-															 		<td class"text-center" ng-bind="item.dta_validade|date" ng-if="item.dta_validade != %272099-12-31%27"></td>
-															 		<td class"text-center" ng-if="item.dta_validade == %272099-12-31%27"></td>
-															 		<td class"text-center" ng-bind="item.qtd_item"></td>
-															 		<td width="80" ng-class="{%27has-error%27: item.tooltip != undefined }" >
-															 			<input controll-tooltip="item.tooltip" ng-blur="func.clearTooltip(item)" somente-numeros ng-keyUp="func.vericarQtdByValidade(item,%27body%27)"  ng-model="item.qtd_transferida"  type="text" class="form-control input-xs text-center">
-					           										</td>
-															 	</tr>
-															 </table>
-													 	'
-														><i class="fa fa-calendar"></i></span>
-														</div>
-													</td>
-													<!--<td id="td-prd-deposito-saida-{{ item.id }}">
-														<select chosen ng-change="loadestoque(item)" 
-													    option="depositos_chosen"
-													    ng-model="item.id_deposito_saida"
-													    ng-options="deposito.id as deposito.nme_deposito for deposito in depositos_chosen">
-														</select>
-													</td>-->
-													<td align="center">
-														<button ng-if="item.add == 1" class="btn btn-xs btn-danger" ng-click="excluirProdutoListaByValidade($index)"><i class="fa fa-trash-o"></i></button>
-													</td>
-												</tr>
-											</tbody>
-										</table>
+									<div class="table-responsive">
+										<div class="form-group" id="produtos">
+											<table class="table table-bordered table-condensed table-striped table-hover">
+												<thead>
+													<tr>
+														<td colspan="9"><i class="fa fa-archive"></i> Produtos</td>
+														<td width="60" align="center">
+														<button class="btn btn-xs btn-primary" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="showProdutosByValidade()"><i class="fa fa-plus-circle"></i></button>
+														</td>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<th>ID</th>
+														<th>Produto</th>
+														<th>Fabricante</th>
+														<th>Tamanho</th>
+														<th>Sabor/Cor</th>
+														<th class="text-center" >Estoque</th>
+														<th class="text-center" width="90"
+															ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
+															Vlr. Custo
+															<div class="btn-group">
+																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																		<span class="caret"></span>
+																</button>
+																<ul class="dropdown-menu">
+																	<li>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_custo_real')">
+																			Custo
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
+																		</a>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_atacado')">
+																			Atacado
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
+																		</a>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_intermediario')">
+																			Intermediário
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
+																		</a>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(null,'vlr_venda_varejo')">
+																			Varejo
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
+																		</a>
+																	</li>
+																</ul>	
+															</div>	
+														</th>
+														<th class="text-center" >Qtd.Pedida</th>
+														<th class="text-center">Qtd. Multipla</th>
+														<th>Qtd. transferir</th>
+														<!--<th width="250">
+															Depósito
+															<button style="float:right" class="btn btn-xs btn-info" ng-disabled="!isNumeric(transferencia.id_empreendimento_transferencia)" ng-click="selDeposito()" tooltip data-placement="top" title="Selecionar deposito para todos os itens"><i class="fa fa-sitemap"></i></button>
+														</th>-->
+														<th></th>
+													</tr>
+													<tr ng-repeat="item in transferencia.produtos" id="tr-prd-{{ item.id }}">
+														<td>{{ item.id	 }}</td>
+														<td>{{ item.nome }}</td>
+														<td>{{ item.nome_fabricante }}</td>
+														<td>{{ item.peso }}</td>
+														<td>{{ item.sabor }}</td>
+														<td class="text-center" ng-if="!item.load_estoque">{{ item.qtd_item }}</td>
+														<td class="text-center" ng-if="item.load_estoque"><i class='fa fa-refresh fa-spin'></i></td>
+														<td class="text-center" ng-if="funcioalidadeAuthorized('ver_valor_custo_produto')">
+															{{ item.vlr_custo | numberFormat:2:',':'.' }}
+															<div class="btn-group">
+																<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+																		<span class="caret"></span>
+																</button>
+																<ul class="dropdown-menu">
+																	<li>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_custo_real')">
+																			Custo: R$ {{ item.vlr_custo_real | numberFormat:2:',':'.' }}
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_custo_real'" ></i>
+																		</a>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_atacado')">
+																			Atacado: R$ {{ item.vlr_venda_atacado | numberFormat:2:',':'.' }}
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_atacado'"></i>
+																		</a>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_intermediario')">
+																			Intermediário: R$ {{ item.vlr_venda_intermediario | numberFormat:2:',':'.' }}
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_intermediario'"></i>
+																		</a>
+																		<a href="" class="text-left" ng-click="setarVlrCusto(item,'vlr_venda_varejo')">
+																			Varejo: R$ {{ item.vlr_venda_varejo | numberFormat:2:',':'.' }}
+																			<i class="fa fa-check-circle-o fa-1" aria-hidden="true" ng-if="item.tipo_vlr_custo == 'vlr_venda_varejo'"></i>
+																		</a>
+																	</li>
+																</ul>	
+															</div>													
+														</td>
+														<td width="80" class="text-center">{{ item.qtd_pedida }}</td>
+														<td class="text-center">{{ item.qtd_multiplo_transferencia }}</td>
+														<td  width="100" align="center" id="td-prd-{{ item.id }}" >
+															<div class="input-group" id="dtaInicialDiv">
+															<input ng-disabled="true" onKeyPress="return SomenteNumero(event);" style="width: 75px" ng-value="somarQtd(item)"  type="text" class="form-control input-sm" />
+															<span id="btnDtaInicial" class="input-group-addon"
+															 href=""
+															 popover2
+															 model="item.validades"
+															 title="Validades"
+															 func="ctrl"
+															 placement="left"
+															 content='
+																 <table class="table table-bordered table-condensed table-striped table-hover">
+																 	<tr ng-repeat="item in model">
+																 		<td ng-bind="item.nome_deposito"></td>
+																 		<td class"text-center" ng-bind="item.dta_validade|date" ng-if="item.dta_validade != %272099-12-31%27"></td>
+																 		<td class"text-center" ng-if="item.dta_validade == %272099-12-31%27"></td>
+																 		<td class"text-center" ng-bind="item.qtd_item"></td>
+																 		<td width="80" ng-class="{%27has-error%27: item.tooltip != undefined }" >
+																 			<input controll-tooltip="item.tooltip" ng-blur="func.clearTooltip(item)" somente-numeros ng-keyUp="func.vericarQtdByValidade(item,%27body%27)"  ng-model="item.qtd_transferida"  type="text" class="form-control input-xs text-center">
+						           										</td>
+																 	</tr>
+																 </table>
+														 	'
+															><i class="fa fa-calendar"></i></span>
+															</div>
+														</td>
+														<!--<td id="td-prd-deposito-saida-{{ item.id }}">
+															<select chosen ng-change="loadestoque(item)" 
+														    option="depositos_chosen"
+														    ng-model="item.id_deposito_saida"
+														    ng-options="deposito.id as deposito.nme_deposito for deposito in depositos_chosen">
+															</select>
+														</td>-->
+														<td align="center">
+															<button ng-if="item.add == 1" class="btn btn-xs btn-danger" ng-click="excluirProdutoListaByValidade($index)"><i class="fa fa-trash-o"></i></button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -505,7 +507,8 @@
 							<br/>
 							<div class="row" ng-if="configuracao.flg_controlar_validade_transferencia == 0">
 								<div class="col-sm-12">
-									<div class="form-group" id="produtos">
+									<div class="table-responsive">
+										<div class="form-group" id="produtos">
 											<table class="table table-bordered table-condensed table-striped table-hover" id="produtos">
 												<thead>
 													<tr>
@@ -624,8 +627,9 @@
 																	ng-if="item.flg_unidade_fracao == 1" 
 																	ng-blur="verificaQtdMultiplo('produtos',index,item)"
 																	id="txt-qtd-multiplo-{{ index }}" 
-																	thousands-formatter precision="3"/></td>
+																	thousands-formatter precision="3"/>
 															</div>
+														</td>
 														<td id="td-prd-deposito-saida-{{ item.id }}">
 															<select chosen ng-change="loadestoque(item)" 
 														    option="depositos_chosen"
@@ -639,12 +643,14 @@
 													</tr>
 												</tbody>
 											</table>
+										</div>
 									</div>
 								</div>
 							</div>
 							<div class="row" ng-if="configuracao.flg_controlar_validade_transferencia == 1">
 								<div class="col-sm-12">
 									<div class="form-group" id="produtos">
+										<div class="table-responsive">
 											<table class="table table-bordered table-condensed table-striped table-hover">
 												<thead>
 													<tr>
@@ -776,6 +782,7 @@
 													</tr>
 												</tbody>
 											</table>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -809,66 +816,68 @@
 						<div class="row">
 							<div class="col-sm-12"><div style="display: none" class="alert alert-transferencia-lista"></div></div>
 						</div>
-						<table class="table table-bordered table-condensed table-striped table-hover">
-							<thead>
-								<tr>
-									<th>#</th>
-									<th>Data Pedido</th>
-									<th>Data Transferência</th>
-									<th>Usuário</th>
-									<th>Empreendimento</th>
-									<th>Status</th>
-									<th width="100" style="text-align: center;">Ações</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-show="listaTransferencias.transferencias == null">
-									<td colspan="7" class="text-center">
-										<i class='fa fa-refresh fa-spin'></i> Carregando...
-									</td>
-								</tr>
-								<tr ng-show="listaTransferencias.transferencias.length == 0">
-									<td colspan="7" class="text-center">
-										Nenhuma transferência encontrada
-									</td>
-								</tr>
-								<tr ng-repeat="item in listaTransferencias.transferencias" bs-tooltip>
-									<td width="80">{{ item.id }}</td>
-									<td>{{ item.dta_pedido | dateFormat : 'dateTime' }}</td>
-									<td>{{ item.dta_transferencia | dateFormat : 'dateTime' }}</td>
-									<td>{{ item.nome_usuario_transferencia }}</td>
-									<td>{{ item.nome_empreendimento_pedido }}</td>
-									<td>{{ item.id_status_transferencia == 1 && 'Pedido recebido' || item.dsc_status_transferencia_estoque }}</td>
-									<td align="center">
-										<button type="button" ng-show="item.id != transferencia.id && item.id_status_transferencia == 1" data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="editTransferencia($index,$event)" title="Realizar Transferência" class="btn btn-xs btn-info" data-toggle="tooltip">
-											<i class="fa fa-arrows-h"></i>
-										</button>
-										<button type="button" ng-show="item.id == transferencia.id && item.id_status_transferencia != 5" data-loading-text="<i class='fa fa-refresh fa-spin'></i>"  title="Em edição" class="btn btn-xs btn-success" data-toggle="tooltip">
-											<i class="fa fa-arrows-h"></i>
-										</button>
+						<div class="table-responsive">
+							<table class="table table-bordered table-condensed table-striped table-hover">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Data Pedido</th>
+										<th>Data Transferência</th>
+										<th>Usuário</th>
+										<th>Empreendimento</th>
+										<th>Status</th>
+										<th width="100" style="text-align: center;">Ações</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-show="listaTransferencias.transferencias == null">
+										<td colspan="7" class="text-center">
+											<i class='fa fa-refresh fa-spin'></i> Carregando...
+										</td>
+									</tr>
+									<tr ng-show="listaTransferencias.transferencias.length == 0">
+										<td colspan="7" class="text-center">
+											Nenhuma transferência encontrada
+										</td>
+									</tr>
+									<tr ng-repeat="item in listaTransferencias.transferencias" bs-tooltip>
+										<td width="80">{{ item.id }}</td>
+										<td>{{ item.dta_pedido | dateFormat : 'dateTime' }}</td>
+										<td>{{ item.dta_transferencia | dateFormat : 'dateTime' }}</td>
+										<td>{{ item.nome_usuario_transferencia }}</td>
+										<td>{{ item.nome_empreendimento_pedido }}</td>
+										<td>{{ item.id_status_transferencia == 1 && 'Pedido recebido' || item.dsc_status_transferencia_estoque }}</td>
+										<td align="center">
+											<button type="button" ng-show="item.id != transferencia.id && item.id_status_transferencia == 1" data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="editTransferencia($index,$event)" title="Realizar Transferência" class="btn btn-xs btn-info" data-toggle="tooltip">
+												<i class="fa fa-arrows-h"></i>
+											</button>
+											<button type="button" ng-show="item.id == transferencia.id && item.id_status_transferencia != 5" data-loading-text="<i class='fa fa-refresh fa-spin'></i>"  title="Em edição" class="btn btn-xs btn-success" data-toggle="tooltip">
+												<i class="fa fa-arrows-h"></i>
+											</button>
 
-										<button type="button" ng-show=" item.id != transferencia.id && item.id_status_transferencia == 5" data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="editTransferencia($index,$event,4)" title="editar pedido" class="btn btn-xs btn-warning" data-toggle="tooltip">
-											<i class="fa fa-edit"></i>
-										</button>
-										<button type="button" ng-show="item.id == transferencia.id && item.id_status_transferencia == 5" data-loading-text="<i class='fa fa-refresh fa-spin'></i>"  title="Em edição" class="btn btn-xs btn-success" data-toggle="tooltip">
-											<i class="fa fa-edit"></i>
-										</button>
+											<button type="button" ng-show=" item.id != transferencia.id && item.id_status_transferencia == 5" data-loading-text="<i class='fa fa-refresh fa-spin'></i>" ng-click="editTransferencia($index,$event,4)" title="editar pedido" class="btn btn-xs btn-warning" data-toggle="tooltip">
+												<i class="fa fa-edit"></i>
+											</button>
+											<button type="button" ng-show="item.id == transferencia.id && item.id_status_transferencia == 5" data-loading-text="<i class='fa fa-refresh fa-spin'></i>"  title="Em edição" class="btn btn-xs btn-success" data-toggle="tooltip">
+												<i class="fa fa-edit"></i>
+											</button>
 
-										<button type="button"  ng-click="detalhesPedido(item)" title="Detalhes" class="btn btn-xs btn-primary" data-toggle="tooltip">
-											<i class="fa fa-tasks"></i>
-										</button>
-										<a href="nota-fiscal.php?id_transferencia={{ item.id }}" 
-											class="btn btn-xs btn-info" 
-											title="Emitir NF-e" data-toggle="tooltip">
-											<i class="fa fa-file-text-o"></i>
-										</a>
-										<button type="button"  ng-click="deletarTransferencia(item)" ng-if="!(item.dta_transferencia)" title="Excluir" class="btn btn-xs btn-danger" data-toggle="tooltip">
-											<i class="fa fa-trash-o"></i>
-										</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+											<button type="button"  ng-click="detalhesPedido(item)" title="Detalhes" class="btn btn-xs btn-primary" data-toggle="tooltip">
+												<i class="fa fa-tasks"></i>
+											</button>
+											<a href="nota-fiscal.php?id_transferencia={{ item.id }}" 
+												class="btn btn-xs btn-info" 
+												title="Emitir NF-e" data-toggle="tooltip">
+												<i class="fa fa-file-text-o"></i>
+											</a>
+											<button type="button"  ng-click="deletarTransferencia(item)" ng-if="!(item.dta_transferencia)" title="Excluir" class="btn btn-xs btn-danger" data-toggle="tooltip">
+												<i class="fa fa-trash-o"></i>
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 					<div class="panel-footer">
 						<div class="row">
@@ -981,90 +990,92 @@
 
 				   		<div class="row">
 				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed" id="produtos">
-									<thead ng-show="(produtos.length != 0)">
-										<tr>
-											<th rowspan="2" style="line-height: 46px;" >ID</th>
-											<th rowspan="2" style="line-height: 46px;" >Nome</th>
-											<th rowspan="2" style="line-height: 46px;" >Fabricante</th>
-											<th rowspan="2" style="line-height: 46px;" >Tamanho</th>
-											<th rowspan="2" style="line-height: 46px;" >Sabor/cor</th>
-											<th colspan="3" class="text-center">Estoque</th>
-											<th rowspan="2" style="line-height: 46px;" class="text-center" >Qtd.</th>
-											<th rowspan="2" style="line-height: 46px;" ></th>
-										</tr>
-										<tr>
-											<td class="text-center">Depósito</td>
-											<td width="50">Validade</td>
-											<td width="50">Qtd.</td>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(produtos.length == 0)" class="text-center">
-											<td colspan="7">Nenhum produto encontrado</td>
-										</tr>
-										<tr ng-show="produtos == null" class="text-center">
-											<td colspan="7" ><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
-										</tr>
-										<tr ng-repeat-start="(key,item) in produtos" ng-class="{'tr-pintada': (key%2)!=0 }">
-											<td rowspan="{{ item.group.length }}" >
-												<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.id_produto }}</span>
-											</td>
-											<td rowspan="{{ item.group.length }}" >
-												<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.nome_produto }}</span>
-											</td>
-											<td rowspan="{{ item.group.length }}" >
-												<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.nome_fabricante }}</span>
-											</td>
-											<td rowspan="{{ item.group.length }}" >
-												<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.peso }}</span>
-											</td>
-											<td rowspan="{{ item.group.length }}" >
-												<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.sabor }}</span>
-											</td>
-											<td class="text-center">
-												{{ item.nome_deposito }}
-											</td>
-											<td>
-												<span ng-if="item.dta_validade != '2099-12-31'">{{ item.dta_validade | date }}<span>
-											</td>
-											<td>
-												{{ item.qtd_item }}
-											</td>
-											<td  width="50" ng-class="{'has-error': item.tooltip != undefined }">
-												<input controll-tooltip="item.tooltip"  ng-blur="clearTooltip(item)"  container="#list_produtos" somente-numeros ng-keyUp="vericarQtdByValidade(item,'#list_produtos')" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" />
-											</td>
-											<td width="50" align="center">
-												<button ng-show="!produtoSelectedByValidade(item.id)" ng-disabled="!isNumeric(item.qtd_transferida)" type="button" class="btn btn-xs btn-success" ng-click="addProdutoByValidade(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-												<button ng-show="produtoSelectedByValidade(item.id)" ng-show="existsAcessorio(item)" ng-disabled="true" class="btn btn-primary btn-xs" type="button">
-                                                	<i class="fa fa-check-circle-o"></i> Selecionado
-                                            	</button>
-											</td>
-										</tr>
-										<tr ng-repeat-end  ng-repeat="item_validade in item.group" ng-if="(item.id != item_validade.id)" ng-class="{'tr-pintada': (key%2)!=0 }">
-											<td class="text-center">{{ item_validade.nome_deposito }}</td>
-											<td>
-												<span ng-if="item_validade.dta_validade != '2099-12-31'">{{ item_validade.dta_validade | date }}<span>
-											</td>
-											<td>
-												{{ item_validade.qtd_item }}
-											</td>
-											<td  width="50" ng-class="{'has-error': item_validade.tooltip != undefined }">
-												<input controll-tooltip="item_validade.tooltip"  ng-blur="clearTooltip(item_validade)" somente-numeros  ng-model="item_validade.qtd_transferida" ng-keyUp="vericarQtdByValidade(item_validade,'#list_produtos')" type="text" class="form-control input-xs" />
-											</td>
-											<td width="50" align="center">
-												<button ng-show="!produtoSelectedByValidade(item_validade.id)"  ng-disabled="!isNumeric(item_validade.qtd_transferida)" type="button" class="btn btn-xs btn-success" ng-click="addProdutoByValidade(item_validade)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-												<button ng-show="produtoSelectedByValidade(item_validade.id)"  ng-disabled="true" class="btn btn-primary btn-xs" type="button">
-                                                	<i class="fa fa-check-circle-o"></i> Selecionado
-                                            	</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+				   				<div class="table-responsive">
+					   				<table class="table table-bordered table-condensed" id="produtos">
+										<thead ng-show="(produtos.length != 0)">
+											<tr>
+												<th rowspan="2" style="line-height: 46px;" >ID</th>
+												<th rowspan="2" style="line-height: 46px;" >Nome</th>
+												<th rowspan="2" style="line-height: 46px;" >Fabricante</th>
+												<th rowspan="2" style="line-height: 46px;" >Tamanho</th>
+												<th rowspan="2" style="line-height: 46px;" >Sabor/cor</th>
+												<th colspan="3" class="text-center">Estoque</th>
+												<th rowspan="2" style="line-height: 46px;" class="text-center" >Qtd.</th>
+												<th rowspan="2" style="line-height: 46px;" ></th>
+											</tr>
+											<tr>
+												<td class="text-center">Depósito</td>
+												<td width="50">Validade</td>
+												<td width="50">Qtd.</td>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-show="(produtos.length == 0)" class="text-center">
+												<td colspan="7">Nenhum produto encontrado</td>
+											</tr>
+											<tr ng-show="produtos == null" class="text-center">
+												<td colspan="7" ><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
+											</tr>
+											<tr ng-repeat-start="(key,item) in produtos" ng-class="{'tr-pintada': (key%2)!=0 }">
+												<td rowspan="{{ item.group.length }}" >
+													<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.id_produto }}</span>
+												</td>
+												<td rowspan="{{ item.group.length }}" >
+													<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.nome_produto }}</span>
+												</td>
+												<td rowspan="{{ item.group.length }}" >
+													<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.nome_fabricante }}</span>
+												</td>
+												<td rowspan="{{ item.group.length }}" >
+													<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.peso }}</span>
+												</td>
+												<td rowspan="{{ item.group.length }}" >
+													<span style="display:block; margin-top: {{ item.group.length > 1 && item.group.length*12.5 || 0  }}px ">{{ item.sabor }}</span>
+												</td>
+												<td class="text-center">
+													{{ item.nome_deposito }}
+												</td>
+												<td>
+													<span ng-if="item.dta_validade != '2099-12-31'">{{ item.dta_validade | date }}<span>
+												</td>
+												<td>
+													{{ item.qtd_item }}
+												</td>
+												<td  width="50" ng-class="{'has-error': item.tooltip != undefined }">
+													<input controll-tooltip="item.tooltip"  ng-blur="clearTooltip(item)"  container="#list_produtos" somente-numeros ng-keyUp="vericarQtdByValidade(item,'#list_produtos')" ng-model="item.qtd_transferida" type="text" class="form-control text-center input-xs" />
+												</td>
+												<td width="50" align="center">
+													<button ng-show="!produtoSelectedByValidade(item.id)" ng-disabled="!isNumeric(item.qtd_transferida)" type="button" class="btn btn-xs btn-success" ng-click="addProdutoByValidade(item)">
+														<i class="fa fa-check-square-o"></i> Selecionar
+													</button>
+													<button ng-show="produtoSelectedByValidade(item.id)" ng-show="existsAcessorio(item)" ng-disabled="true" class="btn btn-primary btn-xs" type="button">
+	                                                	<i class="fa fa-check-circle-o"></i> Selecionado
+	                                            	</button>
+												</td>
+											</tr>
+											<tr ng-repeat-end  ng-repeat="item_validade in item.group" ng-if="(item.id != item_validade.id)" ng-class="{'tr-pintada': (key%2)!=0 }">
+												<td class="text-center">{{ item_validade.nome_deposito }}</td>
+												<td>
+													<span ng-if="item_validade.dta_validade != '2099-12-31'">{{ item_validade.dta_validade | date }}<span>
+												</td>
+												<td>
+													{{ item_validade.qtd_item }}
+												</td>
+												<td  width="50" ng-class="{'has-error': item_validade.tooltip != undefined }">
+													<input controll-tooltip="item_validade.tooltip"  ng-blur="clearTooltip(item_validade)" somente-numeros  ng-model="item_validade.qtd_transferida" ng-keyUp="vericarQtdByValidade(item_validade,'#list_produtos')" type="text" class="form-control input-xs" />
+												</td>
+												<td width="50" align="center">
+													<button ng-show="!produtoSelectedByValidade(item_validade.id)"  ng-disabled="!isNumeric(item_validade.qtd_transferida)" type="button" class="btn btn-xs btn-success" ng-click="addProdutoByValidade(item_validade)">
+														<i class="fa fa-check-square-o"></i> Selecionar
+													</button>
+													<button ng-show="produtoSelectedByValidade(item_validade.id)"  ng-disabled="true" class="btn btn-primary btn-xs" type="button">
+	                                                	<i class="fa fa-check-circle-o"></i> Selecionado
+	                                            	</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 				   			</div>
 				   		</div>
 
@@ -1108,69 +1119,71 @@
 
 				   		<div class="row">
 				   			<div class="col-sm-12">
-				   				<table class="table table-bordered table-condensed table-striped table-hover" id="produtos">
-									<thead ng-show="(produtos.length != 0)">
-										<tr>
-											<th >ID</th>
-											<th >Nome</th>
-											<th >Fabricante</th>
-											<th >Tamanho</th>
-											<th >Sabor/Cor</th>
-											<th >Estoque</th>
-											<th >Qtd.</th>
-											<th ></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-show="(produtos.length == 0)" class="text-center">
-											<td colspan="7">Nenhum produto encontrado</td>
-										</tr>
-										<tr ng-show="produtos == null" class="text-center">
-											<td colspan="7" ><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
-										</tr>
-										<tr ng-repeat="item in produtos">
-											<td>{{ item.id }}</td>
-											<td>{{ item.nome }}</td>
-											<td>{{ item.nome_fabricante }}</td>
-											<td>{{ item.peso }}</td>
-											<td>{{ item.sabor }}</td>
-											<td>{{ item.qtd_item }}</td>
-											<td  width="100">
-												<div class="form-group">
-													<input type="text" 
-														class="form-control text-center input-xs input-group" 
-														onKeyPress="return SomenteNumero(event);" 
-														ng-model="item.qtd_pedida" 
-														ng-if="item.flg_unidade_fracao != 1" 
-														ng-blur="verificaQtdMultiplo('produtos',index,item)"
-														id="txt-qtd-multiplo-{{ index }}"
-														ng-enter="addProduto(item)"
-														ng-disabled="produtoSelected(item.id)"/>
-												</div>
-												<div class="form-group">
-													<input type="text" 
-														class="form-control text-center input-xs input-group" 
-														onKeyPress="return SomenteNumero(event);" 
-														ng-model="item.qtd_pedida" 
-														ng-if="item.flg_unidade_fracao == 1" 
-														ng-blur="verificaQtdMultiplo('produtos',index,item)"
-														id="txt-qtd-multiplo-{{ index }}" 
-														thousands-formatter precision="3"
-														ng-enter="addProduto(item)"
-														ng-disabled="produtoSelected(item.id)"/>
-												</div>
-											</td>
-											<td width="50" align="center">
-												<button ng-show="!produtoSelected(item.id)" type="button" class="btn btn-xs btn-success" ng-click="addProduto(item)">
-													<i class="fa fa-check-square-o"></i> Selecionar
-												</button>
-												<button ng-show="produtoSelected(item.id)" ng-show="existsAcessorio(item)" ng-disabled="true" class="btn btn-primary btn-xs" type="button">
-		                                        	<i class="fa fa-check-circle-o"></i> Selecionado
-		                                    	</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+				   				<div class="table-responsive">
+					   				<table class="table table-bordered table-condensed table-striped table-hover" id="produtos">
+										<thead ng-show="(produtos.length != 0)">
+											<tr>
+												<th >ID</th>
+												<th >Nome</th>
+												<th >Fabricante</th>
+												<th >Tamanho</th>
+												<th >Sabor/Cor</th>
+												<th >Estoque</th>
+												<th >Qtd.</th>
+												<th ></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-show="(produtos.length == 0)" class="text-center">
+												<td colspan="7">Nenhum produto encontrado</td>
+											</tr>
+											<tr ng-show="produtos == null" class="text-center">
+												<td colspan="7" ><i class='fa fa-refresh fa-spin'></i> Carregando...</td>
+											</tr>
+											<tr ng-repeat="item in produtos">
+												<td>{{ item.id }}</td>
+												<td>{{ item.nome }}</td>
+												<td>{{ item.nome_fabricante }}</td>
+												<td>{{ item.peso }}</td>
+												<td>{{ item.sabor }}</td>
+												<td>{{ item.qtd_item }}</td>
+												<td  width="100">
+													<div class="form-group">
+														<input type="text" 
+															class="form-control text-center input-xs input-group" 
+															onKeyPress="return SomenteNumero(event);" 
+															ng-model="item.qtd_pedida" 
+															ng-if="item.flg_unidade_fracao != 1" 
+															ng-blur="verificaQtdMultiplo('produtos',index,item)"
+															id="txt-qtd-multiplo-{{ index }}"
+															ng-enter="addProduto(item)"
+															ng-disabled="produtoSelected(item.id)"/>
+													</div>
+													<div class="form-group">
+														<input type="text" 
+															class="form-control text-center input-xs input-group" 
+															onKeyPress="return SomenteNumero(event);" 
+															ng-model="item.qtd_pedida" 
+															ng-if="item.flg_unidade_fracao == 1" 
+															ng-blur="verificaQtdMultiplo('produtos',index,item)"
+															id="txt-qtd-multiplo-{{ index }}" 
+															thousands-formatter precision="3"
+															ng-enter="addProduto(item)"
+															ng-disabled="produtoSelected(item.id)"/>
+													</div>
+												</td>
+												<td width="50" align="center">
+													<button ng-show="!produtoSelected(item.id)" type="button" class="btn btn-xs btn-success" ng-click="addProduto(item)">
+														<i class="fa fa-check-square-o"></i> Selecionar
+													</button>
+													<button ng-show="produtoSelected(item.id)" ng-show="existsAcessorio(item)" ng-disabled="true" class="btn btn-primary btn-xs" type="button">
+			                                        	<i class="fa fa-check-circle-o"></i> Selecionado
+			                                    	</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 				   			</div>
 				   		</div>
 

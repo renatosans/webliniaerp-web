@@ -222,7 +222,8 @@
 							<td class="text-center">
 								#{{ item.id }}
 							</td>
-							<td>{{ item.nome_cliente }}</td>
+							<td class="text-middle" ng-if="!(item.nome_cliente == null || item.nome_cliente=='')">{{ item.nome_cliente | uppercase }}</td>
+							<td class="text-middle" ng-if="(item.nome_cliente == null || item.nome_cliente=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 							<td ng-if="item.vlr_saldo_devedor > 0" style="color:green;  font-weight: bold;" class="text-right">R$ {{item.vlr_saldo_devedor | numberFormat:2:',':'.'}}</td>
 							<td>
 								{{ item.email }}
@@ -320,7 +321,8 @@
 											<td colspan="2">Não há Clientes cadastrados</td>
 										</tr>
 										<tr ng-repeat="item in vendedores">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">
 												<button type="button" class="btn btn-xs btn-success" ng-click="addCliente(item)">

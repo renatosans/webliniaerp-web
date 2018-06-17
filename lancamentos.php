@@ -949,7 +949,8 @@
 										<tr ng-repeat="item in value.items">
 											<td ng-show="!config_table.groupPerDay">{{ key | dateFormat: 'date' }} </td>
 											<td class="text-center" ng-if="config_table.conta_bancaria">{{ item.dsc_conta_bancaria }}</td>
-											<td>{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')">{{ item.cpf }}</td>
 											<td>{{ item.cod_plano }} - {{ item.dsc_natureza_operacao | uppercase}}</td>
 											<td ng-if="config_table.forma_pagamento">{{ item.descricao_forma_pagamento }}</td>
 											<td ng-if="config_table.bandeira">{{ item.nme_bandeira }}</td>
@@ -1471,7 +1472,8 @@
 									</thead>
 									<tbody>
 										<tr ng-repeat="item in clientes">
-											<td>{{ item.nome }}</td>
+											<td class="text-middle" ng-if="!(item.nome == null || item.nome=='')">{{ item.nome | uppercase }}</td>
+											<td class="text-middle" ng-if="(item.nome == null || item.nome=='')" ng-bind-html="item.cpf | cpfFormat:'<b>CPF:</b> '"></td>
 											<td>{{ item.nome_perfil }}</td>
 											<td width="50" align="center">
 												<button type="button" class="btn btn-xs btn-success" ng-click="addCliente(item)">

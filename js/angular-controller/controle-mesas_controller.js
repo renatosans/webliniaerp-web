@@ -593,19 +593,28 @@ app.controller('ControleMesasController', function(
 		if(!empty(ng.num_cartao_fisico)){
 			$('#modalVincularCartao button').button('loading');
 			
-			var query_string = "?id_empreendimento=" + ng.userLogged.id_empreendimento + "&num_comanda=" + ng.num_cartao_fisico;
+			var query_string = "?id_empreendimento=" + ng.userLogged.id_empreendimento + "&num_comanda=" + ng.num_cartao_fisico + "&flg_excluido=0";
 			aj.get(baseUrlApi()+"cartoes-fisicos"+query_string)
 				.success(function(data, status, headers, config) {
-					aj.post(baseUrlApi()+"comanda/"+ ng.comandaSelecionada.comanda.id +"/vincular-cartao-fisico", {id_venda: ng.comandaSelecionada.comanda.id, id_cartao_fisico: data[0].id})
-						.success(function(data, status, headers, config) {
-							$('#modalVincularCartao button').button('reset');
-							$('#modalVincularCartao').modal('hide');
-							ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
-						})
-						.error(function(data, status, headers, config) {
-							ng.msg_erro_cartao = data;
-							$('#modalVincularCartao button').button('reset');
-						});
+					if(data[0].flg_bloqueado == 1){
+						if (empty(data[0].obs_motivo_bloqueio))
+							ng.msg_erro_cartao = "Cartão Bloquado";
+						else
+							ng.msg_erro_cartao = "Cartão Bloquado pelo seguinte motivo: " + data[0].obs_motivo_bloqueio;
+						
+						$('#modalVincularCartao button').button('reset');
+					} else {
+						aj.post(baseUrlApi()+"comanda/"+ ng.comandaSelecionada.comanda.id +"/vincular-cartao-fisico", {id_venda: ng.comandaSelecionada.comanda.id, id_cartao_fisico: data[0].id})
+							.success(function(data, status, headers, config) {
+								$('#modalVincularCartao button').button('reset');
+								$('#modalVincularCartao').modal('hide');
+								ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
+							})
+							.error(function(data, status, headers, config) {
+								ng.msg_erro_cartao = data;
+								$('#modalVincularCartao button').button('reset');
+							});
+					}
 				})
 				.error(function(data, status, headers, config) {
 					ng.msg_erro_cartao = data;

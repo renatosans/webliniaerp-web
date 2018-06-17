@@ -357,3 +357,50 @@ app.service('PrestaShop', function($http,ConfigService,UserService) {
 		$('#modal-pretashop406').modal('show');
 	}
 });
+
+app.service('Ezcommerce', function($http,ConfigService,UserService) {
+	var aj = $http ;
+	var user = UserService.getUserLogado() ;
+	conf = ConfigService.getConfig(user.id_empreendimento);
+	var PrestaShop = this ;
+	var sendEzcommerce = (!empty(conf['sistemas_integrados']) && typeof parseJSON(conf['sistemas_integrados']) == 'object' && _in('ezcommerce',parseJSON(conf['sistemas_integrados']))) ;
+	this.send = function(method,url,dados,id_empreendimento) {
+		if(!sendEzcommerce)
+			return ;
+		$.noty.closeAll();
+		var i = notifcacaoEzcommerce('informacao');
+		if(!empty(dados)){
+			aj[method](url,dados)
+			.success(function(data, status, headers, config) {
+				$.noty.close(i.options.id) ;
+				if(data.status){
+					notifcacaoEzcommerce('sucesso');
+				}else{
+					notifcacaoEzcommerce('erro');
+				}
+			})
+			.error(function(data, status, headers, config) {
+				
+				$.noty.close(i.options.id) ;
+				notifcacaoEzcommerce('erro',data.erro);
+
+			});
+		}else{
+			aj[method](url)
+			.success(function(data, status, headers, config) {
+				$.noty.close(i.options.id) ;
+				if(data.status){
+					notifcacaoEzcommerce('sucesso');
+				}else{
+					notifcacaoEzcommerce('erro');
+				}
+			})
+			.error(function(data, status, headers, config) {
+
+				$.noty.close(i.options.id) ;
+				notifcacaoEzcommerce('erro',data.erro);
+
+			});
+		}	
+	}
+});

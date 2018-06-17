@@ -1385,14 +1385,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						type : 'table_change',from : ng.caixa_open.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
 						message : JSON.stringify({mesa:data.mesa, id_comanda: ng.id_venda, closed: true})
 					}
-					ng.sendMessageWebSocket(msg);
+					if(!ng.sendMessageWebSocket(msg)){
+						console.log('não foi possivel enviar a mensagem para o WebSocket, o mesmo está offline.');
+					}
 				}
 
-				if(Number(ng.caixa_aberto.flg_imprimir_nfce) == 1){
+				if(!ng.pagamento_fulso && Number(ng.caixa_aberto.flg_imprimir_nfce) == 1){
 					$('#modal_progresso_venda').modal('hide');
 					ng.processNFCe(ng.id_venda);
 				}
-				else if(Number(ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
+				else if(Number(!ng.pagamento_fulso && ng.caixa_aberto.flg_imprimir_sat_cfe) == 1){
 					if(empty(ng.caixa_open.id_ws_dsk)){
 						$('#modal-conexao-websocket').modal({backdrop: 'static', keyboard: false});
 					}
@@ -1416,6 +1418,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 									nome_operador : ng.caixa_aberto.nome_operador
 								}
 								data.pagamentos = angular.copy(ng.recebidos) ;
+								
+								if(!empty(data.dados_venda.vlr_troco, true)) {
+									angular.forEach(data.pagamentos, function(pagamento){
+										if(parseInt(pagamento.id_forma_pagamento, 10) == 3) { // DINHEIRO
+											pagamento.valor_pagamento = parseFloat(pagamento.valor_pagamento);
+											pagamento.valor_pagamento += data.dados_venda.vlr_troco;
+										}
+									});
+								}
+
 								data.ide = {
 									txt_sign_ac : ng.configuracoes.txt_sign_ac,
 									num_cnpj_sw : ng.configuracoes.num_cnpj_sw
@@ -1429,7 +1441,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 									message 	: JSON.stringify(data)
 								};
 								ng.dadosSatCalculados = data ;
-								ng.sendMessageWebSocket(dadosWebSocket);
+								if(!ng.sendMessageWebSocket(dadosWebSocket)) {
+									$('#modal-sat-cfe').modal('hide');
+									alert('Não foi possível emitir o cupom fiscal pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+								}
 							})
 							.error(function(data, status, headers, config) {
 								$('#modal-sat-cfe').modal('hide');
@@ -3192,7 +3207,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							type:'rfc_print',
 							message: JSON.stringify(ng.fechamento_caixa)
 						};
-						ng.sendMessageWebSocket(msg);
+						if(!ng.sendMessageWebSocket(msg))
+							alert('Não foi possível emitir o relatório de fechamento pois a impressora não está configurada no cadastro do caixa');
 					}
 					else
 						alert('Não foi possível emitir o relatório de fechamento pois a impressora não está configurada no cadastro do caixa');
@@ -3207,8 +3223,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.cancelarModal = function(id){
 		$('#'+id).modal('hide');
 	}
-
-	
 
 	ng.cancelarPagamento = function(){
 		if(ng.pagamento_fulso == true){
@@ -3433,7 +3447,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							message: JSON.stringify(data)
 						};
 
-						ng.sendMessageWebSocket(msg);
+						if(!ng.sendMessageWebSocket(msg))
+							alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
 
 						$("#modal-cnf").modal('hide');
 					} else {
@@ -3493,7 +3508,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						type :'cnf_print',
 						message: JSON.stringify(data)
 					};
-					ng.sendMessageWebSocket(msg);
+					
+					if(!ng.sendMessageWebSocket(msg))
+						alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
 
 					if(!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1 && !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
 						window.close();
@@ -4542,6 +4559,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							nome_operador : ng.caixa_aberto.nome_operador
 						}
 						data.pagamentos = dataCrud.pagamentos ;
+						if(!empty(data.dados_venda.vlr_troco, true)) {
+							angular.forEach(data.pagamentos, function(pagamento){
+								if(parseInt(pagamento.id_forma_pagamento, 10) == 3) { // DINHEIRO
+									pagamento.valor_pagamento = parseFloat(pagamento.valor_pagamento);
+									pagamento.valor_pagamento += data.dados_venda.vlr_troco;
+								}
+							});
+						}
 						data.ide = {
 							txt_sign_ac : ng.configuracoes.txt_sign_ac,
 							num_cnpj_sw : ng.configuracoes.num_cnpj_sw
@@ -4554,7 +4579,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							message 	: JSON.stringify(data)
 						};
 						ng.dadosSatCalculados = data ;
-						ng.sendMessageWebSocket(dadosWebSocket);
+						if(!ng.sendMessageWebSocket(dadosWebSocket)){
+							ng.process_reeviar_sat = false;
+							$('#modal-sat-cfe').modal('hide');
+							alert('Não foi possível emitir o cupom fiscal pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+						}
 					})
 					.error(function(data, status, headers, config) {
 						ng.process_reeviar_sat = false ;
@@ -4611,6 +4640,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						nome_operador : ng.caixa_aberto.nome_operador
 					}
 					data.pagamentos = dataCrud.pagamentos ;
+					if(!empty(data.dados_venda.vlr_troco, true)) {
+						angular.forEach(data.pagamentos, function(pagamento){
+							if(parseInt(pagamento.id_forma_pagamento, 10) == 3) { // DINHEIRO
+								pagamento.valor_pagamento = parseFloat(pagamento.valor_pagamento);
+								pagamento.valor_pagamento += data.dados_venda.vlr_troco;
+							}
+						});
+					}
 					data.ide = {
 						txt_sign_ac : ng.configuracoes.txt_sign_ac,
 						num_cnpj_sw : ng.configuracoes.num_cnpj_sw
@@ -4623,7 +4660,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						message 	: JSON.stringify(data)
 					};
 					ng.dadosSatCalculados = data ;
-					ng.sendMessageWebSocket(dadosWebSocket);
+					
+					if(!ng.sendMessageWebSocket(dadosWebSocket)){
+						ng.process_reeviar_sat = false;
+						$('#modal-sat-cfe').modal('hide');
+						alert('Não foi possível emitir o cupom fiscal pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+					}
 				})
 				.error(function(data, status, headers, config) {
 					ng.process_reeviar_sat = false ;
@@ -4686,7 +4728,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			})
 		};
 		ng.dados_sat_cancelamento_in_progress = angular.copy(item);
-		ng.sendMessageWebSocket(dadosWebSocket);
+		if(!ng.sendMessageWebSocket(dadosWebSocket)) {
+			alert('Não foi possível emitir o cumpom de cancelamento pois não existe conexão com o aplicativo cliente (WebliniaERP Client)'); aqui
+		}
 
 		$('#modal-cancelar-cupom-sat').modal('hide');
 		ng.showModalSatCfe('Aguarde, processando cancelamento do CF-e SAT...');
@@ -4761,8 +4805,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		window.location=page;
 	}
 	ng.sendMessageWebSocket = function(data){
-		
-		ng.conn.send(JSON.stringify(data));
+		if (ng.status_websocket == 2) {
+			ng.conn.send(JSON.stringify(data));
+			return true;
+		}
+		return false;
 	}
 	var dadosWebSocket = {
 
