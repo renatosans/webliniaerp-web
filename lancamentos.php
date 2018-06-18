@@ -1579,11 +1579,12 @@
 					    			<table class="table table-bordered table-condensed table-striped table-hover">
 					    				<thead ng-show="itensPrint.length  > 0">
 											<tr>
+												<th>Natureza da Operação</th>
 												<th>Forma de pagamento</th>
 												<th>Status</th>
 												<th ng-if="itensPrint[0].id_forma_pagamento == 4">Doc. Boleto</th>
 												<th ng-if="itensPrint[0].id_forma_pagamento == 4">Num. Boleto</th>
-												<th class="hidden-print">Conta bancaria</th>
+												<th>Conta bancaria</th>
 												<th ng-if="itensPrint[0].id_forma_pagamento == 2">N° Conta Corrente</th>
 												<th ng-if="itensPrint[0].id_forma_pagamento == 2">N° do cheque</th>
 												<th ng-if="itensPrint[0].id_forma_pagamento == 2">Predatado</th>
@@ -1597,14 +1598,25 @@
 													<i class="fa fa-refresh fa-spin"></i> Aguarde, carregando itens...
 												</td>
 											</tr>
-											<tr ng-repeat="item in itensPrint">
+											<tr ng-repeat-start="item in itensPrint">
+												<td>{{ item.cod_plano }} - {{ item.dsc_natureza_operacao | uppercase}}</td>
 												<td ng-if="item.id_forma_pagamento != 6">{{ item.descricao_forma_pagamento  }} </td>
 												<td ng-if="item.id_forma_pagamento == 6">{{ item.descricao_forma_pagamento  }}  {{item.current_parcela}}/{{item.total_parcelas}} </td>
-												<td ng-if="item.status_pagamento == 0">Pendente</td>
-												<td ng-if="item.status_pagamento == 1">Pago</td>
+												<td ng-if="item.status_pagamento == 0">
+													<span class="label label-success">
+														<i class="fa fa-warning"></i>
+														Pendente
+													</span>
+												</td>
+												<td ng-if="item.status_pagamento == 1">
+													<span class="label label-success">
+														<i class="fa fa-check-circle"></i>
+														Pago
+													</span>
+												</td>
 												<td ng-if="item.id_forma_pagamento == 4">{{ item.doc_boleto }}</td>
 												<td ng-if="item.id_forma_pagamento == 4">{{ item.num_boleto }}</td>
-												<td class="hidden-print"> {{ item.dsc_conta_bancaria }}</td>
+												<td> {{ item.dsc_conta_bancaria }}</td>
 												<td ng-if="item.id_forma_pagamento == 2">{{ item.num_conta_corrente  }} </td>
 												<td ng-if="item.id_forma_pagamento == 2">{{ item.num_cheque }} </td>
 												<td ng-if="item.id_forma_pagamento == 2 && item.flg_cheque_predatado == 0"> Não </td>
@@ -1612,6 +1624,12 @@
 												<td >{{ item.data_pagamento | dateFormat:'date' }}</td>
 												<td ng-if="item.id_forma_pagamento != 6">R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</td>
 												<td ng-if="item.id_forma_pagamento == 6">R$ {{ item.valor_pagamento | numberFormat:2:',':'.' }}</td>
+											</tr>
+											<tr>
+												<th colspan="6">Observações</th>
+											</tr>
+											<tr ng-repeat-end>
+												<td colspan="6">{{ item.obs_pagamento }}</td>
 											</tr>
 										</tbody>
 									</table>
@@ -2088,23 +2106,6 @@
 		</div>
 		<!-- /.modal -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		<!-- /Modal Processando Pagamento-->
 		<div class="modal fade" id="modal_add_detalhamento" style="display:none">
   			<div class="modal-dialog error modal-md">
@@ -2154,21 +2155,6 @@
 			<!-- /.modal-dialog -->
 		</div>
 		<!-- /.modal -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		<!-- Footer
 		================================================== -->

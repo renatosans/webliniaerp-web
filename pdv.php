@@ -2903,7 +2903,8 @@
 				    <div class="modal-body">
 				    	<div class="row">
 				    		<div class="col-sm-12">
-				    			Verifique se todos os produtos da venda estão com suas configurações fiscais	
+				    			<span ng-if="(mensagem_erro_calculo_impostos)">{{ mensagem_erro_calculo_impostos }}</span>	
+				    			<span ng-if="(json_erro_calculo_impostos)">{{ json_erro_calculo_impostos }}</span>	
 							</div>
 				    	</div>
 				    </div>

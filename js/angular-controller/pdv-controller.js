@@ -1326,6 +1326,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			.error(function(data, status, headers, config) {
 				$('#modal-sat-cfe').modal('hide');
 				$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
+
+				if(status == 406)
+					ng.mensagem_erro_calculo_impostos = data.mensagem;
+				else
+					ng.json_erro_calculo_impostos = data;
 			});
 	}
 
@@ -1444,6 +1449,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							.error(function(data, status, headers, config) {
 								$('#modal-sat-cfe').modal('hide');
 								$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
+
+								if(status == 406)
+									ng.mensagem_erro_calculo_impostos = data.mensagem;
+								else
+									ng.json_erro_calculo_impostos = data;
 							});
 					}
 
@@ -4479,20 +4489,30 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=true")
 			.success(function(data, status, headers, config) {
-				var vendas_sem_cfe = data;
-				var in_venda = data.map(function(elem){return elem.id_venda}).join(",");
-				aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+ in_venda +")")
-					.success(function(data, status, headers, config) {
-						angular.forEach(data.vendas, function(venda){
-							venda.cod_nota_fiscal = _.findWhere(vendas_sem_cfe, {id_venda: venda.id.toString()}).cod_nota_fiscal;
+				if(data === false) {
+					ng.paginacao.vendas_reenviar_sat = [];
+					ng.vendas_reenviar_sat = [];
+				}
+				else {
+					var vendas_sem_cfe = data;
+					var in_venda = data.map(function(elem){return elem.id_venda}).join(",");
+					
+					if(in_vendas[in_vendas.length-1] == ',')
+						in_vendas = in_vendas.substr(0,in_vendas.length-1);
+
+					aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+ in_venda +")")
+						.success(function(data, status, headers, config) {
+							angular.forEach(data.vendas, function(venda){
+								venda.cod_nota_fiscal = _.findWhere(vendas_sem_cfe, {id_venda: venda.id.toString()}).cod_nota_fiscal;
+							});
+							ng.vendas_reenviar_sat = data.vendas;
+							ng.paginacao.vendas_reenviar_sat = data.paginacao;
+						})
+						.error(function(data, status, headers, config) {
+							ng.paginacao.vendas_reenviar_sat = [];
+							ng.vendas_reenviar_sat = [];
 						});
-						ng.vendas_reenviar_sat = data.vendas;
-						ng.paginacao.vendas_reenviar_sat = data.paginacao;
-					})
-					.error(function(data, status, headers, config) {
-						ng.paginacao.vendas_reenviar_sat = [];
-						ng.vendas_reenviar_sat = [];
-					});
+				}
 			})
 			.error(function(data, status, headers, config) {
 				
@@ -4569,6 +4589,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						ng.process_reeviar_sat = false ;
 						$('#modal-sat-cfe').modal('hide');
 						$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
+
+						if(status == 406)
+							ng.mensagem_erro_calculo_impostos = data.mensagem;
+						else
+							ng.json_erro_calculo_impostos = data;
 					});
 				})
 				.error(function(data, status, headers, config) {
@@ -4646,6 +4671,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					ng.process_reeviar_sat = false ;
 					$('#modal-sat-cfe').modal('hide');
 					$('#modal-erro-cacular-impostos').modal({backdrop: 'static', keyboard: false});
+
+					if(status == 406)
+						ng.mensagem_erro_calculo_impostos = data.mensagem;
+					else
+						ng.json_erro_calculo_impostos = data;
 				});
 			})
 			.error(function(data, status, headers, config) {
@@ -4729,6 +4759,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
 		.success(function(data, status, headers, config) {
 			if(data != false) {
+				if(data.in_venda[data.in_venda.length-1] == ',')
+						data.in_venda = data.in_venda.substr(0,data.in_venda.length-1);
+
 				aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+data.in_venda+")")
 				.success(function(data, status, headers, config) {
 					ng.vendas_caixa_aberto = data.vendas;
@@ -4904,7 +4937,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			query_string += "&tv->id[exp]=<>"+ ng.id_comanda;
 		
 		if(!empty(ng.busca.comandas)){	
-			query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
+			query_string += "&("+$.param({'tm->dsc_mesa':{exp:"like'%"+ng.busca.comandas+"%' OR tu.nome like'%"+ng.busca.comandas+"%' OR cmd.num_comanda LIKE '%"+ ng.busca.comandas +"%' OR tv.id='"+ng.busca.comandas+"'"}})+")";
 		}
 
 		ng.comandas =  {dados:null,paginacao:[]};

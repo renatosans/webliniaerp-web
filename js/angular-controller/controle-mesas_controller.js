@@ -569,7 +569,7 @@ app.controller('ControleMesasController', function(
 
 	ng.loadComandaByNumCartao = function(){
 		ng.comandaSelecionada = null;
-		aj.get(baseUrlApi()+'comanda/cartao-fisico/' + ng.busca.numero_comanda +'?tv->flg_excluido=0&tv->venda_confirmada=0&tv->id_empreendimento='+ ng.userLogged.id_empreendimento)
+		aj.get(baseUrlApi()+'comanda/cartao-fisico?cmd->num_comanda='+ ng.busca.numero_comanda +'&tv->flg_excluido=0&tv->venda_confirmada=0&tv->id_empreendimento='+ ng.userLogged.id_empreendimento)
 			.success(function(data, status, headers, config) {
 				ng.abrirDetalhesComanda(data.comanda.id);
 			})
@@ -914,6 +914,9 @@ app.controller('ControleMesasController', function(
 					});
 				});
 
+				$('.btnCancelarPedido').hide();
+				$('.btnConfirmarPedido').button('loading');
+
 				aj.post(baseUrlApi()+"item_comanda/add/grade",{ itens: JSON.stringify(itens), categorias: JSON.stringify(categorias) })
 					.success(function(data, status, headers, config) {
 						var msg = {
@@ -926,17 +929,20 @@ app.controller('ControleMesasController', function(
 							})
 						};
 						ng.sendMessageWebSocket(msg);
-
 						ng.abrirDetalhesComanda(ng.comandaSelecionada.comanda.id);
 						ng.produto = {};
 						ng.itens_pedido = null;
 						ng.vlr_total_pedido = 0;
+						$('.btnCancelarPedido').show();
+						$('.btnConfirmarPedido').button('reset');
 					})
 					.error(function(data, status, headers, config) {
 						if(status == 406)
 							$dialogs.notify('Atenção!','<strong>Produto com estoque insuficiente</strong>');
 						else
 							$dialogs.notify('Atenção!','<strong>Erro ao incluir produto</strong>');
+						$('.btnCancelarPedido').show();
+						$('.btnConfirmarPedido').button('reset');
 					});
 			},
 			function(){
