@@ -3049,20 +3049,21 @@
 						<h4 ng-if="cdb_busca.status==false">Vendas</span></h4>
       				</div>
 				    <div class="modal-body">
-						<!-- <div class="row">
+						<div class="row">
 							<div class="col-md-12">
 								<div class="input-group">
-						            <input ng-model="busca.produtos" ng-enter="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)" type="text" class="form-control input-sm">
+						            <input type="text" class="form-control input-sm"
+						            	ng-model="busca.vendas_cnf" ng-enter="loadVendasCaixaAberto(0,10)">
 
 						            <div class="input-group-btn">
 						            	<button tabindex="-1" class="btn btn-sm btn-primary" type="button"
-						            		ng-click="loadProdutos(0,configuracoes.qtd_registros_pesquisa_produtos)">
+						            		ng-click="loadVendasCaixaAberto(0,10)">
 						            		<i class="fa fa-search"></i> Buscar
 						            	</button>
 						            </div> 
 						        </div>
 							</div>
-						</div><br> -->
+						</div><br>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="alert alert-produtos" style="display:none"></div>

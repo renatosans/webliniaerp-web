@@ -221,6 +221,16 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				if((!is_juntar) && (Number(data.cliente.id) != Number(ng.configuracoes.id_cliente_movimentacao_caixa)))
 					ng.cliente = data.cliente;
 
+				if(Number(data.cliente.id) != Number(ng.configuracoes.id_cliente_movimentacao_caixa)) {
+					aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ ng.userLogged.id_empreendimento+"?usu->id="+item.id)
+						.success(function(data, status, headers, config) {
+							ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
+						})
+						.error(function(data, status, headers, config) {
+							
+						});
+				}
+
 				$.each(orcamento.itens,function(i,v){
 					v.valor_desconto_real = Number(v.valor_desconto)/100;
 					v.flg_desconto        = Number(v.desconto_aplicado);
@@ -1570,12 +1580,12 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		ng.setMargemAplicada();
 		$("#list_clientes").modal("hide");
 		aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ ng.userLogged.id_empreendimento+"?usu->id="+item.id)
-		.success(function(data, status, headers, config) {
-			ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
-		})
-		.error(function(data, status, headers, config) {
-			
-		});
+			.success(function(data, status, headers, config) {
+				ng.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
+			})
+			.error(function(data, status, headers, config) {
+				
+			});
 	}
 	ng.changeMargemAplicada = function(obj){
 		ng.margemAplicada = obj ;
@@ -4751,9 +4761,14 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
 					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
 					'INNER JOIN tbl_vendas AS ven ON ven.id = tmc.id_venda '+
+					'INNER JOIN tbl_clientes AS cli ON cli.id = ven.id_cliente '+
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
-					'WHERE ta.id = '+ng.caixa_aberto.id+' AND ven.flg_excluido = 0 '+
-					'GROUP BY tmc.id_venda '+
+					'WHERE ta.id = '+ng.caixa_aberto.id+' AND ven.flg_excluido = 0 ';
+
+		if(!empty(ng.busca.vendas_cnf))
+			query += ' AND (ven.id = ' + ng.busca.vendas_cnf + ' OR cli.nome LIKE \'%'+ ng.busca.vendas_cnf +'%\') ';
+
+		query +='GROUP BY tmc.id_venda '+
 				') AS tb '+
 				'GROUP BY grp';
 		aj.get(baseUrlApi()+"crud/read?query="+query+"&fetchAll=false")
