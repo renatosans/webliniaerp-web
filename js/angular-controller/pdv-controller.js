@@ -4507,8 +4507,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					var vendas_sem_cfe = data;
 					var in_venda = data.map(function(elem){return elem.id_venda}).join(",");
 					
-					if(in_vendas[in_vendas.length-1] == ',')
-						in_vendas = in_vendas.substr(0,in_vendas.length-1);
+					if(in_venda[in_venda.length-1] == ',')
+						in_venda = in_venda.substr(0,in_venda.length-1);
 
 					aj.get(baseUrlApi()+"vendas/"+offset+"/"+limit+"?ven->id[exp]=IN("+ in_venda +")")
 						.success(function(data, status, headers, config) {
@@ -4761,7 +4761,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 					'SELECT 1 AS grp, id_venda FROM tbl_abertura_caixa AS ta '+
 					'INNER JOIN tbl_movimentacao_caixa AS tmc ON ta.id = tmc.id_abertura_caixa '+
 					'INNER JOIN tbl_vendas AS ven ON ven.id = tmc.id_venda '+
-					'INNER JOIN tbl_clientes AS cli ON cli.id = ven.id_cliente '+
+					'INNER JOIN tbl_usuarios AS cli ON cli.id = ven.id_cliente '+
 					'LEFT JOIN tbl_nota_fiscal AS tnf ON tmc.id_venda = tnf.cod_venda '+
 					'WHERE ta.id = '+ng.caixa_aberto.id+' AND ven.flg_excluido = 0 ';
 
