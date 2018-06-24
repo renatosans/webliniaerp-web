@@ -4286,7 +4286,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							type : 'connection_search_request',
 							message : 'find desktop'
 						}
-						ng.sendMessageWebSocket(mg);
+						ng.sendMessageWebSocket(mg, true);
 					 }else{
 						
 					 }
@@ -4819,13 +4819,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.location = function(page){
 		window.location=page;
 	}
-	ng.sendMessageWebSocket = function(data){
-		if (ng.status_websocket == 2) {
+	
+	ng.sendMessageWebSocket = function(data, is_init){
+		is_init = (!empty(is_init)) ? is_init : false;
+
+		if (ng.status_websocket == 2 || (ng.status_websocket == 1 && is_init == true)) {
 			ng.conn.send(JSON.stringify(data));
 			return true;
 		}
 		return false;
 	}
+
 	var dadosWebSocket = {
 
 	};
