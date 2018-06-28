@@ -145,7 +145,7 @@ app.controller('RelatorioTotalVendasCliente', function($scope, $http, $window, U
 		}
 
 		if(!isNaN(ng.produto.id_produto)){
-			queryString += queryString == "" ? "?pro->id="+ng.produto.id_produto : "&pro->id="+ng.produto.id_produto ;
+			queryString += queryString == "" ? "?("+$.param({'pro->id=':{exp: ng.produto.id_produto+" OR pro.id_produto_pai="+ ng.produto.id_produto}})+")" : "&("+$.param({'pro->id=':{exp: ng.produto.id_produto +" OR pro.id_produto_pai="+ ng.produto.id_produto}})+")" ;
 		}
 
 		if(ng.flg_venda_obrigatoria == 1){

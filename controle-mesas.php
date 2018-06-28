@@ -336,12 +336,12 @@
 									<label class="control-label">Localizar comanda</label>
 									<div class="contorls">
 										<input id="txt_numero_comanda" 
-											class="form-control" type="number" 
+											class="form-control" type="text" 
 											placeholder="Digite o número da comanda e pressione ENTER" 
 											ng-enter="loadComandaById()" ng-model="busca.numero_comanda"
 											ng-if="(configuracao.flg_usa_cartao_magnetico == 0)">
 										<input id="txt_numero_comanda" 
-											class="form-control" type="number" 
+											class="form-control" type="text" 
 											placeholder="Digite o número da comanda e pressione ENTER" 
 											ng-enter="loadComandaByNumCartao()" ng-model="busca.numero_comanda"
 											ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">
@@ -421,11 +421,43 @@
 									<div class="form-group">
 										<label class="control-label">Localizar comanda</label>
 										<div class="contorls">
-											<div class="input-group">
+											<div class="input-group"
+												ng-if="(configuracao.flg_usa_cartao_magnetico == 0)">
 												<input id="txt_numero_comanda" 
-													class="form-control" type="number" 
+													class="form-control" type="text" 
+													placeholder="Digite o número da comanda e pressione ENTER" 
+													ng-enter="loadComandaById()" 
+													ng-model="busca.numero_comanda">
+												<span class="input-group-btn">
+													<button class="btn btn-block btn-info"
+														ng-click="loadComandaById()">
+														&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;
+													</button>
+												</span>
+											</div>
+
+											<div class="input-group"
+												ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">
+												<input id="txt_numero_comanda" 
+													class="form-control" type="text" 
+													placeholder="Digite o número da comanda e pressione ENTER" 
+													ng-enter="loadComandaByNumCartao()" 
+													ng-model="busca.numero_comanda">
+												<span class="input-group-btn">
+													<button class="btn btn-block btn-info"
+														ng-click="loadComandaByNumCartao()">
+														&nbsp;&nbsp;<i class="fa fa-search"></i>&nbsp;&nbsp;
+													</button>
+												</span>
+											</div>
+
+											<div class="input-group"
+												ng-if="(configuracao.flg_imprime_comanda_eletronica == 1)">
+												<input id="txt_numero_comanda" 
+													class="form-control" type="text" 
 													placeholder="comece a digitar..." 
-													ng-enter="enterComanda()" ng-model="busca.numero_comanda">
+													ng-enter="enterComanda()" 
+													ng-model="busca.numero_comanda">
 												<span class="input-group-btn">
 													<button class="btn btn-block btn-default"
 														ng-click="openQRCodeCapture()">
@@ -436,9 +468,20 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="col-xs-12 col-sm-2">
+									<div class="form-group">
+										<div class="controls">
+											<label class="control-label">&nbsp;</label>
+										</div>
+										<button class="btn btn-info" ng-click="showPesquisaAvancada()">
+											<i class="fa fa-search"></i> Pesquisa Avançada
+										</button>
+									</div>
+								</div>
 							</div>
 
-							<table class="table table-bordered table-hover mesa">
+							<table class="table table-bordered table-hover mesa" ng-if="(!configuracao.flg_ocultar_comandas == 1)">
 								<caption class="text-left text-bold mesa-caption">Comandas abertas</caption>
 								<thead ng-show="mesaSelecionada.comandas.length > 0">
 									<th width="100" class="text-middle text-center">Nº Comanda</th>
@@ -456,7 +499,7 @@
 								<tbody>
 									<tr style="cursor: pointer;"
 										ng-click="abrirDetalhesComanda(comanda.id_comanda)"
-										ng-repeat="comanda in mesaSelecionada.comandas | filter : busca.numero_comanda">
+										ng-repeat="comanda in mesaSelecionada.comandas">
 										<td class="text-center">#{{ comanda.id_comanda }}</td>
 										<td class="text-center" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">{{ comanda.num_cartao_fisico }}</td>
 										<td ng-if="comanda.id_cliente != configuracao.id_cliente_movimentacao_caixa" >{{ comanda.nome_cliente }}</td>
@@ -981,11 +1024,12 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
+											<button type="button" class="btn btn-block btn-danger btnCancelarPedido"
 												ng-click="cancelarPedido()">
 												Cancelar pedido
 											</button>
-											<button type="button" class="btn btn-block btn-info"
+											<button type="button" class="btn btn-block btn-info btnConfirmarPedido"
+												data-loading-text="Aguarde..."
 												ng-click="confirmarPedido()">
 												Confirmar pedido
 											</button>
@@ -1120,11 +1164,12 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
+											<button type="button" class="btn btn-block btn-danger btnCancelarPedido"
 												ng-click="cancelarPedido()">
 												Cancelar pedido
 											</button>
-											<button type="button" class="btn btn-block btn-info"
+											<button type="button" class="btn btn-block btn-info btnConfirmarPedido"
+												data-loading-text="Aguarde..."
 												ng-click="confirmarPedido()">
 												Confirmar pedido
 											</button>
@@ -1237,11 +1282,12 @@
 
 									<div class="row">
 										<div class="col-lg-12">
-											<button type="button" class="btn btn-block btn-danger"
+											<button type="button" class="btn btn-block btn-danger btnCancelarPedido"
 												ng-click="cancelarPedido()">
 												Cancelar pedido
 											</button>
-											<button type="button" class="btn btn-block btn-info"
+											<button type="button" class="btn btn-block btn-info btnConfirmarPedido"
+												data-loading-text="Aguarde..."
 												ng-click="confirmarPedido()">
 												Confirmar pedido
 											</button>
@@ -1291,6 +1337,7 @@
 									<thead ng-show="!(clientes_comanda == null)">
 										<tr>
 											<th class="text-center" width="60">ID Comanda</th>
+											<th class="text-center" width="60" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">Nº Cartão</th>
 											<th class="text-center">Nome</th>
 											<th class="text-center">Mesa</th>
 											<th class="text-center">Total</th>
@@ -1306,6 +1353,7 @@
 										</tr>
 										<tr ng-repeat="item in clientes_comanda">
 											<td class="text-center">{{ item.id }}</td>
+											<td class="text-center" ng-if="(configuracao.flg_usa_cartao_magnetico == 1)">{{ item.num_cartao_fisico }}</td>
 											<td>{{ item.nome }}</td>
 											<td class="text-center">{{ item.dsc_mesa }}</td>
 											<td class="text-right">R$ {{ item.vlr_total_mesa | numberFormat : configuracao.qtd_casas_decimais : ',' : '.' }}</td>
