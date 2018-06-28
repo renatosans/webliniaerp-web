@@ -882,6 +882,7 @@ app.controller('ProdutosController', function($scope, $timeout, $http, $window, 
 		ng.inventario_novo.id_deposito   = item.id;
 		$('#modal-depositos').modal('hide');
 	}
+	
 	ng.existsDateEstoque = function(dta_validade,id_deposito,id){
 		var exists = false ;
 		if(empty(ng.produto.estoque)){
