@@ -1,2 +1,0 @@
-* filter=lfs diff=lfs merge=lfs -text
-assets/imagens/bkp-fotos.tar.gz filter=lfs diff=lfs merge=lfs -text
