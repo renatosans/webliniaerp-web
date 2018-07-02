@@ -1165,7 +1165,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			ng.salvarItensVenda(data.id_venda,ng.produtos_enviar,0);
 		})
 		.error(function(data, status, headers, config) {
-			alert('Erro fatal');
+			alert('Ocorreu um erro ao gravar a venda. Ao fechar essa janela, tente finalizar a venda novamente.');
+            $('#modal_progresso_venda').modal('hide');
+            $('button').button('reset');
 		});
 	};
 
@@ -1212,7 +1214,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.salvarItensVenda(id_venda,produtos_enviar,init+1);
 			})
 			.error(function(data, status, headers, config) {
-				alert('Erro fatal');
+				alert('Ocorreu um erro ao gravar os itens da venda. Ao fechar essa janela, tente finalizar a venda novamente.');
+            	$('#modal_progresso_venda').modal('hide');
+            	$('button').button('reset');
 			});
 	};
 
@@ -1256,7 +1260,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.efetivarOrcamento(id_venda,produtos_enviar,init+1);
 			})
 			.error(function(data, status, headers, config) {
-				alert('Erro fatal');
+				alert('Ocorreu um erro ao confirmar o orçamento. Ao fechar essa janela, tente finalizar a venda novamente.');
+            	$('#modal_progresso_venda').modal('hide');
+            	$('button').button('reset');
 			});
 	};
 
@@ -1509,7 +1515,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				}
 			})
 			.error(function(data, status, headers, config) {
-				alert('Erro fatal');
+				alert('Ocorreu um erro ao gravar os pagamentos da venda. Ao fechar essa janela, tente finalizar a venda novamente.');
+            $('#modal_progresso_venda').modal('hide');
+            $('button').button('reset');
 			});
 	}
 
