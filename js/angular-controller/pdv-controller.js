@@ -3489,59 +3489,133 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			btn.button('loading');
 		}
 
-		aj.get(baseUrlApi()+"dados_venda_cnf/"+ng.id_venda+"/"+ng.caixa_open.id_caixa)
-		.success(function(data, status, headers, config) {
-			if( ng.status_websocket == 2 ){
-				if(!empty(ng.caixa.mod_impressora)) {
-					data.empreendimento.nome_empreendimento = removerAcentosSAT(data.empreendimento.nome_empreendimento);
-					data.venda.nome_usuario = removerAcentosSAT(data.venda.nome_usuario);
-					data.venda.nome_cliente = removerAcentosSAT(data.venda.nome_cliente);
+		if(!ng.pagamento_fulso) {
+			aj.get(baseUrlApi()+"dados_venda_cnf/"+ng.id_venda+"/"+ng.caixa_open.id_caixa)
+				.success(function(data, status, headers, config) {
+					if( ng.status_websocket == 2 ){
+						if(!empty(ng.caixa.mod_impressora)) {
+							data.empreendimento.nome_empreendimento = removerAcentosSAT(data.empreendimento.nome_empreendimento);
+							data.venda.nome_usuario = removerAcentosSAT(data.venda.nome_usuario);
+							data.venda.nome_cliente = removerAcentosSAT(data.venda.nome_cliente);
 
-					data.pagamentos = [];
-					$.each(data.pagamentos_enviar, function(i, item){
-						if(item.id_forma_pagamento == 6) { // cartão de crédito
-							item.forma_pagamento = item.descricao_forma_pagamento + ' (' + item.n_parcelas + 'x)';
-							item.valor_pagamento = item.valor_pagamento;
+							data.pagamentos = [];
+							$.each(data.pagamentos_enviar, function(i, item){
+								if(item.id_forma_pagamento == 6) { // cartão de crédito
+									item.forma_pagamento = item.descricao_forma_pagamento + ' (' + item.n_parcelas + 'x)';
+									item.valor_pagamento = item.valor_pagamento;
+								}
+
+								data.pagamentos.push({
+									dsc_formas_pagamento: removerAcentosSAT(item.descricao_forma_pagamento),
+									vlr_pagamento: item.valor_pagamento
+								});
+							});
+
+							$.each(data.itensVenda, function(i, item){
+								data.itensVenda[i].nome_produto = removerAcentosSAT(item.nome_produto);
+							});
+
+							data.qtdImpressoes = ng.caixa.qtd_vias_impressao;
+							data.cnfType = 'cnf';
+							
+							if(!silentMode)
+								btn.button('reset');
+							
+							var msg = {
+								from: ng.caixa_open.id_ws_web,
+								to: ng.caixa_open.id_ws_dsk,
+								type :'cnf_print',
+								message: JSON.stringify(data)
+							};
+							
+							if(!ng.sendMessageWebSocket(msg))
+								alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+
+							if(!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1 && !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
+								window.close();
+							else
+								ng.resetPdv('venda',true);
+						} else {
+							alert('Não foi possível emitir o cupom pois a impressora não está configurada no cadastro do caixa');
+							
+							if(!silentMode)
+								btn.button('reset');
+							else
+								$("#modal-cnf").hide();
 						}
+					} else {
+						alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
 
-						data.pagamentos.push({
-							dsc_formas_pagamento: removerAcentosSAT(item.descricao_forma_pagamento),
-							vlr_pagamento: item.valor_pagamento
-						});
-					});
+						if(!silentMode)
+							btn.button('reset');
+						else
+							$("#modal-cnf").hide();
+					}
+				})
+				.error(function(data, status, headers, config) {
+					alert('Ocorreu um erro ao processar os dados')
+				});
+		}
+		else {
+			if( ng.status_websocket == 2 ){
+				var pagamentos_enviar = angular.copy(ng.pagamentos_enviar);
 
-					$.each(data.itensVenda, function(i, item){
-						data.itensVenda[i].nome_produto = removerAcentosSAT(item.nome_produto);
-					});
+				angular.forEach(pagamentos_enviar, function(pagamento) {
+					if(pagamento.id_forma_pagamento == 6) { // Cartão de Crédito
+						pagamento.n_parcelas = pagamento.parcelas.length;
+						angular.forEach(pagamento.parcelas, function(parcela) {
+							parcela.n_parcelas = parcela.parcelas;
+							delete parcela.parcelas;
+						})
+					}
+					else {
+						pagamento.n_parcelas = pagamento.parcelas;
+						delete pagamento.parcelas;
+					}
+				});
 
-					data.qtdImpressoes = ng.caixa.qtd_vias_impressao;
-					data.cnfType = 'cnf';
-					
-					if(!silentMode)
-						btn.button('reset');
-					
+				var data = {
+					empreendimento: ng.empreendimento,
+					nome_usuario: ng.userLogged.nme_usuario,
+					nome_cliente: ng.cliente.nome,
+					data_lancamento: moment().format('YYYY-MM-DD HH:mm:ss'),
+					pagamentos: pagamentos_enviar,
+					printerModel: ng.caixa.mod_impressora,
+					flgAssinaturaCliente: false
+				};
+
+				dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Deseja imprimir linhas de assinaturas?</strong>');
+				dlg.result.then(function(btn){
+					data.flgAssinaturaCliente = true;
+
 					var msg = {
 						from: ng.caixa_open.id_ws_web,
 						to: ng.caixa_open.id_ws_dsk,
-						type :'cnf_print',
+						type :'cpa_print',
 						message: JSON.stringify(data)
 					};
 					
-					if(!ng.sendMessageWebSocket(msg))
-						alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
-
-					if(!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1 && !empty(ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda) && ng.configuracoes.flg_fechar_guia_ao_finalizar_uma_comanda == 1)
-						window.close();
-					else
-						ng.resetPdv('venda',true);
-				} else {
-					alert('Não foi possível emitir o cupom pois a impressora não está configurada no cadastro do caixa');
-					
 					if(!silentMode)
 						btn.button('reset');
-					else
-						$("#modal-cnf").hide();
-				}
+
+					if(!ng.sendMessageWebSocket(msg))
+						alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+				}, function(){
+					var msg = {
+						from: ng.caixa_open.id_ws_web,
+						to: ng.caixa_open.id_ws_dsk,
+						type :'cpa_print',
+						message: JSON.stringify(data)
+					};
+
+					if(!silentMode)
+						btn.button('reset');
+					
+					if(!ng.sendMessageWebSocket(msg))
+						alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
+				});
+
+				ng.resetPdv('venda',true);
 			} else {
 				alert('Não foi possível emitir o cupom pois não existe conexão com o aplicativo cliente (WebliniaERP Client)');
 
@@ -3550,12 +3624,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				else
 					$("#modal-cnf").hide();
 			}
-		})
-		.error(function(data, status, headers, config) {
-			alert('Ocorreu um erro ao processar os dados')
-		});
-		//alert("Ao abrir o aplicativo, informe o ID da venda: "+ ng.id_venda);
-		//ng.cancelar();
+		}
 	}
 
 	ng.printDiv = function(id,pg) {
