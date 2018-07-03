@@ -120,8 +120,8 @@ app.controller('NotaFiscalServicoController', function($scope, $http, $window, $
 
 				var msg = "" ;
 				if( typeof data != 'undefined' && !empty(data.erros)){
-					$.each(JSON.parse(data.erros[0].mensagem).erros,function(i,v) {
-						msg += v.mensagem+"<br/>";
+					$.each(JSON.parse(data.erros,function(i,v) {
+						msg += v.mensagem.replace("/\n","<br>")+"<br>";
 					});
 				}
 				else
