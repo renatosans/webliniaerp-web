@@ -819,6 +819,11 @@
 
 											</td>
 										</tr>
+										<tr ng-if="(dadosOrcamento.qtd_pessoas > 0 && configuracoes.controlar_quantidade_pessoas == 1)">
+											<td colspan="2">
+												Total por pessoa <strong class="pull-right">R$ {{ vlrTotalCompra / dadosOrcamento.qtd_pessoas | numberFormat:2:',':'.' }}</strong>
+											</td>
+										</tr>
 										<tr>
 											<td colspan="2">
 												Total Recebido <strong class="pull-right">R$ {{ total_pg | numberFormat:2:',':'.' }}</strong>
@@ -1332,7 +1337,7 @@
 						<div class="pull-right">
 							<button type="button" class="btn btn-lg btn-danger" ng-if="receber_pagamento == false" ng-click="cancelar()"><i class="fa fa-times-circle"></i> Cancelar Venda</button>
 							<button type="button" class="btn btn-lg btn-warning" ng-if="receber_pagamento" ng-click="cancelarPagamento()"><i class="fa fa-times-circle"></i> Cancelar Pagamento</button>
-							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled="(modo_venda == null && total_pg == 0) || (modo_venda == 'pdv' && (total_pg == 0 || total_pg < vlrTotalCompra)) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
+							<button type="button" class="btn btn-lg btn-success" ng-if="receber_pagamento || modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-compra" ng-click="salvar()" ng-disabled="(modo_venda == null && total_pg == 0) || (modo_venda == 'pdv' && !dadosOrcamento.flg_comanda == 1 && (total_pg == 0 || total_pg < vlrTotalCompra )) || (modo_venda == 'pdv' && total_pg == 0) || (modo_venda == 'est' && (carrinho.length <= 0))"><i class="fa fa-save"></i> Finalizar</button>
 							<button type="button" class="btn btn-lg btn-primary" ng-if="receber_pagamento == false" ng-disabled="carrinho.length == 0" ng-click="receberPagamento()"><i class="fa fa-money"></i> Receber</button>
 							<button  type="button" class="btn btn-lg btn-success" ng-show="receber_pagamento == false && modo_venda == 'est'" data-loading-text=" Aguarde..." id="btn-fazer-orcamento" ng-click="salvarOrcamento()" ng-disabled="carrinho.length <= 0 || !isNumeric(cliente.id)"><i class="fa fa-save"></i> Orçamento</button>
 
@@ -1464,6 +1469,11 @@
 										<tr>
 											<td colspan="2" style="background: #A2A2A2;">
 
+											</td>
+										</tr>
+										<tr ng-if="(dadosOrcamento.qtd_pessoas > 0 && configuracoes.controlar_quantidade_pessoas == 1)">
+											<td colspan="2">
+												Total por pessoa <strong class="pull-right">R$ {{ vlrTotalCompra / dadosOrcamento.qtd_pessoas | numberFormat:2:',':'.' }}</strong>
 											</td>
 										</tr>
 										<tr>
