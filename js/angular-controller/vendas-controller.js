@@ -85,7 +85,10 @@ app.controller('VendasController', function($scope, $http, $window, $dialogs, Us
 						id_empreendimento 		: ng.userLogged.id_empreendimento,
 						pagamento_fulso 		: false,
 						id_controle_pagamento 	: null,
-						id_cliente 				: venda.id_cliente
+						id_cliente 				: venda.id_cliente,
+						id_vendedor 			: venda.id_vendedor,
+						cpf						: venda.cpf ? venda.cpf : null,
+						cnpj					: venda.cnpj ? venda.cnpj : null
 					})
 				}
 			})
