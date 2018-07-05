@@ -164,7 +164,7 @@ app.controller('ControleMesasController', function(
 					angular.forEach(ng.pagamentosComanda, function(item, index){
 						ng.totalPagoComanda += item.vlr_pagamento;
 					});
-				});
+				})
 				.error(function(data, status, headers, config) {
 					ng.totalPagoComanda = 0;
 				}); 
