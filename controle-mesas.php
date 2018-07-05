@@ -760,8 +760,12 @@
 							<div class="row client-list">
 								<div class="col-lg-12">
 									<table class="table">
-										<caption ng-if="comandaSelecionada.cliente.id != configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption">Cliente: {{ comandaSelecionada.cliente.nome }}</caption>
-										<caption ng-if="comandaSelecionada.cliente.id == configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption"><b>Cliente: (Cliente não informado)</b></caption>
+										<caption ng-if="comandaSelecionada.cliente.id == configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption">Cliente: (Cliente não informado)</caption>
+										<caption ng-if="comandaSelecionada.cliente.id != configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption"><b>Cliente: {{ comandaSelecionada.cliente.nome }}</b>
+											/ Saldo Devedor : <span ng-if="comandaSelecionada.cliente.vlr_saldo_devedor>0" class="text-bold text-left mesa-caption" style="color:green">R$ {{ comandaSelecionada.cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
+											<span ng-if="comandaSelecionada.cliente.vlr_saldo_devedor<0" class="text-bold text-left mesa-caption" style="color:red">R$ {{ comandaSelecionada.cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
+											<span ng-if="comandaSelecionada.cliente.vlr_saldo_devedor==0" class="text-bold text-left mesa-caption" style="color:blue">R$ {{ comandaSelecionada.cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
+										</caption>
 
 										<thead>
 											<th class="text-middle">Produto</th>

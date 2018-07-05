@@ -155,6 +155,16 @@ app.controller('ControleMesasController', function(
 		
 	}
 
+	ng.getSaldoDevedorCliente = function(){
+		aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ ng.userLogged.id_empreendimento+"?usu->id="+ng.comandaSelecionada.cliente.id)
+			.success(function(data, status, headers, config) {
+				ng.comandaSelecionada.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
+			})
+			.error(function(data, status, headers, config) {
+				
+			});
+	}
+
 	ng.vlrTotalPago = function(){
 		if(!empty(ng.comandaSelecionada) && typeof ng.comandaSelecionada.comanda == 'object'){
 			aj.get(baseUrlApi()+'venda/'+ ng.comandaSelecionada.comanda.id +'/pagamentos')
@@ -502,6 +512,7 @@ app.controller('ControleMesasController', function(
 				ng.loadCartoes();
 			}
 			ng.vlrTotalPago();
+			ng.getSaldoDevedorCliente();
 		})
 		.error(function(data, status, headers, config) {
 			ng.comandaSelecionada = {} ;
