@@ -10,7 +10,7 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
     ng.contas    					= [];
     ng.paginacao           			= {conta:null} ;
     ng.busca               			= {id_forma_pagamento:"",tipoData:"" } ;
-    ng.busca_aux               		= {id_forma_pagamento:"",tipoData:"", cliente: ""} ;
+    ng.busca_aux               		= {id_forma_pagamento:[""],tipoData:"", cliente: ""} ;
     ng.conta                        = {} ;
     ng.movimentacao 				= {};
     ng.movimentacoes 				= null;
@@ -297,7 +297,6 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 		aj.get(baseUrlApi()+"relatorio/pagamentos"+query_string)
 			.success(function(data, status, headers, config) {
 				$.each(data,function(i,v){
-						
 						if(v.id_forma_pagamento == 5){
 							data[i].vlr_taxa_maquineta           = (Math.round(v.valor_pagamento * 100) / 100) * v.taxa_maquineta;
 							data[i].valor_desconto_maquineta     = (Math.round(v.valor_pagamento * 100) / 100) - data[i].vlr_taxa_maquineta ;
@@ -329,6 +328,22 @@ app.controller('relPagamentosController', function($scope, $http, $window, $dial
 				
 				ng.movimentacoes = data;
 				
+				ng.totais_forma_pagamento = _.groupBy(data, 'id_forma_pagamento');
+				
+				$.each(ng.totais_forma_pagamento, function(id_forma_pagamento, pagamentos){
+					ng.totais_forma_pagamento[id_forma_pagamento] = {
+						id_forma_pagamento: id_forma_pagamento,
+						dsc_forma_pagamento: pagamentos[0].descricao_forma_pagamento,
+						pagamentos: pagamentos,
+						vlr_total: 0
+					};
+
+					angular.forEach(pagamentos, function(pagamento){
+						ng.totais_forma_pagamento[id_forma_pagamento].vlr_total += pagamento.valor_pagamento;
+					});
+				});
+
+				console.log(ng.totais_forma_pagamento);
 			})
 			.error(function(data, status, headers, config) {
 				ng.movimentacoes = null;

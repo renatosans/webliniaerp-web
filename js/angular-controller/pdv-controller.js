@@ -55,6 +55,9 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 	ng.dsc_formas_pagamento     = [] ;
 	ng.dadosOrcamento           = null ;
 	ng.margemAplicada           = {atacado:false,intermediario:false,intermediario_ii:false,varejo:true,parceiro:false} ;
+	ng.finalizarPagamentoParcial = 0;
+
+	ng.ultimoPagamento = 0;
 
 	ng.dados_venda = {};
 	ng.formas_pagamento = [
@@ -564,7 +567,6 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		else
 			var data_atual = $("#dta_venda").val();
 
-
 		$.each(ng.recebidos, function(i,v){
 			var parcelas = Number(v.parcelas);
 
@@ -672,6 +674,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		}
 
 		var produtos = angular.copy(ng.carrinho);
+
+		var vendaConfirmada = null;
+		var statusVenda = null;
+		if(ng.orcamento || (!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1) && (!empty(ng.finalizarPagamentoParcial) && ng.finalizarPagamentoParcial == 1)){
+			vendaConfirmada = 0;
+			statusVenda = 1;
+		} else{
+			vendaConfirmada = 1;
+			statusVenda = 4;
+		}
+
 		var venda    = {
 			id        						: empty(params.id_orcamento) ?  null : params.id_orcamento ,
 			id_usuario						: ng.vendedor.id_vendedor,
@@ -680,10 +693,10 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			vlr_total_venda					: ng.vlrTotalCompra,
 			vlr_troco						: ng.troco,
 			id_autorizador_desconto 		: (!empty(ng.autorizador) && !empty(ng.autorizador.id)) ? ng.autorizador.id : null,
-			venda_confirmada 				: ng.orcamento ? 0 : 1,
+			venda_confirmada 				: vendaConfirmada,
 			id_empreendimento				: ng.userLogged.id_empreendimento,
 			id_deposito 					: ng.caixa.depositos,
-			id_status_venda 				: ng.orcamento ? 1 : 4,
+			id_status_venda 				: statusVenda,
 			margem_aplicada     			: ng.margem_aplicada_venda,
 			dta_venda           			: (empty(params.id_orcamento) ? null : moment().format('YYYY-MM-DD HH:mm:ss') ),
 			dsc_observacoes_gerais 			: ng.dsc_observacoes_gerais
@@ -835,7 +848,31 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			.success(function(data, status, headers, config) {
 				if(!empty(ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas) && ng.configuracoes.flg_forcar_fechamento_caixa_zero_horas == 1) {
 					if(data.open_today){
-						ng.efetivarCompra();
+						if (ng.configuracoes.controlar_quantidade_pessoas == 1 && ng.total_pg <= ng.vlrTotalCompra) {
+							var dlg = $dialogs.confirm(
+								'Atenção!!!',
+								'<strong>'+ 'Manter orçamento/comanda em aberto?' +'</strong>'
+							);
+
+							dlg.result.then(
+								function(btn){
+									ng.finalizarPagamentoParcial = 1;
+									ng.efetivarCompra();
+								},
+								function(){
+									if (!$.isNumeric(ng.cliente.id)){
+										$dialogs.notify('Atenção!','<strong>Para realizar uma venda no modo estoque é necessário selecionar um cliente</strong>');
+										$('button').button('reset');
+									} else{
+										ng.modo_venda = 'est';
+										ng.ultimoPagamento = 1;
+										ng.efetivarCompra();
+									}
+								}
+							);
+						} else{
+							ng.efetivarCompra();
+						}
 					}else{
 						var dialog = $dialogs.notify('Atenção!','<strong>Você está utilizando um caixa que foi aberto em uma data anterior a hoje, não será possível realizar nenhuma operação. Feche o caixa para que possa continuar.</strong>');
 						dialog.result.then(
@@ -850,8 +887,33 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						return;
 					}
 				}
-				else
-					ng.efetivarCompra();
+				else{
+					if (ng.configuracoes.controlar_quantidade_pessoas == 1 && ng.total_pg <= ng.vlrTotalCompra && (!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1)) {
+						var dlg = $dialogs.confirm(
+							'Atenção!!!',
+							'<strong>'+ 'Manter orçamento/comanda em aberto?' +'</strong>'
+						);
+
+						dlg.result.then(
+							function(btn){
+								ng.finalizarPagamentoParcial = 1;
+								ng.efetivarCompra();
+							},
+							function(){
+								if (!$.isNumeric(ng.cliente.id)){
+									$dialogs.notify('Atenção!','<strong>Para realizar uma venda no modo estoque é necessário selecionar um cliente</strong>');
+									$('button').button('reset');
+								} else{
+									ng.ultimoPagamento = 1;
+									ng.modo_venda = 'est';
+									ng.efetivarCompra();
+								}
+							}
+						);
+					} else{
+						ng.efetivarCompra();
+					}
+				}
 			})
 			.error(function(data, status, headers, config) {
 				$('button').button('reset');
@@ -1201,10 +1263,17 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 		init = init == null ? 0 : init ;
 		var item_enviar = produtos_enviar[init];
 
+		var vendaConfirmada = null;
+		if(ng.orcamento || (!empty(ng.dadosOrcamento) && ng.dadosOrcamento.flg_comanda == 1) && (!empty(ng.finalizarPagamentoParcial) && ng.finalizarPagamentoParcial == 1)){
+			vendaConfirmada = 0;
+		} else{
+			vendaConfirmada = 1;
+		}
+
 		aj.post(baseUrlApi()+"venda/gravarItensVenda",{	id_venda:id_venda ,
 														id_vendedor :ng.vendedor.id_vendedor,
 														produtos:item_enviar,
-														venda_confirmada 	: ng.orcamento ? 0 : 1,
+														venda_confirmada 	: vendaConfirmada,
 														id_empreendimento:ng.userLogged.id_empreendimento,
 														id_deposito:ng.caixa.depositos,
 														id_caixa : ng.caixa.id
@@ -1390,9 +1459,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			aj.post(baseUrlApi()+"venda/gravarMovimentacoes",{ 
 															   id_venda:id_venda,
 															   id_mesa : id_mesa ,
-															   pagamentos:ng.pagamentos_enviar,
-															   id_cliente:ng.cliente.id,
-															   id_empreendimento:ng.userLogged.id_empreendimento
+															   pagamentos: ng.pagamentos_enviar,
+															   pagamentosAnteriores: ng.pagamentosComanda,
+															   ultimoPagamento: ng.ultimoPagamento,
+															   id_cliente: ng.cliente.id,
+															   id_empreendimento: ng.userLogged.id_empreendimento
 															 }
 			).success(function(data, status, headers) {
 				var btn = $('#btn-fazer-compra');
@@ -2554,6 +2625,23 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 			total += Number(v.valor);
 		});
 		ng.total_pg = Math.round( total * 100) /100 ;
+		if (!empty(ng.dadosOrcamento)) {
+			ng.calcTotalPago();
+		}
+	}
+
+	ng.calcTotalPago = function(){
+		ng.pagamentosComanda = [];
+		aj.get(baseUrlApi()+'venda/'+ params.id_orcamento +'/pagamentos')
+			.success(function(data, status, headers, config) {
+				ng.pagamentosComanda = data;
+				angular.forEach(ng.pagamentosComanda, function(item, index){
+					ng.total_pg += item.vlr_pagamento;
+				});
+			})
+			.error(function(data, status, headers, config) {
+				
+			});
 	}
 
 	ng.getTotalPagamento = function(tirar_id_forma_pagamento){

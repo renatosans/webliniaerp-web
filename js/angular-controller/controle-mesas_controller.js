@@ -73,6 +73,7 @@ app.controller('ControleMesasController', function(
 			ng.isFullscreen = !ng.isFullscreen;
 		}
 	}
+	ng.new_mesa = {};
 
 	ng.getValorTaxaServico = function(){
 		if(!empty(ng.configuracao.prc_taxa_servico))
@@ -89,6 +90,95 @@ app.controller('ControleMesasController', function(
 		$('#pesquisa-avancada').modal('show');
 		ng.clientes_comanda = null;
 		ng.busca_avancada.nome = "";
+	}
+
+	ng.showAddMesa = function(){
+		$('#new-mesa').modal('show');
+		ng.new_mesa.dsc_mesa = "";
+		ng.msgNewMesaSuccess = null;
+		ng.msgNewMesaError = null;
+	}
+
+	ng.saveNewMesa = function(){
+		ng.msgNewMesaError = null;
+		if (empty(ng.new_mesa.dsc_mesa)){
+			ng.msgNewMesaError = "Preencha o nome da Mesa";
+			return false;
+		}
+		
+		ng.new_mesa.id_empreendimento = ng.userLogged.id_empreendimento;
+
+		var post = ng.new_mesa;
+		aj.post(baseUrlApi()+'mesa/new', {data: JSON.stringify(post)})
+		.success(function(data, status, headers, config) {
+			ng.msgNewMesaSuccess = "Mesa criada com secesso";
+			ng.new_mesa.dsc_mesa = "";
+			ng.changeTela('mesas');
+		})
+		.error(function(data, status, headers, config) {
+			ng.msgNewMesaError = "Erro ao criar mesa";
+		}); 
+	}
+
+	ng.showModalPessoas = function(){
+		$('#qtd-pessoas').modal('show');
+	}
+
+	ng.diminuirQuantidadePessoas = function() {
+		if(empty(ng.comandaSelecionada.comanda.qtd_pessoas))
+			ng.comandaSelecionada.comanda.qtd_pessoas = 0;
+		
+		if(parseInt(ng.comandaSelecionada.comanda.qtd_pessoas, 10) > 0)
+			ng.comandaSelecionada.comanda.qtd_pessoas = (parseInt(ng.comandaSelecionada.comanda.qtd_pessoas,10) - 1);
+	}
+
+	ng.aumentarQuantidadePessoas = function() {
+		if(empty(ng.comandaSelecionada.comanda.qtd_pessoas))
+			ng.comandaSelecionada.comanda.qtd_pessoas = 1;
+		else
+			ng.comandaSelecionada.comanda.qtd_pessoas = (parseInt(ng.comandaSelecionada.comanda.qtd_pessoas,10) + 1);
+	}
+
+	ng.updateQtdPessoas = function(){
+		if (ng.comandaSelecionada.comanda.qtd_pessoas === parseInt(ng.comandaSelecionada.comanda.qtd_pessoas, 10)){
+			aj.post(baseUrlApi()+'comanda/'+ ng.comandaSelecionada.comanda.id +'/update-qtd-pessoas/'+ ng.comandaSelecionada.comanda.qtd_pessoas)
+			.success(function(data, status, headers, config) {
+				$('#qtd-pessoas').modal('hide');
+			})
+			.error(function(data, status, headers, config) {
+				
+			}); 
+		}
+		else{
+			alert("Digite apenas números")
+		}
+		
+	}
+
+	ng.getSaldoDevedorCliente = function(){
+		aj.get(baseUrlApi()+"usuarios/saldodevedor/"+ ng.userLogged.id_empreendimento+"?usu->id="+ng.comandaSelecionada.cliente.id)
+			.success(function(data, status, headers, config) {
+				ng.comandaSelecionada.cliente.vlr_saldo_devedor = data.vlr_saldo_devedor;
+			})
+			.error(function(data, status, headers, config) {
+				
+			});
+	}
+
+	ng.vlrTotalPago = function(){
+		if(!empty(ng.comandaSelecionada) && typeof ng.comandaSelecionada.comanda == 'object'){
+			aj.get(baseUrlApi()+'venda/'+ ng.comandaSelecionada.comanda.id +'/pagamentos')
+				.success(function(data, status, headers, config) {
+					ng.pagamentosComanda = data;
+					ng.totalPagoComanda = 0;
+					angular.forEach(ng.pagamentosComanda, function(item, index){
+						ng.totalPagoComanda += item.vlr_pagamento;
+					});
+				})
+				.error(function(data, status, headers, config) {
+					ng.totalPagoComanda = 0;
+				}); 
+		}
 	}
 
 	ng.showAvaliableKitchens = function(){
@@ -421,6 +511,8 @@ app.controller('ControleMesasController', function(
 			if(!empty(ng.vincular_cartao_fisico_automaticamente) && ng.vincular_cartao_fisico_automaticamente && !empty(ng.num_cartao_fisico)) {
 				ng.loadCartoes();
 			}
+			ng.vlrTotalPago();
+			ng.getSaldoDevedorCliente();
 		})
 		.error(function(data, status, headers, config) {
 			ng.comandaSelecionada = {} ;
@@ -1265,6 +1357,17 @@ app.controller('ControleMesasController', function(
 			});
 		}
 		return total ;
+	}
+
+	ng.tempoOcupacao = function(){
+		var tempo = 0;
+		if(!empty(ng.comandaSelecionada) && typeof ng.comandaSelecionada.comanda == 'object'){
+			var current = moment().format('YYYY-MM-DD HH:mm:ss');
+			current = moment(current, 'YYYY-MM-DD HH:mm:ss');
+			var abertura = moment(ng.comandaSelecionada.comanda.dta_abertura, 'YYYY-MM-DD HH:mm:ss');
+			tempo = current.diff(abertura, 'minutes');
+		}
+		return tempo;
 	}
 
 	ng.goChangeCliente = function(){

@@ -1873,7 +1873,7 @@
 										</div>
 									</div>
 
-									<div class="col-sm-4">
+									<div class="col-sm-3">
 										<div class="form-group">
 											<label for="" class="control-label">Imprimir Cupom Não-Fiscal antes de fechar guia?</label>
 											<div class="form-group">
@@ -1890,8 +1890,22 @@
 											</div>
 										</div>
 									</div>
-
-									<div class="col-lg-2">
+									<div class="col-sm-3">
+										<div class="form-group">
+											<label for="" class="control-label">Controlar quantidade de pessoas?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.controlar_quantidade_pessoas" value="1" name="controlar_quantidade_pessoas"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input ng-model="configuracoes.controlar_quantidade_pessoas" value="0" name="controlar_quantidade_pessoas"   type="radio" class="inline-radio">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
 									</div>
 									<div class="col-lg-3">
 										<div class="form-group">

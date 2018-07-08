@@ -162,6 +162,7 @@
 					<div class="col-sm-12">
 						<div class="pull-right">
 							<button class="btn btn-sm btn-success hidden-print"  id="invoicePrint"><i class="fa fa-print"></i> Imprimir</button>
+							<button class="btn btn-sm btn-success hidden-print" ng-click="doExportExcel('data')"><i class="fa fa-file-excel-o"></i> Exportar p/ Excel</button>
 						</div>
 					</div>
 				</div>
@@ -172,7 +173,7 @@
 				<p><b>Data de fechamento :</b> {{ movimentacao.dta_fechamento | dateFormat:'dateTime' }} </p>
 				<div class="alert alert-delete" style="display:none"></div>
 
-				<table class="table table-bordered table-condensed table-striped table-hover">
+				<table id="data" class="table table-bordered table-condensed table-striped table-hover">
 					<thead ng-if="movimentacoes.length > 0">
 						<tr colspan="5" ng-if="movimentacoes.length > 0">
 							<td style="background: #D5D5D5;" colspan="9" class="text-uppercase text-center" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
@@ -682,6 +683,8 @@
 	<script src="js/extras.js"></script>
 
 	<!-- AngularJS -->
+	<script src="js/tableExport/jquery.base64.js" type="text/javascript"></script>  
+	<script src="js/tableExport/tableExport.js" type="text/javascript"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.js"></script>
 	<script src="js/angular-strap.min.js"></script>
 	<script src="js/angular-strap.tpl.min.js"></script>

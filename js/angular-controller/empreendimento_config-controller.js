@@ -1590,6 +1590,14 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item);
 		}
+		if(ng.configuracoes.controlar_quantidade_pessoas != undefined){
+			var item = {
+							nome 				:'controlar_quantidade_pessoas',
+							valor 				:ng.configuracoes.controlar_quantidade_pessoas , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
 		if(ng.configuracoes.flg_controlar_comanda_cliente != undefined){
 			var item = {
 							nome 				:'flg_controlar_comanda_cliente',

@@ -302,7 +302,7 @@
 
 				<div class="row" id="divImprimir">
 					<div class="col-sm-12">
-						<table id="registro" class="table table-bordered table-condensed table-striped table-hover" ng-if="(movimentacoes != null)">
+						<table id="registro" class="table table-bordered table-condensed table-striped table-hover table-sm" ng-if="(movimentacoes != null)">
 							<thead>
 								<tr>
 									<th rowspan="2" class="text-center text-middle">
@@ -403,22 +403,47 @@
 								<tr ng-repeat-end ng-if="item.id_forma_pagamento == 6 && ccDetalhes" ng-repeat="parcela in item.parcelas">
 									<td class="text-right" colspan="4">{{ parcela.current_parcela+"/"+parcela.total_parcelas }} em {{ parcela.data_pagamento | dateFormat:'date' }}</td>
 								</tr>
+							</tbody>
+							<tfoot>
 								<tr ng-if="movimentacoes.length > 0">
-									<td colspan="4" class="text-right"> Total</td>
-									<td style="color:#000;" class="text-right">
-										<strong>R$ {{ totais.total | numberFormat:2:',':'.'}}</strong>
+									<td colspan="9" class="text-right text-bold text-uppercase" style="background: #D5D5D5;">TOTAIS POR FORMA DE PAGAMENTO</td>
+								</tr>
+								<tr ng-if="movimentacoes.length > 0" ng-repeat="fp in totais_forma_pagamento">
+									<td colspan="8" class="text-right">
+										<strong>{{ fp.dsc_forma_pagamento }} ({{ ((fp.vlr_total / totais.total)*100) | numberFormat : 2 : ',' : '.' }}%)</strong>
 									</td>
-									<td ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-
-									</td>
-									<td  style="color:#000;" class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-										<strong>R$ {{ total_desconto_taxa_maquineta | numberFormat:2:',':'.'}}</strong>
-									</td>
-									<td colspan="3" style="color:#000;" class="text-right" ng-if="funcioalidadeAuthorized('ver_taxa_maquineta')">
-										<strong>R$ {{ totais.total - total_desconto_taxa_maquineta | numberFormat:2:',':'.'}}</strong>
+									<td class="text-right">
+										<strong>R$ {{ fp.vlr_total | numberFormat : 2 : ',' : '.' }}</strong>
 									</td>
 								</tr>
-							</tbody>
+								<tr ng-if="movimentacoes.length > 0">
+									<td colspan="9" class="text-right text-bold text-uppercase" style="background: #D5D5D5;">TOTAIS</td>
+								</tr>
+								<tr ng-if="movimentacoes.length > 0">
+									<td colspan="8" class="text-right">
+										<strong>(A) Total Recebido Bruto (100%)</strong>
+									</td>
+									<td class="text-right">
+										<strong>R$ {{ totais.total | numberFormat : 2 : ',' : '.' }}</strong>
+									</td>
+								</tr>
+								<tr ng-if="movimentacoes.length > 0">
+									<td colspan="8" class="text-right">
+										<strong>(B) Total Taxa Maquineta</strong>
+									</td>
+									<td class="text-right">
+										<strong>R$ {{ total_desconto_taxa_maquineta | numberFormat : 2 : ',' : '.' }}</strong>
+									</td>
+								</tr>
+								<tr ng-if="movimentacoes.length > 0">
+									<td colspan="8" class="text-right">
+										<strong>(A - B) Total Recebido Líquido</strong>
+									</td>
+									<td class="text-right">
+										<strong>R$ {{ (totais.total - total_desconto_taxa_maquineta) | numberFormat : 2 : ',' : '.' }}</strong>
+									</td>
+								</tr>
+							</tfoot>
 						</table>
 						<span ng-if="(msg_error)" class="alert alert-{{ (status == 404) ? 'warning' : ((status == 500) ? 'danger' : '') }}">{{ msg_error }}</span>
 					</div>

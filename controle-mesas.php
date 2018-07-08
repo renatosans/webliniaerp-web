@@ -358,6 +358,18 @@
 									</button>
 								</div>
 							</div>
+							<div class="pull-right" ng-show="funcioalidadeAuthorized('add_mesa')">
+								<div class="col-xs-12 col-sm-2">
+									<div class="form-group">
+										<div class="controls">
+											<label class="control-label">&nbsp;</label>
+										</div>
+										<button class="btn btn-success" ng-click="showAddMesa()">
+											<i class="fa fa-plus-circle"></i> Nova Mesa
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div class="row">
 							<div ng-repeat="(index, mesa) in mesas track by index" class="col-xs-6 col-sm-3 col-md-3 col-lg-2">
@@ -477,6 +489,19 @@
 										<button class="btn btn-info" ng-click="showPesquisaAvancada()">
 											<i class="fa fa-search"></i> Pesquisa Avançada
 										</button>
+									</div>
+								</div>
+
+								<div class="pull-right">
+									<div class="col-xs-12 col-sm-2">
+										<div class="form-group">
+											<div class="controls">
+												<label class="control-label">&nbsp;</label>
+											</div>
+											<button class="btn btn-success" ng-click="showAddMesa()">
+												<i class="fa fa-plus-circle"></i> Nova Mesa
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -681,11 +706,21 @@
 									<span ng-if="(comandaSelecionada.comanda.num_cartao_fisico)">
 										<i class="fa fa-credit-card" aria-hidden="true"></i> {{ comandaSelecionada.comanda.num_cartao_fisico }}
 									</span>
+									<span ng-if="configuracao.controlar_quantidade_pessoas == 1">
+										<i class="fa fa-user"></i> {{ comandaSelecionada.comanda.qtd_pessoas }}
+									</span>
 								</small>
 								<div class="pull-right">
 									<button ng-click="changeTela('detMesa', null, $event)" type="button" class="btn btn-xs btn-primary">
 										<i class="fa fa-chevron-circle-left fa-2 yexy" aria-hidden="true"></i>
 										<span class="hidden-xs">Voltar</span>
+									</button>
+									<button type="button" 
+										class="btn btn-xs btn-default hidden-xs" 
+										ng-click="showModalPessoas()" 
+										ng-if="configuracao.controlar_quantidade_pessoas == 1">
+										<i class="fa fa-plus-circle"></i>
+										Qtd Pessoas
 									</button>
 									<button type="button" class="btn btn-xs btn-default" 
 										ng-if="((configuracao.flg_usa_cartao_magnetico == 1) && (comandaSelecionada.comanda.num_cartao_fisico == null))"
@@ -725,8 +760,12 @@
 							<div class="row client-list">
 								<div class="col-lg-12">
 									<table class="table">
-										<caption ng-if="comandaSelecionada.cliente.id != configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption">Cliente: {{ comandaSelecionada.cliente.nome }}</caption>
-										<caption ng-if="comandaSelecionada.cliente.id == configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption"><b>Cliente: (Cliente não informado)</b></caption>
+										<caption ng-if="comandaSelecionada.cliente.id == configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption">Cliente: (Cliente não informado)</caption>
+										<caption ng-if="comandaSelecionada.cliente.id != configuracao.id_cliente_movimentacao_caixa" class="text-bold text-left mesa-caption"><b>Cliente: {{ comandaSelecionada.cliente.nome }}</b>
+											/ Saldo Devedor : <span ng-if="comandaSelecionada.cliente.vlr_saldo_devedor>0" class="text-bold text-left mesa-caption" style="color:green">R$ {{ comandaSelecionada.cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
+											<span ng-if="comandaSelecionada.cliente.vlr_saldo_devedor<0" class="text-bold text-left mesa-caption" style="color:red">R$ {{ comandaSelecionada.cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
+											<span ng-if="comandaSelecionada.cliente.vlr_saldo_devedor==0" class="text-bold text-left mesa-caption" style="color:blue">R$ {{ comandaSelecionada.cliente.vlr_saldo_devedor | numberFormat:2:',':'.' }} </span>
+										</caption>
 
 										<thead>
 											<th class="text-middle">Produto</th>
@@ -769,6 +808,10 @@
 												<td class="text-right">{{ totalItensComanda()  }}</td>
 											</tr>
 											<tr>
+												<td>Tempo de Ocupação</td>
+												<td class="text-right">{{ tempoOcupacao() }} minutos</td>
+											</tr>
+											<tr>
 												<td>Total Consumo</td>
 												<td class="text-right">R$ {{ vlrTotalItensComanda() | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
 											</tr>
@@ -779,6 +822,18 @@
 											<tr>
 												<td>Total Comanda</td>
 												<td class="text-right">R$ {{ vlrTotalItensComanda() + getValorTaxaServico() | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
+											</tr>
+											<tr ng-if="configuracao.controlar_quantidade_pessoas == 1">
+												<td>Total por pessoa</td>
+												<td class="text-right">R$ {{ (vlrTotalItensComanda() + getValorTaxaServico() ) / comandaSelecionada.comanda.qtd_pessoas | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
+											</tr>
+											<tr>
+												<td>Total Pago</td>
+												<td class="text-right">R$ {{ totalPagoComanda | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
+											</tr>
+											<tr>
+												<td>Saldo em Aberto</td>
+												<td class="text-right">R$ {{ ( vlrTotalItensComanda() + getValorTaxaServico() ) - totalPagoComanda | numberFormat:configuracao.qtd_casas_decimais:',':'.' }}</td>
 											</tr>
 										</thead>
 									</table>
@@ -1384,6 +1439,96 @@
 			</div>
 		</div>
 		<!-- FIM Modal -->		
+
+		<!-- Modal New Mesa -->
+		<div class="modal fade" id="new-mesa" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Nova Mesa</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="alert alert-success" ng-if="msgNewMesaSuccess != null">{{ msgNewMesaSuccess }}</div>
+								<div class="alert alert-danger" ng-if="msgNewMesaError != null">{{ msgNewMesaError }}</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Nome</label>
+									<input class="form-control" type="text" name="cliente" ng-model="new_mesa.dsc_mesa" ng-enter="saveNewMesa()" ng-click="msgNewMesaSuccess = null; msgNewMesaError = null">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<button type="button" class="btn btn-success btn-block" ng-click="saveNewMesa()">
+										<i class="fa fa-plus-circle"></i> Adicionar
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FIM Modal -->	
+
+		<!-- Modal Quantidade Pessoas -->
+		<div class="modal fade" id="qtd-pessoas" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Quantidade de pessoas</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="alert alert-success" ng-if="msgNewMesaSuccess != null">{{ msgNewMesaSuccess }}</div>
+								<div class="alert alert-danger" ng-if="msgNewMesaError != null">{{ msgNewMesaError }}</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="control-label">Quantidade</label>
+									<div class="input-group">
+										<span class="input-group-btn">
+											<button class="btn btn-primary" type="button"
+												ng-click="diminuirQuantidadePessoas()">
+												<i class="fa fa-minus-square"></i>
+											</button>
+										</span>
+										<input type="text" class="form-control text-center no-padding" ng-model="comandaSelecionada.comanda.qtd_pessoas" />
+										<span class="input-group-btn">
+											<button class="btn btn-primary" type="button"
+												ng-click="aumentarQuantidadePessoas()">
+												<i class="fa fa-plus-square"></i>
+											</button>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<button type="button" class="btn btn-success btn-block" ng-click="updateQtdPessoas()">
+										<i class="fa fa-plus-circle"></i> Salvar
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FIM Modal -->
 
 		<!-- Modal Autorização Exclusão -->
 		<div class="modal fade" id="autorizacao" style="display:none">
