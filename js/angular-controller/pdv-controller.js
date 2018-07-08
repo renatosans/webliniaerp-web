@@ -3585,7 +3585,7 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				};
 
 				dlg = $dialogs.confirm('Atenção!!!' ,'<strong>Deseja imprimir linhas de assinaturas?</strong>');
-				dlg.result.then(function(btn){
+				dlg.result.then(function(option){
 					data.flgAssinaturaCliente = true;
 
 					var msg = {
