@@ -872,6 +872,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 						}
 			chaves.push(item3);
 		}
+		
+		if(ng.configuracoes.flg_modo_fechamento_caixa != undefined){
+			var item3 = {
+							nome 				:'flg_modo_fechamento_caixa',
+							valor 				:ng.configuracoes.flg_modo_fechamento_caixa , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item3);
+		}
 
 		if(ng.configuracoes.flg_autorizar_exclusao_sem_admin_pdv != undefined){
 			var item3 = {
