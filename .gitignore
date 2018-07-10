@@ -1,5 +1,6 @@
 .gitignore
 js/constants.js
 .idea
+constants.*
 ultil/constants.php
 /nbproject/private/
