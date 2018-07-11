@@ -117,16 +117,16 @@
 			</div><!-- /main-header -->
 
 			<div class="padding-md">
-				<p class="text-muted alert alert-info">
+				<p class="text-muted alert alert-info" ng-show="showBoxEdit == true">
 					<i class="fa fa-warning"></i>
 					Ao confirmar o fechamento do caixa, os valores informados na coluna Conferido serão os valores apresentados no módulo Lançamentos Financeiros e no fluxo de caixa.
 				</p>
 
-				<div class="panel panel-primary hidden-print">
+				<div class="panel panel-primary hidden-print" ng-show="showBoxEdit == true">
 					<div class="panel-heading">
-						Conferência do Caixa #1083902 <br/>
-						Operador: <br/>
-						Data do Movimento: 
+						Conferência do Caixa #{{ borderoSelected.bordero.id }} <br/>
+						Operador: {{ borderoSelected.bordero.nome }}<br/>
+						Data do Movimento: {{ borderoSelected.bordero.dta_abertura }}
 					</div>
 					
 					<div class="panel-body">
@@ -162,21 +162,29 @@
 											</thead>
 											
 											<tbody>
-												<tr ng-repeat="lancamento in lancamentos">
+												<tr ng-repeat="lancamento in borderoSelected.lancamentos">
 													<td class="text-middle" 
-														colspan="{{ (lancamento.id_forma_pagamento == 3) ? 3 : 0 }}">
-														{{ lancamento.nome_forma_pagamento }}
+														colspan="{{ colspanFp(lancamento.id_forma_pagamento) }}">
+														{{ lancamento.descricao_forma_pagamento }}
 													</td>
 													<td class="text-middle" 
 														ng-if="canShowCardColumns(lancamento)">
 														<div class="form-group" style="margin-bottom: 0px;">
-															<select class="form-control input-sm"></select>
+															<select option="bandeiras" class="form-control input-sm"
+																	ng-model="lancamento.id_bandeira"
+																	ng-options="bandeira.id as bandeira.nome for bandeira in bandeiras"
+																	ng-disabled="edit == 1">
+															</select>
 														</div>
 													</td>
 													<td class="text-middle" 
 														ng-if="canShowCardColumns(lancamento)">
 														<div class="form-group" style="margin-bottom: 0px;">
-															<select class="form-control input-sm"></select>
+															<select option="maquinetas" class="form-control input-sm"
+																	ng-model="lancamento.id_maquineta" 
+																	ng-options="maquineta.id_maquineta as maquineta.num_serie_maquineta for maquineta in maquinetas"
+																	ng-disabled="edit == 1">
+															</select>
 														</div>
 													</td>
 													<td class="text-middle text-right">
@@ -190,7 +198,8 @@
 															<input type="text" class="form-control input-sm text-right"
 																ng-model="lancamento.vlr_lancamento_conferencista"
 																ng-change="calculateTotais()"
-																thousands-formatter>
+																thousands-formatter
+																ng-disabled="edit == 1">
 														</div>
 													</td>
 													<td class="text-middle text-right">
@@ -244,7 +253,11 @@
 							<div class="col-lg-4">
 								<div class="form-group">
 									<label class="control-label">Conta Bancária p/ Destinação de Dinheiro</label>
-									<select class="form-control"></select>
+									<select option="contas_bancarias" class="form-control input-sm"
+											ng-model="borderoSelected.fechamento.id_conta_bancaria_destino" 
+											ng-options="conta_bancaria.id as conta_bancaria.dsc_conta_bancaria for conta_bancaria in contas_bancarias" 
+											ng-disabled="edit == 1">
+									</select>
 								</div>
 							</div>
 						</div>
@@ -253,13 +266,65 @@
 					<div class="panel-footer">
 						<div class="clearfix">
 							<div class="pull-right text-right">
-								<button class="btn btn-default">
+								<button class="btn btn-default" ng-click="hideBoxEdit()">
 									<i class="fa fa-times-circle"></i> Cancelar fechamento
 								</button>
-								<button class="btn btn-primary">
+								<button class="btn btn-primary" ng-click="fecharBordero()" id="btn-salvar" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde, salvando" ng-disabled="edit == 1">
 									<i class="fa fa-save"></i> Salvar e Fechar Caixa
 								</button>
 							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-tasks"></i> Borderôs
+					</div>
+					<div class="panel-body">
+						<table class="table table-bordered table-condensed table-striped table-hover">
+							<thead>
+								<tr>
+									<td class="text-center text-bold">ID</td>
+									<td class="text-center text-bold">Data Abertura</td>
+									<td class="text-center text-bold">Data Fechamento</td>
+									<td class="text-center text-bold">Operador</td>
+									<td class="text-center text-bold" colspan="2">Ações</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="item in borderos">
+									<td class="text-center">{{ item.id }}</td>
+									<td class="text-center">{{ item.dta_abertura }}</td>
+									<td class="text-center">{{ item.dta_fechamento }}</td>
+									<td class="text-center">{{ item.nome }}</td>
+									<td class="text-center">
+										<span ng-if="item.dta_fechamento == null">
+											<i class="fa fa-circle text-warning"></i>
+										</span>
+										<span ng-if="item.dta_fechamento != null">
+											<i class="fa fa-circle text-danger"></i>
+										</span>
+									</td>
+									<td class="text-center">
+										<button class="btn btn-warning btn-xs" ng-click="editBordero(item)" ng-if="item.dta_fechamento == null">
+											<i class="fa fa-edit"></i>
+										</button>
+										<button class="btn btn-primary btn-xs" ng-click="editBordero(item)" ng-if="item.dta_fechamento != null">
+											<i class="fa fa-eye"></i>
+										</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="panel-footer clearfix">
+						<div class="pull-right">
+							<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.length > 1">
+								<li ng-repeat="item in paginacao" ng-class="{'active': item.current}">
+									<a href="" ng-click="getAllBorderos(item.offset,item.limit)">{{ item.index }}</a>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>
