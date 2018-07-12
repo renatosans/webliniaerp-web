@@ -1,6 +1,6 @@
 <?php
-	// include_once "util/login/restrito.php";
-	// restrito(array(1));
+	include_once "util/login/restrito.php";
+	restrito(array(1));
 	date_default_timezone_set('America/Sao_Paulo');
 ?>
 <!DOCTYPE html>
