@@ -9,9 +9,45 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	ng.notas 			= null;
 	ng.paginacao 		= {};
 	ng.busca = { text: "", numeroo: "" };
+	ng.itensPagina = "10";
+	ng.showSelect = false;
+	ng.notas_selecionadas = [];
+
+	ng.showButtonRomaneio = function(){
+		ng.notas_selecionadas = _.where(ng.emitidas_nfe, {selected: true});
+		return (!empty(ng.notas_selecionadas) && ng.notas_selecionadas.length > 0);
+	}
+
+	ng.showModalGerarRomaneio = function(){
+		$('#gerar-romaneio').modal('show');
+	}
+
+	ng.salvarRomaneio = function(){
+		var romaneio = {
+			id_usuario: ng.userLogged.id,
+			id_empreendimento: ng.userLogged.id_empreendimento,
+			notas: ng.notas_selecionadas
+		}
+
+		aj.post(baseUrlApi()+"romaneio/entrega", {data: JSON.stringify(romaneio)})
+			.success(function(data, status, headers, config) {
+				//btn.button('reset');
+				$('#gerar-romaneio').modal('hide');
+			})
+			.error(function(data, status, headers, config) {
+				//btn.button('reset');
+				alert('Erro ao salvar romaneio!');
+			});
+	}
+
+	ng.getUrlPDFRomaneioEntrega = function(id_romaneio){
+		var url_pdf = baseUrlApi()+'relPDF?template=romaneio_entrega&id_romaneio='+id_romaneio;
+		return url_pdf;
+	}
 	
 	ng.reset = function(){
 		ng.Notas = {itens:[]};
+		ng.itensPagina = "10";
 	}
 
 	ng.modalInutilizacao = function(){
@@ -98,6 +134,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		ng.reset();
 		ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
 		ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+		ng.loadRomaneios(0,ng.itensPagina);
 		ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
 		ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
 		ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
@@ -109,6 +146,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	ng.filtrar = function(){
 		ng.loadNotas('NFE','emitidas_nfe','autorizado',0,10);
 		ng.loadNotas('NFE','canceladas_nfe','cancelado',0,10);
+		ng.loadRomaneios(0,ng.itensPagina);
 		ng.loadNotas('SAT','emitidas_sat','autorizado',0,10);
 		ng.loadNotas('SAT','canceladas_sat','cancelado',0,10);
 		ng.loadNotas('NFCE','emitidas_nfce','autorizado',0,10);
@@ -117,7 +155,32 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 		ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
 	}
 
-	ng.loadNotas = function(tipo_nota, list_name, status, offset,limit) {
+	ng.loadRomaneios = function(offset, limit){
+		var queryString = "?tre->id_empreendimento="+ ng.userLogged.id_empreendimento;
+		aj.get(baseUrlApi()+"romaneios/entregas"+ offset +"/"+ limit + queryString)
+			.success(function(data, status, headers, config) {
+				ng.romaneios = data.romaneios;
+				ng.paginacao_romaneios = data.paginacao;
+			})
+			.error(function(data, status, headers, config) {
+				ng.romaneios = [];
+			});
+	}
+
+	ng.loadNotasRomaneio = function(romaneio){
+		ng.notas_romaneio = [];
+		$('#detalhes-romaneio').modal('show');
+		aj.get(baseUrlApi()+"romaneio/entrega/"+ romaneio.id +"/notas")
+			.success(function(data, status, headers, config) {
+				ng.notas_romaneio = data;
+				ng.romaneio_detalhes = romaneio;
+			})
+			.error(function(data, status, headers, config) {
+				ng.notas_romaneio = [];
+			});	
+	}
+
+	ng.loadNotas = function(tipo_nota, list_name, status, offset) {
 		ng[list_name] = [];
 		var query_string  = "?cod_empreendimento="+ ng.userLogged.id_empreendimento;
 
@@ -161,7 +224,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 			query_string += "&("+$.param({'2':{exp:"=2 AND cast(data_emissao as date) = '"+ data_emissao +"' )"}});
 		}
 
-		aj.get(baseUrlApi()+"notas/"+ offset +"/"+ limit + query_string)
+		aj.get(baseUrlApi()+"notas/"+ offset +"/"+ ng.itensPagina + query_string)
 			.success(function(data, status, headers, config) {
 				ng[list_name] 			= data.notas;
 				ng.paginacao[list_name] 	= data.paginacao;
@@ -363,6 +426,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	ng.loadNotas('NFCE','canceladas_nfce','cancelado',0,10);
 	ng.loadNotas('NFSE','emitidas_nfse','autorizado',0,10);
 	ng.loadNotas('NFSE','canceladas_nfse','cancelado',0,10);
+	ng.loadRomaneios(0,ng.itensPagina);
 
 	setTimeout(function() {
 	  $('a[href="#list_nfse"]').trigger('click');

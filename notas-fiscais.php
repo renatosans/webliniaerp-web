@@ -198,21 +198,29 @@
 								</div>
 							</div>
 
-							<div class="col-sm-1">
+							<div class="col-sm-2">
+								<div class="form-group">
+									<label class="control-label">Itens por Página</label>
+									<select class="form-control" ng-model="itensPagina" ng-change="filtrar()">
+										<option value="10">10</option>
+										<option value="30">30</option>
+										<option value="50">50</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="col-sm-3">
 								<div class="form-group">
 									<div class="controls">
 										<label class="control-label"><br></label>
 									</div>
 									<button type="button" class="btn btn-sm btn-primary" ng-click="filtrar()"><i class="fa fa-filter"></i> Filtrar</button>
+									<button type="button" class="btn btn-sm btn-default" ng-click="resetFilter()"><i class="fa fa-times-circle"></i> Limpar</button>
+									<button type="button" class="btn btn-sm btn-info" ng-show="!showButtonRomaneio()" ng-click="showSelect = !showSelect"><i class="fa fa-check-square-o"></i> Selecionar Notas</button>
+									<button type="button" class="btn btn-sm btn-success" ng-show="showButtonRomaneio()" ng-click="showModalGerarRomaneio()"><i class="fa fa-check-square-o"></i> Gerar Romaneio</button>
 								</div>
 							</div>
 
-							<div class="col-sm-1">
-								<div class="form-group">
-									<label class="control-label"><br></label>
-									<button type="button" class="btn btn-sm btn-block btn-default" ng-click="resetFilter()">Limpar</button>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>
@@ -246,6 +254,11 @@
 												<i class="fa fa-times-circle-o"></i> Inutilizadas
 											</a>
 										</li>
+										<li>
+											<a href="#romaneios_nfe" data-toggle="tab">
+												<i class="fa fa-list-alt"></i> Romaneios
+											</a>
+										</li>
 									</ul>
 								</div>
 
@@ -258,6 +271,7 @@
 													<div class="alert alert-list-notas" style="display:none"></div>
 													<table class="table table-bordered table-condensed table-striped table-hover">
 														<thead>
+															<th class="text-middle text-center" ng-show="showSelect == true"></th>
 															<th class="text-middle text-center" width="50"></th>
 															<th class="text-middle text-center">Nº NF-e</th>
 															<th class="text-middle">Destinatário</th>
@@ -275,6 +289,10 @@
 																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
 															</tr>
 															<tr bs-tooltip ng-repeat="nota in emitidas_nfe">
+																<td class="text-center" ng-show="showSelect == true">
+																	<input type="checkbox" ng-if="(nota.status == 'autorizado')" ng-model="nota.selected" ng-true-value="true" ng-false-value="false">
+																	<span class="custom-checkbox"></span>
+																</td>
 																<td class="text-middle">
 																	<div class="btn-group">
 																		<button type="button" class="btn btn-sm btn-default dropdown-toggle" 
@@ -602,6 +620,53 @@
 												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao.canceladas_nfe.length > 1">
 													<li ng-repeat="item in paginacao.canceladas_nfe" ng-class="{'active': item.current}">
 														<a href="" ng-click="loadNotas('NFE','canceladas_nfe','cancelado',item.offset,item.limit)">{{ item.index }}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane fade" id="romaneios_nfe">
+										<br/>
+										<h4>Romaneios de Transferência</h4>
+										<hr>
+										<div class="row">
+											<div class="col-lg-12">
+												<div class="table-responsive">
+													<div class="alert alert-list-notas" style="display:none"></div>
+													<table class="table table-bordered table-condensed table-striped table-hover">
+														<thead ng-show="(romaneios.length > 0)">
+															<th class="text-middle text-center">ID</th>
+															<th class="text-middle text-center">Data</th>
+															<th class="text-middle text-center">Usuário responsável</th>
+															<th class="text-middle text-center">Ações</th>
+														</thead>
+														<tbody>
+															<tr ng-show="(romaneios.length == 0)">
+																<td colspan="8" class="text-center text-middle">Nenhum romaneio encontrado!</td>
+															</tr>
+															<tr ng-show="(romaneios == [])">
+																<td colspan="8" class="text-center text-middle"><i class="fa fa-refresh fa-spin"></i> Aguarde, carregando...</td>
+															</tr>
+															<tr bs-tooltip ng-repeat="romaneio in romaneios">
+																<td class="text-center text-middle">{{ romaneio.id }}</td>
+																<td class="text-center text-middle">{{ romaneio.dta_romaneio | date : 'dd/MM/yyyy' }}</td>
+																<td class="text-center text-middle">{{ romaneio.nome_usuario }}</td>
+																<td class="text-center text-middle">
+																	<button class="btn btn-xs btn-primary" ng-click="loadNotasRomaneio(romaneio)">
+																		<i class="fa fa-list-alt"></i> Detalhes
+																	</button>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="pull-right">
+												<ul class="pagination pagination-sm m-top-none" ng-show="paginacao_romaneios.length > 1">
+													<li ng-repeat="item in paginacao_romaneios" ng-class="{'active': item.current}">
+														<a href="" ng-click="loadRomaneios(item.offset,item.limit)">{{ item.index }}</a>
 													</li>
 												</ul>
 											</div>
@@ -1509,6 +1574,91 @@
 			</div>
 		</div><!-- /main-container -->
 
+		<!-- /Modal gerar romaneio-->
+		<div class="modal fade" id="gerar-romaneio" style="display:none">
+  			<div class="modal-dialog modal">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Gerar Romaneio</h4>
+      				</div>
+				    <div class="modal-body">
+				    	<p class="alert alert-info text-center">Ao clicar em salvar será gerado um romaneio das notas listadas abaixo</p>
+				    	<div class="table-responsive">
+					    	<table class="table table-bordered table-condensed table-striped table-hover">
+					    		<thead>
+					    			<th class="text-center">N° NF-e</th>
+					    			<th>Destinatário</th>
+					    			<th class="text-center">Data Emissão</th>
+					    			<th class="text-center">Valor da NF-e</th>
+					    		</thead>
+					    		<tbody>
+					    			<tr ng-repeat="item in notas_selecionadas">
+					    				<td class="text-center">{{ item.numero }}</td>
+					    				<td>{{ item.nome_destinatario }}</td>
+					    				<td class="text-center">{{ item.data_emissao | date : 'dd/MM/yyyy' }}</td>
+					    				<td class="text-right">R$ {{ item.valor_total | numberFormat : 2 : ',' : '.' }}</td>
+					    			</tr>
+					    		</tbody>
+					    	</table>
+				    	</div>
+				    </div>
+				    <div class="modal-footer">
+				    	<button type="button" data-loading-text=" Aguarde..."
+				    		class="btn btn-md btn-default" data-dismiss="modal" id="btn-cancelar-romaneio">
+				    		<i class="fa fa-times-circle"></i> Cancelar
+				    	</button>
+				    	<button type="button" id="btn-salvar-romaneio" data-loading-text="<i class='fa fa-refresh fa-spin'></i> Aguarde..." class="btn btn-md btn-success" ng-click="salvarRomaneio()">
+				    		<i class="fa fa-check-square-o"></i> Salvar
+				    	</button>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
+		<!-- /Modal detalhes romaneio-->
+		<div class="modal fade" id="detalhes-romaneio" style="display:none">
+  			<div class="modal-dialog modal">
+    			<div class="modal-content">
+      				<div class="modal-header">
+        				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4>Romaneio<span>#{{ romaneio_detalhes.id }}</span></h4>
+						<h5>Operador: <span>{{ romaneio_detalhes.nome_usuario }}</span></h5>
+						<h5>Data: <span>{{ romaneio_detalhes.dta_romaneio | date : 'dd/MM/yyyy' }}</span></h5>
+						<a class="btn btn-primary" href="{{ getUrlPDFRomaneioEntrega(romaneio_detalhes.id) }}" target="_blank">Imprimir</a>
+      				</div>
+				    <div class="modal-body">
+				    	<div class="table-responsive">
+					    	<table class="table table-bordered table-condensed table-striped table-hover">
+					    		<thead>
+					    			<th class="text-center">N° NF-e</th>
+					    			<th>Destinatário</th>
+					    			<th class="text-center">Data Emissão</th>
+					    			<th class="text-center">Valor da NF-e</th>
+					    		</thead>
+					    		<tbody>
+					    			<tr ng-repeat="item in notas_romaneio">
+					    				<td class="text-center">{{ item.numero }}</td>
+					    				<td>{{ item.nome_destinatario }}</td>
+					    				<td class="text-center">{{ item.data_emissao | date : 'dd/MM/yyyy' }}</td>
+					    				<td class="text-right">R$ {{ item.valor_total | numberFormat : 2 : ',' : '.' }}</td>
+					    			</tr>
+					    		</tbody>
+					    	</table>
+				    	</div>
+				    </div>
+				    <div class="modal-footer">
+				    	<button type="button"
+				    		class="btn btn-md btn-default" data-dismiss="modal">
+				    		<i class="fa fa-times-circle"></i> Fechar
+				    	</button>
+				    </div>
+			  	</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
+
 		<!-- /Modal novo tamanho-->
 		<div class="modal fade" id="modal-cencelar-nota" style="display:none">
   			<div class="modal-dialog modal">
@@ -1830,6 +1980,9 @@
 	
 	<!-- Moment -->
 	<script src="js/moment/moment.min.js"></script>
+
+	<!-- UnderscoreJS -->
+	<script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
 
 	<script src="js/jquery.noty.packaged.js"></script>
 
