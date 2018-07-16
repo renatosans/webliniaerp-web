@@ -1,4 +1,4 @@
-app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService,$sce) {
+app.controller('PDVController', function($scope, $http, $window,$dialogs, UserService,ConfigService,CaixaService,$timeout,FuncionalidadeService,PrestaShop,TabelaPrecoService,$sce,Ezcommerce) {
 	var ng = $scope,
 		aj = $http;
 	ng.mostrar_validades 	= false ;
@@ -232,6 +232,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 						.error(function(data, status, headers, config) {
 							
 						});
+				}
+				
+				if(!empty(data.vendedor)){
+					ng.vendedor.id_vendedor   = data.vendedor.id;
+					ng.vendedor.nome_vendedor = data.vendedor.nome;
 				}
 
 				$.each(orcamento.itens,function(i,v){
@@ -1255,6 +1260,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 				ng.showModalPrint();
 				ng.clearCloseWindowBlock();
 				ng.printPdf();
+				
+				Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 				PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 				return ;
 			}
@@ -1544,6 +1551,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							});
 					}
 
+					
+					Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 					PrestaShop.send('post', baseUrlApi()+'prestashop/estoque', postPrestaShop);
 				}
 				else{
@@ -1582,6 +1591,8 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 
 					ng.printPdf();
 
+					
+					Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 					PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 				}
 			})

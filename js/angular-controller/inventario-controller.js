@@ -1,4 +1,4 @@
-app.controller('InventarioController', function($scope, $http, $window, $dialogs, UserService, PrestaShop, ConfigService){
+app.controller('InventarioController', function($scope, $http, $window, $dialogs, UserService, PrestaShop, ConfigService,Ezcommerce){
 
 	var ng = $scope
 		aj = $http;
@@ -136,6 +136,7 @@ app.controller('InventarioController', function($scope, $http, $window, $dialogs
 	        	ng.mensagens('alert-success','<strong>Inventario cadastrada com sucesso</strong>');
 	        	ng.loadUltimosInventarios(0,30);
 	        	PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
+	        	Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 	        }).error(function(data, status) {
 	        	$("#btCancelar").show();
 	        	$("#btSalvar").button("reset");
