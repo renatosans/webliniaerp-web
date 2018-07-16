@@ -78,6 +78,10 @@ app.service('UserService', function($http, $window) {
 		removeStorage('user');
 		removeStorage('funcionalidades');
 	}
+
+	this.setUserAuthToken = function(auth_token) {
+		setStorage('admin.webliniaerp.user.auth_token', auth_token);
+	}
 });
 
 app.service('FuncionalidadeService', function($http) {

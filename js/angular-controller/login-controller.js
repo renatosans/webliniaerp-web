@@ -30,6 +30,7 @@ app.controller('LoginController', function($scope, $http, $window,$dialogs,UserS
    		btn.button('loading');
 		aj.post("util/login/login.php",ng.dados)
 			.success(function(data, status, headers, config) {
+				UserService.setUserAuthToken(data.auth_token);
 				//window.location.href = "selecionar_emp.php";
 				id_perfil_user = data.id_perfil ;
 				id_usuario     = Number(data.id) ;

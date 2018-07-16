@@ -80,6 +80,10 @@
 	$url = URL_API.'logar';
 
 	if($_SERVER['REQUEST_METHOD'] == "POST") {
+		unset($_SESSION['dispositivo']);
+		unset($_SESSION['user_emp']);
+		unset($_SESSION['user']);
+
 		$senha = isset($_POST['senha']) ? $_POST['senha'] : "" ;
 		$login = isset($_POST['login']) ? $_POST['login'] : "" ;
 
@@ -107,6 +111,10 @@
 		curl_close($ch);
 
 		if($info['http_code'] == 200){
+			$output = json_decode($output);
+			$output->auth_token = base64_encode($login.":".$senha);
+			$output = json_encode($output);
+			
 			$_SESSION['user_emp'] = json_decode($output);
 		}
 

@@ -281,6 +281,7 @@ app.controller('NotaFiscalController', function($scope, $http, $window, $dialogs
 				var msg = "" ;
 
 				if(typeof data != 'undefined') {
+					data = JSON.parse(data.body);
 					$.each(data.erros,function(i,v){
 						msg += v.mensagem+"<br/>";
 					});
