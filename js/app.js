@@ -1157,19 +1157,3 @@ app.config(['$httpProvider', function($httpProvider) {
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }]);
-
-/*app.factory('httpRequestInterceptor',function () {
-  var user = angular.fromJson(sessionStorage.user);
-  console.log(user);
-  return {
-    request: function (config) {
-      //config.headers['Authorization'] = 'Basic d2VudHdvcnRobWFuOkNoYW5nZV9tZQ==';
-      config.headers['Empreendimento'] = user.id_empreendimento;
-      return config;
-    }
-  };
-});
-
-app.config(function ($httpProvider) {
-  $httpProvider.interceptors.push('httpRequestInterceptor');
-});*/

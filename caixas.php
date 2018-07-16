@@ -153,6 +153,7 @@
 					<h3 class="no-margin"><i class="fa fa-desktop"></i> Caixas</h3>
 					<br/>
 					<a class="btn btn-info" id="btn-novo" ng-disabled="editing" ng-click="showBoxNovo()"><i class="fa fa-plus-circle"></i> Novo caixa</a>
+					<a class="btn btn-primary" href="relatorio-consolidado-caixa-bordero.php"><i class="fa fa-check-square-o"></i> Conferência de Caixa</a>
 				</div><!-- /page-title -->
 			</div><!-- /main-header -->
 

@@ -233,6 +233,11 @@ app.controller('PDVController', function($scope, $http, $window,$dialogs, UserSe
 							
 						});
 				}
+				
+				if(!empty(data.vendedor)){
+					ng.vendedor.id_vendedor   = data.vendedor.id;
+					ng.vendedor.nome_vendedor = data.vendedor.nome;
+				}
 
 				$.each(orcamento.itens,function(i,v){
 					v.valor_desconto_real = Number(v.valor_desconto)/100;

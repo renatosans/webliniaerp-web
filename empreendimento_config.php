@@ -26,6 +26,7 @@
 	<link href="css/chosen/chosen.min.css" rel="stylesheet"/>
 
 	<!-- Tags Input -->
+
 	<link href="css/ng-tags-input.min.css" rel="stylesheet"/>
 	<link href="css/ng-tags-input.bootstrap.min.css" rel="stylesheet"/>
 
@@ -740,6 +741,23 @@
 																<input ng-model="configuracoes.flg_forcar_fechamento_caixa_zero_horas" value="0" name="flg_forcar_fechamento_caixa_zero_horas"   type="radio" class="inline-radio">
 																<span class="custom-radio"></span>
 																<span>Não</span>
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="" class="control-label">Modo de fechamento de caixa</label>
+														<div class="form-group">
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_modo_fechamento_caixa" value="1" name="flg_modo_fechamento_caixa"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Tradicional</span>
+															</label>
+															<label class="label-radio inline">
+																<input ng-model="configuracoes.flg_modo_fechamento_caixa" value="2" name="flg_modo_fechamento_caixa"   type="radio" class="inline-radio">
+																<span class="custom-radio"></span>
+																<span>Borderô</span>
 															</label>
 														</div>
 													</div>
