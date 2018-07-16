@@ -1,4 +1,4 @@
-app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService,PrestaShop, EmpreendimentoService){
+app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialogs, UserService, ConfigService, FuncionalidadeService,PrestaShop, EmpreendimentoService,Ezcommerce){
 
 	var ng = $scope
 		aj = $http;
@@ -401,6 +401,7 @@ app.controller('RelatorioVendasPeriodo', function($scope, $http, $window, $dialo
 				ng.loadVendas(0,10);
 				ng.mensagens('alert-success','venda  cancelada com sucesso','#alert-list-vendas');
 				var postPrestaShop = {produtos:[item.id],id_empreendimento:ng.userLogged.id_empreendimento};
+				Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 				PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 			})
 			.error(function(data, status, headers, config) {

@@ -1,4 +1,4 @@
-app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$filter, UserService, ConfigService, PrestaShop){
+app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$filter, UserService, ConfigService, PrestaShop,Ezcommerce){
 
 	var ng = $scope
 		aj = $http;
@@ -273,6 +273,7 @@ app.controller('EstoqueController', function($scope, $http, $window, $dialogs,$f
 							'.alert-entrada-lista');
 				ng.loadEntradas(0,20);
 				PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
+				Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 				// ng.showModalPrecos(); // Inativado temporariamente
 			})
 			.error(function(data, status) {

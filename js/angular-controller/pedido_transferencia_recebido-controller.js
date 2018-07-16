@@ -1,4 +1,4 @@
-app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop, FuncionalidadeService){
+app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, $window, $dialogs, UserService,ConfigService,PrestaShop, FuncionalidadeService,Ezcommerce){
 	var ng = $scope
 		aj = $http;
 	ng.ctrl = $scope ;
@@ -485,6 +485,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 							ng.listaTransferencias.transferencias[index_current_edit] = data[0];
 						else
 							ng.loadtransferencias(0,10);
+						Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 						PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 					})
 					.error(function(data, status, headers, config) {
@@ -494,6 +495,7 @@ app.controller('PedidoTransferenciaRecebidoController', function($scope, $http, 
 						ng.mensagens('alert-success','<b>transferência realizada com sucesso</b>','.alert-transferencia-lista');
 						$('html,body').animate({scrollTop: 0},'slow');
 			 			ng.loadtransferencias(0,10);
+			 			Ezcommerce.send('post',baseUrlApi()+"ezcommerce/catalogows/produto/atualizar_estoque/"+ng.userLogged.id_empreendimento,postPrestaShop);
 			 			PrestaShop.send('post',baseUrlApi()+"prestashop/estoque",postPrestaShop);
 					});
 			})
