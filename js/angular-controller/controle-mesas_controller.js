@@ -786,35 +786,55 @@ app.controller('ControleMesasController', function(
 
 		dlg.result.then(
 			function(btn){
-				if(item.flg_produto_composto === 1 && (!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1)){
-					dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+				if(item.flg_produto_composto === 1){
+					if(!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1) {
+						dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
 
-					dlg.result.then(
-						function(btn){
-							item.flg_delivery = true;
-							
-							if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
-								ng.select_kitchen = true;
-								ng.showAvaliableKitchens();
-							}
-							else
-								incluirItemComandaModalAction(item);
-						},
-						function(){
-							item.flg_delivery = false;
+						dlg.result.then(
+							function(btn){
+								item.flg_delivery = true;
+								
+								if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+									ng.itemToSave = item;
+									ng.select_kitchen = true;
+									ng.showAvaliableKitchens();
+								}
+								else{
+									ng.itemToSave = item;
+									incluirItemComandaModalAction();
+								}
+							},
+							function(){
+								item.flg_delivery = false;
 
-							if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
-								ng.select_kitchen = true;
-								ng.showAvaliableKitchens();
+								if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+									ng.itemToSave = item;
+									ng.select_kitchen = true;
+									ng.showAvaliableKitchens();
+								}
+								else{
+									ng.itemToSave = item;
+									incluirItemComandaModalAction();
+								}
 							}
-							else
-								incluirItemComandaModalAction(item);
+						);
+					}
+					else {
+						if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+							ng.itemToSave = item;
+							ng.select_kitchen = true;
+							ng.showAvaliableKitchens();
 						}
-					);
+						else{
+							ng.itemToSave = item;
+							incluirItemComandaModalAction();
+						}
+					}
 				}
 				else {
 					item.flg_delivery = false;
-					incluirItemComandaModalAction(item);
+					ng.itemToSave = item;
+					incluirItemComandaModalAction();
 				}
 			},
 			function(){
@@ -823,7 +843,8 @@ app.controller('ControleMesasController', function(
 		);
 	}
 
-	function incluirItemComandaModalAction(item){
+	function incluirItemComandaModalAction(){
+		var item = ng.itemToSave;
 		var produto = angular.copy(item);
 			produto.qtd = empty(produto.qtd) ? 1 : produto.qtd;
 		
@@ -855,12 +876,14 @@ app.controller('ControleMesasController', function(
 				dta_create: 			moment().format('YYYY-MM-DD HH:mm:ss'),
 				dta_lancamento: 		moment().format('YYYY-MM-DD HH:mm:ss'),
 				id_mesa: 				ng.mesaSelecionada.mesa.id_mesa,
+				id_cozinha: (!empty(ng.selectedKitchen)) ? ng.selectedKitchen.cod_cozinha : null,
 				flg_delivery: 			(produto.flg_delivery) ? 1 : 0,
 				adicionais: 			ng.produto.adicionais_selecionados
 			}
 
 			aj.post(baseUrlApi()+"item_comanda/add/lista",post)
 				.success(function(data, status, headers, config) {
+					$('#avaliableKitchens').modal('hide');
 					if(Number(produto.flg_produto_composto) == 1){
 						data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
 						if(!empty(ng.cozinhasDisponiveis) && ng.cozinhasDisponiveis.length > 0) {
@@ -1002,6 +1025,7 @@ app.controller('ControleMesasController', function(
 						dta_lancamento: 		moment().format('YYYY-MM-DD HH:mm:ss'),
 						id_mesa: 				(!empty(ng.mesaSelecionada.mesa.id_mesa)) ? ng.mesaSelecionada.mesa.id_mesa : ng.comandaSelecionada.comanda.id_mesa,
 						flg_delivery: 			(produto.flg_delivery) ? 1 : 0,
+						id_cozinha: (!empty(ng.selectedKitchen)) ? ng.selectedKitchen.cod_cozinha : null,
 						adicionais: 			produto.adicionais_selecionados
 					});
 				});
@@ -1023,6 +1047,7 @@ app.controller('ControleMesasController', function(
 
 				aj.post(baseUrlApi()+"item_comanda/add/grade",{ itens: JSON.stringify(itens), categorias: JSON.stringify(categorias) })
 					.success(function(data, status, headers, config) {
+						$('#avaliableKitchens').modal('hide');
 						var msg = {
 							type: 'table_change',
 							from: ng.id_ws_web,to_empreendimento:ng.userLogged.id_empreendimento,
@@ -1106,13 +1131,14 @@ app.controller('ControleMesasController', function(
 			ng.changeTela('escProduto');
 	}
 
-	ng.selectKitchenAction = function() {
+	ng.selectKitchenAction = function(kitchen) {
+		ng.selectedKitchen = kitchen;
 		switch(ng.configuracao.flg_modo_selecao_produto) {
 			case 'grade':
-				ng.incluirItemComandaAction();
+				incluirItemComandaAction();
 				break;
 			case 'lista':
-				ng.incluirItemComandaModalAction();
+				incluirItemComandaModalAction();
 				break;
 		}
 	}
@@ -1129,31 +1155,41 @@ app.controller('ControleMesasController', function(
 			}
 		);*/
 
-		if(ng.produto.flg_produto_composto === 1 && (!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1)){
-			dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
+		if(ng.produto.flg_produto_composto === 1){
+			if(!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1) {
+				dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
 
-			dlg.result.then(
-				function(btn){
-					ng.produto.flg_delivery = true;
+				dlg.result.then(
+					function(btn){
+						ng.produto.flg_delivery = true;
 
-					if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
-						ng.select_kitchen = true;
-						ng.showAvaliableKitchens();
+						if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+							ng.select_kitchen = true;
+							ng.showAvaliableKitchens();
+						}
+						else
+							incluirItemComandaAction();
+					},
+					function(){
+						ng.produto.flg_delivery = false;
+						
+						if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+							ng.select_kitchen = true;
+							ng.showAvaliableKitchens();
+						}
+						else
+							incluirItemComandaAction();
 					}
-					else
-						incluirItemComandaAction();
-				},
-				function(){
-					ng.produto.flg_delivery = false;
-					
-					if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
-						ng.select_kitchen = true;
-						ng.showAvaliableKitchens();
-					}
-					else
-						incluirItemComandaAction();
+				);
+			}
+			else {
+				if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+					ng.select_kitchen = true;
+					ng.showAvaliableKitchens();
 				}
-			);
+				else
+					incluirItemComandaAction();
+			}
 		}
 		else {
 			ng.produto.flg_delivery = false;
@@ -1193,11 +1229,13 @@ app.controller('ControleMesasController', function(
 				dta_lancamento : moment().format('YYYY-MM-DD HH:mm:ss'),
 				id_mesa : ng.mesaSelecionada.mesa.id_mesa,
 				flg_delivery: (ng.produto.flg_delivery) ? 1 : 0,
+				id_cozinha: (!empty(ng.selectedKitchen)) ? ng.selectedKitchen.cod_cozinha : null,
 				adicionais: ng.produto.adicionais_selecionados
 			};
 
 			aj.post(baseUrlApi()+"item_comanda/add/lista",post)
 				.success(function(data, status, headers, config) {
+					$('#avaliableKitchens').modal('hide');
 					if(Number(ng.produto.flg_produto_composto) == 1){
 						data.ordem_producao.nome_cliente = ((ng.configuracao.id_cliente_movimentacao_caixa == data.ordem_producao.id_cliente) ? '' : data.ordem_producao.nome_cliente.toUpperCase());
 						

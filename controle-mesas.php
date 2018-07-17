@@ -1697,7 +1697,7 @@
 											</td>
 											<td class="text-middle text-center" width="30%">
 												<button class="btn btn-primary"
-													ng-click="selectKitchenAction()">
+													ng-click="selectKitchenAction(cozinha)">
 													<i class="fa fa-check-square"></i>
 													selecionar
 												</button>
