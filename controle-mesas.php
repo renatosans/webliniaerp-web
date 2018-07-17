@@ -1663,27 +1663,46 @@
 		</div>
 		<!-- /.modal -->
 
-		<div class="modal fade" id="avaliableKitchens" style="display: none;">
+		<div class="modal fade" id="avaliableKitchens" style="display: none;" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4>Cozinhas</h4>
+						<h4 ng-if="(!select_kitchen)">Cozinhas</h4>
+						<h4 ng-if="(select_kitchen)">
+							Cozinha Destino<br/>
+							<small>selecione para qual cozinha esse pedido deve ser enviado</small>
+						</h4>
 					</div>
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-lg-12">
-								<table class="table table-condensed table-hover table-bordered table-striped">
-									<thead>
-										<th class="text-middle text-center">#</th>
+								<table class="table table-hover table-bordered table-striped">
+									<thead ng-if="(!select_kitchen)">
+										<th class="text-middle text-center">
+											#
+										</th>
 										<th>Local</th>
-										<th class="text-middle text-center">ID Conexão WebSocket</th>
+										<th>Local</th>
+										<th class="text-middle text-center">
+											ID Conexão WebSocket
+										</th>
 									</thead>
 									<tbody>
 										<tr ng-repeat="cozinha in allCozinhas">
-											<td class="text-middle text-center">{{ cozinha.cod_cozinha }}</td>
-											<td>{{ cozinha.nme_cozinha }}</td>
+											<td class="text-middle text-center" ng-if="(!select_kitchen)">
+												{{ cozinha.cod_cozinha }}
+											</td>
 											<td class="text-middle">
+												{{ cozinha.nme_cozinha }}
+											</td>
+											<td class="text-middle text-center" width="30%">
+												<button class="btn btn-primary"
+													ng-click="selectKitchenAction()">
+													<i class="fa fa-check-square"></i>
+													selecionar
+												</button>
+											</td>
+											<td class="text-middle"  ng-if="(!select_kitchen)">
 												<span ng-if="(!cozinha.id_ws_dsk)">
 													<i class="fa fa-lg fa-circle text-danger"></i>
 													Desconectada
@@ -1700,7 +1719,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer clearfix">
+					<div class="modal-footer clearfix" ng-if="(!select_kitchen)">
 						<div class="pull-right">
 							<button class="btn btn-default btn-sm" data-dismiss="modal">
 								Fechar

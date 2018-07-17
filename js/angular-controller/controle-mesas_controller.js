@@ -792,11 +792,23 @@ app.controller('ControleMesasController', function(
 					dlg.result.then(
 						function(btn){
 							item.flg_delivery = true;
-							incluirItemComandaModalAction(item);
+							
+							if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+								ng.select_kitchen = true;
+								ng.showAvaliableKitchens();
+							}
+							else
+								incluirItemComandaModalAction(item);
 						},
 						function(){
 							item.flg_delivery = false;
-							incluirItemComandaModalAction(item);
+
+							if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+								ng.select_kitchen = true;
+								ng.showAvaliableKitchens();
+							}
+							else
+								incluirItemComandaModalAction(item);
 						}
 					);
 				}
@@ -1094,6 +1106,17 @@ app.controller('ControleMesasController', function(
 			ng.changeTela('escProduto');
 	}
 
+	ng.selectKitchenAction = function() {
+		switch(ng.configuracao.flg_modo_selecao_produto) {
+			case 'grade':
+				ng.incluirItemComandaAction();
+				break;
+			case 'lista':
+				ng.incluirItemComandaModalAction();
+				break;
+		}
+	}
+
 	ng.incluirItemComanda = function(event){
 		/*dlg = $dialogs.confirm('Atenção!!!' ,'Confirma a inclusão deste item na comanda?');
 
@@ -1105,17 +1128,30 @@ app.controller('ControleMesasController', function(
 				
 			}
 		);*/
+
 		if(ng.produto.flg_produto_composto === 1 && (!empty(ng.configuracao.flg_trabalha_delivery) && ng.configuracao.flg_trabalha_delivery == 1)){
 			dlg = $dialogs.confirm('Atenção!!!' ,'Este ítem é para entrega?');
 
 			dlg.result.then(
 				function(btn){
 					ng.produto.flg_delivery = true;
-					incluirItemComandaAction();
+
+					if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+						ng.select_kitchen = true;
+						ng.showAvaliableKitchens();
+					}
+					else
+						incluirItemComandaAction();
 				},
 				function(){
 					ng.produto.flg_delivery = false;
-					incluirItemComandaAction();
+					
+					if(!empty(ng.configuracao.flg_obrigar_informar_cozinha_destino) && ng.configuracao.flg_obrigar_informar_cozinha_destino == 1) {
+						ng.select_kitchen = true;
+						ng.showAvaliableKitchens();
+					}
+					else
+						incluirItemComandaAction();
 				}
 			);
 		}

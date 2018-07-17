@@ -1972,6 +1972,29 @@
 									</div>
 									
 									<div class="col-sm-5">
+										<div class="form-group">
+											<label for="" class="control-label">Obrigar informar cozinha de destino?</label>
+											<div class="form-group">
+												<label class="label-radio inline">
+													<input type="radio"
+														class="inline-radio"
+														ng-model="configuracoes.flg_obrigar_informar_cozinha_destino" 
+														value="1" 
+														name="flg_obrigar_informar_cozinha_destino">
+													<span class="custom-radio"></span>
+													<span>Sim</span>
+												</label>
+												<label class="label-radio inline">
+													<input type="radio"
+														class="inline-radio"
+														ng-model="configuracoes.flg_obrigar_informar_cozinha_destino" 
+														value="0" 
+														name="flg_obrigar_informar_cozinha_destino">
+													<span class="custom-radio"></span>
+													<span>Não</span>
+												</label>
+											</div>
+										</div>
 									</div>
 
 									<div class="col-sm-3">
