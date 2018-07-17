@@ -133,6 +133,8 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="form-group">
+									<h4><strong>Borderô</strong></h4>
+									<hr>
 									<div class="controls">
 										<table class="table table-bordered table-hover table-striped table-condensed">
 											<thead>
@@ -140,23 +142,17 @@
 													<th class="text-middle text-center">
 														<h5>Forma de Pagamento</h5>
 													</th>
-													<th class="text-middle text-center" width="180">
-														<h5>Bandeira</h5>
-													</th>
-													<th class="text-middle text-center" width="180">
+													<th class="text-middle text-center" width="220">
 														<h5>Maquineta</h5>
 													</th>
-													<th class="text-middle text-center" width="120">
+													<th class="text-middle text-center" width="220">
+														<h5>Bandeira</h5>
+													</th>
+													<th class="text-middle text-center" width="160">
 														<h5>Frente de Caixa</h5>
 													</th>
-													<th class="text-middle text-center" width="120">
+													<th class="text-middle text-center" width="160">
 														<h5>Operador</h5>
-													</th>
-													<th class="text-middle text-center" width="120">
-														<h5>Conferido</h5>
-													</th>
-													<th class="text-middle text-center" width="120">
-														<h5>Diferença</h5>
 													</th>
 												</tr>
 											</thead>
@@ -169,49 +165,17 @@
 													</td>
 													<td class="text-middle" 
 														ng-if="canShowCardColumns(lancamento)">
-														<div class="form-group" style="margin-bottom: 0px;">
-															<select option="bandeiras" class="form-control input-sm"
-																	ng-model="lancamento.id_bandeira"
-																	ng-options="bandeira.id as bandeira.nome for bandeira in bandeiras"
-																	ng-disabled="edit == 1">
-															</select>
-														</div>
+														{{ lancamento.num_serie_maquineta }}
 													</td>
 													<td class="text-middle" 
 														ng-if="canShowCardColumns(lancamento)">
-														<div class="form-group" style="margin-bottom: 0px;">
-															<select option="maquinetas" class="form-control input-sm"
-																	ng-model="lancamento.id_maquineta" 
-																	ng-options="maquineta.id_maquineta as maquineta.num_serie_maquineta for maquineta in maquinetas"
-																	ng-disabled="edit == 1">
-															</select>
-														</div>
+														{{ lancamento.nme_bandeira }}
 													</td>
 													<td class="text-middle text-right">
 														R$ {{ lancamento.vlr_lancamento_sistema | numberFormat : 2 : ',' : '.' }}
 													</td>
 													<td class="text-middle text-right">
 														R$ {{ lancamento.vlr_lancamento_operador | numberFormat : 2 : ',' : '.' }}
-													</td>
-													<td>
-														<div class="form-group" style="margin-bottom: 0px;">
-															<input type="text" class="form-control input-sm text-right"
-																ng-model="lancamento.vlr_lancamento_conferencista"
-																ng-change="calculateTotais()"
-																thousands-formatter
-																ng-disabled="edit == 1">
-														</div>
-													</td>
-													<td class="text-middle text-right">
-														<span ng-if="(lancamento.vlr_lancamento_conferencista - lancamento.vlr_lancamento_sistema) = 0">
-															R$ {{ (lancamento.vlr_lancamento_conferencista - lancamento.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
-														</span>
-														<span ng-if="(lancamento.vlr_lancamento_conferencista - lancamento.vlr_lancamento_sistema) < 0" class="text-danger">
-															R$ {{ (lancamento.vlr_lancamento_conferencista - lancamento.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
-														</span>
-														<span ng-if="(lancamento.vlr_lancamento_conferencista - lancamento.vlr_lancamento_sistema) > 0" class="text-success">
-															R$ {{ (lancamento.vlr_lancamento_conferencista - lancamento.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
-														</span>
 													</td>
 												</tr>
 											</tbody>
@@ -221,31 +185,91 @@
 													<td class="text-middle text-bold" colspan="3">
 														<h4>Totais</h4>
 													</td>
-													<td class="text-middle text-bold text-right" width="120">
+													<td class="text-middle text-bold text-right" width="160">
 														<h4>R$ {{ totais.vlr_lancamento_sistema | numberFormat : 2 : ',' : '.' }}</h4>
 													</td>
-													<td class="text-middle text-bold text-right" width="120">
+													<td class="text-middle text-bold text-right" width="160">
 														<h4>R$ {{ totais.vlr_lancamento_operador | numberFormat : 2 : ',' : '.' }}</h4>
-													</td>
-													<td class="text-middle text-bold text-right" width="120">
-														<h4>R$ {{ totais.vlr_lancamento_conferencista | numberFormat : 2 : ',' : '.' }}</h4>
-													</td>
-													<td class="text-middle text-bold text-right" width="120">
-														<h4 ng-if="(totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) = 0">
-															R$ {{ (totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
-														</h4>
-														<h4 ng-if="(totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) < 0" class="text-danger">
-															R$ {{ (totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
-														</h4>
-														<h4 ng-if="(totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) > 0" class="text-success">
-															R$ {{ (totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
-														</h4>
 													</td>
 												</tr>
 											</tfoot>
 										</table>
 									</div>
 								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-lg-12">
+								<h4><strong>Conferência</strong></h4>
+								<hr>
+								<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead>
+										<tr>
+											<th class="text-middle text-center">
+												<h5>Forma de Pagamento</h5>
+											</th>
+											<th class="text-middle text-center" width="220">
+												<h5>Maquineta</h5>
+											</th>
+											<th class="text-middle text-center" width="220">
+												<h5>Bandeira</h5>
+											</th>
+											<th class="text-middle text-center" width="160">
+												<h5>Valor</h5>
+											</th>
+											<th class="text-center text-middle" width="160">
+												<button class="btn btn-xs btn-primary" ng-click="addParcial()" ng-disabled="edit == 1">
+													<i class="fa fa-plus-circle"></i> Adicionar
+												</button>	
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="item in borderoSelected.conferencias" ng-show="borderoSelected.conferencias.length > 0">
+											<td class="text-middle">
+												<div class="form-group" style="margin-bottom: 0px;">
+													<select option="formas_pagamento" class="form-control input-sm"
+															ng-model="item.id_forma_pagamento"
+															ng-options="forma_pagamento.id as forma_pagamento.nome for forma_pagamento in formas_pagamento"
+															ng-disabled="edit == 1">
+													</select>
+												</div>
+											</td>
+											<td class="text-middle">
+												<div class="form-group" style="margin-bottom: 0px;" ng-show="canShowCardColumns(item)">
+													<select option="maquinetas" class="form-control input-sm"
+															ng-model="item.id_maquineta" 
+															ng-options="maquineta.id_maquineta as maquineta.num_serie_maquineta for maquineta in maquinetas"
+															ng-disabled="edit == 1">
+													</select>
+												</div>
+											</td>
+											<td class="text-middle">
+												<div class="form-group" style="margin-bottom: 0px;" ng-show="canShowCardColumns(item)">
+													<select option="bandeiras" class="form-control input-sm"
+															ng-model="item.id_bandeira"
+															ng-options="bandeira.id as bandeira.nome for bandeira in bandeiras"
+															ng-disabled="edit == 1">
+													</select>
+												</div>
+											</td>
+											<td>
+												<div class="form-group" style="margin-bottom: 0px;">
+													<input type="text" class="form-control input-sm text-right"
+														ng-model="item.vlr_lancamento_conferencista"
+														thousands-formatter
+														ng-disabled="edit == 1" ng-change="resumoLancamento()">
+												</div>
+											</td>
+											<td class="text-center text-middle">
+												<button class="btn btn-xs btn-danger" ng-click="removeItemConferencia($index)" ng-disabled="edit == 1">
+													<i class="fa fa-trash-o"></i> Remover
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 
@@ -259,6 +283,73 @@
 											ng-disabled="edit == 1">
 									</select>
 								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-lg-12">
+								<h4><strong>Resumo</strong></h4>
+								<hr>
+								<table class="table table-bordered table-condensed table-striped table-hover">
+									<thead>
+										<tr>
+											<th class="text-middle text-center">
+												<h5>Forma de Pagamento</h5>
+											</th>
+											<th class="text-middle text-center" width="160">
+												<h5>Frente de Caixa</h5>
+											</th>
+											<th class="text-middle text-center" width="160">
+												<h5>Operador</h5>
+											</th>
+											<th class="text-middle text-center" width="160">
+												<h5>Conferêncista</h5>
+											</th>
+											<th class="text-middle text-center" width="160">
+												<h5>Diferença</h5>
+											</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr ng-repeat="item in totaisResumo">
+											<td class="text-middle">
+												{{ item.nme_fp }}
+											</td>
+											<td class="text-right">R$ {{ item.vlr_lancamento_sistema | numberFormat : 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_lancamento_operador | numberFormat : 2 : ',' : '.' }}</td>
+											<td class="text-right">R$ {{ item.vlr_lancamento_conferencista | numberFormat : 2 : ',' : '.' }}</td>
+											<td class="text-middle text-right">
+												<span ng-if="(item.vlr_lancamento_conferencista - item.vlr_lancamento_sistema) == 0">
+													R$ {{ (item.vlr_lancamento_conferencista - item.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
+												</span>
+												<span ng-if="(item.vlr_lancamento_conferencista - item.vlr_lancamento_sistema) < 0" class="text-danger">
+													R$ {{ (item.vlr_lancamento_conferencista - item.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
+												</span>
+												<span ng-if="(item.vlr_lancamento_conferencista - item.vlr_lancamento_sistema) > 0" class="text-success">
+													R$ {{ (item.vlr_lancamento_conferencista - item.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
+												</span>
+											</td>
+										</tr>
+										<tr>
+											<td class="text-middle text-bold"><h4>TOTAIS</h4></td>
+											<td class="text-middle text-bold text-right"><h4>R$ {{ totais.vlr_lancamento_sistema | numberFormat : 2 : ',' : '.' }}</h4></td>
+											<td class="text-middle text-bold text-right"><h4>R$ {{ totais.vlr_lancamento_operador | numberFormat : 2 : ',' : '.' }}</h4></td>
+											<td class="text-middle text-bold text-right"><h4>R$ {{ totais.vlr_lancamento_conferencista | numberFormat : 2 : ',' : '.' }}</h4></td>
+											<td class="text-middle text-bold text-right">
+												<h4 ng-if="(totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) = 0">
+													R$ {{ (totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
+												</h4>
+												<h4 ng-if="(totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) < 0" class="text-danger">
+													R$ {{ (totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
+												</h4>
+												<h4 ng-if="(totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) > 0" class="text-success">
+													R$ {{ (totais.vlr_lancamento_conferencista - totais.vlr_lancamento_sistema) | numberFormat : 2 : ',' : '.' }}
+												</h4>
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
