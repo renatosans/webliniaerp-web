@@ -41,7 +41,7 @@ app.controller('NotasFiscaisController', function($scope, $http, $window, $dialo
 	}
 
 	ng.getUrlPDFRomaneioEntrega = function(id_romaneio){
-		var url_pdf = baseUrlApi()+'relPDF?template=romaneio_entrega&id_romaneio='+id_romaneio;
+		var url_pdf = baseUrlApi()+'relatorio/pdf/romaneio/entrega?template=romaneio_entrega&id_romaneio='+id_romaneio;
 		return url_pdf;
 	}
 	
