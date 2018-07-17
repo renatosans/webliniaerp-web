@@ -1670,6 +1670,15 @@ app.controller('Empreendimento_config-Controller', function($scope, $http, $wind
 			chaves.push(item);
 		}
 
+		if(ng.configuracoes.flg_obrigar_informar_cozinha_destino != undefined){
+			var item = {
+							nome 				:'flg_obrigar_informar_cozinha_destino',
+							valor 				:ng.configuracoes.flg_obrigar_informar_cozinha_destino , 
+							id_empreendimento	:ng.userLogged.id_empreendimento
+						}
+			chaves.push(item);
+		}
+
 		btn.button('loading');
 		
 		aj.post(baseUrlApi()+"configuracao/save/",{ chaves: chaves })
